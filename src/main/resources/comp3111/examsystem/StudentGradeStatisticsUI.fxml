@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.StudentGradeStatisticsController" prefHeight="600.0" prefWidth="900.0" styleClass="background" stylesheets="@style.css">
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15" />
+            </padding>
+            
+            <HBox alignment="CENTER">
+                <Text text="Grade Statistics" styleClass="header-text"/>
+            </HBox>
+            
+            <GridPane hgap="10" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="120" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150" prefWidth="200" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="120" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="150" prefWidth="200" />
+                </columnConstraints>
+                
+                <Label text="Course:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="filter-label"/>
+                <ComboBox fx:id="courseComboBox" promptText="Select Course" GridPane.rowIndex="0" GridPane.columnIndex="1" maxWidth="Infinity" />
+                
+                <Label text="Score Range:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="filter-label"/>
+                <HBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="3">
+                    <TextField fx:id="minScoreField" promptText="Min" prefWidth="70" />
+                    <Label text="to" />
+                    <TextField fx:id="maxScoreField" promptText="Max" prefWidth="70" />
+                </HBox>
+                
+                <Label text="Date Range:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="filter-label"/>
+                <HBox spacing="5" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <DatePicker fx:id="startDatePicker" promptText="From" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                </HBox>
+                
+                <Label text="to" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="filter-label" />
+                <DatePicker fx:id="endDatePicker" promptText="To" GridPane.rowIndex="1" GridPane.columnIndex="3" maxWidth="Infinity" />
+                
+                <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="4">
+                    <Button fx:id="filterButton" text="Filter" onAction="#handleFilter" styleClass="action-button"/>
+                    <Button fx:id="resetButton" text="Reset" onAction="#handleReset" styleClass="action-button"/>
+                    <Button fx:id="refreshButton" text="Refresh" onAction="#handleRefresh" styleClass="action-button"/>
+                </HBox>
+            </GridPane>
+        </VBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.3" prefHeight="160.0" prefWidth="200.0">
+            <VBox spacing="5">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10" />
+                </padding>
+                <Label text="Taken Quizzes:" styleClass="section-header"/>
+                <ListView fx:id="quizListView" VBox.vgrow="ALWAYS" onMouseClicked="#handleQuizSelection" />
+            </VBox>
+            
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10" />
+                </padding>
+                <Label text="Grade Distribution:" styleClass="section-header"/>
+                <BarChart fx:id="gradeChart" title="Score Distribution" legendVisible="false" VBox.vgrow="ALWAYS">
+                    <xAxis>
+                        <CategoryAxis label="Quiz" fx:id="xAxis" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Score (%)" fx:id="yAxis" lowerBound="0" upperBound="100" tickUnit="10" />
+                    </yAxis>
+                </BarChart>
+                
+                <GridPane hgap="10" vgap="5">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="120" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="120" />
+                    </columnConstraints>
+                    
+                    <Label text="Average Score:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="result-label"/>
+                    <Label fx:id="averageScoreLabel" text="0%" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                    
+                    <Label text="Highest Score:" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="result-label"/>
+                    <Label fx:id="highestScoreLabel" text="0%" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                    
+                    <Label text="Lowest Score:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="result-label"/>
+                    <Label fx:id="lowestScoreLabel" text="0%" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                </GridPane>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER" spacing="20.0">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15" />
+            </padding>
+            <Button fx:id="backButton" text="Back to Main" onAction="#handleBack" styleClass="navigation-button"/>
+            <Button fx:id="closeButton" text="Close Application" onAction="#handleClose" styleClass="close-button"/>
+        </HBox>
+    </bottom>
+</BorderPane> 

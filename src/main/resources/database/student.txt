@@ -1,0 +1,3 @@
+name%&:Erastus!@#gender%&:Male!@#age%&:15!@#department%&:CSE!@#username%&:erastus!@#password%&:erastuserastus!@#id%&:1740122689526!@#isAble%&:true!@#
+name%&:tester!@#gender%&:Male!@#age%&:12!@#department%&:ACCT!@#username%&:test!@#password%&:admin1234!@#id%&:1740638984594!@#isAble%&:true!@#
+name%&:test!@#gender%&:Male!@#age%&:21!@#department%&:CSE!@#username%&:tester!@#password%&:admin1234!@#id%&:1743903332578!@#isAble%&:true!@#

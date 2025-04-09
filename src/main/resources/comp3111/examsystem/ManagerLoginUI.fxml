@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-background-repeat: stretch;-fx-background-position: center center;" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="20.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.ManagerLoginController">
+    <Label text="Examination Management System" styleClass="header-label"/>
+    <Region prefHeight="10.0" prefWidth="600.0" />
+    <GridPane alignment="CENTER" hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" />
+            <ColumnConstraints halignment="LEFT" />
+        </columnConstraints>
+        <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="header-label"/>
+        <TextField fx:id="usernameTxt" promptText="Please enter the user ID" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="header-label"/>
+        <PasswordField fx:id="passwordTxt" promptText="Please enter the password" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
+    <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0" spacing="20.0">
+        <Button mnemonicParsing="false" onAction="#login" text="Login" styleClass="login-button"/>
+        <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" styleClass="login-button"/>
+    </HBox>
+</VBox>

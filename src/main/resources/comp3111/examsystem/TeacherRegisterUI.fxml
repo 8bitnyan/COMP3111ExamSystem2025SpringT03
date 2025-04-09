@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="20.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherRegisterController">
+    <Label text="Teacher Register" styleClass="header-label"/>
+    <Region prefHeight="10.0" prefWidth="600.0" />
+    <GridPane alignment="CENTER" hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" />
+            <ColumnConstraints halignment="LEFT" />
+        </columnConstraints>
+        <Label text="Username:" styleClass="header-label"/>
+        <TextField fx:id="usernameTxt" promptText="Please enter your user ID" GridPane.columnIndex="1" />
+        <Label text="Name:" GridPane.rowIndex="1" styleClass="header-label"/>
+        <TextField fx:id="nameTxt" promptText="Please enter your name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label text="Gender:" GridPane.rowIndex="2" styleClass="header-label"/>
+        <ComboBox fx:id="genderCmb" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Label text="Age:" GridPane.rowIndex="3" styleClass="header-label"/>
+        <TextField fx:id="ageTxt" promptText="Please enter your age" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label text="Department:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="header-label"/>
+        <ComboBox fx:id="departmentCmb" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="6" styleClass="header-label"/>
+        <PasswordField fx:id="passwordTxt" promptText="Please enter your password" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Label text="Confirm Password:" GridPane.columnIndex="0" GridPane.rowIndex="7" styleClass="header-label"/>
+        <PasswordField fx:id="passwordConfirmTxt" promptText="Please confirm your password" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Label text="Position:" GridPane.rowIndex="4" styleClass="header-label"/>
+        <ComboBox fx:id="positionCmb" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    </GridPane>
+    <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0" spacing="20.0">
+        <Button mnemonicParsing="false" onAction="#register" text="Register" styleClass="login-button"/>
+        <Button mnemonicParsing="false" onAction="#cancel" text="Cancel" styleClass="login-button"/>
+    </HBox>
+</VBox>
