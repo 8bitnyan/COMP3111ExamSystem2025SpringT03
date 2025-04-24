@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="comp3111.examsystem.controller.CourseManagementController"
+            prefHeight="600.0" prefWidth="1000.0"
+            stylesheets="@style.css">
+
+    <VBox spacing="20" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10">
+
+        <!-- Filter Bar -->
+        <HBox spacing="15" alignment="CENTER" style="-fx-font-size: 14px;">
+            <Label text="Course Code:"/>
+            <TextField fx:id="filterCourseCode" prefWidth="140"/>
+            <Label text="Course Name:"/>
+            <TextField fx:id="filterCourseName" prefWidth="140"/>
+            <Label text="Department:"/>
+            <ComboBox fx:id="filterDepartment" prefWidth="140"/>
+            <Button fx:id="btnFilter" onAction="#filterCourses" text="Filter" styleClass="primary-button" prefHeight="36" prefWidth="80"/>
+            <Button fx:id="btnReset" onAction="#reset" text="Reset" styleClass="primary-button" prefHeight="36" prefWidth="80"/>
+        </HBox>
+
+        <!-- Main Area Split -->
+        <HBox spacing="30" alignment="CENTER" style="-fx-font-size: 14px;">
+            <!-- Table -->
+            <TableView fx:id="courseTable" prefWidth="700.0" prefHeight="420.0" style="-fx-font-size: 14px;">
+                <columns>
+                    <TableColumn fx:id="colCourseCode" text="Course ID" prefWidth="200"/>
+                    <TableColumn fx:id="colCourseName" text="Course Name" prefWidth="350"/>
+                    <TableColumn fx:id="colDepartment" text="Department" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <!-- Right Form -->
+            <VBox spacing="10" style="-fx-font-size: 14px;">
+                <Label text="Course Code:"/>
+                <TextField fx:id="tfCourseCode" prefWidth="180"/>
+                <Label text="Course Name:"/>
+                <TextField fx:id="tfCourseName" prefWidth="180"/>
+                <Label text="Department:"/>
+                <ComboBox fx:id="cbDepartment" prefWidth="180"/>
+                <HBox spacing="12">
+                    <Button fx:id="btnAdd" text="Add" onAction="#addCourse" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                    <Button fx:id="btnUpdate" text="Update" onAction="#updateCourse" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                    <Button fx:id="btnDelete" text="Delete" onAction="#deleteCourse" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Bottom Buttons -->
+        <HBox spacing="30" alignment="CENTER" style="-fx-font-size: 14px;">
+            <VBox.margin>
+                <Insets top="40"/>
+            </VBox.margin>
+            <Button fx:id="btnBack" text="Back" onAction="#back" styleClass="primary-button" prefWidth="150" prefHeight="40"/>
+            <Button fx:id="btnClose" text="Close Application" onAction="#closeApplication" styleClass="primary-button" prefWidth="180" prefHeight="40"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

@@ -16,12 +16,18 @@ import java.util.List;
  */
 public class Teacher extends User {
     private Position position;
-
     /**
      * Constructor for database utilities. Do NOT call this.
      */
     public Teacher() {
         super();
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
     /**

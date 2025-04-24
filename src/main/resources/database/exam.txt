@@ -1,0 +1,2 @@
+courseCode%&:COMP3111!@#examName%&:Multiple!@#examTime%&:15!@#questions%&:[String-~,1740122751927-~,1740122752858-~,1740122767858]!@#isPublished%&:false!@#id%&:1745230000000!@#isAble%&:true!@#
+courseCode%&:ELEC1010!@#examName%&:Delete Test!@#examTime%&:15!@#questions%&:[String-~,1740122751927]!@#isPublished%&:false!@#id%&:1745230000001!@#isAble%&:false!@#
