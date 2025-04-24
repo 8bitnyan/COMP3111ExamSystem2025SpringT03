@@ -1,0 +1,4 @@
+teacherId%&:1740122825527!@#type%&:MCQ!@#questionText%&:Kill!@#optionA%&:A!@#optionB%&:B!@#optionC%&:C!@#optionD%&:D!@#answer%&:D!@#score%&:5!@#isPublished%&:false!@#id%&:1740122751927!@#isAble%&:true!@#
+teacherId%&:1740122825527!@#type%&:Short Answer!@#questionText%&:KRRR!@#answer%&:Bombardilo!@#score%&:10!@#isPublished%&:false!@#id%&:1740122752858!@#isAble%&:true!@#
+teacherId%&:1740122825528!@#type%&:Short Answer!@#questionText%&:oh!@#answer%&:yeon!@#score%&:11!@#isPublished%&:false!@#id%&:1740122767858!@#isAble%&:true!@#
+teacherId%&:1740122825528!@#type%&:MCQ!@#questionText%&:yeon!@#optionA%&:asdad!@#optionB%&:asdasdasd!@#optionC%&:sadasdsa!@#optionD%&:sdasdsadas!@#answer%&:A!@#score%&:11!@#isPublished%&:false!@#id%&:1740122767859!@#isAble%&:true!@#
