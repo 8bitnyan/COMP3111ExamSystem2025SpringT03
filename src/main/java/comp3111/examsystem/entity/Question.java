@@ -3,6 +3,7 @@ package comp3111.examsystem.entity;
 import java.util.List;
 
 public class Question extends Entity {
+
     private Long teacherId; // To isolate questions per teacher
     private String type; // e.g., "MCQ", "Short Answer"
     private String questionText;
@@ -13,6 +14,11 @@ public class Question extends Entity {
     private String answer;
     private Integer score;
     private Integer isPublished = 0; // For confirmation of deletion
+
+    private Long id;
+    private List<String> options; // For MCQ
+    private boolean isAble = true; // Required for lazy deletion
+
 
     // Constructors
     public Question() {} // Required for Database.java reflection
@@ -25,11 +31,22 @@ public class Question extends Entity {
         this.optionB = B;
         this.optionC = C;
         this.optionD = D;
+
         this.answer = answer;
         this.score = score;
     }
 
     // Getters and Setters
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     public Long getTeacherId() {
         return teacherId;

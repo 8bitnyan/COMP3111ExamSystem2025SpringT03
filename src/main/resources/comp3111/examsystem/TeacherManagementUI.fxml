@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="comp3111.examsystem.controller.TeacherManagementController"
+            prefHeight="600.0" prefWidth="1000.0"
+            stylesheets="@style.css">
+
+    <VBox spacing="20" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10">
+
+        <!-- Filter Bar -->
+        <HBox spacing="15" alignment="CENTER" style="-fx-font-size: 14px;">
+            <Label text="Username:"/>
+            <TextField fx:id="filterUsername" prefWidth="140"/>
+            <Label text="Name:"/>
+            <TextField fx:id="filterName" prefWidth="140"/>
+            <Label text="Department:"/>
+            <ComboBox fx:id="filterDepartment" prefWidth="140"/>
+            <Button fx:id="btnFilter" onAction="#filterTeachers" text="Filter" styleClass="primary-button" prefHeight="36" prefWidth="80"/>
+            <Button fx:id="btnReset" onAction="#reset" text="Reset" styleClass="primary-button" prefHeight="36" prefWidth="80"/>
+        </HBox>
+
+        <!-- Main Area Split -->
+        <HBox spacing="30" alignment="CENTER" style="-fx-font-size: 14px;">
+            <!-- Table -->
+            <TableView fx:id="teacherTable" prefWidth="800.0" prefHeight="420.0" style="-fx-font-size: 14px;">
+                <columns>
+                    <TableColumn fx:id="colUsername" text="Username" prefWidth="120"/>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="120"/>
+                    <TableColumn fx:id="colAge" text="Age" prefWidth="60"/>
+                    <TableColumn fx:id="colGender" text="Gender" prefWidth="100"/>
+                    <TableColumn fx:id="colPosition" text="Position" prefWidth="150"/>
+                    <TableColumn fx:id="colDepartment" text="Department" prefWidth="100"/>
+                    <TableColumn fx:id="colPassword" text="Password" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <!-- Right Form -->
+            <VBox spacing="10" style="-fx-font-size: 14px;">
+                <Label text="Username:"/>
+                <TextField fx:id="tfUsername" prefWidth="180"/>
+                <Label text="Name:"/>
+                <TextField fx:id="tfName" prefWidth="180"/>
+                <Label text="Password:"/>
+                <PasswordField fx:id="tfPassword" prefWidth="180"/>
+                <Label text="Department:"/>
+                <ComboBox fx:id="cbDepartment" prefWidth="180"/>
+                <Label text="Age:"/>
+                <TextField fx:id="tfAge" prefWidth="180"/>
+                <Label text="Gender:"/>
+                <ComboBox fx:id="cbGender" prefWidth="180"/>
+                <Label text="Position"/>
+                <ComboBox fx:id="cbPosition" prefWidth="180"/>
+                <HBox spacing="12">
+                    <Button fx:id="btnAdd" text="Add" onAction="#addTeacher" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                    <Button fx:id="btnUpdate" text="Update" onAction="#updateTeacher" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                    <Button fx:id="btnDelete" text="Delete" onAction="#deleteTeacher" styleClass="primary-button" prefWidth="80" prefHeight="36"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Bottom Buttons -->
+        <HBox spacing="30" alignment="CENTER" style="-fx-font-size: 14px;">
+            <VBox.margin>
+                <Insets top="40"/>
+            </VBox.margin>
+            <Button fx:id="btnBack" text="Back" onAction="#back" styleClass="primary-button" prefWidth="150" prefHeight="40"/>
+            <Button fx:id="btnClose" text="Close Application" onAction="#closeApplication" styleClass="primary-button" prefWidth="180" prefHeight="40"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>
