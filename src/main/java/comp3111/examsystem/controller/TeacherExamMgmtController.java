@@ -419,7 +419,7 @@ public class TeacherExamMgmtController implements Initializable {
         }
         List<Long> questions = getIncludedQuestionIds();
 
-        Exam newExam = new Exam(courseCode, name, time, questions, isPublished);
+        Exam newExam = new Exam(courseCode, name, teacher.getId(), time, questions, isPublished);
 
         Database<Exam> examDB = new Database<>(Exam.class);
         examDB.add(newExam);

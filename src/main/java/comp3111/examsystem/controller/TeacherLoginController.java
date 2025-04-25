@@ -72,7 +72,7 @@ public class TeacherLoginController implements Initializable {
         try {
             stage.setScene(new Scene(fxmlLoader.load()));
             TeacherMainController controller = fxmlLoader.getController();
-            controller.preSetController(teacher);
+            controller.presetController(teacher);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

@@ -1,0 +1,59 @@
+.root {
+    -fx-font-family: "Arial";
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 10;
+}
+
+.background {
+    -fx-background-color: #f5f5f5;
+}
+
+.header-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.login-button {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 4;
+}
+
+.login-button:hover {
+    -fx-background-color: #3367d6;
+}
+
+.login-button:pressed {
+    -fx-background-color: #2a56c6;
+}
+
+.form {
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.table {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.table .column-header {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: white;
+}
+
+.table .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Make read-only fields visually different */
+.text-field:disabled, .text-area:disabled, .combo-box:disabled {
+    -fx-opacity: 0.8;
+    -fx-background-color: #f0f0f0;
+}

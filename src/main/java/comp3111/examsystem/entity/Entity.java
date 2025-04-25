@@ -82,7 +82,14 @@ public class Entity implements java.io.Serializable, Comparable<Entity> {
      */
     @Override
     public boolean equals(Object other) {
-        if (other instanceof Entity) return this.id.equals(((Entity) other).getId());
+        if (other instanceof Entity) {
+            // Handle null IDs safely
+            Entity otherEntity = (Entity) other;
+            if (this.id == null || otherEntity.getId() == null) {
+                return this == other; // If either ID is null, only equal if same object
+            }
+            return this.id.equals(otherEntity.getId());
+        }
         else return false;
     }
 }

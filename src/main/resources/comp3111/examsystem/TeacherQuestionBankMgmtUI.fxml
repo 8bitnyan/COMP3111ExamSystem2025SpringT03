@@ -10,60 +10,94 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.Region?>
 
-<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="10.0" styleClass="root" stylesheets="@../../../../../../Lab5TeamRepoG02/src/main/resources/comp3111/examsystem/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherQuestionBankMgmtController">
+<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" spacing="10.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherQuestionBankMgmtController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
     <HBox spacing="10" alignment="CENTER">
         <Label text="Question:" styleClass="header-label"/>
-        <TextField fx:id="filterQuestionTxt" />
+        <TextField fx:id="filterQuestionTxt" minWidth="150" />
         <Label text="Type:" styleClass="header-label"/>
-        <ComboBox fx:id="filterTypeCmb" prefWidth="300.0" />
+        <ComboBox fx:id="filterTypeCmb" prefWidth="120" />
         <Label text="Score:" styleClass="header-label"/>
-        <TextField fx:id="filterScoreTxt" />
+        <TextField fx:id="filterScoreTxt" prefWidth="60" />
         <Button mnemonicParsing="false" onAction="#handleReset" text="Reset" styleClass="login-button"/>
         <Button mnemonicParsing="false" onAction="#handleFilter" text="Filter" styleClass="login-button"/>
     </HBox>
 
-    <SplitPane dividerPositions="0.7">
-        <TableView fx:id="questionsTable" styleClass="table">
+    <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">
+        <TableView fx:id="questionsTable" styleClass="table" minWidth="400">
             <columns>
-                <TableColumn text="Question" fx:id="colQuestion"/>
-                <TableColumn text="Type" fx:id="colType"/>
-                <TableColumn text="Score" fx:id="colScore"/>
-                <TableColumn text="Option A" fx:id="colOptionA"/>
-                <TableColumn text="Option B" fx:id="colOptionB"/>
-                <TableColumn text="Option C" fx:id="colOptionC"/>
-                <TableColumn text="Option D" fx:id="colOptionD"/>
-                <TableColumn text="Answer" fx:id="colAnswer"/>
+                <TableColumn text="Question" fx:id="colQuestion" prefWidth="200"/>
+                <TableColumn text="Type" fx:id="colType" prefWidth="80"/>
+                <TableColumn text="Score" fx:id="colScore" prefWidth="50"/>
+                <TableColumn text="Option A" fx:id="colOptionA" prefWidth="80"/>
+                <TableColumn text="Option B" fx:id="colOptionB" prefWidth="80"/>
+                <TableColumn text="Option C" fx:id="colOptionC" prefWidth="80"/>
+                <TableColumn text="Option D" fx:id="colOptionD" prefWidth="80"/>
+                <TableColumn text="Option E" fx:id="colOptionE" prefWidth="80"/>
+                <TableColumn text="Answer" fx:id="colAnswer" prefWidth="60"/>
             </columns>
         </TableView>
-        <VBox spacing="10" styleClass="form">
-            <Label text="Type:" styleClass="header-label"/>
-            <ComboBox fx:id="typeCmb" />
-            <Label text="Question:" styleClass="header-label"/>
-            <TextField fx:id="questionTxt" />
-            <Label text="Score:" styleClass="header-label"/>
-            <TextField fx:id="scoreTxt" />
-            <VBox fx:id="options" spacing="5" visible="false">
-                <Label text="Option A:" styleClass="header-label"/>
-                <TextField fx:id="ATxt" />
-                <Label text="Option B:" styleClass="header-label"/>
-                <TextField fx:id="BTxt" />
-                <Label text="Option C:" styleClass="header-label"/>
-                <TextField fx:id="CTxt" />
-                <Label text="Option D:" styleClass="header-label"/>
-                <TextField fx:id="DTxt" />
+        <ScrollPane fitToWidth="true" minWidth="300" hbarPolicy="NEVER">
+            <VBox spacing="10" styleClass="form" minWidth="280">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                
+                <!-- Form Header with edit controls -->
+                <HBox spacing="5" alignment="CENTER_LEFT">
+                    <Label text="Question Details" styleClass="header-label" style="-fx-font-size: 16px;"/>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="editBtn" onAction="#handleEdit" text="Edit" styleClass="login-button" style="-fx-background-color: #4CAF50;"/>
+                    <Button fx:id="cancelEditBtn" onAction="#handleCancelEdit" text="Cancel" styleClass="login-button" style="-fx-background-color: #f44336;"/>
+                </HBox>
+                
+                <Label text="Type:" styleClass="header-label"/>
+                <ComboBox fx:id="typeCmb" prefWidth="250" />
+                
+                <Label text="Question:" styleClass="header-label"/>
+                <TextArea fx:id="questionTxt" prefHeight="80" wrapText="true" />
+                
+                <Label text="Score:" styleClass="header-label"/>
+                <TextField fx:id="scoreTxt" prefWidth="100" />
+                
+                <!-- Adaptable MCQ Options -->
+                <VBox fx:id="options" spacing="5" visible="false" minWidth="250">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="MCQ Options" styleClass="header-label"/>
+                        <Button fx:id="addOptionBtn" text="Add Option" onAction="#handleAddOption" styleClass="login-button">
+                            <HBox.margin>
+                                <Insets left="10"/>
+                            </HBox.margin>
+                        </Button>
+                    </HBox>
+                    <!-- Dynamic options will be added here by the controller -->
+                    <VBox fx:id="optionsContainer" spacing="5" minWidth="250"/>
+                </VBox>
+                
+                <Label text="Answer:" styleClass="header-label"/>
+                <TextField fx:id="answerTxt" prefWidth="250" />
+                
+                <!-- Action buttons within the form -->
+                <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                    <Button fx:id="addBtn" onAction="#handleAdd" text="Add New" styleClass="login-button" style="-fx-background-color: #4CAF50;"/>
+                    <Button fx:id="updateBtn" onAction="#handleUpdate" text="Save Changes" styleClass="login-button" style="-fx-background-color: #FF9800;"/>
+                </HBox>
             </VBox>
-            <Label text="Answer:" styleClass="header-label"/>
-            <TextField fx:id="answerTxt" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-        </VBox>
+        </ScrollPane>
     </SplitPane>
 
     <HBox spacing="10" alignment="CENTER">
-        <Button onAction="#handleDelete" text="Delete" styleClass="login-button"/>
-        <Button onAction="#handleRefresh" text="Refresh" styleClass="login-button"/>
-        <Button onAction="#handleAdd" text="Add" styleClass="login-button"/>
-        <Button onAction="#handleUpdate" text="Update" styleClass="login-button"/>
-        <Button onAction="#handleBack" text="Back" styleClass="login-button"/>
-        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
+        <Button fx:id="deleteBtn" onAction="#handleDelete" text="Delete" styleClass="login-button"/>
+        <Button fx:id="refreshBtn" onAction="#handleRefresh" text="Refresh" styleClass="login-button"/>
+        <Button fx:id="backBtn" onAction="#handleBack" text="Back" styleClass="login-button"/>
+        <Button fx:id="closeBtn" onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
     </HBox>
 </VBox>

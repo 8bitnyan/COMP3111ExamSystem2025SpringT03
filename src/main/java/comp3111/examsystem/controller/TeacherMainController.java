@@ -34,10 +34,10 @@ public class TeacherMainController implements Initializable {
     }
 
     /**
-     * Sets the teacher object and initializes the UI.
+     * Sets the teacher object and initializes the UI. (for compatibility with other controllers)
      * @param teacher The teacher object that is operating this page.
      */
-    public void preSetController(Teacher teacher) {
+    public void presetController(Teacher teacher) {
         this.teacher = teacher;
     }
 
