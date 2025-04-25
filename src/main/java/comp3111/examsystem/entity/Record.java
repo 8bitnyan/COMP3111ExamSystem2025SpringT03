@@ -7,9 +7,7 @@ public class Record extends Entity{
     private String response;
     private Integer score;
 
-    public Record() {
-
-    }
+    public Record() { super(); }
 
     public Record(Long questionID, Long studentID, Long examID, String response, Integer score) {
         this.questionID = questionID;

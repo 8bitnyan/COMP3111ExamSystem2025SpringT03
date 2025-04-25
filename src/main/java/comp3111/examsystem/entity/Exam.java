@@ -1,5 +1,6 @@
 package comp3111.examsystem.entity;
 
+
 import comp3111.examsystem.tools.Database;
 import comp3111.examsystem.tools.MsgSender;
 import javafx.collections.ObservableList;
@@ -8,12 +9,14 @@ import javafx.fxml.FXML;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 public class Exam extends Entity {
     private String courseCode;
     private String examName;
     private long examTime;
     private List<Long> questions;
     private boolean isPublished;
+
 
     public Exam() {
         super();
@@ -26,6 +29,8 @@ public class Exam extends Entity {
         this.questions = questions;
         this.isPublished = false;
     }
+
+    //Getter Function
 
     public String getCourseCode() {
         return courseCode;
@@ -43,10 +48,10 @@ public class Exam extends Entity {
         return questions;
     }
 
-    //Setter Function
-//    public void setExamID(long examID) {
-//        this.examID = examID;
-//    }
+
+    public boolean getIsPublished() {
+        return isPublished;
+    }
 
     public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
@@ -63,6 +68,8 @@ public class Exam extends Entity {
     public void setIsPublished(boolean isPublished) {
         this.isPublished = isPublished;
     }
+
+    public void setQuestions(List<Long> newQuestions) {
+        this.questions = newQuestions;
+    }
 }
-
-

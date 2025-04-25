@@ -1,7 +1,6 @@
 courseCode%&:COMP3111!@#courseName%&:Software Engineering!@#department%&:CSE!@#id%&:1740122851858!@#isAble%&:true!@#
 courseCode%&:COMP3511!@#courseName%&:Operating Systems!@#department%&:CSE!@#id%&:1745298919058!@#isAble%&:true!@#
-courseCode%&:ELEC1010!@#courseName%&:Electric Boogaloo!@#department%&:ECE!@#id%&:1745299050190!@#isAble%&:false!@#
-courseCode%&:ELEC2600!@#courseName%&:Random Ass Numbers!@#department%&:ECE!@#id%&:1745309697810!@#isAble%&:false!@#
+courseCode%&:ELEC1010!@#courseName%&:Electric Boogaloo!@#department%&:ECE!@#id%&:1745299050190!@#isAble%&:true!@#
+courseCode%&:ELEC2600!@#courseName%&:Random Ass Numbers!@#department%&:ECE!@#id%&:1745309697810!@#isAble%&:true!@#
 courseCode%&:COMP2711!@#courseName%&:Discrete Mathematics!@#department%&:CSE!@#id%&:1745309839884!@#isAble%&:true!@#
 courseCode%&:COMP2611!@#courseName%&:Computer Organization!@#department%&:CSE!@#id%&:1745310001923!@#isAble%&:true!@#
-courseCode%&:BIEN1010!@#courseName%&:Intro to BioEngineering!@#department%&:CBE!@#id%&:1745334240189!@#isAble%&:true!@#

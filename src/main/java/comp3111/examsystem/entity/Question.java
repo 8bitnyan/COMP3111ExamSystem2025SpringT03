@@ -3,29 +3,42 @@ package comp3111.examsystem.entity;
 import java.util.List;
 
 public class Question extends Entity {
-    private Long id;
+
     private Long teacherId; // To isolate questions per teacher
     private String type; // e.g., "MCQ", "Short Answer"
     private String questionText;
-    private List<String> options; // For MCQ
+    private String optionA;
+    private String optionB;
+    private String optionC;
+    private String optionD;
     private String answer;
-    private float score;
+    private Integer score;
+    private Integer isPublished = 0; // For confirmation of deletion
+
+    private Long id;
+    private List<String> options; // For MCQ
     private boolean isAble = true; // Required for lazy deletion
-    private boolean isPublished = false; // For confirmation of deletion
+
 
     // Constructors
     public Question() {} // Required for Database.java reflection
 
-    public Question(Long teacherId, String type, String questionText, List<String> options, String answer, int score) {
+    public Question(Long teacherId, String type, String questionText, String A, String B, String C, String D, String answer, int score) {
         this.teacherId = teacherId;
         this.type = type;
         this.questionText = questionText;
-        this.options = options;
+        this.optionA = A;
+        this.optionB = B;
+        this.optionC = C;
+        this.optionD = D;
+
         this.answer = answer;
         this.score = score;
     }
 
     // Getters and Setters
+
+
     public Long getId() {
         return id;
     }
@@ -33,6 +46,7 @@ public class Question extends Entity {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public Long getTeacherId() {
         return teacherId;
@@ -58,13 +72,32 @@ public class Question extends Entity {
         this.questionText = questionText;
     }
 
-    public List<String> getOptions() {
-        return options;
+    public String getOptionA() {
+        return optionA;
+    }
+    public String getOptionB() {
+        return optionB;
+    }
+    public String getOptionC() {
+        return optionC;
+    }
+    public String getOptionD() {
+        return optionD;
     }
 
-    public void setOptions(List<String> options) {
-        this.options = options;
+    public void setA(String A) {
+        this.optionA = A;
     }
+    public void setB(String B) {
+        this.optionB = B;
+    }
+    public void setC(String C) {
+        this.optionC = C;
+    }
+    public void setD(String D) {
+        this.optionD = D;
+    }
+
 
     public String getAnswer() {
         return answer;
@@ -74,27 +107,19 @@ public class Question extends Entity {
         this.answer = answer;
     }
 
-    public float getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(float score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 
-    public boolean isAble() {
-        return isAble;
-    }
-
-    public void setAble(boolean able) {
-        isAble = able;
-    }
-
-    public boolean getPublished() {
+    public int getPublished() {
         return isPublished;
     }
 
-    public void setPublished(boolean publish) {
+    public void setPublished(int publish) {
         isPublished = publish;
     }
 }

@@ -26,14 +26,17 @@ public class Course extends Entity {
     }
 
     public String getCourseCode() {
-        return courseCode;
+
+        return this.courseCode;
+
     }
     public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
     }
 
     public String getCourseName() {
-        return courseName;
+
+        return this.courseName;
     }
     public void setCourseName(String courseName) {
         this.courseName = courseName;

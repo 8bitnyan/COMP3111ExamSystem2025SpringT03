@@ -1,2 +1,6 @@
-courseCode%&:COMP3111!@#examName%&:Multiple!@#examTime%&:15!@#questions%&:[String-~,1740122751927-~,1740122752858-~,1740122767858]!@#isPublished%&:false!@#id%&:1745230000000!@#isAble%&:true!@#
-courseCode%&:ELEC1010!@#examName%&:Delete Test!@#examTime%&:15!@#questions%&:[String-~,1740122751927]!@#isPublished%&:false!@#id%&:1745230000001!@#isAble%&:false!@#
+courseCode%&:ELEC1010!@#examName%&:EE!@#examTime%&:15!@#questions%&:[Long-~,7051039259891614676-~,6776832195721970168-~,6606525541611421749]!@#isPublished%&:false!@#id%&:1745360393755!@#isAble%&:false!@#
+courseCode%&:COMP2611!@#examName%&:SS!@#examTime%&:15!@#questions%&:[Long-~,6606525541611421749]!@#isPublished%&:false!@#id%&:1745361640991!@#isAble%&:false!@#
+courseCode%&:COMP3511!@#examName%&:AA!@#examTime%&:15!@#questions%&:[Long-~,6776832195721970168]!@#isPublished%&:false!@#id%&:1745366226119!@#isAble%&:false!@#
+courseCode%&:COMP3111!@#examName%&:Multiple!@#examTime%&:15!@#questions%&:[Long-~,4374155174116278513-~,6167524122865651657-~,6468309739296867581]!@#isPublished%&:true!@#id%&:1745389465279!@#isAble%&:true!@#
+courseCode%&:COMP2711!@#examName%&:Test!@#examTime%&:20!@#questions%&:[Long-~,6167524122865651657-~,1026046535683231633]!@#isPublished%&:true!@#id%&:1745394329217!@#isAble%&:true!@#
+courseCode%&:COMP2711!@#examName%&:asdsa!@#examTime%&:123!@#questions%&:[Long-~,6167524122865651657-~,6468309739296867581-~,4374155174116278513]!@#isPublished%&:true!@#id%&:1745394454975!@#isAble%&:true!@#
