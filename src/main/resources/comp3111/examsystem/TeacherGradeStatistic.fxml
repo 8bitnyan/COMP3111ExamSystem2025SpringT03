@@ -3,63 +3,132 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
-<?import javafx.scene.chart.LineChart?>
-<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="10.0" styleClass="root" stylesheets="@../../../../../../Lab5TeamRepoG02/src/main/resources/comp3111/examsystem/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherGradeStatisticController">
-    <HBox spacing="10" alignment="CENTER">
-        <Label text="Course:" styleClass="header-label"/>
-        <ComboBox fx:id="courseCmb" />
-        <Label text="Exam:" styleClass="header-label"/>
-        <ComboBox fx:id="examCmb" />
-        <Label text="Student:" styleClass="header-label"/>
-        <ComboBox fx:id="studentCmb" />
-        <Button mnemonicParsing="false" onAction="#handleReset" text="Reset" styleClass="login-button"/>
-        <Button mnemonicParsing="false" onAction="#handleFilter" text="Filter" styleClass="login-button"/>
-    </HBox>
+<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="1200" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherGradeStatisticController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-    <SplitPane dividerPositions="0.5">
-        <TableView fx:id="recordTable" styleClass="table">
-            <columns>
-                <TableColumn text="Student" fx:id="colStudent"/>
-                <TableColumn text="Course" fx:id="colCourse"/>
-                <TableColumn text="Exam" fx:id="colExam"/>
-                <TableColumn text="Score" fx:id="colScore"/>
-                <TableColumn text="Max Score" fx:id="colMaxScore"/>
-                <TableColumn text="Time Spent" fx:id="colTimeSpent"/>
-            </columns>
-        </TableView>
+    <!-- Title -->
+    <Text text="Grade Statistics Dashboard" styleClass="title-text">
+        <font>
+            <Font name="System Bold" size="24"/>
+        </font>
+    </Text>
+
+    <!-- Filter Section -->
+    <VBox spacing="10" styleClass="filter-section">
+        <HBox>
+            <Text text="Filter Options" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="16"/>
+                </font>
+            </Text>
+        </HBox>
+        
+        <GridPane hgap="15" vgap="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            
+            <Label text="Course:" styleClass="filter-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="courseCmb" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            
+            <Label text="Exam:" styleClass="filter-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="examCmb" prefWidth="150" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+            
+            <Label text="Student:" styleClass="filter-label" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+            <ComboBox fx:id="studentCmb" prefWidth="150" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+            
+            <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="6">
+                <Button mnemonicParsing="false" onAction="#handleReset" text="Reset Filters" styleClass="reset-button"/>
+                <Button mnemonicParsing="false" onAction="#handleFilter" text="Apply Filters" styleClass="filter-button"/>
+            </HBox>
+        </GridPane>
+    </VBox>
+
+    <!-- Content Area -->
+    <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
+        <!-- Results Table -->
         <VBox spacing="10">
-            <BarChart fx:id="barChart">
-                <xAxis>
-                    <CategoryAxis label="Course" />
-                </xAxis>
-                <yAxis>
-                    <NumberAxis label="Avg. Score Percentage" />
-                </yAxis>
-            </BarChart>
-            <LineChart fx:id="lineChart">
-                <xAxis>
-                    <CategoryAxis label="Exam" />
-                </xAxis>
-                <yAxis>
-                    <NumberAxis label="Avg. Score Percentage" />
-                </yAxis>
-            </LineChart>
+            <Text text="Student Results" styleClass="section-header">
+                <font>
+                    <Font name="System Bold" size="16"/>
+                </font>
+            </Text>
+            
+            <TableView fx:id="recordTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Student" fx:id="colStudent" prefWidth="120"/>
+                    <TableColumn text="Course" fx:id="colCourse" prefWidth="100"/>
+                    <TableColumn text="Exam" fx:id="colExam" prefWidth="120"/>
+                    <TableColumn text="Score" fx:id="colScore" prefWidth="60"/>
+                    <TableColumn text="Max Score" fx:id="colMaxScore" prefWidth="80"/>
+                    <TableColumn text="Time Spent" fx:id="colTimeSpent" prefWidth="100"/>
+                </columns>
+            </TableView>
         </VBox>
+        
+        <!-- Charts Section -->
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20">
+                <!-- Bar Chart Section -->
+                <VBox spacing="10">
+                    <Text text="Performance by Course (Bar Chart)" styleClass="section-header">
+                        <font>
+                            <Font name="System Bold" size="16"/>
+                        </font>
+                    </Text>
+                    
+                    <BarChart fx:id="barChart" legendVisible="true" prefHeight="300">
+                        <xAxis>
+                            <CategoryAxis label="Course" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Average Score (%)" />
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+                
+                <!-- Line Chart Section -->
+                <VBox spacing="10">
+                    <Text text="Performance Trends (Line Chart)" styleClass="section-header">
+                        <font>
+                            <Font name="System Bold" size="16"/>
+                        </font>
+                    </Text>
+                    
+                    <LineChart fx:id="lineChart" legendVisible="true" prefHeight="300">
+                        <xAxis>
+                            <CategoryAxis label="Course - Exam" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Average Score (%)" />
+                        </yAxis>
+                    </LineChart>
+                </VBox>
+            </VBox>
+        </ScrollPane>
     </SplitPane>
 
-    <HBox spacing="10" alignment="CENTER">
-        <Button onAction="#handleBack" text="Back" styleClass="login-button"/>
-        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
+    <!-- Action Buttons -->
+    <HBox spacing="15" alignment="CENTER">
+        <Button onAction="#handleBack" text="Back" styleClass="navigation-button"/>
+        <Button onAction="#handleExportData" text="Export Data" styleClass="action-button"/>
+        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="close-button"/>
     </HBox>
 </VBox>

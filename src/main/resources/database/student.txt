@@ -1,11 +1,1 @@
-name%&:Erastus!@#gender%&:Male!@#age%&:15!@#department%&:CSE!@#username%&:erastus!@#password%&:erastuserastus!@#id%&:1740122689526!@#isAble%&:true!@#
-name%&:Juwon Park!@#gender%&:Male!@#age%&:22!@#department%&:CSE!@#username%&:jparkbf!@#password%&:juwonjuwon!@#id%&:1745219267534!@#isAble%&:true!@#
-name%&:Test!@#gender%&:Female!@#age%&:23!@#department%&:ECON!@#username%&:test1!@#password%&:testtest!@#id%&:1745219339482!@#isAble%&:true!@#
-name%&:test2!@#gender%&:Male!@#age%&:23!@#department%&:ANY!@#username%&:test2!@#password%&:testing2!@#id%&:1745222568070!@#isAble%&:true!@#
-name%&:invalid!@#gender%&:Male!@#age%&:21!@#department%&:ANY!@#username%&:invalid!@#password%&:invalidtest!@#id%&:1745223631324!@#isAble%&:true!@#
-name%&:test3!@#gender%&:Male!@#age%&:23!@#department%&:ANY!@#username%&:test3!@#password%&:testing3!@#id%&:1745223810086!@#isAble%&:true!@#
-name%&:test4!@#gender%&:Male!@#age%&:11!@#department%&:ANY!@#username%&:test4!@#password%&:testing4!@#id%&:1745223910615!@#isAble%&:true!@#
-name%&:tester!@#gender%&:Female!@#age%&:61!@#department%&:ANY!@#username%&:test!@#password%&:invalidnl!@#id%&:1745224771895!@#isAble%&:false!@#
-name%&:tester!@#gender%&:Female!@#age%&:61!@#department%&:ACCT!@#username%&:test!@#password%&:invalidnl!@#id%&:1745224776245!@#isAble%&:true!@#
-name%&:something!@#gender%&:Male!@#age%&:12!@#department%&:ECON!@#username%&:something!@#password%&:something!@#id%&:1745297662340!@#isAble%&:false!@#
-name%&:person!@#gender%&:Male!@#age%&:42!@#department%&:CSE!@#username%&:person!@#password%&:person123!@#id%&:1745333590811!@#isAble%&:true!@#
+name%&:admin!@#gender%&:Male!@#age%&:21!@#department%&:CSE!@#username%&:csestu!@#password%&:11111111!@#id%&:1745578331480!@#isAble%&:true!@#

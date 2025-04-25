@@ -4,86 +4,155 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.Region?>
 
-<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" spacing="10.0" styleClass="root" stylesheets="@../../../../../../Lab5TeamRepoG02/src/main/resources/comp3111/examsystem/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherExamMgmtController">
-    <HBox spacing="10" alignment="CENTER">
-        <Label text="Question:" styleClass="header-label"/>
-        <TextField fx:id="filterQuestionTxt" />
-        <Label text="Type:" styleClass="header-label" />
-        <ComboBox fx:id="filterQuestionTypeCmb" />
-        <Label text="Score:" styleClass="header-label" />
-        <TextField fx:id="filterQuestionScoreTxt" />
-        <Button onAction="#handleQFReset" text="Reset" styleClass="login-button" />
-        <Button onAction="#handleQFFilter" text="Filter" styleClass="login-button" />
+<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720" prefWidth="1200" spacing="10.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherExamMgmtController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <!-- Title -->
+    <Label text="Exam Management" styleClass="title-label" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    
+    <!-- Filter Area -->
+    <HBox spacing="20" alignment="CENTER">
+        <!-- Exam Filter -->
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Filter Exams" styleClass="header-label" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Exam Name:" styleClass="header-label"/>
+                <TextField fx:id="filterExamNameTxt" prefWidth="150" />
+                <Label text="Course ID:" styleClass="header-label"/>
+                <TextField fx:id="filterCourseIdTxt" prefWidth="80" />
+                <Label text="Status:" styleClass="header-label"/>
+                <ComboBox fx:id="filterStatusCmb" prefWidth="120" />
+                <Button mnemonicParsing="false" onAction="#handleResetExamFilter" text="Reset" styleClass="login-button"/>
+                <Button mnemonicParsing="false" onAction="#handleFilterExams" text="Filter" styleClass="login-button"/>
+            </HBox>
+        </VBox>
+        
+        <!-- Spacer -->
+        <Region prefWidth="20" />
+        
+        <!-- Question Filter -->
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Filter Questions" styleClass="header-label" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Question:" styleClass="header-label"/>
+                <TextField fx:id="filterQuestionTxt" prefWidth="150" />
+                <Label text="Type:" styleClass="header-label"/>
+                <ComboBox fx:id="filterTypeCmb" prefWidth="120" />
+                <Label text="Score:" styleClass="header-label"/>
+                <TextField fx:id="filterScoreTxt" prefWidth="60" />
+                <Button mnemonicParsing="false" onAction="#handleResetQuestionFilter" text="Reset" styleClass="login-button"/>
+                <Button mnemonicParsing="false" onAction="#handleFilterQuestions" text="Filter" styleClass="login-button"/>
+            </HBox>
+        </VBox>
     </HBox>
-
-    <HBox spacing="10" alignment="CENTER">
-        <Label text="Exam Name:" styleClass="header-label"/>
-        <TextField fx:id="filterExamNameTxt" />
-        <Label text="CourseID:" styleClass="header-label"/>
-        <ComboBox fx:id="filterCourseIDCmb" />
-        <Label text="Publish:" styleClass="header-label"/>
-        <ComboBox fx:id="filterIsPublishedCmb" />
-        <Button onAction="#handleEFReset" text="Reset" styleClass="login-button"/>
-        <Button onAction="#handleEFFilter" text="Filter" styleClass="login-button"/>
-    </HBox>
-
-    <TableView fx:id="examTable" styleClass="table">
-        <columns>
-            <TableColumn text="Exam Name" fx:id="colExamName"/>
-            <TableColumn text="Course ID" fx:id="colCourseID"/>
-            <TableColumn text="Exam Time" fx:id="colExamTime"/>
-            <TableColumn text="Publish" fx:id="colPublish"/>
-        </columns>
-    </TableView>
-
-    <SplitPane dividerPositions="0.5">
-        <TableView fx:id="examQuestions" styleClass="table">
-            <columns>
-                <TableColumn text="Question in Exam" fx:id="colQInExam"/>
-                <TableColumn text="Type" fx:id="colQInExamType"/>
-                <TableColumn text="Score" fx:id="colQInExamScore"/>
-            </columns>
-        </TableView>
-        <TableView fx:id="questions" styleClass="table">
-            <columns>
-                <TableColumn text="Question" fx:id="colQ"/>
-                <TableColumn text="Type" fx:id="colQType"/>
-                <TableColumn text="Score" fx:id="colQScore"/>
-            </columns>
-        </TableView>
+    
+    <!-- Main Content - Three Lists and Form -->
+    <SplitPane dividerPositions="0.3, 0.7" VBox.vgrow="ALWAYS">
+        <!-- Left: Exams List -->
+        <VBox spacing="5">
+            <Label text="Available Exams" styleClass="header-label" style="-fx-font-weight: bold;"/>
+            <TableView fx:id="examsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Exam Name" fx:id="colExamName" prefWidth="150"/>
+                    <TableColumn text="Course ID" fx:id="colCourseId" prefWidth="80"/>
+                    <TableColumn text="Duration (min)" fx:id="colDuration" prefWidth="100"/>
+                    <TableColumn text="Published" fx:id="colPublished" prefWidth="80"/>
+                    <TableColumn text="Question Count" fx:id="colQuestionCount" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+        
+        <!-- Middle: Selected Questions for Exam -->
+        <VBox spacing="5">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Questions in Exam" styleClass="header-label" style="-fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="removeSelectedQuestionBtn" text="Remove" onAction="#handleRemoveSelectedQuestion" styleClass="login-button" style="-fx-background-color: #f44336;"/>
+                <Button fx:id="clearSelectedQuestionsBtn" text="Clear All" onAction="#handleClearSelectedQuestions" styleClass="login-button" style="-fx-background-color: #f44336;"/>
+            </HBox>
+            <TableView fx:id="selectedQuestionsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Question" fx:id="colSelectedQuestion" prefWidth="150"/>
+                    <TableColumn text="Type" fx:id="colSelectedType" prefWidth="80"/>
+                    <TableColumn text="Score" fx:id="colSelectedScore" prefWidth="60"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Total Score:" styleClass="header-label"/>
+                <Label fx:id="totalScoreLabel" text="0" styleClass="header-label" style="-fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+        
+        <!-- Right: All Questions + Exam Form -->
+        <VBox spacing="10">
+            <SplitPane dividerPositions="0.65" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                <!-- All available questions -->
+                <VBox spacing="5">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Available Questions" styleClass="header-label" style="-fx-font-weight: bold;"/>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="addToExamBtn" text="Add to Exam" onAction="#handleAddToExam" styleClass="login-button" style="-fx-background-color: #4CAF50;"/>
+                    </HBox>
+                    <TableView fx:id="questionsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Question" fx:id="colQuestion" prefWidth="150"/>
+                            <TableColumn text="Type" fx:id="colType" prefWidth="80"/>
+                            <TableColumn text="Score" fx:id="colScore" prefWidth="60"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+                
+                <!-- Exam Form -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                    <VBox spacing="10" styleClass="form">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        
+                        <!-- Form Header -->
+                        <Label fx:id="formHeaderLabel" text="Exam Details" styleClass="header-label" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        
+                        <Label text="Exam Name:" styleClass="header-label"/>
+                        <TextField fx:id="examNameTxt" promptText="Enter exam name"/>
+                        
+                        <Label text="Course ID:" styleClass="header-label"/>
+                        <TextField fx:id="courseIdTxt" promptText="Enter course ID"/>
+                        
+                        <Label text="Duration (minutes):" styleClass="header-label"/>
+                        <TextField fx:id="durationTxt" promptText="Enter exam duration in minutes"/>
+                        
+                        <CheckBox fx:id="publishedChk" text="Publish Exam" />
+                        
+                        <!-- Action buttons within the form -->
+                        <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                            <Button fx:id="addExamBtn" onAction="#handleAddExam" text="Add New Exam" styleClass="login-button" style="-fx-background-color: #4CAF50; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 1);"/>
+                            <Button fx:id="editExamBtn" onAction="#handleEditExam" text="Edit Exam" styleClass="login-button" style="-fx-background-color: #2196F3;"/>
+                            <Button fx:id="updateExamBtn" onAction="#handleUpdateExam" text="Save Changes" styleClass="login-button" style="-fx-background-color: #FF9800;"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </SplitPane>
+        </VBox>
     </SplitPane>
 
-    <HBox spacing="15" alignment="CENTER">
-        <Button text="&lt;---" onAction="#addToExam" styleClass="login-button"/>
-        <Button text="---&gt;" onAction="#removeFromExam" styleClass="login-button"/>
-    </HBox>
-
+    <!-- Bottom Buttons -->
     <HBox spacing="10" alignment="CENTER">
-        <Label text="Exam Name:" styleClass="header-label"/>
-        <TextField fx:id="examNameTxt" />
-        <Label text="Exam Time:" styleClass="header-label"/>
-        <TextField fx:id="examTimeTxt" />
-    </HBox>
-
-    <HBox spacing="10" alignment="CENTER">
-        <Label text="Course ID:" styleClass="header-label"/>
-        <ComboBox fx:id="courseIDCmb" />
-        <Label text="Publish:" styleClass="header-label"/>
-        <ComboBox fx:id="isPublishedCmb" />
-    </HBox>
-
-    <HBox spacing="10" alignment="CENTER">
-        <Button onAction="#handleDelete" text="Delete" styleClass="login-button"/>
-        <Button onAction="#handleRefresh" text="Refresh" styleClass="login-button"/>
-        <Button onAction="#handleAdd" text="Add" styleClass="login-button"/>
-        <Button onAction="#handleUpdate" text="Update" styleClass="login-button"/>
-        <Button onAction="#handleBack" text="Back" styleClass="login-button"/>
-        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
+        <Button fx:id="deleteExamBtn" onAction="#handleDeleteExam" text="Delete" styleClass="login-button"/>
+        <Button fx:id="refreshBtn" onAction="#handleRefresh" text="Refresh" styleClass="login-button"/>
+        <Button fx:id="backBtn" onAction="#handleBack" text="Back" styleClass="login-button"/>
+        <Button fx:id="closeBtn" onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
     </HBox>
 </VBox>

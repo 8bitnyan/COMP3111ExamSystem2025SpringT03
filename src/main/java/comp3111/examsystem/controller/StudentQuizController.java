@@ -1,6 +1,7 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.*;
+import comp3111.examsystem.tools.Database;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -69,11 +70,7 @@ public class StudentQuizController implements Initializable {
         // Setup timer
         setupTimer();
         
-        // Setup window close handler
-        Platform.runLater(() -> {
-            Stage stage = (Stage) questionText.getScene().getWindow();
-            stage.setOnCloseRequest(this::handleWindowClose);
-        });
+        // We'll set up the window close handler in preSetController after UI is fully loaded
     }
     
     /**
@@ -105,6 +102,11 @@ public class StudentQuizController implements Initializable {
             this.minutes = timeLimit % 60;
             this.seconds = 0;
             updateTimerDisplay();
+            
+            // Start the timer
+            if (timeline != null) {
+                timeline.play();
+            }
         }
         
         // Create question navigation buttons
@@ -112,6 +114,21 @@ public class StudentQuizController implements Initializable {
         
         // Load the first question
         loadQuestion(0);
+        
+        // Apply initial styles to question buttons
+        updateQuestionButtonStyles();
+        
+        // Setup window close handler after UI is fully loaded
+        Platform.runLater(() -> {
+            try {
+                Stage stage = (Stage) questionText.getScene().getWindow();
+                if (stage != null) {
+                    stage.setOnCloseRequest(this::handleWindowClose);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to set up window close handler: " + e.getMessage());
+            }
+        });
     }
     
     /**
@@ -124,7 +141,41 @@ public class StudentQuizController implements Initializable {
             Button questionButton = new Button("Question " + (i + 1));
             questionButton.setPrefWidth(180);
             questionButton.setOnAction(e -> loadQuestion(questionIndex));
+            
+            // Add a style class to the button
+            questionButton.getStyleClass().add("question-button");
+            
             questionListContainer.getChildren().add(questionButton);
+        }
+    }
+    
+    /**
+     * Updates the question navigation buttons to indicate which questions have been answered.
+     */
+    private void updateQuestionButtonStyles() {
+        for (int i = 0; i < questionListContainer.getChildren().size(); i++) {
+            Button button = (Button) questionListContainer.getChildren().get(i);
+            
+            // Check if this question has been answered
+            boolean isAnswered = i < studentAnswers.size() && !studentAnswers.get(i).isEmpty();
+            
+            // Add or remove the "answered" style class
+            if (isAnswered) {
+                if (!button.getStyleClass().contains("answered-question")) {
+                    button.getStyleClass().add("answered-question");
+                }
+            } else {
+                button.getStyleClass().remove("answered-question");
+            }
+            
+            // Highlight current question
+            if (i == currentQuestionIndex) {
+                if (!button.getStyleClass().contains("current-question")) {
+                    button.getStyleClass().add("current-question");
+                }
+            } else {
+                button.getStyleClass().remove("current-question");
+            }
         }
     }
     
@@ -156,21 +207,36 @@ public class StudentQuizController implements Initializable {
             
             // Set multiple choice options
             List<String> options = question.getOptions();
-            option1.setText(options.get(0));
-            option2.setText(options.get(1));
-            option3.setText(options.get(2));
-            option4.setText(options.get(3));
+            
+            // Clear all options first
+            option1.setText("");
+            option2.setText("");
+            option3.setText("");
+            option4.setText("");
+            
+            // Set options based on available count
+            int optionsCount = options.size();
+            if (optionsCount > 0) option1.setText(options.get(0));
+            if (optionsCount > 1) option2.setText(options.get(1));
+            if (optionsCount > 2) option3.setText(options.get(2));
+            if (optionsCount > 3) option4.setText(options.get(3));
+            
+            // Set visibility based on available options
+            option1.setVisible(optionsCount > 0);
+            option2.setVisible(optionsCount > 1);
+            option3.setVisible(optionsCount > 2);
+            option4.setVisible(optionsCount > 3);
             
             // Set selected option if an answer exists
             String savedAnswer = studentAnswers.get(currentQuestionIndex);
             if (!savedAnswer.isEmpty()) {
-                if (savedAnswer.equals(option1.getText())) {
+                if (savedAnswer.equals(option1.getText()) && !option1.getText().isEmpty()) {
                     option1.setSelected(true);
-                } else if (savedAnswer.equals(option2.getText())) {
+                } else if (savedAnswer.equals(option2.getText()) && !option2.getText().isEmpty()) {
                     option2.setSelected(true);
-                } else if (savedAnswer.equals(option3.getText())) {
+                } else if (savedAnswer.equals(option3.getText()) && !option3.getText().isEmpty()) {
                     option3.setSelected(true);
-                } else if (savedAnswer.equals(option4.getText())) {
+                } else if (savedAnswer.equals(option4.getText()) && !option4.getText().isEmpty()) {
                     option4.setSelected(true);
                 }
             } else {
@@ -186,6 +252,9 @@ public class StudentQuizController implements Initializable {
         
         // Update navigation buttons
         updateNavigationButtons();
+        
+        // Update question button styles
+        updateQuestionButtonStyles();
     }
     
     /**
@@ -203,6 +272,9 @@ public class StudentQuizController implements Initializable {
             } else {
                 studentAnswers.set(currentQuestionIndex, shortAnswerField.getText());
             }
+            
+            // Update the question button styles
+            updateQuestionButtonStyles();
         }
     }
     
@@ -245,6 +317,13 @@ public class StudentQuizController implements Initializable {
      */
     private void updateTimerDisplay() {
         timerText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        
+        // Change timer color to red when less than 5 minutes remain
+        if (hours == 0 && minutes < 5) {
+            timerText.setStyle("-fx-fill: red;");
+        } else {
+            timerText.setStyle("-fx-fill: black;");
+        }
     }
     
     /**
@@ -299,7 +378,9 @@ public class StudentQuizController implements Initializable {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             // Save current answer and submit the quiz
             saveCurrentAnswer();
-            submitQuiz();
+            saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);
+            
+            // The window will close automatically since we don't consume the event
         } else {
             // Resume the timer and consume the event to prevent window from closing
             if (timeline != null) {
@@ -313,6 +394,12 @@ public class StudentQuizController implements Initializable {
      * Submits the quiz and shows the completion message.
      */
     private void submitQuiz() {
+        // Save all answers one final time
+        saveCurrentAnswer();
+        
+        // In a real application, you would save the quiz results to a database here
+        saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);
+        
         // Show completion message
         Alert completionMessage = new Alert(Alert.AlertType.INFORMATION);
         completionMessage.setTitle("Quiz Completed");
@@ -351,6 +438,114 @@ public class StudentQuizController implements Initializable {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Saves the quiz results to a database or persistent storage.
+     * This is a placeholder method that would be implemented in a real application.
+     * 
+     * @param student The student who took the quiz
+     * @param quizName The name of the quiz
+     * @param questions The list of questions in the quiz
+     * @param studentAnswers The list of answers provided by the student
+     */
+    private void saveQuizResultsToDatabase(Student student, String quizName, List<QuizQuestion> questions, List<String> studentAnswers) {
+        try {
+            // Get the exam from the database
+            Database<Exam> examDB = new Database<>(Exam.class);
+            List<Exam> exams = examDB.getAllEnabled();
+            Exam exam = null;
+            
+            // Find the exam with the matching name
+            for (Exam e : exams) {
+                if (quizName.equals(e.getName())) {
+                    exam = e;
+                    break;
+                }
+            }
+            
+            if (exam == null) {
+                System.err.println("Error: Could not find exam with name: " + quizName);
+                return;
+            }
+            
+            // Get the questions string from the exam
+            String questionsStr = exam.getQuestions();
+            
+            if (questionsStr == null || questionsStr.isEmpty()) {
+                System.err.println("Error: No questions found for exam: " + quizName);
+                return;
+            }
+            
+            // Split the question IDs string
+            String[] questionIdArr = questionsStr.split(",");
+            
+            if (questionIdArr.length != questions.size()) {
+                System.err.println("Error: Question count mismatch. Database: " + questionIdArr.length + ", Actual: " + questions.size());
+                return;
+            }
+            
+            // Create records for each question
+            Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
+            
+            // Delete any existing records for this student and exam (in case they're retaking the quiz)
+            List<comp3111.examsystem.entity.Record> existingRecords = recordDB.getAll();
+            for (comp3111.examsystem.entity.Record record : existingRecords) {
+                if (record.getStudentID() != null && record.getStudentID().equals(student.getId()) &&
+                    record.getExamID() != null && record.getExamID().equals(exam.getId())) {
+                    recordDB.delByKey(record.getId().toString());
+                }
+            }
+            
+            // Create new records
+            for (int i = 0; i < questions.size() && i < questionIdArr.length && i < studentAnswers.size(); i++) {
+                try {
+                    String questionIdStr = questionIdArr[i].trim();
+                    if (questionIdStr.isEmpty()) continue;
+                    
+                    // Parse the question ID string to Long
+                    Long questionId = Long.parseLong(questionIdStr);
+                    
+                    comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();
+                    record.setStudent(student.getId());
+                    record.setExamID(exam.getId());
+                    record.setQuestionID(questionId);
+                    record.setResponse(studentAnswers.get(i));
+                    
+                    // For now, set a default score of 0 - teacher will grade later
+                    record.setScore(0);
+                    
+                    // Save the record to the database
+                    recordDB.add(record);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing question ID: " + questionIdArr[i] + ". Skipping this question.");
+                }
+            }
+            
+            // Also save time spent on the quiz (for future implementations)
+            Database<TimeSpent> timeSpentDB = new Database<>(TimeSpent.class);
+            TimeSpent timeSpent = new TimeSpent();
+            timeSpent.setStudentId(student.getId());
+            timeSpent.setExamId(exam.getId());
+            
+            // Calculate time spent in minutes (initial time limit minus remaining time)
+            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;
+            int remainingMinutes = hours * 60 + minutes;
+            int timeSpentMinutes = initialTimeLimit - remainingMinutes;
+            
+            // Make sure time spent is positive
+            if (timeSpentMinutes < 0) {
+                timeSpentMinutes = 0;
+            }
+            
+            timeSpent.setTimeSpent(timeSpentMinutes);
+            timeSpentDB.add(timeSpent);
+            
+            System.out.println("Successfully saved quiz results for student: " + student.getName());
+        } catch (Exception e) {
+            System.err.println("Error saving quiz results: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -57,3 +57,61 @@
     -fx-opacity: 0.8;
     -fx-background-color: #f0f0f0;
 }
+
+/* Quiz question buttons */
+.question-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #333333;
+    -fx-padding: 8 10;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.question-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.answered-question {
+    -fx-background-color: #d4e6f1;
+    -fx-border-color: #5499c7;
+}
+
+.answered-question:hover {
+    -fx-background-color: #aed6f1;
+}
+
+.current-question {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.current-question:hover {
+    -fx-background-color: #3367d6;
+}
+
+/* Quiz navigation and submit buttons */
+.navigation-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 4;
+}
+
+.navigation-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.submit-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 4;
+}
+
+.submit-button:hover {
+    -fx-background-color: #45a049;
+}
