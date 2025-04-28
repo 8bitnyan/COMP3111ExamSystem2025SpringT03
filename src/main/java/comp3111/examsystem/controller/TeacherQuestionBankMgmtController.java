@@ -71,7 +71,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      */
     public void presetController(Teacher teacher) {
         this.teacher = teacher;
-        handleRefresh();
+        handleRefreshWithoutMsg();
     }
 
     @Override
@@ -506,7 +506,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         filterQuestionTxt.clear();
         filterScoreTxt.clear();
         filterTypeCmb.setValue("Any");
-        handleRefresh();
+        handleRefreshWithoutMsg();
     }
 
     @FXML
@@ -587,7 +587,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
                     Question checkDeleted = questionDB.queryByKey(deletedQuestionId.toString());
                     if (checkDeleted != null) {
                         // If question still exists, try refreshing the entire list
-                        handleRefresh();
+                        handleRefreshWithoutMsg();
                     }
                     
                     // Show success message
@@ -717,6 +717,108 @@ public class TeacherQuestionBankMgmtController implements Initializable {
             
             // Provide user feedback
             MsgSender.showMsg("Question bank refreshed successfully!");
+        } catch (Exception e) {
+            System.err.println("Error refreshing questions: " + e.getMessage());
+            e.printStackTrace();
+            MsgSender.showMsg("Error refreshing questions: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleRefreshWithoutMsg() {
+        // Check if teacher is null and handle it
+        if (this.teacher == null) {
+            MsgSender.showMsg("Error: Teacher information not available. Please log in again.");
+            System.err.println("Teacher object is null in handleRefresh");
+
+            // Attempt to recover by returning to login screen
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/LoginUI.fxml"));
+                Parent root = loader.load();
+
+                Stage stage = (Stage) mainbox.getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } catch (Exception e) {
+                System.err.println("Failed to return to login screen: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        // Save selected item and selection index if any
+        Question selectedItem = questionsTable.getSelectionModel().getSelectedItem();
+        Long selectedId = selectedItem != null ? selectedItem.getId() : null;
+
+        // Track initial question count for verification
+        int initialCount = questionsTable.getItems().size();
+
+        // Create new database instance to ensure fresh data
+        Database<Question> questionDB = new Database<>(Question.class);
+
+        try {
+            // Force reload all questions for this teacher from the database
+            List<Question> freshQuestions = questionDB.queryByField("teacherId", Long.toString(this.teacher.getId()));
+
+            // Check if we got reasonable data
+            if (freshQuestions == null || (initialCount > 0 && freshQuestions.isEmpty())) {
+                // Something went wrong - try a harder refresh
+                MsgSender.showMsg("Regular refresh failed. Trying hard refresh...");
+                handleHardRefresh();
+                return;
+            }
+
+            // Store original selection index for later restoration
+            int originalIndex = questionsTable.getSelectionModel().getSelectedIndex();
+
+            // Clear selection first to avoid any selection events during refresh
+            questionsTable.getSelectionModel().clearSelection();
+
+            // Clear and refill the table
+            questionsTable.getItems().clear();
+
+            // Add the fresh data
+            questionsTable.getItems().addAll(freshQuestions);
+
+            // Force JavaFX to process the update now
+            Platform.runLater(() -> {
+                // Force table refresh
+                questionsTable.refresh();
+
+                // Attempt to restore selection in multiple ways for robustness
+                if (selectedId != null) {
+                    // Try to find the question with same ID
+                    for (int i = 0; i < questionsTable.getItems().size(); i++) {
+                        Question q = questionsTable.getItems().get(i);
+                        if (q != null && selectedId.equals(q.getId())) {
+                            questionsTable.getSelectionModel().select(i);
+                            questionsTable.scrollTo(i);
+                            // Reapply the form data from the freshly loaded question
+                            fillFieldsFromSelectedQuestion(q);
+                            return; // Selection restored
+                        }
+                    }
+                }
+
+                // If we couldn't restore by ID, try by index if it's valid
+                if (originalIndex >= 0 && originalIndex < questionsTable.getItems().size()) {
+                    questionsTable.getSelectionModel().select(originalIndex);
+                    questionsTable.scrollTo(originalIndex);
+                    Question selected = questionsTable.getSelectionModel().getSelectedItem();
+                    if (selected != null) {
+                        selectedQuestion = selected;
+                        fillFieldsFromSelectedQuestion(selected);
+                    } else {
+                        // If selection is invalid, clear the form
+                        clearFormFields();
+                    }
+                } else {
+                    // If no selection could be restored, clear the form
+                    clearFormFields();
+                }
+            });
+
         } catch (Exception e) {
             System.err.println("Error refreshing questions: " + e.getMessage());
             e.printStackTrace();

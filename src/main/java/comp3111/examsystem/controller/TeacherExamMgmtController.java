@@ -267,7 +267,7 @@ public class TeacherExamMgmtController implements Initializable {
         courseIdTxt.setText(exam.getCourseCode() != null ? exam.getCourseCode() : "");
         durationTxt.setText(exam.getDuration() != null ? exam.getDuration().toString() : "");
         publishedChk.setSelected(exam.getIsPublishedInt() != null && exam.getIsPublishedInt() > 0);
-        
+
         // Load the exam questions
         loadExamQuestions(exam);
         
@@ -281,12 +281,30 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadExamQuestions(Exam exam) {
         selectedQuestions.clear();
+        loadAllQuestions();
         
+
         if (exam != null && exam.getQuestionIds() != null && !exam.getQuestionIds().isEmpty()) {
             Database<Question> questionDB = new Database<>(Question.class);
-            
+
+            List<Long> QID = exam.getQuestionIds();
+            for (Object qid : QID) {
+                Question q;
+                if (qid instanceof Long) {
+                    q = questionDB.queryByKey(qid.toString());
+                } else if (qid instanceof String) {
+                    q = questionDB.queryByKey((String) qid);
+                } else {
+                    continue;
+                }
+                questionsTable.getItems().remove(q);
+                availableQuestions.remove(q);
+            }
+            questionsTable.setItems(availableQuestions);
+
+            /*
             for (Object questionIdObj : exam.getQuestionIds()) {
-                String questionIdStr;
+                String que stionIdStr;
                 if (questionIdObj instanceof Long) {
                     questionIdStr = questionIdObj.toString();
                 } else if (questionIdObj instanceof String) {
@@ -298,8 +316,10 @@ public class TeacherExamMgmtController implements Initializable {
                 Question question = questionDB.queryByKey(questionIdStr);
                 if (question != null) {
                     selectedQuestions.add(question);
+                    questionsTable.getItems().remove(question);
                 }
             }
+            */
         }
         
         // Update total score
@@ -329,6 +349,12 @@ public class TeacherExamMgmtController implements Initializable {
         String nameFilter = filterExamNameTxt.getText().trim().toLowerCase();
         String courseIdFilter = filterCourseIdTxt.getText().trim().toLowerCase();
         String statusFilter = filterStatusCmb.getValue();
+
+        Database<Course> courseDB = new Database<>(Course.class);
+        if (courseDB.queryByField("courseCode", courseIdFilter).isEmpty()) {
+            MsgSender.showMsg("No such course found.");
+            return;
+        }
         
         Database<Exam> examDB = new Database<>(Exam.class);
         List<Exam> allExams = examDB.queryByField("teacherId", teacher.getId().toString());
@@ -448,6 +474,8 @@ public class TeacherExamMgmtController implements Initializable {
         
         // Add the question to the selected questions
         selectedQuestions.add(selectedQuestion);
+
+        questionsTable.getItems().remove(selectedQuestion);
         
         // Update total score
         updateTotalScore();
@@ -467,6 +495,8 @@ public class TeacherExamMgmtController implements Initializable {
         
         // Remove the question from the selected questions
         selectedQuestions.remove(questionToRemove);
+
+        questionsTable.getItems().add(questionToRemove);
         
         // Update total score
         updateTotalScore();
@@ -486,6 +516,7 @@ public class TeacherExamMgmtController implements Initializable {
             "Are you sure you want to remove all questions from this exam?", 
             () -> {
                 selectedQuestions.clear();
+                loadAllQuestions();
                 updateTotalScore();
             }
         );
@@ -499,6 +530,7 @@ public class TeacherExamMgmtController implements Initializable {
         // Clear form and set to edit mode
         clearForm();
         selectedExam = null;
+        loadAllQuestions();
         editMode = true;
         setFormEditable(true);
         
@@ -551,6 +583,13 @@ public class TeacherExamMgmtController implements Initializable {
             
             if (selectedQuestions.isEmpty()) {
                 MsgSender.showMsg("Please add at least one question to the exam.");
+                return;
+            }
+
+            // Check whether the course exists
+            Database<Course> courseDB = new Database<>(Course.class);
+            if (courseDB.queryByField("courseCode", courseIdTxt.getText()).isEmpty()) {
+                MsgSender.showMsg("No such course found.");
                 return;
             }
             
@@ -656,6 +695,9 @@ public class TeacherExamMgmtController implements Initializable {
     private void handleRefresh() {
         // Save selected exam ID if any
         Long selectedExamId = selectedExam != null ? selectedExam.getId() : null;
+
+        // Clear added questions
+        selectedQuestionsTable.getItems().clear();
         
         // Reload data
         loadAllExams();
