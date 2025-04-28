@@ -315,21 +315,24 @@ private void updateScore() {
 
     @FXML
     void back(ActionEvent e) {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
-        Stage stage = new Stage();
-        stage.setTitle("Back");
         try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Back");
             stage.setScene(new Scene(fxmlLoader.load()));
-        } catch (IOException e1) {
-            e1.printStackTrace();
+            TeacherMainController controller = fxmlLoader.getController();
+            controller.presetController(teacher);
+            UIhelper.expandToFullScreen(stage);
+            stage.show();
+
+            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        UIhelper.expandToFullScreen(stage);
-        stage.show();
-        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
     }
 
     @FXML
-    void closeApplication(ActionEvent e) {
+    void closeApplication() {
         MsgSender.showConfirm(
                 "Exit Confirmation",
                 "Are you sure you want to exit?\nClick OK to exit the application.",
