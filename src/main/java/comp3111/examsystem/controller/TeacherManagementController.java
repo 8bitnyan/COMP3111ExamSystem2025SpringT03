@@ -1,5 +1,4 @@
 package comp3111.examsystem.controller;
-
 import comp3111.examsystem.Main;
 import comp3111.examsystem.data.Department;
 import comp3111.examsystem.data.Gender;
@@ -21,22 +20,25 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 
+/**
+ * Controller class for managing Teachers in the Exam System.
+ * This class handles displaying, filtering, adding, updating, and deleting Teachers.
+ */
 public class TeacherManagementController {
     private Manager manager;
-
+    /**
+     * Sets the manager context for this controller.
+     * @param manager The currently logged-in manager.
+     */
     public void presetController(Manager manager) {
         this.manager = manager;
     }
-    //Database
+    // Database instance for handling Course objects
     private final Database<Teacher> teacherDatabase = new Database<>(Teacher.class);
     private ObservableList<Teacher> allTeachers;
-    //Table
+    //Table columns for displaying course data
     @FXML private TableView<Teacher> teacherTable;
     @FXML private TableColumn<Teacher, String> colName;
     @FXML private TableColumn<Teacher, String> colGender;
@@ -45,11 +47,11 @@ public class TeacherManagementController {
     @FXML private TableColumn<Teacher, String> colUsername;
     @FXML private TableColumn<Teacher, String> colPosition;
     @FXML private TableColumn<Teacher, String> colPassword;
-    //Filter
+    //Filter UI fields
     @FXML private TextField filterUsername;
     @FXML private TextField filterName;
     @FXML private ComboBox<String> filterDepartment;
-    //Form
+    //Teacher input form fields
     @FXML private TextField tfUsername;
     @FXML private TextField tfName;
     @FXML private TextField tfPassword;
@@ -69,11 +71,10 @@ public class TeacherManagementController {
         colDepartment.setCellValueFactory(new PropertyValueFactory<>("department"));
         colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
 
+        //Display courses in the table and filter
         ObservableList<Teacher> teachers = FXCollections.observableArrayList(teacherDatabase.getAllEnabled());
         teacherTable.setItems(teachers);
         allTeachers = teachers;
-
-        //Filter + Form initialization
         for (Department dept : Department.values()) {
             filterDepartment.getItems().add(dept.toString());
             cbDepartment.getItems().add(Department.valueOf(dept.toString()));
@@ -100,7 +101,9 @@ public class TeacherManagementController {
         });
     }
 
-//Filter Teachers
+    /**
+     * Applies filtering logic on teacher list based on filter inputs.
+     */
     private List<Teacher> applyTeachersFilter(String username, String name, String department) {
         List<Teacher> filtered = teacherDatabase.getAllEnabled();
         if (username != null) {
@@ -117,6 +120,9 @@ public class TeacherManagementController {
         return filtered;
     }
 
+    /**
+     * Handles filtering when user clicks the "Filter" button.
+     */
     @FXML
     private void filterTeachers() {
         String username = filterUsername.getText().trim();
@@ -129,6 +135,9 @@ public class TeacherManagementController {
         teacherTable.setItems(FXCollections.observableArrayList(filtered));
     }
 
+    /**
+     * Resets all filters and reloads the full course list.
+     */
     @FXML
     private void reset() {
         filterUsername.clear();
@@ -137,7 +146,9 @@ public class TeacherManagementController {
         teacherTable.setItems(FXCollections.observableArrayList(teacherDatabase.getAllEnabled()));
     }
 
-//Right Form Action
+    /**
+     * Clears the input form on the right side.
+     */
     private void clearForm() {
         tfUsername.clear();
         tfName.clear();
@@ -151,6 +162,10 @@ public class TeacherManagementController {
         cbPosition.setPromptText("Select Position");
     }
 
+    /**
+     * Adds a new Teacher using input form values.
+     * Using functions provided in the database class
+     */
     @FXML
     private void addTeacher() {
         try {
@@ -161,43 +176,24 @@ public class TeacherManagementController {
             Gender gender = cbGender.getValue();
             String ageStr = tfAge.getText().trim();
             Position position = cbPosition.getValue();
-
             // Validation
             StringBuilder validationMsg = Teacher.validateWithMessage(null, username, password, name, ageStr, department);
             if (validationMsg.length() > 0) {
                 MsgSender.showMsg(validationMsg.toString());
-                return;
-            }
+                return; }
             if (gender == null) {
                 MsgSender.showMsg("Please select a gender.");
-                return;
-            }
+                return; }
             if (position == null) {
                 MsgSender.showMsg("Please select a position.");
-                return;
-            }
+                return; }
             int age = Integer.parseInt(ageStr);
             long id = System.currentTimeMillis();
-            boolean isAble = true;
-
             Teacher teacher = new Teacher(id, username, password, name, gender, age, department, position);
-
             teacherDatabase.add(teacher);
             allTeachers.add(teacher);
             teacherTable.setItems(FXCollections.observableArrayList(allTeachers));
             clearForm();
-
-            // Create teacher's question file
-            Path questionFilePath = Paths.get("src", "main", "resources", "database", "question", username.toLowerCase() + ".txt");
-            if (!Files.exists(questionFilePath)) {
-                try {
-                    Files.createFile(questionFilePath);
-                } catch (IOException ex) {
-                    MsgSender.showMsg("Failed to create question file for the teacher.");
-                    ex.printStackTrace();
-                }
-            }
-
             MsgSender.showMsg("Teacher added successfully!");
         } catch (Exception e) {
             MsgSender.showMsg("Failed to add teacher.");
@@ -205,6 +201,9 @@ public class TeacherManagementController {
         }
     }
 
+    /**
+     * Updates an existing teacher selected in the table using form values.
+     */
     @FXML
     private void updateTeacher() {
         Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();
@@ -225,16 +224,13 @@ public class TeacherManagementController {
         StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);
         if(validationMsg.length() > 0) {
             MsgSender.showMsg(validationMsg.toString());
-            return;
-        }
+            return; }
         if (gender == null) {
             MsgSender.showMsg("Please select a gender.");
-            return;
-        }
+            return; }
         if (position == null) {
             MsgSender.showMsg("Please select a position.");
-            return;
-        }
+            return; }
 
         // Update selected Teacher
         int age = Integer.parseInt(tfAge.getText().trim());
@@ -251,6 +247,9 @@ public class TeacherManagementController {
         MsgSender.showMsg("Teacher updated successfully!");
     }
 
+    /**
+     * Updates the changed values to the database
+     */
     private void saveAllTeachersToFile() {
         try {
             for (Teacher t : allTeachers) {
@@ -262,6 +261,9 @@ public class TeacherManagementController {
         }
     }
 
+    /**
+     * Deletes the selected teacher from the database.
+     */
     @FXML
     void deleteTeacher() {
         Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();
@@ -282,6 +284,10 @@ public class TeacherManagementController {
         );
     }
 
+    /**
+     * Navigates back to the Manager main screen.
+     * @param e The triggered action event.
+     */
     @FXML
     void back(ActionEvent e) {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ManagerMainUI.fxml"));
@@ -297,8 +303,11 @@ public class TeacherManagementController {
         ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
     }
 
+    /**
+     * Closes the application with a confirmation.
+     */
     @FXML
-    void closeApplication(ActionEvent e) {
+    void closeApplication() {
         MsgSender.showConfirm(
                 "Exit Confirmation",
                 "Are you sure you want to exit?\nClick OK to exit the application.",

@@ -24,7 +24,14 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * The controller for teacher grade exam page.
+ * Controller class for the Teacher Grade Exam page.
+ * This controller allows a logged-in teacher to:
+ * - Filter exams by course and student.
+ * - View and select questions from a specific exam.
+ * - Display and grade student responses to each question.
+ * - Update scores and view correct answers and maximum scores.
+ * It uses a `Database<Record>` to retrieve and update student answers,
+ * and parses structured text files to read exams, questions, and student information.
  */
 public class TeacherGradeExamController implements Initializable {
     private Teacher teacher;
@@ -49,6 +56,7 @@ public class TeacherGradeExamController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Load all questions from the exam for display
         loadExamOptions();
         courseFilter.setOnAction(e -> {
             String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();
@@ -57,7 +65,7 @@ public class TeacherGradeExamController implements Initializable {
                 examFilter.getItems().addAll(courseToExamsMap.get(selectedCourse));
             }
         });
-
+        // Retrieve student's response to a particular question
         colStudentName.setCellValueFactory(cellData -> {
             Long id = cellData.getValue().getStudentID();
             return new SimpleStringProperty(getStudentNameById(String.valueOf(id)));
@@ -74,7 +82,7 @@ public class TeacherGradeExamController implements Initializable {
             }
         });
 
-//When shit is clicked
+        //If a question is selected -> Display question details, all the students' response for that question.
         questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && questionTextToId.containsKey(newVal)) {
                 String qid = questionTextToId.get(newVal);
@@ -100,6 +108,10 @@ public class TeacherGradeExamController implements Initializable {
         this.teacher = teacher;
     }
 
+    /**
+     * Loads all enabled exams from the database file and populates filter options.
+     * Organizes exams by course in a map for later filtering.
+     */
     private void loadExamOptions() {
         Path examPath = Paths.get("src", "main", "resources", "database", "exam.txt");
         try {
@@ -126,7 +138,13 @@ public class TeacherGradeExamController implements Initializable {
         }
     }
 
-
+    /**
+     * Displays all questions from the selected exam.
+     * - Reads question IDs from the exam.
+     * - Looks up question text from the question file.
+     * - Populates the question list and question ID mappings.
+     * @param examLine The serialized exam data line.
+     */
     private void displayQuestionsFromExamLine(String examLine) {
         questionList.getItems().clear();
         questionTextToId.clear();
@@ -135,6 +153,7 @@ public class TeacherGradeExamController implements Initializable {
         questionSection = questionSection.substring(1, questionSection.length() - 1);
         String[] parts = questionSection.split("-~,");
 
+        //Read questionID from the database.
         List<String> questionIds = new ArrayList<>();
         for (int i = 1; i < parts.length; i++) { // skip type "Long"
             questionIds.add(parts[i].trim());
@@ -147,6 +166,8 @@ public class TeacherGradeExamController implements Initializable {
             MsgSender.showMsg("Failed to read question database.");
             return;
         }
+
+        //Extract the question from the question list
         for (String qid : questionIds) {
             for (String line : questionLines) {
                 String id = extractField(line, "id");
@@ -162,6 +183,7 @@ public class TeacherGradeExamController implements Initializable {
             }
         }
 
+        // Get the students record
         Set<String> uniqueStudentNames = new HashSet<>();
         List<Record> allRecords = recordDatabase.getAllEnabled();
         for (Record r : allRecords) {
@@ -177,6 +199,12 @@ public class TeacherGradeExamController implements Initializable {
 
     }
 
+    /**
+     * Extracts the value of a specific field from a serialized data line.
+     * @param line The line of text.
+     * @param fieldName The field name to extract.
+     * @return The value of the field, or null if not found.
+     */
     private String extractField(String line, String fieldName) {
         String[] fields = line.split("!@#");
         for (String field : fields) {
@@ -187,6 +215,10 @@ public class TeacherGradeExamController implements Initializable {
         return null;
     }
 
+    /**
+     * Filters and loads an exam based on selected course and exam name.
+     * Triggers display of related questions.
+     */
     @FXML
     private void filterExam() {
         String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();
@@ -206,6 +238,11 @@ public class TeacherGradeExamController implements Initializable {
         }
     }
 
+    /**
+     * Extracts the exam ID from a serialized exam line.
+     * @param examLine The serialized exam data line.
+     * @return The exam ID as a Long.
+     */
     private Long extractExamIdFromLine(String examLine) {
         String[] fields = examLine.split("!@#");
         for (String field : fields) {
@@ -216,6 +253,9 @@ public class TeacherGradeExamController implements Initializable {
         return null;
     }
 
+    /**
+     * Resets the filter input.
+     */
     @FXML
     private void resetFilter() {
         courseFilter.getSelectionModel().clearSelection();
@@ -224,25 +264,35 @@ public class TeacherGradeExamController implements Initializable {
         questionList.getItems().clear();
     }
 
-//Viewing Responses from page
-private void displayStudentResponsesForQuestion(String questionId) {
-    String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();
-    List<Record> allRecords = recordDatabase.getAllEnabled();
-    List<Record> result = new ArrayList<>();
-    for (Record r : allRecords) {
-        if (r.getQuestionID() != null && r.getExamID() != null &&
-                r.getQuestionID().toString().equals(questionId) &&
-                r.getExamID().equals(currentExamID)) {
+    /**
+     * Displays all student responses to the selected question.
+     * Optionally filters by student if selected in the student dropdown.
+     * @param questionId The ID of the selected question.
+     */
+    private void displayStudentResponsesForQuestion(String questionId) {
+        String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();
+        List<Record> allRecords = recordDatabase.getAllEnabled();
+        List<Record> result = new ArrayList<>();
+        for (Record r : allRecords) {
+            if (r.getQuestionID() != null && r.getExamID() != null &&
+                    r.getQuestionID().toString().equals(questionId) &&
+                    r.getExamID().equals(currentExamID)) {
 
-            String name = getStudentNameById(String.valueOf(r.getStudentID()));
-            if (selectedStudentName == null || selectedStudentName.equals("ALL") || name.equals(selectedStudentName)) {
-                result.add(r);
+                String name = getStudentNameById(String.valueOf(r.getStudentID()));
+                if (selectedStudentName == null || selectedStudentName.equals("ALL") || name.equals(selectedStudentName)) {
+                    result.add(r);
+                }
             }
         }
+        answerTable.setItems(FXCollections.observableArrayList(result));
     }
-    answerTable.setItems(FXCollections.observableArrayList(result));
-}
 
+    /**
+     * Looks up and returns a student's name by ID.
+     * Reads from the student database file.
+     * @param studentId The student ID.
+     * @return The student's name, or "Unknown" if not found.
+     */
     private String getStudentNameById(String studentId) {
         Path studentFile = Paths.get("src", "main", "resources", "database", "student.txt");
         try {
@@ -257,6 +307,10 @@ private void displayStudentResponsesForQuestion(String questionId) {
         return "Unknown";
     }
 
+    /**
+     * Displays the correct answer and maximum score for the selected question.
+     * @param questionId The question's unique ID.
+     */
     private void displayQuestionDetails(String questionId) {
         Path questionDB = Paths.get("src", "main", "resources", "database", "question.txt");
         try {
@@ -278,41 +332,48 @@ private void displayStudentResponsesForQuestion(String questionId) {
         maxScoreLabel.setText("N/A");
     }
 
-//Update Question Score
-@FXML
-private void updateScore() {
-    if (selectedRecord == null) {
-        MsgSender.showMsg("Please select a student answer first.");
-        return;
-    }
-    String newScoreText = manualScoreField.getText().trim();
-    if (newScoreText.isEmpty()) {
-        MsgSender.showMsg("Score cannot be empty.");
-        return;
-    }
-    try {
-        int newScore = Integer.parseInt(newScoreText);
-        //Validation
-        String maxScoreText = maxScoreLabel.getText().trim();
-        if (!maxScoreText.equals("N/A")) {
-            try {
-                int maxScore = Integer.parseInt(maxScoreText);
-                if (newScore < 0 || newScore > maxScore) {
-                    MsgSender.showMsg("Score must be between 0 and " + maxScore);
-                    return;
-                }
-            } catch (NumberFormatException ignored) {
-            }
+    /**
+     * Updates the score of the selected student answer.
+     * Validates against the maximum possible score and applies the change to the database.
+     */
+    @FXML
+    private void updateScore() {
+        if (selectedRecord == null) {
+            MsgSender.showMsg("Please select a student answer first.");
+            return;
         }
-        selectedRecord.setScore(newScore);
-        recordDatabase.update(selectedRecord);
-        answerTable.refresh();  // Refresh table view
-        MsgSender.showMsg("Score updated successfully.");
-    } catch (NumberFormatException e) {
-        MsgSender.showMsg("Please enter a valid numeric score.");
+        String newScoreText = manualScoreField.getText().trim();
+        if (newScoreText.isEmpty()) {
+            MsgSender.showMsg("Score cannot be empty.");
+            return;
+        }
+        try {
+            int newScore = Integer.parseInt(newScoreText);
+            //Validation
+            String maxScoreText = maxScoreLabel.getText().trim();
+            if (!maxScoreText.equals("N/A")) {
+                try {
+                    int maxScore = Integer.parseInt(maxScoreText);
+                    if (newScore < 0 || newScore > maxScore) {
+                        MsgSender.showMsg("Score must be between 0 and " + maxScore);
+                        return;
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            selectedRecord.setScore(newScore);
+            recordDatabase.update(selectedRecord);
+            answerTable.refresh();  // Refresh table view
+            MsgSender.showMsg("Score updated successfully.");
+        } catch (NumberFormatException e) {
+            MsgSender.showMsg("Please enter a valid numeric score.");
+        }
     }
-}
 
+    /**
+     * Navigates back to the Teacher main screen.
+     * @param e The triggered action event.
+     */
     @FXML
     void back(ActionEvent e) {
         try {
@@ -324,13 +385,15 @@ private void updateScore() {
             controller.presetController(teacher);
             UIhelper.expandToFullScreen(stage);
             stage.show();
-
             ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Closes the application with a confirmation dialog.
+     */
     @FXML
     void closeApplication() {
         MsgSender.showConfirm(

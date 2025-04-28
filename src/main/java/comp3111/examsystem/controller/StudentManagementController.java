@@ -1,5 +1,4 @@
 package comp3111.examsystem.controller;
-
 import comp3111.examsystem.Main;
 import comp3111.examsystem.data.Department;
 import comp3111.examsystem.data.Gender;
@@ -18,26 +17,33 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 
+/**
+ * Controller class for managing Students in the Exam System.
+ * This controller handles:
+ * - Displaying all enabled students in a table view.
+ * - Filtering students based on username, name, and department.
+ * - Adding, updating, and deleting student records.
+ * - Binding form fields to selected student data for editing.
+ * It uses a generic `Database<Student>` instance for persistence,
+ */
 public class StudentManagementController {
     private Manager manager;
-
+    /**
+     * Sets the manager context for this controller.
+     *
+     * @param manager The currently logged-in manager.
+     */
     public void presetController(Manager manager) {
         this.manager = manager;
     }
 
-    //Database
+    //Database Initialization for displaying all the students
     private final Database<Student> studentDatabase = new Database<>(Student.class);
     private ObservableList<Student> allStudents;
-
-    //Table
+    //Table columns for displaying students data
     @FXML private TableView<Student> studentTable;
     @FXML private TableColumn<Student, String> colName;
     @FXML private TableColumn<Student, String> colGender;
@@ -45,11 +51,11 @@ public class StudentManagementController {
     @FXML private TableColumn<Student, String> colDepartment;
     @FXML private TableColumn<Student, String> colUsername;
     @FXML private TableColumn<Student, String> colPassword;
-    //Filter
+    //Filter fields
     @FXML private TextField filterUsername;
     @FXML private TextField filterName;
     @FXML private ComboBox<String> filterDepartment;
-    //Form
+    //Form fields on the right side
     @FXML private TextField tfUsername;
     @FXML private TextField tfName;
     @FXML private TextField tfPassword;
@@ -94,7 +100,9 @@ public class StudentManagementController {
         });
     }
 
-//Filter Students
+    /**
+     * Applies filtering logic on student list based on filter inputs.
+     */
     private List<Student> applyStudentsFilter(String username, String name, String department) {
         List<Student> filtered = studentDatabase.getAllEnabled();
         if (username != null) {
@@ -111,6 +119,9 @@ public class StudentManagementController {
         return filtered;
     }
 
+    /**
+     * Handles filtering when user clicks the "Filter" button.
+     */
     @FXML
     private void filterStudents() {
         String username = filterUsername.getText().trim();
@@ -123,6 +134,9 @@ public class StudentManagementController {
         studentTable.setItems(FXCollections.observableArrayList(filtered));
     }
 
+    /**
+     * Resets all filters and reloads the full course list.
+     */
     @FXML
     private void reset() {
         filterUsername.clear();
@@ -131,7 +145,9 @@ public class StudentManagementController {
         studentTable.setItems(FXCollections.observableArrayList(studentDatabase.getAllEnabled()));
     }
 
-//Right Form Action
+    /**
+     * Clears the input form on the right side.
+     */
     private void clearForm() {
         tfUsername.clear();
         tfName.clear();
@@ -141,6 +157,10 @@ public class StudentManagementController {
         cbGender.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Adds a new Student using input form values.
+     * Using functions provided in the database class
+     */
     @FXML
     private void addStudent() {
         try {
@@ -150,17 +170,14 @@ public class StudentManagementController {
             Department department = cbDepartment.getValue();
             Gender gender = cbGender.getValue();
             String ageStr = tfAge.getText().trim();
-
             // Validate input
             StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);
             if (validationMsg.length() > 0) {
                 MsgSender.showMsg(validationMsg.toString());
-                return;
-            }
+                return; }
             if (gender == null) {
                 MsgSender.showMsg("Please select a gender.");
-                return;
-            }
+                return; }
             int age = Integer.parseInt(ageStr);
             Student student = new Student(null, username, password, name, gender, age, department);
             studentDatabase.add(student);
@@ -168,14 +185,15 @@ public class StudentManagementController {
             studentTable.setItems(allStudents);
             clearForm();
             MsgSender.showMsg("Student added successfully!");
-        } catch (NumberFormatException e) {
-            MsgSender.showMsg("Age must be a number.");
         } catch (Exception e) {
             MsgSender.showMsg("Failed to add student to system.");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Updates an existing student selected in the table using form values.
+     */
     @FXML
     private void updateStudent() {
         Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();
@@ -190,19 +208,17 @@ public class StudentManagementController {
         Department department = cbDepartment.getValue();
         Gender gender = cbGender.getValue();
         String ageStr = tfAge.getText().trim();
-
+        //Validation
         StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);
         if(validationMsg.length() > 0) {
             MsgSender.showMsg(validationMsg.toString());
-            return;
-        }
+            return; }
         if (gender == null) {
             MsgSender.showMsg("Please select a gender.");
-            return;
-        }
+            return; }
 
-        int age = Integer.parseInt(tfAge.getText().trim());
         // Update selected student
+        int age = Integer.parseInt(tfAge.getText().trim());
         selectedStudent.setUsername(username);
         selectedStudent.setName(name);
         selectedStudent.setPassword(password);
@@ -215,6 +231,9 @@ public class StudentManagementController {
         MsgSender.showMsg("Student updated successfully!");
     }
 
+    /**
+     * Updates the changed values in the database
+     */
     private void saveAllStudentsToFile() {
         try {
             for (Student s : allStudents) {
@@ -226,6 +245,9 @@ public class StudentManagementController {
         }
     }
 
+    /**
+     * Deletes the selected student from the database.
+     */
     @FXML
     void deleteStudent() {
         Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();
@@ -251,6 +273,10 @@ public class StudentManagementController {
         );
     }
 
+    /**
+     * Navigates back to the Manager main screen.
+     * @param e The triggered action event.
+     */
     @FXML
     void back(ActionEvent e) {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ManagerMainUI.fxml"));
@@ -266,8 +292,11 @@ public class StudentManagementController {
         ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
     }
 
+    /**
+     * Closes the application with a confirmation.
+     */
     @FXML
-    void closeApplication(ActionEvent e) {
+    void closeApplication() {
         MsgSender.showConfirm(
                 "Exit Confirmation",
                 "Are you sure you want to exit?\nClick OK to exit the application.",
