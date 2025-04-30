@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="1200" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherGradeStatisticController">
+<VBox fx:id="mainbox" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" spacing="10.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.examsystem.controller.TeacherGradeStatisticController">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
@@ -45,18 +45,18 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
             
-            <Label text="Course:" styleClass="filter-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label text="Course:" styleClass="header-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
             <ComboBox fx:id="courseCmb" prefWidth="150" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
             
-            <Label text="Exam:" styleClass="filter-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+            <Label text="Exam:" styleClass="header-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
             <ComboBox fx:id="examCmb" prefWidth="150" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
             
-            <Label text="Student:" styleClass="filter-label" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+            <Label text="Student:" styleClass="header-label" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
             <ComboBox fx:id="studentCmb" prefWidth="150" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
             
             <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="6">
-                <Button mnemonicParsing="false" onAction="#handleReset" text="Reset Filters" styleClass="reset-button"/>
-                <Button mnemonicParsing="false" onAction="#handleFilter" text="Apply Filters" styleClass="filter-button"/>
+                <Button mnemonicParsing="false" onAction="#handleReset" text="Reset Filters" styleClass="login-button"/>
+                <Button mnemonicParsing="false" onAction="#handleFilter" text="Apply Filters" styleClass="login-button"/>
             </HBox>
         </GridPane>
     </VBox>
@@ -127,8 +127,8 @@
 
     <!-- Action Buttons -->
     <HBox spacing="15" alignment="CENTER">
-        <Button onAction="#handleBack" text="Back" styleClass="navigation-button"/>
-        <Button onAction="#handleExportData" text="Export Data" styleClass="action-button"/>
-        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="close-button"/>
+        <Button onAction="#handleBack" text="Back" styleClass="login-button"/>
+        <Button onAction="#handleExportData" text="Export Data" styleClass="login-button"/>
+        <Button onAction="#handleCloseApplication" text="Close Application" styleClass="login-button"/>
     </HBox>
 </VBox>

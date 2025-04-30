@@ -159,6 +159,9 @@ public class TeacherExamMgmtController implements Initializable {
 
         // Set selected questions to display in the middle table
         selectedQuestionsTable.setItems(selectedQuestions);
+
+        //
+        questionsTable.setItems(availableQuestions);
         
         // Add listener to update total score when questions change
         selectedQuestions.addListener((javafx.collections.ListChangeListener.Change<? extends Question> c) -> {
@@ -281,48 +284,39 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadExamQuestions(Exam exam) {
         selectedQuestions.clear();
-        loadAllQuestions();
-        
+
+        // Fetch all questions from the database
+        Database<Question> questionDB = new Database<>(Question.class);
+        List<Question> allQuestions = questionDB.getAllEnabled();
+        availableQuestions.setAll(allQuestions); // Reset available questions to all
 
         if (exam != null && exam.getQuestionIds() != null && !exam.getQuestionIds().isEmpty()) {
-            Database<Question> questionDB = new Database<>(Question.class);
+            // Extract valid question IDs from the exam (Don't know why but they are String)
+            List<Long> selectedQuestionIds = exam.getQuestionIds();
 
-            List<Long> QID = exam.getQuestionIds();
-            for (Object qid : QID) {
-                Question q;
-                if (qid instanceof Long) {
-                    q = questionDB.queryByKey(qid.toString());
-                } else if (qid instanceof String) {
-                    q = questionDB.queryByKey((String) qid);
-                } else {
-                    continue;
-                }
-                questionsTable.getItems().remove(q);
-                availableQuestions.remove(q);
-            }
-            questionsTable.setItems(availableQuestions);
+            // Split questions into selected (for the exam) and remaining (available)
+            List<Question> remainingQuestions = new ArrayList<>();
+            List<Question> selected = new ArrayList<>();
 
-            /*
-            for (Object questionIdObj : exam.getQuestionIds()) {
-                String que stionIdStr;
-                if (questionIdObj instanceof Long) {
-                    questionIdStr = questionIdObj.toString();
-                } else if (questionIdObj instanceof String) {
-                    questionIdStr = (String) questionIdObj;
+            for (Question q : allQuestions) {
+                // MsgSender.showMsg(q.getId().getClass().getName());
+                if (selectedQuestionIds.contains(Long.toString(q.getId()))) {
+                    selected.add(q); // Add to selected exam questions
                 } else {
-                    continue; // Skip invalid types
-                }
-                
-                Question question = questionDB.queryByKey(questionIdStr);
-                if (question != null) {
-                    selectedQuestions.add(question);
-                    questionsTable.getItems().remove(question);
+                    remainingQuestions.add(q); // Add to available questions
                 }
             }
-            */
+
+            // Update the lists and tables
+            availableQuestions.setAll(remainingQuestions);
+            selectedQuestions.setAll(selected);
+
+            // MsgSender.showMsg(String.valueOf(availableQuestions.size()));
         }
-        
-        // Update total score
+
+        // Refresh the tables
+        questionsTable.setItems(availableQuestions);
+        selectedQuestionsTable.setItems(selectedQuestions);
         updateTotalScore();
     }
 
@@ -357,8 +351,9 @@ public class TeacherExamMgmtController implements Initializable {
         }
         
         Database<Exam> examDB = new Database<>(Exam.class);
-        List<Exam> allExams = examDB.queryByField("teacherId", teacher.getId().toString());
-        
+        // List<Exam> allExams = examDB.queryByField("teacherId", teacher.getId().toString());
+        List<Exam> allExams = examDB.getAllEnabled();
+
         List<Exam> filteredExams = allExams.stream()
             .filter(e -> e.getName() != null && e.getName().toLowerCase().contains(nameFilter))
             .filter(e -> e.getCourseCode() != null && e.getCourseCode().toLowerCase().contains(courseIdFilter))
@@ -395,8 +390,9 @@ public class TeacherExamMgmtController implements Initializable {
         String scoreText = filterScoreTxt.getText().trim();
         
         Database<Question> questionDB = new Database<>(Question.class);
-        List<Question> allQuestions = questionDB.queryByField("teacherId", teacher.getId().toString());
-        
+        // List<Question> allQuestions = questionDB.queryByField("teacherId", teacher.getId().toString());
+        List<Question> allQuestions = questionDB.getAllEnabled();
+
         int scoreFilter = -1;
         if (!scoreText.isEmpty()) {
             try {
@@ -434,8 +430,9 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadAllExams() {
         Database<Exam> examDB = new Database<>(Exam.class);
-        List<Exam> exams = examDB.queryByField("teacherId", teacher.getId().toString());
-        
+        // List<Exam> exams = examDB.queryByField("teacherId", teacher.getId().toString());
+        List<Exam> exams = examDB.getAllEnabled();
+
         examsTable.getItems().clear();
         examsTable.getItems().addAll(exams);
     }
@@ -445,10 +442,15 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadAllQuestions() {
         Database<Question> questionDB = new Database<>(Question.class);
-        List<Question> questions = questionDB.queryByField("teacherId", teacher.getId().toString());
-        
+        /*
+        List<Question> questions = questionDB.getAllEnabled();
+
         questionsTable.getItems().clear();
         questionsTable.getItems().addAll(questions);
+        */
+        availableQuestions.clear();
+        selectedQuestions.clear();
+        availableQuestions.setAll(questionDB.getAllEnabled());
     }
 
     /**
