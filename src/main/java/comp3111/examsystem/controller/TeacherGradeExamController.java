@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller class for the Teacher Grade Exam page.
@@ -149,15 +150,14 @@ public class TeacherGradeExamController implements Initializable {
         questionList.getItems().clear();
         questionTextToId.clear();
         String questionSection = extractField(examLine, "questions");
-        if (questionSection == null || questionSection.length() < 3) return;
-        questionSection = questionSection.substring(1, questionSection.length() - 1);
-        String[] parts = questionSection.split("-~,");
+        if (questionSection == null || questionSection.isBlank()) return;
 
-        //Read questionID from the database.
-        List<String> questionIds = new ArrayList<>();
-        for (int i = 1; i < parts.length; i++) { // skip type "Long"
-            questionIds.add(parts[i].trim());
-        }
+        // Parse question IDs from the comma-separated string
+        List<String> questionIds = Arrays.stream(questionSection.split(","))
+                .map(String::trim)
+                .filter(id -> !id.isEmpty())
+                .collect(Collectors.toList());
+
         Path questionDB = Paths.get("src", "main", "resources", "database", "question.txt");
         List<String> questionLines;
         try {
