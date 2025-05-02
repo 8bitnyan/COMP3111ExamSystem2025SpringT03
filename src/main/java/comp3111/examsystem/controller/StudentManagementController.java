@@ -208,8 +208,10 @@ public class StudentManagementController {
         Department department = cbDepartment.getValue();
         Gender gender = cbGender.getValue();
         String ageStr = tfAge.getText().trim();
+        Long id = selectedStudent.getId();
+
         //Validation
-        StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);
+        StringBuilder validationMsg = Student.validateWithMessage(id, username, password, name, ageStr, department);
         if(validationMsg.length() > 0) {
             MsgSender.showMsg(validationMsg.toString());
             return; }
