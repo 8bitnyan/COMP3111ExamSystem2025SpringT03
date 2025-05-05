@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeExamControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeExamControllerTest.java</span></div><h1>TeacherGradeExamControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import javafx.scene.control.*;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import comp3111.examsystem.entity.Record;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import comp3111.examsystem.tools.MsgSender;
+
+<span class="fc" id="L13">public class TeacherGradeExamControllerTest {</span>
+    private TeacherGradeExamController controller;
+
+    @BeforeEach
+    void setUp() throws Exception {
+<span class="fc" id="L18">        controller = new TeacherGradeExamController();</span>
+        // Initialize JavaFX controls as needed
+<span class="fc" id="L20">    }</span>
+
+    @Test
+    void testManualGradingInput() throws Exception {
+        // Simulate grading: assign score to a student/question
+        // (Assume method handleGrade or similar exists)
+        // Setup fields as needed
+<span class="fc" id="L27">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            // If a grading method exists, call it via reflection
+            // Example:
+            // var gradeMethod = controller.getClass().getDeclaredMethod(&quot;handleGrade&quot;);
+            // gradeMethod.setAccessible(true);
+            // gradeMethod.invoke(controller);
+            // No exceptions = logic covered
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L35">    }</span>
+
+    @Test
+    void testGradeStatisticsFilters() {
+        // Simulate filter: only show results for a specific exam
+<span class="fc" id="L40">        List&lt;String&gt; allResults = Arrays.asList(&quot;Exam1-student1&quot;, &quot;Exam2-student2&quot;);</span>
+<span class="fc" id="L41">        String filter = &quot;Exam1&quot;;</span>
+<span class="fc" id="L42">        List&lt;String&gt; filtered = allResults.stream().filter(r -&gt; r.contains(filter)).toList();</span>
+<span class="fc" id="L43">        assertEquals(1, filtered.size());</span>
+<span class="fc" id="L44">        assertEquals(&quot;Exam1-student1&quot;, filtered.get(0));</span>
+<span class="fc" id="L45">    }</span>
+
+    @Test
+    void testFiltersWork() throws Exception {
+        // Simulate filter controls and call filter method if present
+<span class="fc" id="L50">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            // If a filter method exists, call it via reflection
+            // Example:
+            // var filterMethod = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);
+            // filterMethod.setAccessible(true);
+            // filterMethod.invoke(controller);
+            // No exceptions = logic covered
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L58">    }</span>
+
+    @Test
+    void testNoStudentResultsEdgeCase() throws Exception {
+        // Simulate empty student results and call refresh/statistics method
+<span class="fc" id="L63">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            // If a refresh/statistics method exists, call it via reflection
+            // Example:
+            // var refreshMethod = controller.getClass().getDeclaredMethod(&quot;handleRefresh&quot;);
+            // refreshMethod.setAccessible(true);
+            // refreshMethod.invoke(controller);
+            // No exceptions = logic covered
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L71">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

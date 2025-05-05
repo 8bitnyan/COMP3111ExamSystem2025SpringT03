@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Question.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Question.java</span></div><h1>Question.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Question extends Entity {
+
+    private Long teacherId; // To isolate questions per teacher
+    private String type; // e.g., &quot;MCQ&quot;, &quot;Short Answer&quot;
+    private String questionText;
+    // Keep these for backward compatibility
+    private String optionA;
+    private String optionB;
+    private String optionC;
+    private String optionD;
+    private String optionE;
+    private String answer;
+    private Integer score;
+<span class="pc" id="L19">    private Integer isPublished = 0; // For confirmation of deletion</span>
+<span class="pc" id="L20">    private int optionCount = 4; // Default is 4 options (A, B, C, D)</span>
+
+    private Long id;
+<span class="pc" id="L23">    private List&lt;String&gt; options = new ArrayList&lt;&gt;(); // For adaptable MCQ options</span>
+<span class="pc" id="L24">    private boolean isAble = true; // Required for lazy deletion</span>
+
+
+    // Constructors
+<span class="fc" id="L28">    public Question() {} // Required for Database.java reflection</span>
+
+<span class="nc" id="L30">    public Question(Long teacherId, String type, String questionText, String A, String B, String C, String D, String answer, int score) {</span>
+<span class="nc" id="L31">        this.teacherId = teacherId;</span>
+<span class="nc" id="L32">        this.type = type;</span>
+<span class="nc" id="L33">        this.questionText = questionText;</span>
+<span class="nc" id="L34">        this.optionA = A;</span>
+<span class="nc" id="L35">        this.optionB = B;</span>
+<span class="nc" id="L36">        this.optionC = C;</span>
+<span class="nc" id="L37">        this.optionD = D;</span>
+
+<span class="nc" id="L39">        this.answer = answer;</span>
+<span class="nc" id="L40">        this.score = score;</span>
+        
+        // Initialize options list
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (A != null) options.add(A);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (B != null) options.add(B);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (C != null) options.add(C);</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (D != null) options.add(D);</span>
+<span class="nc" id="L47">        this.optionCount = options.size();</span>
+<span class="nc" id="L48">    }</span>
+
+    // Method to get an option by index (0-based)
+    public String getOption(int index) {
+<span class="nc bnc" id="L52" title="All 4 branches missed.">        if (index &lt; 0 || index &gt;= options.size()) {</span>
+<span class="nc" id="L53">            return null;</span>
+        }
+<span class="nc" id="L55">        return options.get(index);</span>
+    }
+    
+    // Method to set an option by index (0-based)
+    public void setOption(int index, String value) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        while (options.size() &lt;= index) {</span>
+<span class="nc" id="L61">            options.add(&quot;&quot;);</span>
+        }
+<span class="nc" id="L63">        options.set(index, value);</span>
+<span class="nc" id="L64">        updateLegacyFields();</span>
+<span class="nc" id="L65">    }</span>
+    
+    // Method to add a new option
+    public void addOption(String value) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (options.size() &lt; 5) { // Max 5 options</span>
+<span class="nc" id="L70">            options.add(value);</span>
+<span class="nc" id="L71">            optionCount = options.size();</span>
+<span class="nc" id="L72">            updateLegacyFields();</span>
+        }
+<span class="nc" id="L74">    }</span>
+    
+    // Method to remove an option by index
+    public boolean removeOption(int index) {
+<span class="nc bnc" id="L78" title="All 6 branches missed.">        if (index &lt; 0 || index &gt;= options.size() || options.size() &lt;= 2) {</span>
+<span class="nc" id="L79">            return false; // Can't remove if fewer than 2 options would remain</span>
+        }
+<span class="nc" id="L81">        options.remove(index);</span>
+<span class="nc" id="L82">        optionCount = options.size();</span>
+<span class="nc" id="L83">        updateLegacyFields();</span>
+<span class="nc" id="L84">        return true;</span>
+    }
+    
+    // Update legacy fields from options list
+    private void updateLegacyFields() {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        optionA = options.size() &gt; 0 ? options.get(0) : &quot;&quot;;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        optionB = options.size() &gt; 1 ? options.get(1) : &quot;&quot;;</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        optionC = options.size() &gt; 2 ? options.get(2) : &quot;&quot;;</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        optionD = options.size() &gt; 3 ? options.get(3) : &quot;&quot;;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        optionE = options.size() &gt; 4 ? options.get(4) : &quot;&quot;;</span>
+<span class="fc" id="L94">    }</span>
+    
+    // Update options list from legacy fields
+    private void updateOptionsList() {
+<span class="nc" id="L98">        options.clear();</span>
+<span class="nc bnc" id="L99" title="All 4 branches missed.">        if (optionA != null &amp;&amp; !optionA.isEmpty()) options.add(optionA);</span>
+<span class="nc bnc" id="L100" title="All 4 branches missed.">        if (optionB != null &amp;&amp; !optionB.isEmpty()) options.add(optionB);</span>
+<span class="nc bnc" id="L101" title="All 4 branches missed.">        if (optionC != null &amp;&amp; !optionC.isEmpty()) options.add(optionC);</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">        if (optionD != null &amp;&amp; !optionD.isEmpty()) options.add(optionD);</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">        if (optionE != null &amp;&amp; !optionE.isEmpty()) options.add(optionE);</span>
+<span class="nc" id="L104">        optionCount = options.size();</span>
+<span class="nc" id="L105">    }</span>
+
+    // Getters and Setters
+    public Long getId() {
+<span class="fc" id="L109">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L113">        this.id = id;</span>
+<span class="fc" id="L114">    }</span>
+
+    public Long getTeacherId() {
+<span class="nc" id="L117">        return teacherId;</span>
+    }
+
+    public void setTeacherId(Long teacherId) {
+<span class="fc" id="L121">        this.teacherId = teacherId;</span>
+<span class="fc" id="L122">    }</span>
+
+    public String getType() {
+<span class="fc" id="L125">        return type;</span>
+    }
+
+    public void setType(String type) {
+<span class="fc" id="L129">        this.type = type;</span>
+<span class="fc" id="L130">    }</span>
+
+    public String getQuestionText() {
+<span class="fc" id="L133">        return questionText;</span>
+    }
+
+    public void setQuestionText(String questionText) {
+<span class="fc" id="L137">        this.questionText = questionText;</span>
+<span class="fc" id="L138">    }</span>
+
+    public List&lt;String&gt; getOptions() {
+<span class="nc bnc" id="L141" title="All 12 branches missed.">        if (options.isEmpty() &amp;&amp; (optionA != null || optionB != null || optionC != null || optionD != null || optionE != null)) {</span>
+<span class="nc" id="L142">            updateOptionsList();</span>
+        }
+<span class="nc" id="L144">        return options;</span>
+    }
+    
+    public void setOptions(List&lt;String&gt; options) {
+<span class="fc" id="L148">        this.options = options;</span>
+<span class="fc" id="L149">        this.optionCount = options.size();</span>
+<span class="fc" id="L150">        updateLegacyFields();</span>
+<span class="fc" id="L151">    }</span>
+    
+    public int getOptionCount() {
+<span class="nc" id="L154">        return optionCount;</span>
+    }
+    
+    public void setOptionCount(int count) {
+<span class="nc" id="L158">        this.optionCount = count;</span>
+<span class="nc" id="L159">    }</span>
+
+    public String getOptionA() {
+<span class="nc" id="L162">        return optionA;</span>
+    }
+    public String getOptionB() {
+<span class="nc" id="L165">        return optionB;</span>
+    }
+    public String getOptionC() {
+<span class="nc" id="L168">        return optionC;</span>
+    }
+    public String getOptionD() {
+<span class="nc" id="L171">        return optionD;</span>
+    }
+    public String getOptionE() {
+<span class="nc" id="L174">        return optionE;</span>
+    }
+
+    public void setA(String A) {
+<span class="nc" id="L178">        this.optionA = A;</span>
+<span class="nc" id="L179">        setOption(0, A);</span>
+<span class="nc" id="L180">    }</span>
+    public void setB(String B) {
+<span class="nc" id="L182">        this.optionB = B;</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (options.size() &gt; 1) setOption(1, B);</span>
+<span class="nc bnc" id="L184" title="All 4 branches missed.">        else if (B != null &amp;&amp; !B.isEmpty()) addOption(B);</span>
+<span class="nc" id="L185">    }</span>
+    public void setC(String C) {
+<span class="nc" id="L187">        this.optionC = C;</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (options.size() &gt; 2) setOption(2, C);</span>
+<span class="nc bnc" id="L189" title="All 4 branches missed.">        else if (C != null &amp;&amp; !C.isEmpty()) addOption(C);</span>
+<span class="nc" id="L190">    }</span>
+    public void setD(String D) {
+<span class="nc" id="L192">        this.optionD = D;</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (options.size() &gt; 3) setOption(3, D);</span>
+<span class="nc bnc" id="L194" title="All 4 branches missed.">        else if (D != null &amp;&amp; !D.isEmpty()) addOption(D);</span>
+<span class="nc" id="L195">    }</span>
+    public void setE(String E) {
+<span class="nc" id="L197">        this.optionE = E;</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (options.size() &gt; 4) setOption(4, E);</span>
+<span class="nc bnc" id="L199" title="All 4 branches missed.">        else if (E != null &amp;&amp; !E.isEmpty()) addOption(E);</span>
+<span class="nc" id="L200">    }</span>
+
+    public String getAnswer() {
+<span class="nc" id="L203">        return answer;</span>
+    }
+
+    public void setAnswer(String answer) {
+<span class="fc" id="L207">        this.answer = answer;</span>
+<span class="fc" id="L208">    }</span>
+
+    public Integer getScore() {
+<span class="fc" id="L211">        return score;</span>
+    }
+
+    public void setScore(Integer score) {
+<span class="fc" id="L215">        this.score = score;</span>
+<span class="fc" id="L216">    }</span>
+
+    public int getPublished() {
+<span class="fc" id="L219">        return isPublished;</span>
+    }
+
+    public void setPublished(int publish) {
+<span class="fc" id="L223">        isPublished = publish;</span>
+<span class="fc" id="L224">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

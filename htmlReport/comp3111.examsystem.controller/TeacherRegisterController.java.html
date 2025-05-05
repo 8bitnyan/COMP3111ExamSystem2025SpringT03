@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherRegisterController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherRegisterController.java</span></div><h1>TeacherRegisterController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.data.*;
+import comp3111.examsystem.Main;
+import comp3111.examsystem.entity.Teacher;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.MsgSender;
+import comp3111.examsystem.tools.UIhelper;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+/**
+ * The controller for teacher registration page.
+ */
+<span class="nc" id="L25">public class TeacherRegisterController implements Initializable {</span>
+
+    @FXML
+    private TextField ageTxt, usernameTxt, nameTxt;
+    @FXML
+    private ComboBox&lt;Gender&gt; genderCmb;
+    @FXML
+    private ComboBox&lt;Department&gt; departmentCmb;
+    @FXML
+    private ComboBox&lt;Position&gt; positionCmb;
+    @FXML
+    private PasswordField passwordConfirmTxt, passwordTxt;
+
+<span class="nc" id="L38">    private final Database&lt;Teacher&gt; teacherDatabase = new Database&lt;&gt;(Teacher.class);</span>
+
+    /**
+     * Validates the registration information.
+     * @return An error message if the registration information is invalid, empty string otherwise.
+     */
+    private StringBuilder validateTeacherRegistration() {
+<span class="nc" id="L45">        StringBuilder stringBuilder = new StringBuilder();</span>
+<span class="nc bnc" id="L46" title="All 4 branches missed.">        if (usernameTxt.getText().isEmpty() || nameTxt.getText().isEmpty() ||</span>
+<span class="nc bnc" id="L47" title="All 6 branches missed.">                ageTxt.getText().isEmpty() || passwordTxt.getText().isEmpty() || passwordConfirmTxt.getText().isEmpty()) {</span>
+<span class="nc" id="L48">            stringBuilder.append(&quot;Please fill in all fields!\n&quot;);</span>
+<span class="nc" id="L49">            return stringBuilder;</span>
+        } else {
+<span class="nc" id="L51">            stringBuilder.append(Teacher.validateWithMessage(usernameTxt.getText(), passwordTxt.getText(),</span>
+<span class="nc" id="L52">                    nameTxt.getText(), ageTxt.getText(), departmentCmb.getValue()));</span>
+<span class="nc" id="L53">            List&lt;Teacher&gt; teachers = teacherDatabase.getAllEnabled();</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">            for (Teacher teacher : teachers) if (teacher.getUsername().equals(usernameTxt.getText())) stringBuilder.append(&quot;Username has been used!\n&quot;);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (!passwordTxt.getText().equals(passwordConfirmTxt.getText())) stringBuilder.append(&quot;Password and Confirm Password do not match!\n&quot;);</span>
+        }
+<span class="nc" id="L57">        return stringBuilder;</span>
+    }
+
+    /**
+     * Saves the registration information to the database.
+     * @return A teacher object with the registered values.
+     */
+    private Teacher saveRegistration() {
+<span class="nc" id="L65">        String username = usernameTxt.getText();</span>
+<span class="nc" id="L66">        String password = passwordTxt.getText();</span>
+<span class="nc" id="L67">        String name = nameTxt.getText();</span>
+<span class="nc" id="L68">        Gender gender = genderCmb.getValue();</span>
+<span class="nc" id="L69">        int age = Integer.parseInt(ageTxt.getText());</span>
+<span class="nc" id="L70">        Department department = departmentCmb.getValue();</span>
+<span class="nc" id="L71">        Position position = positionCmb.getValue();</span>
+
+<span class="nc" id="L73">        Teacher teacher = new Teacher(null, username, password, name, gender, age, department, position);</span>
+
+<span class="nc" id="L75">        teacherDatabase.add(teacher);</span>
+
+<span class="nc" id="L77">        return teacher;</span>
+    }
+
+    /**
+     * Initializes the Teacher Registration UI.
+     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
+    public void initialize(URL location, ResourceBundle resources) {
+<span class="nc" id="L86">        genderCmb.getItems().setAll(Gender.values());</span>
+<span class="nc" id="L87">        genderCmb.setValue(Gender.MALE);</span>
+<span class="nc" id="L88">        positionCmb.getItems().setAll(Position.values());</span>
+<span class="nc" id="L89">        positionCmb.setValue(Position.AP);</span>
+<span class="nc" id="L90">        departmentCmb.getItems().setAll(Department.values());</span>
+<span class="nc" id="L91">        departmentCmb.setValue(Department.ANY);</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Handles the cancel button click event.
+     * @param e The action event.
+     */
+    @FXML
+    void cancel(ActionEvent e) {
+<span class="nc" id="L100">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherLoginUI.fxml&quot;));</span>
+<span class="nc" id="L101">        Stage stage = new Stage();</span>
+<span class="nc" id="L102">        stage.setTitle(&quot;Student Login&quot;);</span>
+        try {
+<span class="nc" id="L104">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L105">        } catch (IOException e1) {</span>
+<span class="nc" id="L106">            e1.printStackTrace();</span>
+<span class="nc" id="L107">        }</span>
+<span class="nc" id="L108">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L109">        stage.show();</span>
+<span class="nc" id="L110">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Handles the register button click event.
+     * @param e The action event.
+     */
+    @FXML
+    void register(ActionEvent e) {
+<span class="nc" id="L120">        StringBuilder msg = validateTeacherRegistration();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (!msg.isEmpty()) {</span>
+<span class="nc" id="L122">            MsgSender.showMsg(msg.toString());</span>
+<span class="nc" id="L123">            return;</span>
+        }
+<span class="nc" id="L125">        Teacher teacher = saveRegistration();</span>
+<span class="nc" id="L126">        MsgSender.showMsg(&quot;Successful Register&quot;);</span>
+<span class="nc" id="L127">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
+<span class="nc" id="L128">        Stage stage = new Stage();</span>
+<span class="nc" id="L129">        stage.setTitle(&quot;Hi &quot; + usernameTxt.getText() + &quot;, Welcome to HKUST Examination System&quot;);</span>
+        try {
+<span class="nc" id="L131">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L132">            TeacherMainController controller = fxmlLoader.getController();</span>
+<span class="nc" id="L133">            controller.presetController(teacher);</span>
+<span class="nc" id="L134">        } catch (IOException e1) {</span>
+<span class="nc" id="L135">            e1.printStackTrace();</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L138">        stage.show();</span>
+<span class="nc" id="L139">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L140">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

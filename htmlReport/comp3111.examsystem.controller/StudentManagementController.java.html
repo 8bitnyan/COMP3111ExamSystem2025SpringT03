@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentManagementController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentManagementController.java</span></div><h1>StudentManagementController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+import comp3111.examsystem.Main;
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.entity.Manager;
+import comp3111.examsystem.entity.Student;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.UIhelper;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import java.io.IOException;
+import java.util.*;
+
+/**
+ * Controller class for managing Students in the Exam System.
+ * This controller handles:
+ * - Displaying all enabled students in a table view.
+ * - Filtering students based on username, name, and department.
+ * - Adding, updating, and deleting student records.
+ * - Binding form fields to selected student data for editing.
+ * It uses a generic `Database&lt;Student&gt;` instance for persistence,
+ */
+<span class="fc" id="L32">public class StudentManagementController {</span>
+    private Manager manager;
+    /**
+     * Sets the manager context for this controller.
+     *
+     * @param manager The currently logged-in manager.
+     */
+    public void presetController(Manager manager) {
+<span class="nc" id="L40">        this.manager = manager;</span>
+<span class="nc" id="L41">    }</span>
+
+    //Database Initialization for displaying all the students
+<span class="fc" id="L44">    private final Database&lt;Student&gt; studentDatabase = new Database&lt;&gt;(Student.class);</span>
+    private ObservableList&lt;Student&gt; allStudents;
+    //Table columns for displaying students data
+    @FXML private TableView&lt;Student&gt; studentTable;
+    @FXML private TableColumn&lt;Student, String&gt; colName;
+    @FXML private TableColumn&lt;Student, String&gt; colGender;
+    @FXML private TableColumn&lt;Student, Integer&gt; colAge;
+    @FXML private TableColumn&lt;Student, String&gt; colDepartment;
+    @FXML private TableColumn&lt;Student, String&gt; colUsername;
+    @FXML private TableColumn&lt;Student, String&gt; colPassword;
+    //Filter fields
+    @FXML private TextField filterUsername;
+    @FXML private TextField filterName;
+    @FXML private ComboBox&lt;String&gt; filterDepartment;
+    //Form fields on the right side
+    @FXML private TextField tfUsername;
+    @FXML private TextField tfName;
+    @FXML private TextField tfPassword;
+    @FXML private ComboBox&lt;Department&gt; cbDepartment;
+    @FXML private TextField tfAge;
+    @FXML private ComboBox&lt;Gender&gt; cbGender;
+
+    @FXML
+    public void initialize() {
+        //Table Initialization
+<span class="fc" id="L69">        colName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;name&quot;));</span>
+<span class="fc" id="L70">        colGender.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;gender&quot;));</span>
+<span class="fc" id="L71">        colAge.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;age&quot;));</span>
+<span class="fc" id="L72">        colDepartment.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;department&quot;));</span>
+<span class="fc" id="L73">        colUsername.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;username&quot;));</span>
+<span class="fc" id="L74">        colPassword.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;password&quot;));</span>
+<span class="fc" id="L75">        ObservableList&lt;Student&gt; students = FXCollections.observableArrayList(studentDatabase.getAllEnabled());</span>
+<span class="fc" id="L76">        studentTable.setItems(students);</span>
+<span class="fc" id="L77">        allStudents = students;</span>
+
+        //Filter + Form initialization
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (Department dept : Department.values()) {</span>
+<span class="fc" id="L81">            filterDepartment.getItems().add(dept.toString());</span>
+<span class="fc" id="L82">            cbDepartment.getItems().add(Department.valueOf(dept.toString()));</span>
+        }
+<span class="fc" id="L84">        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</span>
+<span class="fc" id="L85">        cbDepartment.getSelectionModel().select(Department.valueOf(&quot;ANY&quot;));</span>
+<span class="fc" id="L86">        cbGender.getItems().addAll(Gender.values());</span>
+<span class="fc" id="L87">        cbGender.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L88">        cbGender.setPromptText(&quot;Select Gender&quot;);</span>
+
+        //Select Student for Form editing
+<span class="fc" id="L91">        studentTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedStudent) -&gt; {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            if (selectedStudent != null) {</span>
+<span class="fc" id="L93">                tfUsername.setText(selectedStudent.getUsername());</span>
+<span class="fc" id="L94">                tfName.setText(selectedStudent.getName());</span>
+<span class="fc" id="L95">                tfPassword.setText((selectedStudent.getPassword()));</span>
+<span class="fc" id="L96">                cbDepartment.getSelectionModel().select(selectedStudent.getDepartment());</span>
+<span class="fc" id="L97">                tfAge.setText(String.valueOf(selectedStudent.getAge()));</span>
+<span class="fc" id="L98">                cbGender.getSelectionModel().select(selectedStudent.getGender());</span>
+            }
+<span class="fc" id="L100">        });</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * Applies filtering logic on student list based on filter inputs.
+     */
+    private List&lt;Student&gt; applyStudentsFilter(String username, String name, String department) {
+<span class="fc" id="L107">        List&lt;Student&gt; filtered = studentDatabase.getAllEnabled();</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (username != null) {</span>
+<span class="fc" id="L109">            filtered = studentDatabase.queryFuzzyByField(&quot;username&quot;, username);</span>
+        }
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (name != null) {</span>
+<span class="nc" id="L112">            List&lt;Student&gt; nameFiltered = studentDatabase.queryFuzzyByField(&quot;name&quot;, name);</span>
+<span class="nc" id="L113">            filtered = studentDatabase.join(filtered, nameFiltered);</span>
+        }
+<span class="pc bpc" id="L115" title="3 of 4 branches missed.">        if (department != null &amp;&amp; !department.equalsIgnoreCase(&quot;ANY&quot;)) {</span>
+<span class="nc" id="L116">            List&lt;Student&gt; deptFiltered = studentDatabase.queryByField(&quot;department&quot;, department);</span>
+<span class="nc" id="L117">            filtered = studentDatabase.join(filtered, deptFiltered);</span>
+        }
+<span class="fc" id="L119">        return filtered;</span>
+    }
+
+    /**
+     * Handles filtering when user clicks the &quot;Filter&quot; button.
+     */
+    @FXML
+    public void filterStudents() {
+<span class="fc" id="L127">        String username = filterUsername.getText().trim();</span>
+<span class="fc" id="L128">        String name = filterName.getText().trim();</span>
+<span class="fc" id="L129">        String department = filterDepartment.getValue();</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (username.isEmpty()) {username = null;}</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (name.isEmpty()) {name = null;}</span>
+<span class="pc bpc" id="L132" title="3 of 6 branches missed.">        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase(&quot;any&quot;)) {department = null;}</span>
+<span class="fc" id="L133">        List&lt;Student&gt; filtered = applyStudentsFilter(username, name, department);</span>
+<span class="fc" id="L134">        studentTable.setItems(FXCollections.observableArrayList(filtered));</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Resets all filters and reloads the full course list.
+     */
+    @FXML
+    private void reset() {
+<span class="nc" id="L142">        filterUsername.clear();</span>
+<span class="nc" id="L143">        filterName.clear();</span>
+<span class="nc" id="L144">        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</span>
+<span class="nc" id="L145">        studentTable.setItems(FXCollections.observableArrayList(studentDatabase.getAllEnabled()));</span>
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Clears the input form on the right side.
+     */
+    private void clearForm() {
+<span class="fc" id="L152">        tfUsername.clear();</span>
+<span class="fc" id="L153">        tfName.clear();</span>
+<span class="fc" id="L154">        tfPassword.clear();</span>
+<span class="fc" id="L155">        cbDepartment.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L156">        tfAge.clear();</span>
+<span class="fc" id="L157">        cbGender.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L158">    }</span>
+
+    /**
+     * Adds a new Student using input form values.
+     * Using functions provided in the database class
+     */
+    @FXML
+    public void addStudent() {
+        try {
+<span class="fc" id="L167">            String username = tfUsername.getText().trim();</span>
+<span class="fc" id="L168">            String name = tfName.getText().trim();</span>
+<span class="fc" id="L169">            String password = tfPassword.getText().trim();</span>
+<span class="fc" id="L170">            Department department = cbDepartment.getValue();</span>
+<span class="fc" id="L171">            Gender gender = cbGender.getValue();</span>
+<span class="fc" id="L172">            String ageStr = tfAge.getText().trim();</span>
+            // Validate input
+<span class="fc" id="L174">            StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (validationMsg.length() &gt; 0) {</span>
+<span class="fc" id="L176">                MsgSender.showMsg(validationMsg.toString());</span>
+<span class="fc" id="L177">                return; }</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">            if (gender == null) {</span>
+<span class="fc" id="L179">                MsgSender.showMsg(&quot;Please select a gender.&quot;);</span>
+<span class="fc" id="L180">                return; }</span>
+<span class="fc" id="L181">            int age = Integer.parseInt(ageStr);</span>
+<span class="fc" id="L182">            Student student = new Student(null, username, password, name, gender, age, department);</span>
+<span class="fc" id="L183">            studentDatabase.add(student);</span>
+<span class="fc" id="L184">            allStudents = FXCollections.observableArrayList(studentDatabase.getAllEnabled());</span>
+<span class="fc" id="L185">            studentTable.setItems(allStudents);</span>
+<span class="fc" id="L186">            clearForm();</span>
+<span class="fc" id="L187">            MsgSender.showMsg(&quot;Student added successfully!&quot;);</span>
+<span class="nc" id="L188">        } catch (Exception e) {</span>
+<span class="nc" id="L189">            MsgSender.showMsg(&quot;Failed to add student to system.&quot;);</span>
+<span class="nc" id="L190">            e.printStackTrace();</span>
+<span class="fc" id="L191">        }</span>
+<span class="fc" id="L192">    }</span>
+
+    /**
+     * Updates an existing student selected in the table using form values.
+     */
+    @FXML
+    public void updateStudent() {
+<span class="fc" id="L199">        Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (selectedStudent == null) {</span>
+<span class="fc" id="L201">            MsgSender.showMsg(&quot;Please select a student to update.&quot;);</span>
+<span class="fc" id="L202">            return;</span>
+        }
+        // Get updated form values
+<span class="fc" id="L205">        String username = tfUsername.getText().trim();</span>
+<span class="fc" id="L206">        String name = tfName.getText().trim();</span>
+<span class="fc" id="L207">        String password = tfPassword.getText().trim();</span>
+<span class="fc" id="L208">        Department department = cbDepartment.getValue();</span>
+<span class="fc" id="L209">        Gender gender = cbGender.getValue();</span>
+<span class="fc" id="L210">        String ageStr = tfAge.getText().trim();</span>
+<span class="fc" id="L211">        Long id = selectedStudent.getId();</span>
+
+        //Validation
+<span class="fc" id="L214">        StringBuilder validationMsg = Student.validateWithMessage(id, username, password, name, ageStr, department);</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        if(validationMsg.length() &gt; 0) {</span>
+<span class="nc" id="L216">            MsgSender.showMsg(validationMsg.toString());</span>
+<span class="nc" id="L217">            return; }</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (gender == null) {</span>
+<span class="nc" id="L219">            MsgSender.showMsg(&quot;Please select a gender.&quot;);</span>
+<span class="nc" id="L220">            return; }</span>
+
+        // Update selected student
+<span class="fc" id="L223">        int age = Integer.parseInt(tfAge.getText().trim());</span>
+<span class="fc" id="L224">        selectedStudent.setUsername(username);</span>
+<span class="fc" id="L225">        selectedStudent.setName(name);</span>
+<span class="fc" id="L226">        selectedStudent.setPassword(password);</span>
+<span class="fc" id="L227">        selectedStudent.setDepartment(department);</span>
+<span class="fc" id="L228">        selectedStudent.setGender(gender);</span>
+<span class="fc" id="L229">        selectedStudent.setAge(age);</span>
+        // Rewrite file with all students
+<span class="fc" id="L231">        saveAllStudentsToFile();</span>
+<span class="fc" id="L232">        studentTable.refresh();</span>
+<span class="fc" id="L233">        MsgSender.showMsg(&quot;Student updated successfully!&quot;);</span>
+<span class="fc" id="L234">    }</span>
+
+    /**
+     * Updates the changed values in the database
+     */
+    private void saveAllStudentsToFile() {
+        try {
+<span class="fc bfc" id="L241" title="All 2 branches covered.">            for (Student s : allStudents) {</span>
+<span class="fc" id="L242">                studentDatabase.update(s);  // Ensures only enabled students are updated correctly</span>
+<span class="fc" id="L243">            }</span>
+<span class="nc" id="L244">        } catch (Exception e) {</span>
+<span class="nc" id="L245">            MsgSender.showMsg(&quot;Failed to save student data.&quot;);</span>
+<span class="nc" id="L246">            e.printStackTrace();</span>
+<span class="fc" id="L247">        }</span>
+<span class="fc" id="L248">    }</span>
+
+    /**
+     * Deletes the selected student from the database.
+     */
+    @FXML
+    public void deleteStudent() {
+<span class="fc" id="L255">        Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if (selectedStudent == null) {</span>
+<span class="fc" id="L257">            MsgSender.showMsg(&quot;Please select a student to delete.&quot;);</span>
+<span class="fc" id="L258">            return;</span>
+        }
+<span class="fc" id="L260">        MsgSender.showConfirm(</span>
+                &quot;Delete Confirmation&quot;,
+                &quot;Are you sure you want to delete this student?&quot;,
+                () -&gt; {
+                    try {
+<span class="fc" id="L265">                        studentDatabase.delByKey(String.valueOf(selectedStudent.getId()));</span>
+<span class="fc" id="L266">                        allStudents = FXCollections.observableArrayList(studentDatabase.getAllEnabled());</span>
+<span class="fc" id="L267">                        studentTable.setItems(allStudents);</span>
+<span class="fc" id="L268">                        clearForm();</span>
+<span class="fc" id="L269">                        MsgSender.showMsg(&quot;Student deleted successfully.&quot;);</span>
+<span class="nc" id="L270">                    } catch (Exception e) {</span>
+<span class="nc" id="L271">                        MsgSender.showMsg(&quot;Failed to delete student.&quot;);</span>
+<span class="nc" id="L272">                        e.printStackTrace();</span>
+<span class="fc" id="L273">                    }</span>
+<span class="fc" id="L274">                }</span>
+        );
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * Navigates back to the Manager main screen.
+     * @param e The triggered action event.
+     */
+    @FXML
+    void back(ActionEvent e) {
+<span class="nc" id="L284">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;ManagerMainUI.fxml&quot;));</span>
+<span class="nc" id="L285">        Stage stage = new Stage();</span>
+<span class="nc" id="L286">        stage.setTitle(&quot;Back&quot;);</span>
+        try {
+<span class="nc" id="L288">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L289">        } catch (IOException e1) {</span>
+<span class="nc" id="L290">            e1.printStackTrace();</span>
+<span class="nc" id="L291">        }</span>
+<span class="nc" id="L292">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L293">        stage.show();</span>
+<span class="nc" id="L294">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Closes the application with a confirmation.
+     */
+    @FXML
+    void closeApplication() {
+<span class="nc" id="L302">        MsgSender.showConfirm(</span>
+                &quot;Exit Confirmation&quot;,
+                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,
+                Platform::exit
+        );
+<span class="nc" id="L307">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

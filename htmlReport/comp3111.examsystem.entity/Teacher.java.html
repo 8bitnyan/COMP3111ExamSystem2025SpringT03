@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Teacher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Teacher.java</span></div><h1>Teacher.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.data.Position;
+import comp3111.examsystem.tools.Database;
+
+import java.util.List;
+
+/**
+ * The Teacher class represents a teacher in the system.
+ * It contains the position and a list of question IDs.
+ * The teacher class provides functions to get the list of questions that belong to the teacher, add a question belonging to the teacher to the database, delete a question belonging to the teacher from the database, and update a question belonging to the teacher in the database.
+ * It also supports grade modification and retrieval.
+ * The teacher class extends the User class.
+ */
+public class Teacher extends User {
+    private Position position;
+    /**
+     * Constructor for database utilities. Do NOT call this.
+     */
+    public Teacher() {
+<span class="fc" id="L23">        super();</span>
+<span class="fc" id="L24">    }</span>
+
+    public Position getPosition() {
+<span class="nc" id="L27">        return position;</span>
+    }
+    public void setPosition(Position position) {
+<span class="nc" id="L30">        this.position = position;</span>
+<span class="nc" id="L31">    }</span>
+
+    /**
+     * The intended constructor for Teacher.
+     * @param id The entity id recorded in the database.
+     * @param username The username of the teacher.
+     * @param password The password of the teacher.
+     * @param name The name of the teacher.
+     * @param gender The gender of the teacher.
+     * @param age The age of the teacher.
+     * @param department The department of the teacher.
+     * @param position The position of the teacher.
+     */
+    public Teacher(Long id, String username, String password, String name, Gender gender, Integer age, Department department, Position position) {
+<span class="fc" id="L45">        super(id, username, password, name, gender, age, department);</span>
+<span class="fc" id="L46">        this.position = position;</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Validates the teacher with the given parameters. Also checks repetition of usernames.
+     * @param id The entity id of the teacher recorded in the database.
+     * @param username The username of the teacher.
+     * @param password The password of the teacher.
+     * @param name The name of the teacher.
+     * @param age The age of the teacher.
+     * @param department The department of the teacher.
+     * @return A StringBuilder containing the error message or empty if no error.
+     */
+    public static StringBuilder validateWithMessage(Long id, String username, String password, String name, String age, Department department) {
+<span class="fc" id="L60">        StringBuilder msg = User.validateWithMessage(username, password, name, age, department);</span>
+<span class="fc" id="L61">        List&lt;Teacher&gt; usernameList = (new Database&lt;&gt;(Teacher.class)).queryByField(&quot;username&quot;, username);</span>
+<span class="pc bpc" id="L62" title="3 of 4 branches missed.">        if (!usernameList.isEmpty() &amp;&amp; !usernameList.getFirst().getId().equals(id)) msg.append(&quot;Duplicate username found! Please make sure that usernames are unique.&quot;);</span>
+<span class="fc" id="L63">        return msg;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

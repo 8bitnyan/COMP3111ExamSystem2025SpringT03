@@ -123,7 +123,7 @@ public class StudentManagementController {
      * Handles filtering when user clicks the "Filter" button.
      */
     @FXML
-    private void filterStudents() {
+    public void filterStudents() {
         String username = filterUsername.getText().trim();
         String name = filterName.getText().trim();
         String department = filterDepartment.getValue();
@@ -162,7 +162,7 @@ public class StudentManagementController {
      * Using functions provided in the database class
      */
     @FXML
-    private void addStudent() {
+    public void addStudent() {
         try {
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
@@ -195,7 +195,7 @@ public class StudentManagementController {
      * Updates an existing student selected in the table using form values.
      */
     @FXML
-    private void updateStudent() {
+    public void updateStudent() {
         Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();
         if (selectedStudent == null) {
             MsgSender.showMsg("Please select a student to update.");
@@ -251,7 +251,7 @@ public class StudentManagementController {
      * Deletes the selected student from the database.
      */
     @FXML
-    void deleteStudent() {
+    public void deleteStudent() {
         Student selectedStudent = studentTable.getSelectionModel().getSelectedItem();
         if (selectedStudent == null) {
             MsgSender.showMsg("Please select a student to delete.");

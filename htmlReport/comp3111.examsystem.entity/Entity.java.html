@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Entity.java</span></div><h1>Entity.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import comp3111.examsystem.tools.Database;
+
+/**
+ * The Entity class represents any entity in the database.
+ * It contains the entity id used for database queries and a boolean value indicating whether the entity is an active record.
+ * The entity id is a long integer.
+ * The isAble is a boolean value representing the status of the entity (true means active, false means inactive).
+ * The Entity class bridges the functionalities of the exam system with the database.
+ */
+public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
+
+<span class="fc" id="L14">    protected Long id = null;</span>
+<span class="fc" id="L15">    protected Boolean isAble = true;</span>
+
+    /**
+     * Gets the entity id recorded in the database.
+     * @return A Long type representing the entity id.
+     */
+    public Long getId() {
+<span class="fc" id="L22">        return id;</span>
+    }
+
+    /**
+     * Sets the entity id in the database. Should only be used internally in the database.
+     * @param id
+     */
+    public void setId(Long id) {
+<span class="fc" id="L30">        this.id = id;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Gets the status of the entity.
+     * @return true if active, false otherwise.
+     */
+    public Boolean getIsAble() {
+<span class="nc" id="L38">        return isAble;</span>
+    }
+
+    /**
+     * Constructor for database utilities. Do NOT call this.
+     */
+    public Entity() {
+<span class="fc" id="L45">        super();</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * The intended constructor for Entity.
+     * @param id The entity id.
+     */
+    public Entity(Long id) {
+<span class="fc" id="L53">        super();</span>
+<span class="fc" id="L54">        this.id = id;</span>
+<span class="fc" id="L55">        this.isAble = true;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Compares the id of this entity with another entity. Deprecated.
+     * @param o the other entity to be compared.
+     * @return -1 if this.id is smaller than o.id, 0 if equal, 1 otherwise.
+     */
+    public int compareTo(Entity o) {
+<span class="nc" id="L64">        return Long.compare(this.id, o.id);</span>
+    }
+
+    /**
+     * Checks whether a string contains any of ListItemSeparator, PropertySeparator, or NameValueSeparator. For protecting database representation.
+     * @param str The string to be checked.
+     * @return true if str contains any of these special strings, false otherwise.
+     */
+    public static Boolean containsSpecialString(String str) {
+<span class="nc bnc" id="L73" title="All 4 branches missed.">        return str.contains(Database.ListItemSeparator) || str.contains(Database.PropertySeparator)</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                || str.contains(Database.NameValueSeparator);</span>
+    }
+
+    /**
+     * Overrides Object.equals().
+     * Checks whether the two entity have the same id.
+     * @param other The other entity to be compared with.
+     * @return true if they have same id and are of Entity class, false otherwise.
+     */
+    @Override
+    public boolean equals(Object other) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (other instanceof Entity) {</span>
+            // Handle null IDs safely
+<span class="fc" id="L87">            Entity otherEntity = (Entity) other;</span>
+<span class="pc bpc" id="L88" title="1 of 4 branches missed.">            if (this.id == null || otherEntity.getId() == null) {</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                return this == other; // If either ID is null, only equal if same object</span>
+            }
+<span class="fc" id="L91">            return this.id.equals(otherEntity.getId());</span>
+        }
+<span class="fc" id="L93">        else return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

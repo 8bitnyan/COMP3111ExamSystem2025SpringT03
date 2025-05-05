@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import comp3111.examsystem.data.*;
+
+/**
+ * The User class represents a user in the system.
+ * A base class for Teacher and Student.
+ */
+public class User extends Person {
+    private String name;
+    private Gender gender;
+    private Integer age;
+    private Department department;
+
+    /**
+     * Constructor for database utilities. Do NOT call this.
+     */
+    public User() {
+<span class="fc" id="L19">        super();</span>
+<span class="fc" id="L20">    }</span>
+
+    /**
+     * The intended constructor for User.
+     * @param id The entity id of the user recorded in the database.
+     * @param username The username for login.
+     * @param password The password for login.
+     * @param name The name for display.
+     * @param gender The gender. Has Enum type Gender.
+     * @param age The age in integer.
+     * @param department The department user is in, has Enum type Department.
+     */
+    public User(Long id, String username, String password, String name, Gender gender, Integer age, Department department) {
+<span class="fc" id="L33">        super(id, username, password);</span>
+<span class="fc" id="L34">        this.name = name;</span>
+<span class="fc" id="L35">        this.gender = gender;</span>
+<span class="fc" id="L36">        this.age = age;</span>
+<span class="fc" id="L37">        this.department = department;</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Gets the name of the user.
+     * @return name string.
+     */
+    public String getName() {
+<span class="fc" id="L45">        return name;</span>
+    }
+
+    /**
+     * Sets the name of the user.
+     * @param name the new name.
+     */
+    public void setName(String name) {
+<span class="fc" id="L53">        this.name = name;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Gets the gender of the user.
+     * @return gender Enum.
+     */
+    public Gender getGender() {
+<span class="fc" id="L61">        return gender;</span>
+    }
+
+    /**
+     * Sets the gender of the user.
+     * @param gender the new gender.
+     */
+    public void setGender(Gender gender) {
+<span class="fc" id="L69">        this.gender = gender;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Sets the gender of the user, for reading data from database only.
+     * @param genderString the gender string read from database.
+     */
+    public void setGender(String genderString) {
+<span class="nc" id="L77">        this.gender = Gender.fromString(genderString);</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Gets the age of the user.
+     * @return age integer.
+     */
+    public Integer getAge() {
+<span class="fc" id="L85">        return age;</span>
+    }
+
+    /**
+     * Sets the age of the user.
+     * @param age the new age.
+     */
+    public void setAge(Integer age) {
+<span class="fc" id="L93">        this.age = age;</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Gets the department of the user.
+     * @return department Enum.
+     */
+    public Department getDepartment() {
+<span class="fc" id="L101">        return department;</span>
+    }
+
+    /**
+     * Sets the department of the user.
+     * @param department the new department.
+     */
+    public void setDepartment(Department department) {
+<span class="fc" id="L109">        this.department = department;</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Sets the department of the user, for reading data from database only.
+     * @param departmentString the department string read from database.
+     */
+    public void setDepartment(String departmentString) {
+<span class="nc" id="L117">        this.department = Department.fromString(departmentString);</span>
+<span class="nc" id="L118">    }</span>
+
+    // Utility functions
+
+    /**
+     * Validates a user.
+     * Checks input format.
+     * Does not check repetition of usernames.
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @param name The name of the user.
+     * @param age The age of the user.
+     * @param department The department of the user.
+     * @return A StringBuilder object containing the error messages for invalid input. If it is empty, then the user is valid.
+     */
+    public static StringBuilder validateWithMessage(String username, String password, String name, String age, Department department) {
+<span class="fc" id="L134">        StringBuilder msg = new StringBuilder();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (!username.matches(&quot;^[a-zA-Z0-9]{4,20}$&quot;)) msg.append(&quot;Invalid username! (Required: 4-20 characters, alphanumeric only, no space characters)\n\n&quot;);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (!password.matches(&quot;^[a-zA-Z0-9]{8,20}$&quot;)) msg.append(&quot;Invalid password! (Required: 8-20 characters, alphanumeric only, no space characters)\n\n&quot;);</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (!name.matches(&quot;^[A-Za-z]+( [A-Za-z]+)*$&quot;)) msg.append(&quot;Invalid name! (Required: English letters with 1 space character between each word, e.g. CHAN Tai Man)\n\n&quot;);</span>
+        try {
+<span class="pc bpc" id="L139" title="1 of 4 branches missed.">            if (Integer.parseInt(age) &lt; 1 || Integer.parseInt(age) &gt; 100)</span>
+<span class="fc" id="L140">                msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</span>
+<span class="fc" id="L141">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L142">            msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</span>
+<span class="fc" id="L143">        }</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        if (department == Department.ANY) msg.append(&quot;Invalid department! (Department cannot be \&quot;ANY\&quot;)\n\n&quot;);</span>
+<span class="fc" id="L145">        return msg;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentManagementControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentManagementControllerTest.java</span></div><h1>StudentManagementControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.entity.Student;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.collections.FXCollections;
+import javafx.scene.control.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+<span class="fc" id="L27">class StudentManagementControllerTest {</span>
+    @InjectMocks
+    StudentManagementController controller;
+
+    TableView&lt;Student&gt; studentTable;
+    TableColumn&lt;Student, String&gt; colName;
+    TableColumn&lt;Student, String&gt; colGender;
+    TableColumn&lt;Student, Integer&gt; colAge;
+    TableColumn&lt;Student, String&gt; colDepartment;
+    TableColumn&lt;Student, String&gt; colUsername;
+    TableColumn&lt;Student, String&gt; colPassword;
+    TextField filterUsername;
+    TextField filterName;
+    ComboBox&lt;String&gt; filterDepartment;
+    TextField tfUsername;
+    TextField tfName;
+    TextField tfPassword;
+    ComboBox&lt;Department&gt; cbDepartment;
+    TextField tfAge;
+    ComboBox&lt;Gender&gt; cbGender;
+
+    private MockedStatic&lt;MsgSender&gt; msgSenderMockedStatic;
+
+    FakeStudentDatabase studentDatabase;
+
+    static class FakeStudentDatabase extends Database&lt;Student&gt; {
+<span class="fc" id="L53">        List&lt;Student&gt; students = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L54">        public FakeStudentDatabase() { super(Student.class); }</span>
+<span class="fc" id="L55">        @Override public List&lt;Student&gt; getAllEnabled() { return new ArrayList&lt;&gt;(students); }</span>
+<span class="fc" id="L56">        @Override public void add(Student s) { students.add(s); }</span>
+<span class="fc" id="L57">        @Override public void delByKey(String key) { students.removeIf(s -&gt; String.valueOf(s.getId()).equals(key)); }</span>
+        @Override public List&lt;Student&gt; queryFuzzyByField(String fieldName, String fieldValue) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (&quot;username&quot;.equals(fieldName)) {</span>
+<span class="fc" id="L60">                List&lt;Student&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                for (Student s : students) {</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                    if (s.getUsername().contains(fieldValue)) result.add(s);</span>
+<span class="fc" id="L63">                }</span>
+<span class="fc" id="L64">                return result;</span>
+            }
+<span class="nc" id="L66">            return new ArrayList&lt;&gt;();</span>
+        }
+    }
+
+    @BeforeAll
+    static void initJfx() {
+<span class="fc" id="L72">        new JFXPanel();</span>
+<span class="fc" id="L73">        Platform.setImplicitExit(false);</span>
+<span class="fc" id="L74">    }</span>
+
+    @BeforeEach
+    void setup() {
+        // Patch MsgSender static methods
+<span class="fc" id="L79">        msgSenderMockedStatic = mockStatic(MsgSender.class);</span>
+<span class="fc" id="L80">        msgSenderMockedStatic.when(() -&gt; MsgSender.showMsg(anyString())).then(invocation -&gt; null);</span>
+<span class="fc" id="L81">        msgSenderMockedStatic.when(() -&gt; MsgSender.showConfirm(anyString(), anyString(), any())).then(invocation -&gt; {</span>
+<span class="fc" id="L82">            Runnable callback = invocation.getArgument(2);</span>
+<span class="fc" id="L83">            callback.run();</span>
+<span class="fc" id="L84">            return null;</span>
+        });
+        // Inject test double for Database&lt;Student&gt;
+<span class="fc" id="L87">        studentDatabase = new FakeStudentDatabase();</span>
+        try {
+<span class="fc" id="L89">            java.lang.reflect.Field dbField = StudentManagementController.class.getDeclaredField(&quot;studentDatabase&quot;);</span>
+<span class="fc" id="L90">            dbField.setAccessible(true);</span>
+<span class="fc" id="L91">            dbField.set(controller, studentDatabase);</span>
+<span class="nc" id="L92">        } catch (Exception e) {</span>
+<span class="nc" id="L93">            throw new RuntimeException(e);</span>
+<span class="fc" id="L94">        }</span>
+        // Create and inject real JavaFX controls
+<span class="fc" id="L96">        studentTable = new TableView&lt;&gt;();</span>
+<span class="fc" id="L97">        colName = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L98">        colGender = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L99">        colAge = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L100">        colDepartment = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L101">        colUsername = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L102">        colPassword = new TableColumn&lt;&gt;();</span>
+<span class="fc" id="L103">        filterUsername = new TextField();</span>
+<span class="fc" id="L104">        filterName = new TextField();</span>
+<span class="fc" id="L105">        filterDepartment = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L106">        tfUsername = new TextField();</span>
+<span class="fc" id="L107">        tfName = new TextField();</span>
+<span class="fc" id="L108">        tfPassword = new TextField();</span>
+<span class="fc" id="L109">        cbDepartment = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L110">        tfAge = new TextField();</span>
+<span class="fc" id="L111">        cbGender = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L112">        setField(controller, &quot;studentTable&quot;, studentTable);</span>
+<span class="fc" id="L113">        setField(controller, &quot;colName&quot;, colName);</span>
+<span class="fc" id="L114">        setField(controller, &quot;colGender&quot;, colGender);</span>
+<span class="fc" id="L115">        setField(controller, &quot;colAge&quot;, colAge);</span>
+<span class="fc" id="L116">        setField(controller, &quot;colDepartment&quot;, colDepartment);</span>
+<span class="fc" id="L117">        setField(controller, &quot;colUsername&quot;, colUsername);</span>
+<span class="fc" id="L118">        setField(controller, &quot;colPassword&quot;, colPassword);</span>
+<span class="fc" id="L119">        setField(controller, &quot;filterUsername&quot;, filterUsername);</span>
+<span class="fc" id="L120">        setField(controller, &quot;filterName&quot;, filterName);</span>
+<span class="fc" id="L121">        setField(controller, &quot;filterDepartment&quot;, filterDepartment);</span>
+<span class="fc" id="L122">        setField(controller, &quot;tfUsername&quot;, tfUsername);</span>
+<span class="fc" id="L123">        setField(controller, &quot;tfName&quot;, tfName);</span>
+<span class="fc" id="L124">        setField(controller, &quot;tfPassword&quot;, tfPassword);</span>
+<span class="fc" id="L125">        setField(controller, &quot;cbDepartment&quot;, cbDepartment);</span>
+<span class="fc" id="L126">        setField(controller, &quot;tfAge&quot;, tfAge);</span>
+<span class="fc" id="L127">        setField(controller, &quot;cbGender&quot;, cbGender);</span>
+<span class="fc" id="L128">        cbDepartment.getItems().addAll(Department.values());</span>
+<span class="fc" id="L129">        cbGender.getItems().addAll(Gender.values());</span>
+        // Call controller.initialize() to set up listeners and bindings
+<span class="fc" id="L131">        controller.initialize();</span>
+<span class="fc" id="L132">    }</span>
+
+    private void setField(Object target, String fieldName, Object value) {
+        try {
+<span class="fc" id="L136">            java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L137">            field.setAccessible(true);</span>
+<span class="fc" id="L138">            field.set(target, value);</span>
+<span class="nc" id="L139">        } catch (Exception e) {</span>
+<span class="nc" id="L140">            throw new RuntimeException(e);</span>
+<span class="fc" id="L141">        }</span>
+<span class="fc" id="L142">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (msgSenderMockedStatic != null) {</span>
+<span class="fc" id="L147">            msgSenderMockedStatic.close();</span>
+        }
+<span class="fc" id="L149">    }</span>
+
+    @Test
+    void testAddStudent_Success() {
+<span class="fc" id="L153">        tfUsername.setText(&quot;testuser&quot;);</span>
+<span class="fc" id="L154">        tfName.setText(&quot;Test User&quot;);</span>
+<span class="fc" id="L155">        tfPassword.setText(&quot;password123&quot;);</span>
+<span class="fc" id="L156">        cbDepartment.setValue(Department.CSE);</span>
+<span class="fc" id="L157">        cbGender.setValue(Gender.MALE);</span>
+<span class="fc" id="L158">        tfAge.setText(&quot;20&quot;);</span>
+<span class="fc" id="L159">        controller.addStudent();</span>
+<span class="fc" id="L160">        assertEquals(1, studentDatabase.students.size());</span>
+<span class="fc" id="L161">        verifyStaticMsg(&quot;Student added successfully!&quot;);</span>
+<span class="fc" id="L162">    }</span>
+
+    @Test
+    void testAddStudent_InvalidInput() {
+<span class="fc" id="L166">        tfUsername.setText(&quot;bad&quot;); // too short</span>
+<span class="fc" id="L167">        tfName.setText(&quot;Test User&quot;);</span>
+<span class="fc" id="L168">        tfPassword.setText(&quot;pass&quot;); // too short</span>
+<span class="fc" id="L169">        cbDepartment.setValue(Department.CSE);</span>
+<span class="fc" id="L170">        cbGender.setValue(Gender.MALE);</span>
+<span class="fc" id="L171">        tfAge.setText(&quot;200&quot;); // invalid age</span>
+<span class="fc" id="L172">        controller.addStudent();</span>
+<span class="fc" id="L173">        assertEquals(0, studentDatabase.students.size());</span>
+<span class="fc" id="L174">        verifyStaticMsgContains(&quot;Invalid&quot;);</span>
+<span class="fc" id="L175">    }</span>
+
+    @Test
+    void testAddStudent_MissingGender() {
+<span class="fc" id="L179">        tfUsername.setText(&quot;testuser&quot;);</span>
+<span class="fc" id="L180">        tfName.setText(&quot;Test User&quot;);</span>
+<span class="fc" id="L181">        tfPassword.setText(&quot;password123&quot;);</span>
+<span class="fc" id="L182">        cbDepartment.setValue(Department.CSE);</span>
+<span class="fc" id="L183">        cbGender.setValue(null);</span>
+<span class="fc" id="L184">        tfAge.setText(&quot;20&quot;);</span>
+<span class="fc" id="L185">        controller.addStudent();</span>
+<span class="fc" id="L186">        assertEquals(0, studentDatabase.students.size());</span>
+<span class="fc" id="L187">        verifyStaticMsg(&quot;Please select a gender.&quot;);</span>
+<span class="fc" id="L188">    }</span>
+
+    @Test
+    void testUpdateStudent_Success() {
+<span class="fc" id="L192">        Student student = new Student(1L, &quot;testuser&quot;, &quot;password123&quot;, &quot;Test User&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L193">        TableView.TableViewSelectionModel&lt;Student&gt; selectionModel = studentTable.getSelectionModel();</span>
+<span class="fc" id="L194">        studentDatabase.students.add(student);</span>
+<span class="fc" id="L195">        studentTable.getItems().add(student);</span>
+<span class="fc" id="L196">        selectionModel.select(student);</span>
+<span class="fc" id="L197">        studentTable.requestFocus();</span>
+<span class="fc" id="L198">        studentTable.getSelectionModel().select(0);</span>
+<span class="fc" id="L199">        tfUsername.setText(&quot;testuser2&quot;);</span>
+<span class="fc" id="L200">        tfName.setText(&quot;Test UserX&quot;);</span>
+<span class="fc" id="L201">        tfPassword.setText(&quot;password456&quot;);</span>
+<span class="fc" id="L202">        cbDepartment.setValue(Department.MATH);</span>
+<span class="fc" id="L203">        cbGender.setValue(Gender.FEMALE);</span>
+<span class="fc" id="L204">        tfAge.setText(&quot;22&quot;);</span>
+        // Debug print before update
+<span class="fc" id="L206">        System.out.println(&quot;Before update: &quot; + student);</span>
+<span class="fc" id="L207">        controller.updateStudent();</span>
+        // Debug print after update
+<span class="fc" id="L209">        System.out.println(&quot;After update: &quot; + student);</span>
+<span class="fc" id="L210">        Student updated = studentTable.getItems().get(0);</span>
+<span class="fc" id="L211">        System.out.println(&quot;From table: &quot; + updated);</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        System.out.println(&quot;student == updated: &quot; + (student == updated));</span>
+<span class="fc" id="L213">        System.out.println(&quot;student fields: username=&quot; + student.getUsername() + &quot;, name=&quot; + student.getName());</span>
+<span class="fc" id="L214">        System.out.println(&quot;updated fields: username=&quot; + updated.getUsername() + &quot;, name=&quot; + updated.getName());</span>
+<span class="fc" id="L215">        System.out.println(&quot;All students in table after update:&quot;);</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        for (Student st : studentTable.getItems()) {</span>
+<span class="fc" id="L217">            System.out.println(&quot;Student: username=&quot; + st.getUsername() + &quot;, name=&quot; + st.getName());</span>
+<span class="fc" id="L218">        }</span>
+<span class="fc" id="L219">        assertEquals(&quot;testuser2&quot;, updated.getUsername());</span>
+<span class="fc" id="L220">        assertEquals(&quot;Test UserX&quot;, updated.getName());</span>
+<span class="fc" id="L221">        assertEquals(&quot;password456&quot;, updated.getPassword());</span>
+<span class="fc" id="L222">        assertEquals(Department.MATH, updated.getDepartment());</span>
+<span class="fc" id="L223">        assertEquals(Gender.FEMALE, updated.getGender());</span>
+<span class="fc" id="L224">        assertEquals(22, updated.getAge());</span>
+<span class="fc" id="L225">        verifyStaticMsg(&quot;Student updated successfully!&quot;);</span>
+<span class="fc" id="L226">    }</span>
+
+    @Test
+    void testUpdateStudent_NoSelection() {
+<span class="fc" id="L230">        studentTable.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L231">        controller.updateStudent();</span>
+<span class="fc" id="L232">        verifyStaticMsg(&quot;Please select a student to update.&quot;);</span>
+<span class="fc" id="L233">    }</span>
+
+    @Test
+    void testDeleteStudent_Success() {
+<span class="fc" id="L237">        Student student = new Student(1L, &quot;testuser&quot;, &quot;password123&quot;, &quot;Test User&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L238">        studentDatabase.students.add(student);</span>
+<span class="fc" id="L239">        studentTable.getItems().add(student);</span>
+<span class="fc" id="L240">        studentTable.getSelectionModel().select(student);</span>
+<span class="fc" id="L241">        controller.deleteStudent();</span>
+<span class="fc" id="L242">        assertEquals(0, studentDatabase.students.size());</span>
+<span class="fc" id="L243">        verifyStaticMsg(&quot;Student deleted successfully.&quot;);</span>
+<span class="fc" id="L244">    }</span>
+
+    @Test
+    void testDeleteStudent_NoSelection() {
+<span class="fc" id="L248">        studentTable.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L249">        controller.deleteStudent();</span>
+<span class="fc" id="L250">        verifyStaticMsg(&quot;Please select a student to delete.&quot;);</span>
+<span class="fc" id="L251">    }</span>
+
+    @Test
+    void testFilterStudents_ByUsername() {
+<span class="fc" id="L255">        filterUsername.setText(&quot;testuser&quot;);</span>
+<span class="fc" id="L256">        filterName.setText(&quot;&quot;);</span>
+<span class="fc" id="L257">        filterDepartment.setValue(&quot;ANY&quot;);</span>
+<span class="fc" id="L258">        Student s = new Student(1L, &quot;testuser&quot;, &quot;password123&quot;, &quot;Test User&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L259">        studentDatabase.students.add(s);</span>
+<span class="fc" id="L260">        List&lt;Student&gt; filtered = List.of(s);</span>
+<span class="fc" id="L261">        controller.filterStudents();</span>
+<span class="fc" id="L262">        assertEquals(FXCollections.observableArrayList(filtered), studentTable.getItems());</span>
+<span class="fc" id="L263">    }</span>
+
+    // --- Helper methods for static MsgSender verification ---
+    private void verifyStaticMsg(String expected) {
+<span class="fc" id="L267">        msgSenderMockedStatic.verify(() -&gt; MsgSender.showMsg(eq(expected)));</span>
+<span class="fc" id="L268">    }</span>
+    private void verifyStaticMsgContains(String expectedSubstring) {
+<span class="fc" id="L270">        ArgumentCaptor&lt;String&gt; captor = ArgumentCaptor.forClass(String.class);</span>
+<span class="fc" id="L271">        msgSenderMockedStatic.verify(() -&gt; MsgSender.showMsg(captor.capture()));</span>
+<span class="fc" id="L272">        String actual = captor.getValue();</span>
+<span class="fc" id="L273">        assertTrue(actual.contains(expectedSubstring), &quot;Expected message to contain: &quot; + expectedSubstring);</span>
+<span class="fc" id="L274">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

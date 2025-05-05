@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MsgSender.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.tools</a> &gt; <span class="el_source">MsgSender.java</span></div><h1>MsgSender.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.tools;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+
+/**
+ * The MsgSender class is a helper class for displaying javafx alert messages.
+ * It supports displaying information popups and confirmation popups.
+ */
+<span class="nc" id="L10">public class MsgSender {</span>
+    /**
+     * Displays a popup message in the UI.
+     * @param msg The message string to be displayed.
+     */
+    static public void showMsg(String msg) {
+<span class="nc" id="L16">        Alert alert = new Alert(Alert.AlertType.INFORMATION);</span>
+<span class="nc" id="L17">        alert.titleProperty().set(&quot;Hint&quot;);</span>
+<span class="nc" id="L18">        alert.headerTextProperty().set(msg);</span>
+<span class="nc" id="L19">        alert.showAndWait();</span>
+<span class="nc" id="L20">    }</span>
+
+    /**
+     * Displays a confirmation message in the UI. If the user confirms the action, callback is executed.
+     * @param title The title string of the confirmation message.
+     * @param msg The message string to be displayed.
+     * @param callback The function to be executed if the user confirms.
+     */
+    static public void showConfirm(String title, String msg, Runnable callback) {
+<span class="fc" id="L29">        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);</span>
+<span class="fc" id="L30">        alert.setTitle(title);</span>
+<span class="fc" id="L31">        alert.setHeaderText(msg);</span>
+<span class="fc" id="L32">        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);</span>
+
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (result == ButtonType.OK) {</span>
+<span class="fc" id="L35">            callback.run();</span>
+        }
+<span class="fc" id="L37">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TestRunner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem</a> &gt; <span class="el_source">TestRunner.java</span></div><h1>TestRunner.java</h1><pre class="source lang-java linenums">package comp3111.examsystem;
+
+import org.junit.BeforeClass;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
+import org.junit.runners.Suite;
+import comp3111.examsystem.TestUtils;
+
+/**
+ * Test runner class for the exam system.
+ * This class sets up the JavaFX environment for headless testing
+ * and runs all the test classes in the project.
+ * 
+ * Note: For headless JavaFX testing to work properly, you need to add the following dependency to pom.xml:
+ * 
+ * &lt;dependency&gt;
+ *     &lt;groupId&gt;org.testfx&lt;/groupId&gt;
+ *     &lt;artifactId&gt;openjfx-monocle&lt;/artifactId&gt;
+ *     &lt;version&gt;jdk-12.0.1+2&lt;/version&gt; &lt;!-- Use this version for Java 11+ --&gt;
+ *     &lt;scope&gt;test&lt;/scope&gt;
+ * &lt;/dependency&gt;
+ */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    // Controllers
+    // comp3111.examsystem.controller.TeacherLoginControllerTest.class,
+    // comp3111.examsystem.controller.ManagerLoginControllerTest.class,
+    comp3111.examsystem.controller.StudentQuizControllerTest.class,
+    
+    // Entities
+    // comp3111.examsystem.entity.StudentTest.class,
+    
+    // Tools &amp; Data
+    // comp3111.examsystem.tools.DatabaseTest.class,
+    // comp3111.examsystem.tools.FileUtilTest.class,
+    // comp3111.examsystem.data.DepartmentTest.class
+})
+<span class="nc" id="L40">public class TestRunner {</span>
+    
+    @BeforeClass
+    public static void setupClass() throws Exception {
+        // Set headless mode properties first
+<span class="nc" id="L45">        System.setProperty(&quot;java.awt.headless&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L46">        System.setProperty(&quot;javafx.headless&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L47">        System.setProperty(&quot;testfx.headless&quot;, &quot;true&quot;);</span>
+<span class="nc" id="L48">        System.setProperty(&quot;testfx.robot&quot;, &quot;glass&quot;);</span>
+<span class="nc" id="L49">        System.setProperty(&quot;glass.platform&quot;, &quot;Monocle&quot;);</span>
+<span class="nc" id="L50">        System.setProperty(&quot;monocle.platform&quot;, &quot;Headless&quot;);</span>
+<span class="nc" id="L51">        System.setProperty(&quot;prism.order&quot;, &quot;sw&quot;);</span>
+<span class="nc" id="L52">        System.setProperty(&quot;prism.text&quot;, &quot;t2k&quot;);</span>
+        
+        // Disable hardware acceleration and enable software rendering
+<span class="nc" id="L55">        System.setProperty(&quot;javafx.animation.fullspeed&quot;, &quot;false&quot;);</span>
+<span class="nc" id="L56">        System.setProperty(&quot;quantum.multithreaded&quot;, &quot;false&quot;);</span>
+        
+        // Check if we have the necessary classes
+        try {
+<span class="nc" id="L60">            Class.forName(&quot;com.sun.glass.ui.monocle.MonoclePlatformFactory&quot;);</span>
+<span class="nc" id="L61">            System.out.println(&quot;Monocle platform is available for testing&quot;);</span>
+<span class="nc" id="L62">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L63">            System.out.println(&quot;WARNING: Monocle platform not found. Make sure you have the openjfx-monocle dependency in your pom.xml&quot;);</span>
+<span class="nc" id="L64">            System.out.println(&quot;Tests requiring JavaFX may fail. Add this dependency to your pom.xml:&quot;);</span>
+<span class="nc" id="L65">            System.out.println(&quot;&lt;dependency&gt;&quot;);</span>
+<span class="nc" id="L66">            System.out.println(&quot;    &lt;groupId&gt;org.testfx&lt;/groupId&gt;&quot;);</span>
+<span class="nc" id="L67">            System.out.println(&quot;    &lt;artifactId&gt;openjfx-monocle&lt;/artifactId&gt;&quot;);</span>
+<span class="nc" id="L68">            System.out.println(&quot;    &lt;version&gt;jdk-12.0.1+2&lt;/version&gt;&quot;);</span>
+<span class="nc" id="L69">            System.out.println(&quot;    &lt;scope&gt;test&lt;/scope&gt;&quot;);</span>
+<span class="nc" id="L70">            System.out.println(&quot;&lt;/dependency&gt;&quot;);</span>
+<span class="nc" id="L71">        }</span>
+        
+        // Initialize JavaFX toolkit
+<span class="nc" id="L74">        TestUtils.setupJavaFX();</span>
+<span class="nc" id="L75">    }</span>
+    
+    /**
+     * Main method to run the tests.
+     * @param args Command line arguments (not used)
+     */
+    public static void main(String[] args) {
+<span class="nc" id="L82">        Result result = JUnitCore.runClasses(TestRunner.class);</span>
+        
+<span class="nc" id="L84">        System.out.println(&quot;========== TEST REPORT ==========&quot;);</span>
+<span class="nc" id="L85">        System.out.println(&quot;Total tests run: &quot; + result.getRunCount());</span>
+<span class="nc" id="L86">        System.out.println(&quot;Tests passed: &quot; + (result.getRunCount() - result.getFailureCount()));</span>
+<span class="nc" id="L87">        System.out.println(&quot;Tests failed: &quot; + result.getFailureCount());</span>
+<span class="nc" id="L88">        System.out.println(&quot;Run time: &quot; + result.getRunTime() + &quot;ms&quot;);</span>
+        
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (!result.wasSuccessful()) {</span>
+<span class="nc" id="L91">            System.out.println(&quot;\nFailed tests:&quot;);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            for (Failure failure : result.getFailures()) {</span>
+<span class="nc" id="L93">                System.out.println(&quot;- &quot; + failure.toString());</span>
+<span class="nc" id="L94">            }</span>
+        }
+        
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        System.out.println(&quot;\nTest &quot; + (result.wasSuccessful() ? &quot;SUCCESSFUL&quot; : &quot;FAILED&quot;));</span>
+<span class="nc" id="L98">        System.out.println(&quot;================================&quot;);</span>
+        
+<span class="nc" id="L100">        System.out.println(&quot;\nCoverage reports can be found in target/site/jacoco/index.html after running 'mvn test'.&quot;);</span>
+        
+        // Exit with appropriate status code
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        System.exit(result.wasSuccessful() ? 0 : 1);</span>
+<span class="nc" id="L104">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

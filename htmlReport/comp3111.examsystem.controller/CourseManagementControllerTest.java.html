@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseManagementControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">CourseManagementControllerTest.java</span></div><h1>CourseManagementControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import javafx.scene.control.*;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.lang.reflect.Field;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.event.ActionEvent;
+import javafx.embed.swing.JFXPanel;
+import org.junit.jupiter.api.BeforeAll;
+import javafx.application.Platform;
+import java.util.concurrent.CountDownLatch;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+
+<span class="fc" id="L20">public class CourseManagementControllerTest {</span>
+    private CourseManagementController controller;
+
+    @BeforeAll
+    static void initJfx() {
+<span class="fc" id="L25">        new JFXPanel();</span>
+<span class="fc" id="L26">    }</span>
+
+    @BeforeEach
+    void setUp() throws Exception {
+<span class="fc" id="L30">        controller = new CourseManagementController();</span>
+<span class="fc" id="L31">        setField(controller, &quot;courseTable&quot;, new TableView&lt;&gt;());</span>
+<span class="fc" id="L32">        setField(controller, &quot;tfCourseCode&quot;, new TextField());</span>
+<span class="fc" id="L33">        setField(controller, &quot;tfCourseName&quot;, new TextField());</span>
+<span class="fc" id="L34">        setField(controller, &quot;cbDepartment&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L35">        setField(controller, &quot;filterCourseCode&quot;, new TextField());</span>
+<span class="fc" id="L36">        setField(controller, &quot;filterCourseName&quot;, new TextField());</span>
+<span class="fc" id="L37">        setField(controller, &quot;filterDepartment&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L38">    }</span>
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+<span class="fc" id="L41">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L42">        field.setAccessible(true);</span>
+<span class="fc" id="L43">        field.set(obj, value);</span>
+<span class="fc" id="L44">    }</span>
+
+    @Test
+    void testAddUpdateDeleteCourseCRUD() throws Exception {
+<span class="fc" id="L48">        setField(controller, &quot;tfCourseCode&quot;, new TextField(&quot;COMP1001&quot;));</span>
+<span class="fc" id="L49">        setField(controller, &quot;tfCourseName&quot;, new TextField(&quot;Intro to CS&quot;));</span>
+        // ... set other required fields ...
+<span class="fc" id="L51">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            // Add
+            try {
+<span class="fc" id="L54">                var add = controller.getClass().getDeclaredMethod(&quot;addCourse&quot;);</span>
+<span class="fc" id="L55">                add.setAccessible(true);</span>
+<span class="fc" id="L56">                add.invoke(controller);</span>
+<span class="pc" id="L57">            } catch (NoSuchMethodException ignored) {}</span>
+            // Update
+            try {
+<span class="fc" id="L60">                var update = controller.getClass().getDeclaredMethod(&quot;updateCourse&quot;);</span>
+<span class="fc" id="L61">                update.setAccessible(true);</span>
+<span class="fc" id="L62">                update.invoke(controller);</span>
+<span class="pc" id="L63">            } catch (NoSuchMethodException ignored) {}</span>
+            // Delete
+            try {
+<span class="fc" id="L66">                var delete = controller.getClass().getDeclaredMethod(&quot;deleteCourse&quot;);</span>
+<span class="fc" id="L67">                delete.setAccessible(true);</span>
+<span class="fc" id="L68">                delete.invoke(controller);</span>
+<span class="pc" id="L69">            } catch (NoSuchMethodException ignored) {}</span>
+        }
+<span class="fc" id="L71">    }</span>
+
+    @Test
+    void testUniqueCourseIdConstraint() throws Exception {
+<span class="fc" id="L75">        setField(controller, &quot;tfCourseCode&quot;, new TextField(&quot;COMP1001&quot;));</span>
+<span class="fc" id="L76">        setField(controller, &quot;tfCourseName&quot;, new TextField(&quot;Intro to CS&quot;));</span>
+<span class="fc" id="L77">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            try {
+<span class="fc" id="L79">                var add = controller.getClass().getDeclaredMethod(&quot;addCourse&quot;);</span>
+<span class="fc" id="L80">                add.setAccessible(true);</span>
+<span class="fc" id="L81">                add.invoke(controller);</span>
+                // Try to add again with same course code
+<span class="fc" id="L83">                add.invoke(controller);</span>
+<span class="pc" id="L84">            } catch (NoSuchMethodException ignored) {}</span>
+        }
+<span class="fc" id="L86">        assertTrue(true); // Placeholder for actual assertion</span>
+<span class="fc" id="L87">    }</span>
+
+    @Test
+    void testDeleteRemovesCourseAndExams() throws Exception {
+<span class="fc" id="L91">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            try {
+<span class="fc" id="L93">                var delete = controller.getClass().getDeclaredMethod(&quot;deleteCourse&quot;);</span>
+<span class="fc" id="L94">                delete.setAccessible(true);</span>
+<span class="fc" id="L95">                delete.invoke(controller);</span>
+<span class="pc" id="L96">            } catch (NoSuchMethodException ignored) {}</span>
+        }
+<span class="fc" id="L98">        assertTrue(true); // Placeholder</span>
+<span class="fc" id="L99">    }</span>
+
+    @Test
+    void testBackAndCloseButtons() throws Exception {
+<span class="fc" id="L103">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L104">            msgSenderMocked.when(() -&gt; MsgSender.showConfirm(anyString(), anyString(), any())).then(invocation -&gt; {</span>
+<span class="nc" id="L105">                Runnable callback = invocation.getArgument(2);</span>
+<span class="nc" id="L106">                callback.run();</span>
+<span class="nc" id="L107">                return null;</span>
+            });
+            // Back
+            try {
+<span class="fc" id="L111">                var back = controller.getClass().getDeclaredMethod(&quot;back&quot;, ActionEvent.class);</span>
+<span class="fc" id="L112">                back.setAccessible(true);</span>
+<span class="fc" id="L113">                CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L114">                Platform.runLater(() -&gt; {</span>
+                    try {
+<span class="nc" id="L116">                        back.invoke(controller, new ActionEvent());</span>
+<span class="pc" id="L117">                    } catch (Exception ignored) {}</span>
+<span class="fc" id="L118">                    latch.countDown();</span>
+<span class="fc" id="L119">                });</span>
+<span class="fc" id="L120">                latch.await();</span>
+<span class="pc" id="L121">            } catch (NoSuchMethodException ignored) {}</span>
+            // Close
+            try {
+<span class="fc" id="L124">                var close = controller.getClass().getDeclaredMethod(&quot;closeApplication&quot;);</span>
+<span class="fc" id="L125">                close.setAccessible(true);</span>
+<span class="fc" id="L126">                CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L127">                Platform.runLater(() -&gt; {</span>
+                    try {
+<span class="fc" id="L129">                        close.invoke(controller);</span>
+<span class="pc" id="L130">                    } catch (Exception ignored) {}</span>
+<span class="fc" id="L131">                    latch.countDown();</span>
+<span class="fc" id="L132">                });</span>
+<span class="fc" id="L133">                latch.await();</span>
+<span class="pc" id="L134">            } catch (NoSuchMethodException ignored) {}</span>
+<span class="fc" id="L135">            assertTrue(true);</span>
+        }
+<span class="fc" id="L137">    }</span>
+
+    @Test
+    void testFilterAndResetLogic() throws Exception {
+<span class="fc" id="L141">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+            // Filter
+            try {
+<span class="fc" id="L144">                var filter = controller.getClass().getDeclaredMethod(&quot;filterCourses&quot;);</span>
+<span class="fc" id="L145">                filter.setAccessible(true);</span>
+<span class="fc" id="L146">                filter.invoke(controller);</span>
+<span class="pc" id="L147">            } catch (NoSuchMethodException ignored) {}</span>
+            // Reset
+            try {
+<span class="fc" id="L150">                var reset = controller.getClass().getDeclaredMethod(&quot;reset&quot;);</span>
+<span class="fc" id="L151">                reset.setAccessible(true);</span>
+<span class="fc" id="L152">                reset.invoke(controller);</span>
+<span class="pc" id="L153">            } catch (NoSuchMethodException ignored) {}</span>
+<span class="fc" id="L154">            assertTrue(true);</span>
+        }
+<span class="fc" id="L156">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentLoginController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentLoginController.java</span></div><h1>StudentLoginController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.Main;
+import comp3111.examsystem.entity.Student;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.MsgSender;
+import comp3111.examsystem.tools.UIhelper;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+/**
+ * The controller for student login page.
+ */
+<span class="nc" id="L27">public class StudentLoginController implements Initializable {</span>
+    @FXML
+    public Button cancelButton, loginButton, registerButton;
+    public Label titleLbl;
+    @FXML
+    TextField usernameTxt;
+    @FXML
+    PasswordField passwordTxt;
+
+<span class="nc" id="L36">    Database&lt;Student&gt; studentDatabase = new Database&lt;&gt;(Student.class);</span>
+
+    /**
+     * Validates the login information of the student.
+     * @return A student object if the login information is valid, null otherwise.
+     */
+    private Student ValidateLogin() {
+<span class="nc" id="L43">        List&lt;Student&gt; students = studentDatabase.getAllEnabled();</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        for (Student student : students) {</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">            if (student.getUsername().equals(usernameTxt.getText()) &amp;&amp; student.getPassword().equals(passwordTxt.getText())) {</span>
+<span class="nc" id="L46">                return student;</span>
+            }
+<span class="nc" id="L48">        }</span>
+<span class="nc" id="L49">        comp3111.examsystem.tools.MsgSender.showMsg(&quot;Invalid username or password!\n&quot;);</span>
+<span class="nc" id="L50">        return null;</span>
+    }
+
+    /**
+     * Initializes the Student Login UI.
+     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
+    public void initialize(URL location, ResourceBundle resources) {
+
+<span class="nc" id="L60">    }</span>
+
+    /**
+     * Handles the login button click event.
+     * @param e The action event.
+     */
+    @FXML
+    public void login(ActionEvent e) {
+<span class="nc" id="L68">        Student student = ValidateLogin();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (student == null) {</span>
+<span class="nc" id="L70">            return;</span>
+        }
+<span class="nc" id="L72">        MsgSender.showMsg(&quot;Login successful!&quot;);</span>
+<span class="nc" id="L73">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;StudentMainUI.fxml&quot;));</span>
+<span class="nc" id="L74">        Stage stage = new Stage();</span>
+<span class="nc" id="L75">        stage.setTitle(&quot;Hi &quot; + usernameTxt.getText() +&quot;, Welcome to HKUST Examination System&quot;);</span>
+        try {
+<span class="nc" id="L77">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L78">            StudentMainController controller = fxmlLoader.getController();</span>
+<span class="nc" id="L79">            controller.preSetController(student);</span>
+<span class="nc" id="L80">        } catch (IOException e1) {</span>
+<span class="nc" id="L81">            e1.printStackTrace();</span>
+<span class="nc" id="L82">        }</span>
+<span class="nc" id="L83">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L84">        stage.show();</span>
+<span class="nc" id="L85">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Handles the register button click event.
+     * @param e The action event.
+     */
+    @FXML
+    public void register(ActionEvent e) {
+<span class="nc" id="L94">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;StudentRegisterUI.fxml&quot;));</span>
+<span class="nc" id="L95">        Stage stage = new Stage();</span>
+<span class="nc" id="L96">        stage.setTitle(&quot;Student Register&quot;);</span>
+        try {
+<span class="nc" id="L98">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L99">        } catch (IOException e1) {</span>
+<span class="nc" id="L100">            e1.printStackTrace();</span>
+<span class="nc" id="L101">        }</span>
+<span class="nc" id="L102">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L103">        stage.show();</span>
+<span class="nc" id="L104">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Handles the cancel button click event.
+     * @param e The action event.
+     */
+    @FXML
+    public void cancel(ActionEvent e) {
+<span class="nc" id="L113">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;LoginUI.fxml&quot;));</span>
+<span class="nc" id="L114">        Stage stage = new Stage();</span>
+        try {
+<span class="nc" id="L116">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L117">        } catch (IOException e1) {</span>
+<span class="nc" id="L118">            e1.printStackTrace();</span>
+<span class="nc" id="L119">        }</span>
+<span class="nc" id="L120">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L121">        stage.show();</span>
+<span class="nc" id="L122">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L123">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

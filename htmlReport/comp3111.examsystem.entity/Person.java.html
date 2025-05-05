@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Person.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Person.java</span></div><h1>Person.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+/**
+ * The Person class represents a person in the system.
+ * It contains the username and password of the person.
+ * The username is a string of English letters and numbers.
+ * The password is a string of English letters and numbers.
+ */
+public class Person extends Entity {
+    private String username;
+    private String password;
+
+    /**
+     * Constructor for database utilities. Do NOT call this.
+     */
+    public Person() {
+<span class="fc" id="L17">        super();</span>
+<span class="fc" id="L18">    }</span>
+
+    /**
+     * The intended constructor for Person.
+     * @param id The entity id of the person recorded in the database.
+     * @param username The username of the person.
+     * @param password The password of the person.
+     */
+    public Person(Long id, String username, String password) {
+<span class="fc" id="L27">        super(id);</span>
+<span class="fc" id="L28">        this.username = username;</span>
+<span class="fc" id="L29">        this.password = password;</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Gets the username of the person.
+     * @return A string representing the username.
+     */
+    public String getUsername() {
+<span class="fc" id="L37">        return username;</span>
+    }
+
+    /**
+     * Sets the username of the person.
+     * @param username A string representing the username.
+     */
+    public void setUsername(String username) {
+<span class="fc" id="L45">        this.username = username;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Gets the password of the person.
+     * @return A string representing the password.
+     */
+    public String getPassword() {
+<span class="fc" id="L53">        return password;</span>
+    }
+
+    /**
+     * Sets the password of the person.
+     * @param password A string representing the password.
+     */
+    public void setPassword(String password) {
+<span class="fc" id="L61">        this.password = password;</span>
+<span class="fc" id="L62">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherExamMgmtController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherExamMgmtController.java</span></div><h1>TeacherExamMgmtController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.Main;
+import comp3111.examsystem.entity.*;
+import comp3111.examsystem.tools.UIhelper;
+import comp3111.examsystem.tools.MsgSender;
+import comp3111.examsystem.tools.Database;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * The controller for teacher exam management page.
+ */
+<span class="fc" id="L28">public class TeacherExamMgmtController implements Initializable {</span>
+    private Teacher teacher;
+    private Exam selectedExam;
+<span class="fc" id="L31">    private boolean editMode = false;</span>
+    
+    // ObservableList for the selected questions in the current exam
+<span class="fc" id="L34">    private ObservableList&lt;Question&gt; selectedQuestions = FXCollections.observableArrayList();</span>
+    
+    @FXML private VBox mainbox;
+
+    // Filter fields
+    @FXML private TextField filterQuestionTxt;
+    @FXML private TextField filterScoreTxt;
+    @FXML private ComboBox&lt;String&gt; filterTypeCmb;
+
+    @FXML private TextField filterExamNameTxt;
+    @FXML private TextField filterCourseIdTxt;
+    @FXML private ComboBox&lt;String&gt; filterStatusCmb;
+
+    // Tables
+    @FXML private TableView&lt;Exam&gt; examsTable;
+    @FXML private TableColumn&lt;Exam, String&gt; colExamName;
+    @FXML private TableColumn&lt;Exam, String&gt; colCourseId;
+    @FXML private TableColumn&lt;Exam, Integer&gt; colDuration;
+    @FXML private TableColumn&lt;Exam, String&gt; colPublished;
+    @FXML private TableColumn&lt;Exam, Integer&gt; colQuestionCount;
+
+    @FXML private TableView&lt;Question&gt; selectedQuestionsTable;
+    @FXML private TableColumn&lt;Question, String&gt; colSelectedQuestion;
+    @FXML private TableColumn&lt;Question, String&gt; colSelectedType;
+    @FXML private TableColumn&lt;Question, Integer&gt; colSelectedScore;
+
+    @FXML private TableView&lt;Question&gt; questionsTable;
+    @FXML private TableColumn&lt;Question, String&gt; colQuestion;
+    @FXML private TableColumn&lt;Question, String&gt; colType;
+    @FXML private TableColumn&lt;Question, Integer&gt; colScore;
+
+    // Form fields
+    @FXML private Label formHeaderLabel;
+    @FXML private TextField examNameTxt;
+    @FXML private TextField courseIdTxt;
+    @FXML private TextField durationTxt;
+    @FXML private CheckBox publishedChk;
+    @FXML private Label totalScoreLabel;
+
+    // Buttons
+    @FXML private Button addExamBtn;
+    @FXML private Button editExamBtn;
+    @FXML private Button updateExamBtn;
+    @FXML private Button deleteExamBtn;
+    @FXML private Button addToExamBtn;
+    @FXML private Button removeSelectedQuestionBtn;
+    @FXML private Button clearSelectedQuestionsBtn;
+
+    // Main entity collections
+<span class="fc" id="L83">    private ObservableList&lt;Exam&gt; allExams = FXCollections.observableArrayList();</span>
+<span class="fc" id="L84">    private ObservableList&lt;Question&gt; availableQuestions = FXCollections.observableArrayList();</span>
+    
+    // Database reference for exams
+    private Database&lt;Exam&gt; examDB;
+
+    /**
+     * Initializes the teacher exam management page UI.
+     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialize filter ComboBoxes
+<span class="nc" id="L97">        filterTypeCmb.setItems(FXCollections.observableArrayList(&quot;Any&quot;, &quot;MCQ&quot;, &quot;Short Answer&quot;));</span>
+<span class="nc" id="L98">        filterTypeCmb.setValue(&quot;Any&quot;);</span>
+        
+<span class="nc" id="L100">        filterStatusCmb.setItems(FXCollections.observableArrayList(&quot;Any&quot;, &quot;Published&quot;, &quot;Unpublished&quot;));</span>
+<span class="nc" id="L101">        filterStatusCmb.setValue(&quot;Any&quot;);</span>
+
+        // Configure table columns
+<span class="nc" id="L104">        colExamName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;name&quot;));</span>
+<span class="nc" id="L105">        colCourseId.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseCode&quot;));</span>
+<span class="nc" id="L106">        colDuration.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;duration&quot;));</span>
+<span class="nc" id="L107">        colPublished.setCellValueFactory(cellData -&gt; {</span>
+<span class="nc" id="L108">            Integer isPublished = cellData.getValue().getIsPublishedInt();</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">            String displayText = isPublished != null &amp;&amp; isPublished &gt; 0 ? &quot;Yes&quot; : &quot;No&quot;;</span>
+<span class="nc" id="L110">            return new ReadOnlyStringWrapper(displayText);</span>
+        });
+<span class="nc" id="L112">        colQuestionCount.setCellValueFactory(cellData -&gt; </span>
+<span class="nc" id="L113">            new javafx.beans.property.SimpleObjectProperty&lt;&gt;(cellData.getValue().getQuestionCount()));</span>
+
+        // Configure selected questions table columns
+<span class="nc" id="L116">        colSelectedQuestion.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;questionText&quot;));</span>
+<span class="nc" id="L117">        colSelectedType.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;type&quot;));</span>
+<span class="nc" id="L118">        colSelectedScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
+
+        // Configure available questions table columns
+<span class="nc" id="L121">        colQuestion.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;questionText&quot;));</span>
+<span class="nc" id="L122">        colType.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;type&quot;));</span>
+<span class="nc" id="L123">        colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
+
+        // Set up exam selection handler
+<span class="nc" id="L126">        examsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -&gt; {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            if (editMode) {</span>
+                // Don't change selection during edit mode
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                if (oldSelection != null) {</span>
+<span class="nc" id="L130">                    Platform.runLater(() -&gt; examsTable.getSelectionModel().select(oldSelection));</span>
+                }
+<span class="nc" id="L132">                return;</span>
+            }
+            
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (newSelection != null) {</span>
+<span class="nc" id="L136">                selectedExam = newSelection;</span>
+<span class="nc" id="L137">                loadExamDetails(newSelection);</span>
+                
+                // Enable/disable buttons based on publish status
+<span class="nc bnc" id="L140" title="All 4 branches missed.">                boolean isPublished = newSelection.getIsPublishedInt() != null &amp;&amp; newSelection.getIsPublishedInt() &gt; 0;</span>
+<span class="nc" id="L141">                editExamBtn.setDisable(isPublished);</span>
+<span class="nc" id="L142">                updateExamBtn.setDisable(true); // Initially disable until Edit is clicked</span>
+<span class="nc" id="L143">                deleteExamBtn.setDisable(isPublished);</span>
+                
+                // Also disable add/remove question buttons if published
+<span class="nc" id="L146">                addToExamBtn.setDisable(isPublished);</span>
+<span class="nc" id="L147">                removeSelectedQuestionBtn.setDisable(isPublished);</span>
+<span class="nc" id="L148">                clearSelectedQuestionsBtn.setDisable(isPublished);</span>
+<span class="nc" id="L149">            } else {</span>
+<span class="nc" id="L150">                selectedExam = null;</span>
+<span class="nc" id="L151">                clearForm();</span>
+                
+                // Disable buttons that require selection
+<span class="nc" id="L154">                editExamBtn.setDisable(true);</span>
+<span class="nc" id="L155">                updateExamBtn.setDisable(true);</span>
+<span class="nc" id="L156">                deleteExamBtn.setDisable(true);</span>
+            }
+<span class="nc" id="L158">        });</span>
+
+        // Set selected questions to display in the middle table
+<span class="nc" id="L161">        selectedQuestionsTable.setItems(selectedQuestions);</span>
+
+        //
+<span class="nc" id="L164">        questionsTable.setItems(availableQuestions);</span>
+        
+        // Add listener to update total score when questions change
+<span class="nc" id="L167">        selectedQuestions.addListener((javafx.collections.ListChangeListener.Change&lt;? extends Question&gt; c) -&gt; {</span>
+<span class="nc" id="L168">            updateTotalScore();</span>
+<span class="nc" id="L169">        });</span>
+        
+        // Initialize UI state
+<span class="nc" id="L172">        setFormEditable(false);</span>
+<span class="nc" id="L173">        clearForm();</span>
+        
+        // Set initial button states
+<span class="nc" id="L176">        editExamBtn.setDisable(true);</span>
+<span class="nc" id="L177">        updateExamBtn.setDisable(true);</span>
+<span class="nc" id="L178">        deleteExamBtn.setDisable(true);</span>
+        
+        // Make Add Exam button more prominent
+<span class="nc" id="L181">        addExamBtn.setStyle(&quot;-fx-background-color: #4CAF50; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 1);&quot;);</span>
+<span class="nc" id="L182">        addExamBtn.setTooltip(new Tooltip(&quot;Click here to create a new exam&quot;));</span>
+        
+        // Add tooltips to other buttons
+<span class="nc" id="L185">        editExamBtn.setTooltip(new Tooltip(&quot;Edit the selected exam&quot;));</span>
+<span class="nc" id="L186">        updateExamBtn.setTooltip(new Tooltip(&quot;Save changes to the exam&quot;));</span>
+        
+        // Initialize database reference
+<span class="nc" id="L189">        examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Sets the teacher object and initializes the UI.
+     * @param teacher The teacher object that is operating the page.
+     */
+    public void presetController(Teacher teacher) {
+<span class="nc" id="L197">        this.teacher = teacher;</span>
+<span class="nc" id="L198">        handleRefresh();</span>
+<span class="nc" id="L199">    }</span>
+
+    /**
+     * Updates the total score display based on selected questions
+     */
+    private void updateTotalScore() {
+<span class="fc" id="L205">        int total = selectedQuestions.stream()</span>
+<span class="pc bnc" id="L206" title="All 2 branches missed.">                .mapToInt(q -&gt; q.getScore() != null ? q.getScore() : 0)</span>
+<span class="fc" id="L207">                .sum();</span>
+<span class="fc" id="L208">        totalScoreLabel.setText(String.valueOf(total));</span>
+<span class="fc" id="L209">    }</span>
+
+    /**
+     * Sets the form fields to be editable or read-only
+     * @param editable True to make editable, false for read-only
+     */
+    private void setFormEditable(boolean editable) {
+<span class="fc" id="L216">        examNameTxt.setEditable(editable);</span>
+<span class="fc" id="L217">        courseIdTxt.setEditable(editable);</span>
+<span class="fc" id="L218">        durationTxt.setEditable(editable);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        publishedChk.setDisable(!editable);</span>
+        
+        // Set visual cues for form state
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        String style = editable ? &quot;&quot; : &quot;-fx-background-color: #f5f5f5;&quot;;</span>
+<span class="fc" id="L223">        examNameTxt.setStyle(style);</span>
+<span class="fc" id="L224">        courseIdTxt.setStyle(style);</span>
+<span class="fc" id="L225">        durationTxt.setStyle(style);</span>
+        
+        // Update form header based on state
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        formHeaderLabel.setText(editable ? </span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            (selectedExam == null ? &quot;Create New Exam&quot; : &quot;Edit Exam&quot;) : </span>
+<span class="fc" id="L230">            &quot;Exam Details (Select an exam or click 'Add New Exam')&quot;);</span>
+        
+        // Add tooltips when read-only
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        String tooltip = editable ? null : &quot;Click 'Add New Exam' to create a new exam&quot;;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        examNameTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        courseIdTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        durationTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+        
+        // Update button states
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        if (editable) {</span>
+<span class="fc" id="L240">            addExamBtn.setDisable(true);</span>
+<span class="fc" id="L241">            editExamBtn.setDisable(true);</span>
+<span class="fc" id="L242">            updateExamBtn.setDisable(false);</span>
+        } else {
+<span class="fc" id="L244">            addExamBtn.setDisable(false);</span>
+            
+            // Enable Edit button only for unpublished exams
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            editExamBtn.setDisable(selectedExam == null || </span>
+<span class="pc bnc" id="L248" title="All 4 branches missed.">                (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0));</span>
+                
+            // Disable Update button when not in edit mode
+<span class="fc" id="L251">            updateExamBtn.setDisable(true);</span>
+        }
+        
+        // Set table disabled state
+<span class="fc" id="L255">        examsTable.setDisable(editable);</span>
+<span class="fc" id="L256">    }</span>
+
+    /**
+     * Loads exam details into the form
+     * @param exam The exam to load
+     */
+    private void loadExamDetails(Exam exam) {
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (exam == null) {</span>
+<span class="nc" id="L264">            clearForm();</span>
+<span class="nc" id="L265">            return;</span>
+        }
+        
+        // Set form fields
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        examNameTxt.setText(exam.getName() != null ? exam.getName() : &quot;&quot;);</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        courseIdTxt.setText(exam.getCourseCode() != null ? exam.getCourseCode() : &quot;&quot;);</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        durationTxt.setText(exam.getDuration() != null ? exam.getDuration().toString() : &quot;&quot;);</span>
+<span class="nc bnc" id="L272" title="All 4 branches missed.">        publishedChk.setSelected(exam.getIsPublishedInt() != null &amp;&amp; exam.getIsPublishedInt() &gt; 0);</span>
+
+        // Load the exam questions
+<span class="nc" id="L275">        loadExamQuestions(exam);</span>
+        
+        // Update form state
+<span class="nc" id="L278">        setFormEditable(false);</span>
+<span class="nc" id="L279">    }</span>
+
+    /**
+     * Loads the questions for the given exam
+     * @param exam The exam to load questions for
+     */
+    private void loadExamQuestions(Exam exam) {
+<span class="nc" id="L286">        selectedQuestions.clear();</span>
+
+        // Fetch all questions from the database
+<span class="nc" id="L289">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="nc" id="L290">        List&lt;Question&gt; allQuestions = questionDB.getAllEnabled();</span>
+<span class="nc" id="L291">        availableQuestions.setAll(allQuestions); // Reset available questions to all</span>
+
+<span class="nc bnc" id="L293" title="All 6 branches missed.">        if (exam != null &amp;&amp; exam.getQuestionIds() != null &amp;&amp; !exam.getQuestionIds().isEmpty()) {</span>
+            // Extract valid question IDs from the exam (Don't know why but they are String)
+<span class="nc" id="L295">            List&lt;Long&gt; selectedQuestionIds = exam.getQuestionIds();</span>
+
+            // Split questions into selected (for the exam) and remaining (available)
+<span class="nc" id="L298">            List&lt;Question&gt; remainingQuestions = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L299">            List&lt;Question&gt; selected = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            for (Question q : allQuestions) {</span>
+                // MsgSender.showMsg(q.getId().getClass().getName());
+<span class="nc bnc" id="L303" title="All 2 branches missed.">                if (selectedQuestionIds.contains(Long.toString(q.getId()))) {</span>
+<span class="nc" id="L304">                    selected.add(q); // Add to selected exam questions</span>
+                } else {
+<span class="nc" id="L306">                    remainingQuestions.add(q); // Add to available questions</span>
+                }
+<span class="nc" id="L308">            }</span>
+
+            // Update the lists and tables
+<span class="nc" id="L311">            availableQuestions.setAll(remainingQuestions);</span>
+<span class="nc" id="L312">            selectedQuestions.setAll(selected);</span>
+
+            // MsgSender.showMsg(String.valueOf(availableQuestions.size()));
+        }
+
+        // Refresh the tables
+<span class="nc" id="L318">        questionsTable.setItems(availableQuestions);</span>
+<span class="nc" id="L319">        selectedQuestionsTable.setItems(selectedQuestions);</span>
+<span class="nc" id="L320">        updateTotalScore();</span>
+<span class="nc" id="L321">    }</span>
+
+    /**
+     * Clears the form fields
+     */
+    private void clearForm() {
+<span class="fc" id="L327">        examNameTxt.clear();</span>
+<span class="fc" id="L328">        courseIdTxt.clear();</span>
+<span class="fc" id="L329">        durationTxt.clear();</span>
+<span class="fc" id="L330">        publishedChk.setSelected(false);</span>
+<span class="fc" id="L331">        selectedQuestions.clear();</span>
+        
+        // Update UI
+<span class="fc" id="L334">        updateTotalScore();</span>
+<span class="fc" id="L335">        setFormEditable(false);</span>
+<span class="fc" id="L336">    }</span>
+
+    /**
+     * Handles filtering exams
+     */
+    @FXML
+    private void handleFilterExams() {
+<span class="nc" id="L343">        String nameFilter = filterExamNameTxt.getText().trim().toLowerCase();</span>
+<span class="nc" id="L344">        String courseIdFilter = filterCourseIdTxt.getText().trim().toLowerCase();</span>
+<span class="nc" id="L345">        String statusFilter = filterStatusCmb.getValue();</span>
+
+<span class="nc" id="L347">        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">        if (courseDB.queryByField(&quot;courseCode&quot;, courseIdFilter).isEmpty()) {</span>
+<span class="nc" id="L349">            MsgSender.showMsg(&quot;No such course found.&quot;);</span>
+<span class="nc" id="L350">            return;</span>
+        }
+        
+<span class="nc" id="L353">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+        // List&lt;Exam&gt; allExams = examDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());
+<span class="nc" id="L355">        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</span>
+
+<span class="nc" id="L357">        List&lt;Exam&gt; filteredExams = allExams.stream()</span>
+<span class="nc bnc" id="L358" title="All 4 branches missed.">            .filter(e -&gt; e.getName() != null &amp;&amp; e.getName().toLowerCase().contains(nameFilter))</span>
+<span class="nc bnc" id="L359" title="All 4 branches missed.">            .filter(e -&gt; e.getCourseCode() != null &amp;&amp; e.getCourseCode().toLowerCase().contains(courseIdFilter))</span>
+<span class="nc" id="L360">            .filter(e -&gt; {</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">                if (&quot;Any&quot;.equals(statusFilter)) return true;</span>
+<span class="nc bnc" id="L362" title="All 4 branches missed.">                boolean isPublished = e.getIsPublishedInt() != null &amp;&amp; e.getIsPublishedInt() &gt; 0;</span>
+<span class="nc bnc" id="L363" title="All 4 branches missed.">                return (&quot;Published&quot;.equals(statusFilter) &amp;&amp; isPublished) || </span>
+<span class="nc bnc" id="L364" title="All 4 branches missed.">                       (&quot;Unpublished&quot;.equals(statusFilter) &amp;&amp; !isPublished);</span>
+            })
+<span class="nc" id="L366">            .collect(Collectors.toList());</span>
+        
+<span class="nc" id="L368">        examsTable.getItems().clear();</span>
+<span class="nc" id="L369">        examsTable.getItems().addAll(filteredExams);</span>
+<span class="nc" id="L370">    }</span>
+
+    /**
+     * Handles resetting the exam filter
+     */
+    @FXML
+    private void handleResetExamFilter() {
+<span class="nc" id="L377">        filterExamNameTxt.clear();</span>
+<span class="nc" id="L378">        filterCourseIdTxt.clear();</span>
+<span class="nc" id="L379">        filterStatusCmb.setValue(&quot;Any&quot;);</span>
+<span class="nc" id="L380">        loadAllExams();</span>
+<span class="nc" id="L381">    }</span>
+
+    /**
+     * Handles filtering questions
+     */
+    @FXML
+    private void handleFilterQuestions() {
+<span class="nc" id="L388">        String questionFilter = filterQuestionTxt.getText().trim().toLowerCase();</span>
+<span class="nc" id="L389">        String typeFilter = filterTypeCmb.getValue();</span>
+<span class="nc" id="L390">        String scoreText = filterScoreTxt.getText().trim();</span>
+        
+<span class="nc" id="L392">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+        // List&lt;Question&gt; allQuestions = questionDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());
+<span class="nc" id="L394">        List&lt;Question&gt; allQuestions = questionDB.getAllEnabled();</span>
+
+<span class="nc" id="L396">        int scoreFilter = -1;</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        if (!scoreText.isEmpty()) {</span>
+            try {
+<span class="nc" id="L399">                scoreFilter = Integer.parseInt(scoreText);</span>
+<span class="nc" id="L400">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L401">                MsgSender.showMsg(&quot;Score filter should be an integer or left blank.&quot;);</span>
+<span class="nc" id="L402">                filterScoreTxt.clear();</span>
+<span class="nc" id="L403">            }</span>
+        }
+<span class="nc" id="L405">        final int finalScoreFilter = scoreFilter;</span>
+        
+<span class="nc" id="L407">        List&lt;Question&gt; filteredQuestions = allQuestions.stream()</span>
+<span class="nc bnc" id="L408" title="All 4 branches missed.">            .filter(q -&gt; q.getQuestionText() != null &amp;&amp; q.getQuestionText().toLowerCase().contains(questionFilter))</span>
+<span class="nc bnc" id="L409" title="All 6 branches missed.">            .filter(q -&gt; &quot;Any&quot;.equals(typeFilter) || (q.getType() != null &amp;&amp; q.getType().equals(typeFilter)))</span>
+<span class="nc bnc" id="L410" title="All 6 branches missed.">            .filter(q -&gt; finalScoreFilter == -1 || (q.getScore() != null &amp;&amp; q.getScore() == finalScoreFilter))</span>
+<span class="nc" id="L411">            .collect(Collectors.toList());</span>
+        
+<span class="nc" id="L413">        questionsTable.getItems().clear();</span>
+<span class="nc" id="L414">        questionsTable.getItems().addAll(filteredQuestions);</span>
+<span class="nc" id="L415">    }</span>
+
+    /**
+     * Handles resetting the question filter
+     */
+    @FXML
+    private void handleResetQuestionFilter() {
+<span class="nc" id="L422">        filterQuestionTxt.clear();</span>
+<span class="nc" id="L423">        filterTypeCmb.setValue(&quot;Any&quot;);</span>
+<span class="nc" id="L424">        filterScoreTxt.clear();</span>
+<span class="nc" id="L425">        loadAllQuestions();</span>
+<span class="nc" id="L426">    }</span>
+
+    /**
+     * Loads all exams for the current teacher
+     */
+    private void loadAllExams() {
+<span class="nc" id="L432">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+        // List&lt;Exam&gt; exams = examDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());
+<span class="nc" id="L434">        List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
+
+<span class="nc" id="L436">        examsTable.getItems().clear();</span>
+<span class="nc" id="L437">        examsTable.getItems().addAll(exams);</span>
+<span class="nc" id="L438">    }</span>
+
+    /**
+     * Loads all questions for the current teacher
+     */
+    private void loadAllQuestions() {
+<span class="fc" id="L444">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+        /*
+        List&lt;Question&gt; questions = questionDB.getAllEnabled();
+
+        questionsTable.getItems().clear();
+        questionsTable.getItems().addAll(questions);
+        */
+<span class="fc" id="L451">        availableQuestions.clear();</span>
+<span class="fc" id="L452">        selectedQuestions.clear();</span>
+<span class="fc" id="L453">        availableQuestions.setAll(questionDB.getAllEnabled());</span>
+<span class="fc" id="L454">    }</span>
+
+    /**
+     * Handles adding a question to the exam
+     */
+    @FXML
+    private void handleAddToExam() {
+<span class="nc" id="L461">        Question selectedQuestion = questionsTable.getSelectionModel().getSelectedItem();</span>
+        
+<span class="nc bnc" id="L463" title="All 2 branches missed.">        if (selectedQuestion == null) {</span>
+<span class="nc" id="L464">            MsgSender.showMsg(&quot;Please select a question to add to the exam.&quot;);</span>
+<span class="nc" id="L465">            return;</span>
+        }
+        
+        // Check if the question is already in the selected questions
+<span class="nc" id="L469">        boolean alreadySelected = selectedQuestions.stream()</span>
+<span class="nc" id="L470">            .anyMatch(q -&gt; q.getId().equals(selectedQuestion.getId()));</span>
+        
+<span class="nc bnc" id="L472" title="All 2 branches missed.">        if (alreadySelected) {</span>
+<span class="nc" id="L473">            MsgSender.showMsg(&quot;This question is already added to the exam.&quot;);</span>
+<span class="nc" id="L474">            return;</span>
+        }
+        
+        // Add the question to the selected questions
+<span class="nc" id="L478">        selectedQuestions.add(selectedQuestion);</span>
+
+<span class="nc" id="L480">        questionsTable.getItems().remove(selectedQuestion);</span>
+        
+        // Update total score
+<span class="nc" id="L483">        updateTotalScore();</span>
+<span class="nc" id="L484">    }</span>
+
+    /**
+     * Handles removing a selected question from the exam
+     */
+    @FXML
+    private void handleRemoveSelectedQuestion() {
+<span class="nc" id="L491">        Question questionToRemove = selectedQuestionsTable.getSelectionModel().getSelectedItem();</span>
+        
+<span class="nc bnc" id="L493" title="All 2 branches missed.">        if (questionToRemove == null) {</span>
+<span class="nc" id="L494">            MsgSender.showMsg(&quot;Please select a question to remove from the exam.&quot;);</span>
+<span class="nc" id="L495">            return;</span>
+        }
+        
+        // Remove the question from the selected questions
+<span class="nc" id="L499">        selectedQuestions.remove(questionToRemove);</span>
+
+<span class="nc" id="L501">        questionsTable.getItems().add(questionToRemove);</span>
+        
+        // Update total score
+<span class="nc" id="L504">        updateTotalScore();</span>
+<span class="nc" id="L505">    }</span>
+
+    /**
+     * Handles clearing all selected questions
+     */
+    @FXML
+    private void handleClearSelectedQuestions() {
+<span class="nc bnc" id="L512" title="All 2 branches missed.">        if (selectedQuestions.isEmpty()) {</span>
+<span class="nc" id="L513">            return;</span>
+        }
+        
+<span class="nc" id="L516">        MsgSender.showConfirm(</span>
+            &quot;Clear Selected Questions&quot;, 
+            &quot;Are you sure you want to remove all questions from this exam?&quot;, 
+            () -&gt; {
+<span class="nc" id="L520">                selectedQuestions.clear();</span>
+<span class="nc" id="L521">                loadAllQuestions();</span>
+<span class="nc" id="L522">                updateTotalScore();</span>
+<span class="nc" id="L523">            }</span>
+        );
+<span class="nc" id="L525">    }</span>
+
+    /**
+     * Handles adding a new exam
+     */
+    @FXML
+    private void handleAddExam() {
+        // Clear form and set to edit mode
+<span class="fc" id="L533">        clearForm();</span>
+<span class="fc" id="L534">        selectedExam = null;</span>
+<span class="fc" id="L535">        loadAllQuestions();</span>
+<span class="fc" id="L536">        editMode = true;</span>
+<span class="fc" id="L537">        setFormEditable(true);</span>
+        
+        // Update UI
+<span class="fc" id="L540">        formHeaderLabel.setText(&quot;Create New Exam&quot;);</span>
+<span class="fc" id="L541">        formHeaderLabel.setStyle(&quot;-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4CAF50;&quot;);</span>
+<span class="fc" id="L542">    }</span>
+
+    /**
+     * Handles editing an existing exam
+     */
+    @FXML
+    private void handleEditExam() {
+<span class="pc bpc" id="L549" title="1 of 2 branches missed.">        if (selectedExam == null) {</span>
+<span class="nc" id="L550">            MsgSender.showMsg(&quot;Please select an exam to edit.&quot;);</span>
+<span class="nc" id="L551">            return;</span>
+        }
+        
+<span class="pc bpc" id="L554" title="2 of 4 branches missed.">        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</span>
+<span class="nc" id="L555">            MsgSender.showMsg(&quot;Published exams cannot be edited.&quot;);</span>
+<span class="nc" id="L556">            return;</span>
+        }
+        
+        // Enter edit mode
+<span class="fc" id="L560">        editMode = true;</span>
+<span class="fc" id="L561">        setFormEditable(true);</span>
+        
+        // Update UI
+<span class="fc" id="L564">        formHeaderLabel.setText(&quot;Edit Exam&quot;);</span>
+<span class="fc" id="L565">        formHeaderLabel.setStyle(&quot;-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2196F3;&quot;);</span>
+<span class="fc" id="L566">    }</span>
+
+    /**
+     * Handles creating a new exam or updating an existing one
+     */
+    @FXML
+    private void handleUpdateExam() {
+        // Validate input
+<span class="pc bpc" id="L574" title="2 of 6 branches missed.">        if (examNameTxt.getText().isEmpty() || courseIdTxt.getText().isEmpty() || durationTxt.getText().isEmpty()) {</span>
+<span class="fc" id="L575">            MsgSender.showMsg(&quot;Please fill in all required fields.&quot;);</span>
+<span class="fc" id="L576">            return;</span>
+        }
+        
+        try {
+<span class="fc" id="L580">            Integer duration = Integer.parseInt(durationTxt.getText());</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">            if (duration &lt;= 0) {</span>
+<span class="nc" id="L582">                MsgSender.showMsg(&quot;Duration must be a positive number.&quot;);</span>
+<span class="nc" id="L583">                return;</span>
+            }
+            
+<span class="pc bpc" id="L586" title="1 of 2 branches missed.">            if (selectedQuestions.isEmpty()) {</span>
+<span class="fc" id="L587">                MsgSender.showMsg(&quot;Please add at least one question to the exam.&quot;);</span>
+<span class="fc" id="L588">                return;</span>
+            }
+
+            // Check whether the course exists
+<span class="nc" id="L592">            Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="nc bnc" id="L593" title="All 2 branches missed.">            if (courseDB.queryByField(&quot;courseCode&quot;, courseIdTxt.getText()).isEmpty()) {</span>
+<span class="nc" id="L594">                MsgSender.showMsg(&quot;No such course found.&quot;);</span>
+<span class="nc" id="L595">                return;</span>
+            }
+            
+            // Create or update exam
+<span class="nc bnc" id="L599" title="All 2 branches missed.">            if (selectedExam == null) {</span>
+                // Create new exam
+<span class="nc" id="L601">                Exam newExam = new Exam();</span>
+<span class="nc" id="L602">                newExam.setTeacherId(teacher.getId());</span>
+<span class="nc" id="L603">                newExam.setName(examNameTxt.getText());</span>
+<span class="nc" id="L604">                newExam.setCourseCode(courseIdTxt.getText());</span>
+<span class="nc" id="L605">                newExam.setDuration(duration);</span>
+<span class="nc" id="L606">                newExam.setExamTime(duration.toString()); // Sync with duration field</span>
+<span class="nc bnc" id="L607" title="All 2 branches missed.">                newExam.setIsPublishedInt(publishedChk.isSelected() ? 1 : 0);</span>
+                
+                // Set questions
+<span class="nc" id="L610">                List&lt;Long&gt; questionIds = selectedQuestions.stream()</span>
+<span class="nc" id="L611">                    .map(Question::getId)</span>
+<span class="nc" id="L612">                    .collect(Collectors.toList());</span>
+<span class="nc" id="L613">                newExam.setQuestionIds(questionIds);</span>
+                
+                // Save exam to database
+<span class="nc" id="L616">                examDB.add(newExam);</span>
+<span class="nc" id="L617">                MsgSender.showMsg(&quot;Exam created successfully!&quot;);</span>
+                
+                // Add to list and select it
+<span class="nc" id="L620">                allExams.add(newExam);</span>
+<span class="nc" id="L621">                Platform.runLater(() -&gt; examsTable.getSelectionModel().select(newExam));</span>
+<span class="nc" id="L622">            } else {</span>
+                // Update existing exam
+<span class="nc" id="L624">                selectedExam.setName(examNameTxt.getText());</span>
+<span class="nc" id="L625">                selectedExam.setCourseCode(courseIdTxt.getText());</span>
+<span class="nc" id="L626">                selectedExam.setDuration(duration);</span>
+<span class="nc" id="L627">                selectedExam.setExamTime(duration.toString()); // Sync with duration field</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">                selectedExam.setIsPublishedInt(publishedChk.isSelected() ? 1 : 0);</span>
+                
+                // Set questions
+<span class="nc" id="L631">                List&lt;Long&gt; questionIds = selectedQuestions.stream()</span>
+<span class="nc" id="L632">                    .map(Question::getId)</span>
+<span class="nc" id="L633">                    .collect(Collectors.toList());</span>
+<span class="nc" id="L634">                selectedExam.setQuestionIds(questionIds);</span>
+                
+                // Update in database
+<span class="nc" id="L637">                examDB.update(selectedExam);</span>
+<span class="nc" id="L638">                MsgSender.showMsg(&quot;Exam updated successfully!&quot;);</span>
+                
+                // Refresh table
+<span class="nc" id="L641">                examsTable.refresh();</span>
+            }
+            
+            // Exit edit mode
+<span class="nc" id="L645">            editMode = false;</span>
+<span class="nc" id="L646">            setFormEditable(false);</span>
+            
+            // Refresh exam list
+<span class="nc" id="L649">            loadAllExams();</span>
+            
+<span class="nc" id="L651">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L652">            MsgSender.showMsg(&quot;Please enter a valid number for duration.&quot;);</span>
+<span class="nc" id="L653">        } catch (Exception e) {</span>
+<span class="nc" id="L654">            MsgSender.showMsg(&quot;Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L655">            e.printStackTrace();</span>
+<span class="nc" id="L656">        }</span>
+<span class="nc" id="L657">    }</span>
+
+    /**
+     * Handles deleting an exam
+     */
+    @FXML
+    private void handleDeleteExam() {
+<span class="pc bpc" id="L664" title="1 of 2 branches missed.">        if (selectedExam == null) {</span>
+<span class="nc" id="L665">            MsgSender.showMsg(&quot;Please select an exam to delete.&quot;);</span>
+<span class="nc" id="L666">            return;</span>
+        }
+        
+<span class="pc bpc" id="L669" title="2 of 4 branches missed.">        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</span>
+<span class="nc" id="L670">            MsgSender.showMsg(&quot;Published exams cannot be deleted.&quot;);</span>
+<span class="nc" id="L671">            return;</span>
+        }
+        
+<span class="fc" id="L674">        MsgSender.showConfirm(</span>
+            &quot;Delete Exam&quot;, 
+            &quot;Are you sure you want to delete this exam? This action cannot be undone.&quot;, 
+            () -&gt; {
+<span class="nc" id="L678">                examDB.delByKey(selectedExam.getId().toString());</span>
+                
+                // Clear selection and form
+<span class="nc" id="L681">                selectedExam = null;</span>
+<span class="nc" id="L682">                clearForm();</span>
+                
+                // Refresh UI
+<span class="nc" id="L685">                loadAllExams();</span>
+                
+                // Show success message
+<span class="nc" id="L688">                MsgSender.showMsg(&quot;Exam deleted successfully!&quot;);</span>
+<span class="nc" id="L689">            }</span>
+        );
+<span class="fc" id="L691">    }</span>
+
+    /**
+     * Handles refreshing the UI
+     */
+    @FXML
+    private void handleRefresh() {
+        // Save selected exam ID if any
+<span class="nc bnc" id="L699" title="All 2 branches missed.">        Long selectedExamId = selectedExam != null ? selectedExam.getId() : null;</span>
+
+        // Clear added questions
+<span class="nc" id="L702">        selectedQuestionsTable.getItems().clear();</span>
+        
+        // Reload data
+<span class="nc" id="L705">        loadAllExams();</span>
+<span class="nc" id="L706">        loadAllQuestions();</span>
+        
+        // Restore selection if possible
+<span class="nc bnc" id="L709" title="All 2 branches missed.">        if (selectedExamId != null) {</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">            for (Exam exam : examsTable.getItems()) {</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">                if (exam.getId().equals(selectedExamId)) {</span>
+<span class="nc" id="L712">                    examsTable.getSelectionModel().select(exam);</span>
+<span class="nc" id="L713">                    examsTable.scrollTo(exam);</span>
+<span class="nc" id="L714">                    break;</span>
+                }
+<span class="nc" id="L716">            }</span>
+        }
+        
+        // Reset edit mode
+<span class="nc" id="L720">        editMode = false;</span>
+<span class="nc" id="L721">        setFormEditable(false);</span>
+<span class="nc" id="L722">    }</span>
+
+    /**
+     * Handles navigating back to the teacher main menu
+     */
+    @FXML
+    private void handleBack() {
+        try {
+<span class="nc" id="L730">            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
+<span class="nc" id="L731">            Stage stage = new Stage();</span>
+<span class="nc" id="L732">            stage.setTitle(&quot;Welcome to HKUST Examination System&quot;);</span>
+<span class="nc" id="L733">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L734">            TeacherMainController newController = fxmlLoader.getController();</span>
+<span class="nc bnc" id="L735" title="All 2 branches missed.">            if (teacher == null) {</span>
+<span class="nc" id="L736">                MsgSender.showMsg(&quot;NULL Teacher&quot;);</span>
+            }
+<span class="nc" id="L738">            newController.presetController(teacher); // Pass the Teacher object to the next controller</span>
+<span class="nc" id="L739">            UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L740">            stage.show();</span>
+<span class="nc" id="L741">            ((Stage) mainbox.getScene().getWindow()).close();</span>
+<span class="nc" id="L742">        } catch (Exception e) {</span>
+<span class="nc" id="L743">            e.printStackTrace();</span>
+<span class="nc" id="L744">        }</span>
+<span class="nc" id="L745">    }</span>
+
+    /**
+     * Handles closing the application
+     */
+    @FXML
+    private void handleCloseApplication() {
+<span class="nc" id="L752">        Platform.exit();</span>
+<span class="nc" id="L753">        System.exit(0);</span>
+<span class="nc" id="L754">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
