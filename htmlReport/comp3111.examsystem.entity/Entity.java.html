@@ -86,7 +86,7 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
             // Handle null IDs safely
 <span class="fc" id="L87">            Entity otherEntity = (Entity) other;</span>
 <span class="pc bpc" id="L88" title="1 of 4 branches missed.">            if (this.id == null || otherEntity.getId() == null) {</span>
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                return this == other; // If either ID is null, only equal if same object</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                return this == other; // If either ID is null, only equal if same object</span>
             }
 <span class="fc" id="L91">            return this.id.equals(otherEntity.getId());</span>
         }

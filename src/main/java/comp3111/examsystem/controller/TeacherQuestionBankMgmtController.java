@@ -381,7 +381,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         addOptionBtn.setDisable(optionFields.size() >= MAX_OPTIONS);
     }
 
-    private void updateOptionFieldsVisibility(String selectedType) {
+    void updateOptionFieldsVisibility(String selectedType) {
         boolean isMCQ = "MCQ".equalsIgnoreCase(selectedType);
         options.setManaged(isMCQ);
         options.setVisible(isMCQ);

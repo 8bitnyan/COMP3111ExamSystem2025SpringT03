@@ -381,27 +381,27 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L381" title="All 2 branches missed.">        addOptionBtn.setDisable(optionFields.size() &gt;= MAX_OPTIONS);</span>
 <span class="nc" id="L382">    }</span>
 
-    private void updateOptionFieldsVisibility(String selectedType) {
-<span class="nc" id="L385">        boolean isMCQ = &quot;MCQ&quot;.equalsIgnoreCase(selectedType);</span>
-<span class="nc" id="L386">        options.setManaged(isMCQ);</span>
-<span class="nc" id="L387">        options.setVisible(isMCQ);</span>
+    void updateOptionFieldsVisibility(String selectedType) {
+<span class="fc" id="L385">        boolean isMCQ = &quot;MCQ&quot;.equalsIgnoreCase(selectedType);</span>
+<span class="fc" id="L386">        options.setManaged(isMCQ);</span>
+<span class="fc" id="L387">        options.setVisible(isMCQ);</span>
         
         // Ensure options are properly shown for MCQ questions
-<span class="nc bnc" id="L390" title="All 2 branches missed.">        if (isMCQ) {</span>
+<span class="fc bfc" id="L390" title="All 2 branches covered.">        if (isMCQ) {</span>
             // If question is MCQ but no option fields, initialize them
-<span class="nc bnc" id="L392" title="All 2 branches missed.">            if (optionFields.isEmpty()) {</span>
-<span class="nc" id="L393">                initializeOptions(MIN_OPTIONS);</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">            if (optionFields.isEmpty()) {</span>
+<span class="fc" id="L393">                initializeOptions(MIN_OPTIONS);</span>
             }
             
             // Ensure the options container is visible
-<span class="nc" id="L397">            optionsContainer.setVisible(true);</span>
-<span class="nc" id="L398">            optionsContainer.setManaged(true);</span>
+<span class="fc" id="L397">            optionsContainer.setVisible(true);</span>
+<span class="fc" id="L398">            optionsContainer.setManaged(true);</span>
             
             // Make add option button available based on option count, regardless of edit mode
             // The actual add functionality will still only work in edit mode (controlled in setFormFieldsEditable)
-<span class="nc bnc" id="L402" title="All 2 branches missed.">            addOptionBtn.setDisable(optionFields.size() &gt;= MAX_OPTIONS);</span>
+<span class="pc bpc" id="L402" title="1 of 2 branches missed.">            addOptionBtn.setDisable(optionFields.size() &gt;= MAX_OPTIONS);</span>
         }
-<span class="nc" id="L404">    }</span>
+<span class="fc" id="L404">    }</span>
 
     private void fillFieldsFromSelectedQuestion(Question question) {
         // If null question, clear fields and return

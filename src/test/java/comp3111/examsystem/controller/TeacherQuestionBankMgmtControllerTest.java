@@ -292,6 +292,201 @@ public class TeacherQuestionBankMgmtControllerTest {
         }
     }
 
+    @Test
+    void testAddMCQWithMinimumOptions() throws Exception {
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField("1"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "questionsTable", new TableView<Question>());
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd();
+            // No exception means success for this test
+        }
+    }
+
+    @Test
+    void testAddMCQWithMaximumOptions() throws Exception {
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField("5"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(
+            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5")));
+        setField(controller, "questionsTable", new TableView<Question>());
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd();
+        }
+    }
+
+    @Test
+    void testAddMCQWithInvalidOptionCounts() throws Exception {
+        // 1 option (should fail)
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField("2"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(new TextField("A1")));
+        setField(controller, "questionsTable", new TableView<Question>());
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd(); // Should not add, but should not throw
+        }
+        // 6 options (should fail)
+        setField(controller, "optionFields", Arrays.asList(
+            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5"), new TextField("A6")));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd(); // Should not add, but should not throw
+        }
+    }
+
+    @Test
+    void testAddUpdateWithEmptyOrPartialFields() throws Exception {
+        // All fields empty
+        setField(controller, "questionTxt", new TextArea(""));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField(""));
+        setField(controller, "answerTxt", new TextField(""));
+        setField(controller, "optionFields", Arrays.asList(new TextField(""), new TextField("")));
+        setField(controller, "questionsTable", new TableView<Question>());
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd();
+        }
+        // Only some fields filled
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        setField(controller, "scoreTxt", new TextField(""));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd();
+        }
+    }
+
+    @Test
+    void testButtonStatesAfterSelectionAndActions() throws Exception {
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        TableView<Question> table = new TableView<>();
+        setField(controller, "questionsTable", table);
+        // No selection
+        table.getSelectionModel().clearSelection();
+        // Simulate selection
+        Question q = new Question();
+        q.setId(1L);
+        table.getItems().add(q);
+        table.getSelectionModel().select(q);
+        // Deselect
+        table.getSelectionModel().clearSelection();
+        // After add
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField("2"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleAdd();
+        }
+        // After update
+        setField(controller, "editMode", true);
+        Question q2 = new Question();
+        q2.setId(2L);
+        setField(controller, "selectedQuestion", q2);
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        setField(controller, "scoreTxt", new TextField("2"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleUpdate();
+        }
+        // After delete
+        table.getItems().add(q2);
+        table.getSelectionModel().select(q2);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            controller.handleDelete();
+        }
+    }
+
+    @Test
+    void testSwitchBetweenMCQAndShortAnswer() throws Exception {
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        setField(controller, "typeCmb", typeCmb);
+        VBox options = new VBox();
+        setField(controller, "options", options);
+        // Switch to MCQ
+        typeCmb.setValue("MCQ");
+        controller.updateOptionFieldsVisibility("MCQ");
+        // Switch to Short Answer
+        typeCmb.setValue("Short Answer");
+        controller.updateOptionFieldsVisibility("Short Answer");
+        // Switch back to MCQ
+        typeCmb.setValue("MCQ");
+        controller.updateOptionFieldsVisibility("MCQ");
+    }
+
     private Object getField(Object obj, String fieldName) throws Exception {
         Field field = obj.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);

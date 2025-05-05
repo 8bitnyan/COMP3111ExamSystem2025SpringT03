@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExamTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">ExamTest.java</span></div><h1>ExamTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L12">public class ExamTest {</span>
+    private Exam exam;
+
+    @BeforeEach
+    void setUp() {
+<span class="fc" id="L17">        exam = new Exam(1L, &quot;Midterm&quot;, &quot;COMP3111&quot;, 90, 0, new java.util.ArrayList&lt;&gt;(java.util.Arrays.asList(1L, 2L, 3L)));</span>
+<span class="fc" id="L18">    }</span>
+
+    @Test
+    void testAddQuestion_NewAndDuplicate() {
+<span class="fc" id="L22">        assertTrue(exam.addQuestion(4L));</span>
+<span class="fc" id="L23">        assertFalse(exam.addQuestion(2L)); // Already exists</span>
+<span class="fc" id="L24">    }</span>
+
+    @Test
+    void testRemoveQuestion_ExistingAndNonExisting() {
+<span class="fc" id="L28">        assertTrue(exam.removeQuestion(2L));</span>
+<span class="fc" id="L29">        assertFalse(exam.removeQuestion(99L));</span>
+<span class="fc" id="L30">    }</span>
+
+    @Test
+    void testGetQuestionCount() {
+<span class="fc" id="L34">        assertEquals(3, exam.getQuestionCount());</span>
+<span class="fc" id="L35">        exam.addQuestion(4L);</span>
+<span class="fc" id="L36">        assertEquals(4, exam.getQuestionCount());</span>
+<span class="fc" id="L37">    }</span>
+
+    @Test
+    void testSetDurationAndExamTime() {
+<span class="fc" id="L41">        exam.setDuration(120);</span>
+<span class="fc" id="L42">        assertEquals(120, exam.getDuration());</span>
+<span class="fc" id="L43">        assertEquals(&quot;120 minutes&quot;, exam.getExamTime());</span>
+<span class="fc" id="L44">        exam.setExamTime(&quot;60 minutes&quot;);</span>
+<span class="fc" id="L45">        assertEquals(60, exam.getDuration());</span>
+<span class="fc" id="L46">        exam.setExamTime(&quot;invalid&quot;); // Should not throw</span>
+<span class="fc" id="L47">        assertEquals(60, exam.getDuration()); // Unchanged</span>
+<span class="fc" id="L48">    }</span>
+
+    @Test
+    void testSetIsPublished_ValidAndInvalid() {
+<span class="fc" id="L52">        exam.setIsPublished(&quot;1&quot;);</span>
+<span class="fc" id="L53">        assertEquals(1, exam.getIsPublishedInt());</span>
+<span class="fc" id="L54">        assertTrue(exam.getPublished());</span>
+<span class="fc" id="L55">        exam.setIsPublished(&quot;notANumber&quot;);</span>
+<span class="fc" id="L56">        assertEquals(0, exam.getIsPublishedInt());</span>
+<span class="fc" id="L57">        assertFalse(exam.getPublished());</span>
+<span class="fc" id="L58">    }</span>
+
+    @Test
+    void testSetIsPublishedInt() {
+<span class="fc" id="L62">        exam.setIsPublishedInt(2);</span>
+<span class="fc" id="L63">        assertEquals(&quot;2&quot;, exam.getIsPublished());</span>
+<span class="fc" id="L64">        assertTrue(exam.getPublished());</span>
+<span class="fc" id="L65">        exam.setIsPublishedInt(null);</span>
+<span class="fc" id="L66">        assertEquals(&quot;0&quot;, exam.getIsPublished());</span>
+<span class="fc" id="L67">        assertFalse(exam.getPublished());</span>
+<span class="fc" id="L68">    }</span>
+
+    @Test
+    void testSetNameAndExamNameSync() {
+<span class="fc" id="L72">        exam.setName(&quot;Final&quot;);</span>
+<span class="fc" id="L73">        assertEquals(&quot;Final&quot;, exam.getExamName());</span>
+<span class="fc" id="L74">        exam.setExamName(&quot;Quiz&quot;);</span>
+<span class="fc" id="L75">        assertEquals(&quot;Quiz&quot;, exam.getName());</span>
+<span class="fc" id="L76">    }</span>
+
+    @Test
+    void testSetQuestionIds_NullAndNonLongList() {
+<span class="fc" id="L80">        exam.setQuestionIds(null);</span>
+<span class="fc" id="L81">        assertEquals(0, exam.getQuestionIds().size());</span>
+<span class="fc" id="L82">        exam.setQuestionIds(new java.util.ArrayList&lt;&gt;(java.util.Arrays.asList(&quot;10&quot;, &quot;20&quot;)));</span>
+<span class="fc" id="L83">        List&lt;Long&gt; ids = exam.getQuestionIds();</span>
+<span class="fc" id="L84">        assertEquals(2, ids.size());</span>
+<span class="fc" id="L85">        assertEquals(10L, ids.get(0));</span>
+<span class="fc" id="L86">        assertEquals(20L, ids.get(1));</span>
+<span class="fc" id="L87">    }</span>
+
+    @Test
+    void testSetQuestions_ValidAndInvalid() {
+<span class="fc" id="L91">        exam.setQuestions(&quot;100,200,300&quot;);</span>
+<span class="fc" id="L92">        List&lt;Long&gt; ids = exam.getQuestionIds();</span>
+<span class="fc" id="L93">        assertEquals(3, ids.size());</span>
+<span class="fc" id="L94">        assertEquals(100L, ids.get(0));</span>
+<span class="fc" id="L95">        exam.setQuestions(&quot;&quot;);</span>
+<span class="fc" id="L96">        assertEquals(3, exam.getQuestionIds().size());</span>
+<span class="fc" id="L97">        exam.setQuestions(&quot;notANumber&quot;);</span>
+<span class="fc" id="L98">        assertEquals(3, exam.getQuestionIds().size());</span>
+<span class="fc" id="L99">    }</span>
+
+    @Test
+    void testEnabledAndIsAble() {
+<span class="fc" id="L103">        exam.setEnabled(false);</span>
+<span class="fc" id="L104">        assertFalse(exam.getEnabled());</span>
+<span class="fc" id="L105">        assertFalse(exam.getIsAble());</span>
+<span class="fc" id="L106">        exam.setEnabled(true);</span>
+<span class="fc" id="L107">        assertTrue(exam.getEnabled());</span>
+<span class="fc" id="L108">        assertTrue(exam.getIsAble());</span>
+<span class="fc" id="L109">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

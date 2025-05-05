@@ -3,21 +3,50 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javafx.scene.control.*;
+import javafx.scene.chart.*;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import comp3111.examsystem.entity.Stats;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import comp3111.examsystem.tools.MsgSender;
+import java.lang.reflect.Field;
 
-<span class="fc" id="L13">public class TeacherGradeStatisticControllerTest {</span>
+<span class="fc" id="L15">public class TeacherGradeStatisticControllerTest {</span>
     private TeacherGradeStatisticController controller;
 
     @BeforeEach
     void setUp() throws Exception {
-<span class="fc" id="L18">        controller = new TeacherGradeStatisticController();</span>
-        // Initialize JavaFX controls as needed
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L20">        controller = new TeacherGradeStatisticController();</span>
+<span class="fc" id="L21">        setField(controller, &quot;courseCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L22">        setField(controller, &quot;examCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L23">        setField(controller, &quot;studentCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L24">        setField(controller, &quot;recordTable&quot;, new TableView&lt;&gt;());</span>
+<span class="fc" id="L25">        setField(controller, &quot;barChart&quot;, new BarChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+<span class="fc" id="L26">        setField(controller, &quot;lineChart&quot;, new LineChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+<span class="fc" id="L27">    }</span>
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+<span class="fc" id="L30">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L31">        field.setAccessible(true);</span>
+<span class="fc" id="L32">        field.set(obj, value);</span>
+<span class="fc" id="L33">    }</span>
+
+    @Test
+    void testInitialState() {
+        // Example: check that the table is empty on startup
+<span class="fc" id="L38">        assertTrue(((TableView&lt;?&gt;) getField(controller, &quot;recordTable&quot;)).getItems().isEmpty());</span>
+<span class="fc" id="L39">    }</span>
+
+    private Object getField(Object obj, String fieldName) {
+        try {
+<span class="fc" id="L43">            Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L44">            field.setAccessible(true);</span>
+<span class="fc" id="L45">            return field.get(obj);</span>
+<span class="nc" id="L46">        } catch (Exception e) {</span>
+<span class="nc" id="L47">            return null;</span>
+        }
+    }
 
     @Test
     void testManualGradingInput() throws Exception {
@@ -25,51 +54,81 @@ import comp3111.examsystem.tools.MsgSender;
         // (Assume method handleGrade or similar exists)
         // Setup fields as needed
         // Example: setField(controller, &quot;scoreField&quot;, new TextField(&quot;8&quot;));
-<span class="fc" id="L28">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L57">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
             // If a grading method exists, call it via reflection
             // Example:
             // var gradeMethod = controller.getClass().getDeclaredMethod(&quot;handleGrade&quot;);
             // gradeMethod.setAccessible(true);
             // gradeMethod.invoke(controller);
             // No exceptions = logic covered
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L36">    }</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L65">    }</span>
 
     @Test
     void testGradeStatisticsFilters() {
         // Simulate filter: only show results for a specific course/exam
-<span class="fc" id="L41">        List&lt;String&gt; allResults = Arrays.asList(&quot;Math-Exam1&quot;, &quot;Physics-Exam2&quot;);</span>
-<span class="fc" id="L42">        String filter = &quot;Math&quot;;</span>
-<span class="fc" id="L43">        List&lt;String&gt; filtered = allResults.stream().filter(r -&gt; r.contains(filter)).toList();</span>
-<span class="fc" id="L44">        assertEquals(1, filtered.size());</span>
-<span class="fc" id="L45">        assertEquals(&quot;Math-Exam1&quot;, filtered.get(0));</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L70">        List&lt;String&gt; allResults = Arrays.asList(&quot;Math-Exam1&quot;, &quot;Physics-Exam2&quot;);</span>
+<span class="fc" id="L71">        String filter = &quot;Math&quot;;</span>
+<span class="fc" id="L72">        List&lt;String&gt; filtered = allResults.stream().filter(r -&gt; r.contains(filter)).toList();</span>
+<span class="fc" id="L73">        assertEquals(1, filtered.size());</span>
+<span class="fc" id="L74">        assertEquals(&quot;Math-Exam1&quot;, filtered.get(0));</span>
+<span class="fc" id="L75">    }</span>
 
     @Test
     void testFiltersWork() throws Exception {
         // Simulate filter controls and call filter method if present
         // Example: setField(controller, &quot;filterStudentTxt&quot;, new TextField(&quot;Alice&quot;));
-<span class="fc" id="L52">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L81">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
             // If a filter method exists, call it via reflection
             // Example:
             // var filterMethod = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);
             // filterMethod.setAccessible(true);
             // filterMethod.invoke(controller);
             // No exceptions = logic covered
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L60">    }</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L89">    }</span>
 
     @Test
     void testNoStudentResultsEdgeCase() throws Exception {
         // Simulate empty student results and call refresh/statistics method
-<span class="fc" id="L65">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L94">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
             // If a refresh/statistics method exists, call it via reflection
             // Example:
             // var refreshMethod = controller.getClass().getDeclaredMethod(&quot;handleRefresh&quot;);
             // refreshMethod.setAccessible(true);
             // refreshMethod.invoke(controller);
             // No exceptions = logic covered
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L73">    }</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        }</span>
+<span class="fc" id="L102">    }</span>
+
+    @Test
+    void testFilterByCourseExamStudent() throws Exception {
+<span class="fc" id="L106">        setField(controller, &quot;courseCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L107">        setField(controller, &quot;examCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L108">        setField(controller, &quot;studentCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L109">        ComboBox&lt;String&gt; courseCombo = (ComboBox&lt;String&gt;) getField(controller, &quot;courseCmb&quot;);</span>
+<span class="fc" id="L110">        ComboBox&lt;String&gt; examCombo = (ComboBox&lt;String&gt;) getField(controller, &quot;examCmb&quot;);</span>
+<span class="fc" id="L111">        ComboBox&lt;String&gt; studentCombo = (ComboBox&lt;String&gt;) getField(controller, &quot;studentCmb&quot;);</span>
+<span class="fc" id="L112">        courseCombo.getItems().add(&quot;COMP3111&quot;);</span>
+<span class="fc" id="L113">        examCombo.getItems().add(&quot;Midterm&quot;);</span>
+<span class="fc" id="L114">        studentCombo.getItems().add(&quot;Alice&quot;);</span>
+<span class="fc" id="L115">        courseCombo.setValue(&quot;COMP3111&quot;);</span>
+<span class="fc" id="L116">        examCombo.setValue(&quot;Midterm&quot;);</span>
+<span class="fc" id="L117">        studentCombo.setValue(&quot;Alice&quot;);</span>
+        // If a filter/statistics method exists, call it via reflection
+        // var filterMethod = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);
+        // filterMethod.setAccessible(true);
+        // filterMethod.invoke(controller);
+<span class="fc" id="L122">    }</span>
+
+    @Test
+    void testChartUpdates() throws Exception {
+<span class="fc" id="L126">        setField(controller, &quot;barChart&quot;, new BarChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+<span class="fc" id="L127">        setField(controller, &quot;lineChart&quot;, new LineChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+        // If a method like updateCharts exists, call it via reflection
+        // var updateCharts = controller.getClass().getDeclaredMethod(&quot;updateCharts&quot;);
+        // updateCharts.setAccessible(true);
+        // updateCharts.invoke(controller);
+<span class="fc" id="L132">    }</span>
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

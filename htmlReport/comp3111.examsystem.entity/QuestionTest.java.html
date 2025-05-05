@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuestionTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">QuestionTest.java</span></div><h1>QuestionTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L12">public class QuestionTest {</span>
+    private Question question;
+
+    @BeforeEach
+    void setUp() {
+<span class="fc" id="L17">        question = new Question(1L, &quot;MCQ&quot;, &quot;What is 2+2?&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;C&quot;, 5);</span>
+<span class="fc" id="L18">    }</span>
+
+    @Test
+    void testGetOption_ValidAndInvalidIndices() {
+<span class="fc" id="L22">        assertEquals(&quot;2&quot;, question.getOption(0));</span>
+<span class="fc" id="L23">        assertEquals(&quot;3&quot;, question.getOption(1));</span>
+<span class="fc" id="L24">        assertNull(question.getOption(-1));</span>
+<span class="fc" id="L25">        assertNull(question.getOption(10));</span>
+<span class="fc" id="L26">    }</span>
+
+    @Test
+    void testSetOption_ExistingAndNewIndex() {
+<span class="fc" id="L30">        question.setOption(1, &quot;42&quot;);</span>
+<span class="fc" id="L31">        assertEquals(&quot;42&quot;, question.getOption(1));</span>
+<span class="fc" id="L32">        question.setOption(4, &quot;new&quot;);</span>
+<span class="fc" id="L33">        assertEquals(&quot;new&quot;, question.getOption(4));</span>
+<span class="fc" id="L34">    }</span>
+
+    @Test
+    void testAddOption_UpToMax() {
+<span class="fc" id="L38">        question.addOption(&quot;extra1&quot;);</span>
+<span class="fc" id="L39">        question.addOption(&quot;extra2&quot;); // Should not add more than 5</span>
+<span class="fc" id="L40">        assertEquals(5, question.getOptions().size());</span>
+<span class="fc" id="L41">        question.addOption(&quot;shouldNotAdd&quot;);</span>
+<span class="fc" id="L42">        assertEquals(5, question.getOptions().size());</span>
+<span class="fc" id="L43">    }</span>
+
+    @Test
+    void testRemoveOption_ValidAndInvalid() {
+        // Remove valid
+<span class="fc" id="L48">        assertTrue(question.removeOption(3));</span>
+        // Remove invalid (out of bounds)
+<span class="fc" id="L50">        assertFalse(question.removeOption(10));</span>
+        // Remove invalid (would leave &lt;2 options)
+<span class="fc" id="L52">        question.removeOption(2);</span>
+<span class="fc" id="L53">        question.removeOption(1);</span>
+<span class="fc" id="L54">        assertFalse(question.removeOption(0));</span>
+<span class="fc" id="L55">    }</span>
+
+    @Test
+    void testUpdateLegacyFieldsAndOptionsList() {
+<span class="fc" id="L59">        question.setOption(0, &quot;A&quot;);</span>
+<span class="fc" id="L60">        question.setOption(1, &quot;B&quot;);</span>
+<span class="fc" id="L61">        question.setOption(2, &quot;C&quot;);</span>
+<span class="fc" id="L62">        question.setOption(3, &quot;D&quot;);</span>
+<span class="fc" id="L63">        question.setOption(4, &quot;E&quot;);</span>
+        // Now clear options and update from legacy fields
+<span class="fc" id="L65">        question.setOptions(new java.util.ArrayList&lt;&gt;());</span>
+<span class="fc" id="L66">        assertTrue(question.getOptions().isEmpty());</span>
+<span class="fc" id="L67">        question.setA(&quot;A&quot;);</span>
+<span class="fc" id="L68">        question.setB(&quot;B&quot;);</span>
+<span class="fc" id="L69">        question.setC(&quot;C&quot;);</span>
+<span class="fc" id="L70">        question.setD(&quot;D&quot;);</span>
+<span class="fc" id="L71">        question.setE(&quot;E&quot;);</span>
+<span class="fc" id="L72">        List&lt;String&gt; options = question.getOptions();</span>
+<span class="fc" id="L73">        assertEquals(5, options.size());</span>
+<span class="fc" id="L74">        assertEquals(&quot;A&quot;, options.get(0));</span>
+<span class="fc" id="L75">        assertEquals(&quot;E&quot;, options.get(4));</span>
+<span class="fc" id="L76">    }</span>
+
+    @Test
+    void testSettersForAtoE() {
+<span class="fc" id="L80">        question.setA(&quot;A1&quot;);</span>
+<span class="fc" id="L81">        assertEquals(&quot;A1&quot;, question.getOptionA());</span>
+<span class="fc" id="L82">        question.setB(&quot;B1&quot;);</span>
+<span class="fc" id="L83">        assertEquals(&quot;B1&quot;, question.getOptionB());</span>
+<span class="fc" id="L84">        question.setC(&quot;C1&quot;);</span>
+<span class="fc" id="L85">        assertEquals(&quot;C1&quot;, question.getOptionC());</span>
+<span class="fc" id="L86">        question.setD(&quot;D1&quot;);</span>
+<span class="fc" id="L87">        assertEquals(&quot;D1&quot;, question.getOptionD());</span>
+<span class="fc" id="L88">        question.setE(&quot;E1&quot;);</span>
+<span class="fc" id="L89">        assertEquals(&quot;E1&quot;, question.getOptionE());</span>
+<span class="fc" id="L90">    }</span>
+
+    @Test
+    void testGetAndSetScoreAndAnswer() {
+<span class="fc" id="L94">        question.setScore(10);</span>
+<span class="fc" id="L95">        assertEquals(10, question.getScore());</span>
+<span class="fc" id="L96">        question.setAnswer(&quot;A&quot;);</span>
+<span class="fc" id="L97">        assertEquals(&quot;A&quot;, question.getAnswer());</span>
+<span class="fc" id="L98">    }</span>
+
+    @Test
+    void testGetAndSetPublished() {
+<span class="fc" id="L102">        question.setPublished(1);</span>
+<span class="fc" id="L103">        assertEquals(1, question.getPublished());</span>
+<span class="fc" id="L104">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

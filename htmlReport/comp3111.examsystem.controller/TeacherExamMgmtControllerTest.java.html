@@ -135,10 +135,120 @@ import org.junit.jupiter.api.BeforeAll;
         }
 <span class="fc" id="L136">    }</span>
 
+    @Test
+    void testCreateExamWithEmptyOrNullFields() throws Exception {
+        // All fields empty
+<span class="fc" id="L141">        setField(controller, &quot;examNameTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="fc" id="L142">        setField(controller, &quot;courseIdTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="fc" id="L143">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="fc" id="L144">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L145">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList());</span>
+<span class="fc" id="L146">        setField(controller, &quot;selectedExam&quot;, null);</span>
+<span class="fc" id="L147">        setField(controller, &quot;totalScoreLabel&quot;, new Label());</span>
+<span class="fc" id="L148">        setField(controller, &quot;formHeaderLabel&quot;, new Label());</span>
+<span class="fc" id="L149">        setField(controller, &quot;addExamBtn&quot;, new Button());</span>
+<span class="fc" id="L150">        setField(controller, &quot;editExamBtn&quot;, new Button());</span>
+<span class="fc" id="L151">        setField(controller, &quot;updateExamBtn&quot;, new Button());</span>
+<span class="fc" id="L152">        setField(controller, &quot;examsTable&quot;, new TableView&lt;&gt;());</span>
+<span class="fc" id="L153">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L154">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L155">            addExam.setAccessible(true);</span>
+<span class="fc" id="L156">            addExam.invoke(controller);</span>
+        }
+        // Null fields (simulate by not setting them)
+<span class="fc" id="L159">        controller = new TeacherExamMgmtController();</span>
+<span class="fc" id="L160">        setField(controller, &quot;examNameTxt&quot;, new TextField());</span>
+<span class="fc" id="L161">        setField(controller, &quot;courseIdTxt&quot;, new TextField());</span>
+<span class="fc" id="L162">        setField(controller, &quot;durationTxt&quot;, new TextField());</span>
+<span class="fc" id="L163">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L164">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList());</span>
+<span class="fc" id="L165">        setField(controller, &quot;selectedExam&quot;, null);</span>
+<span class="fc" id="L166">        setField(controller, &quot;totalScoreLabel&quot;, new Label());</span>
+<span class="fc" id="L167">        setField(controller, &quot;formHeaderLabel&quot;, new Label());</span>
+<span class="fc" id="L168">        setField(controller, &quot;addExamBtn&quot;, new Button());</span>
+<span class="fc" id="L169">        setField(controller, &quot;editExamBtn&quot;, new Button());</span>
+<span class="fc" id="L170">        setField(controller, &quot;updateExamBtn&quot;, new Button());</span>
+<span class="fc" id="L171">        setField(controller, &quot;examsTable&quot;, new TableView&lt;&gt;());</span>
+<span class="fc" id="L172">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L173">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L174">            addExam.setAccessible(true);</span>
+<span class="fc" id="L175">            addExam.invoke(controller);</span>
+        }
+<span class="fc" id="L177">    }</span>
+
+    @Test
+    void testCreateExamWithInvalidDuration() throws Exception {
+<span class="fc" id="L181">        setField(controller, &quot;examNameTxt&quot;, new TextField(&quot;Exam1&quot;));</span>
+<span class="fc" id="L182">        setField(controller, &quot;courseIdTxt&quot;, new TextField(&quot;COMP1000&quot;));</span>
+<span class="fc" id="L183">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;-10&quot;));</span>
+<span class="fc" id="L184">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L185">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList(new Question()));</span>
+<span class="fc" id="L186">        setField(controller, &quot;selectedExam&quot;, null);</span>
+<span class="fc" id="L187">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L188">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L189">            addExam.setAccessible(true);</span>
+<span class="fc" id="L190">            addExam.invoke(controller);</span>
+        }
+<span class="fc" id="L192">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;abc&quot;));</span>
+<span class="fc" id="L193">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L194">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L195">            addExam.setAccessible(true);</span>
+<span class="fc" id="L196">            addExam.invoke(controller);</span>
+        }
+<span class="fc" id="L198">    }</span>
+
+    @Test
+    void testCreateExamWithWhitespaceOrDuplicateName() throws Exception {
+<span class="fc" id="L202">        setField(controller, &quot;examNameTxt&quot;, new TextField(&quot;   &quot;));</span>
+<span class="fc" id="L203">        setField(controller, &quot;courseIdTxt&quot;, new TextField(&quot;COMP1000&quot;));</span>
+<span class="fc" id="L204">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;60&quot;));</span>
+<span class="fc" id="L205">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L206">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList(new Question()));</span>
+<span class="fc" id="L207">        setField(controller, &quot;selectedExam&quot;, null);</span>
+<span class="fc" id="L208">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L209">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L210">            addExam.setAccessible(true);</span>
+<span class="fc" id="L211">            addExam.invoke(controller);</span>
+        }
+        // Duplicate name (simulate by adding an exam with the same name)
+<span class="fc" id="L214">        setField(controller, &quot;examNameTxt&quot;, new TextField(&quot;Midterm&quot;));</span>
+<span class="fc" id="L215">        setField(controller, &quot;courseIdTxt&quot;, new TextField(&quot;COMP1000&quot;));</span>
+<span class="fc" id="L216">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;60&quot;));</span>
+<span class="fc" id="L217">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L218">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList(new Question()));</span>
+<span class="fc" id="L219">        setField(controller, &quot;selectedExam&quot;, null);</span>
+<span class="fc" id="L220">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L221">            var addExam = controller.getClass().getDeclaredMethod(&quot;handleAddExam&quot;);</span>
+<span class="fc" id="L222">            addExam.setAccessible(true);</span>
+<span class="fc" id="L223">            addExam.invoke(controller);</span>
+        }
+<span class="fc" id="L225">    }</span>
+
+    @Test
+    void testUpdateDeletePublishedExam() throws Exception {
+<span class="fc" id="L229">        Exam exam = new Exam();</span>
+<span class="fc" id="L230">        exam.setId(10L);</span>
+<span class="fc" id="L231">        exam.setIsPublishedInt(1); // Published</span>
+<span class="fc" id="L232">        setField(controller, &quot;selectedExam&quot;, exam);</span>
+<span class="fc" id="L233">        setField(controller, &quot;examNameTxt&quot;, new TextField(&quot;PublishedExam&quot;));</span>
+<span class="fc" id="L234">        setField(controller, &quot;courseIdTxt&quot;, new TextField(&quot;COMP1000&quot;));</span>
+<span class="fc" id="L235">        setField(controller, &quot;durationTxt&quot;, new TextField(&quot;60&quot;));</span>
+<span class="fc" id="L236">        setField(controller, &quot;publishedChk&quot;, new CheckBox());</span>
+<span class="fc" id="L237">        setField(controller, &quot;selectedQuestions&quot;, FXCollections.observableArrayList(new Question()));</span>
+<span class="fc" id="L238">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L239">            var updateExam = controller.getClass().getDeclaredMethod(&quot;handleUpdateExam&quot;);</span>
+<span class="fc" id="L240">            updateExam.setAccessible(true);</span>
+<span class="fc" id="L241">            updateExam.invoke(controller);</span>
+<span class="fc" id="L242">            var deleteExam = controller.getClass().getDeclaredMethod(&quot;handleDeleteExam&quot;);</span>
+<span class="fc" id="L243">            deleteExam.setAccessible(true);</span>
+<span class="fc" id="L244">            deleteExam.invoke(controller);</span>
+        }
+<span class="fc" id="L246">    }</span>
+
     private void setField(Object obj, String fieldName, Object value) throws Exception {
-<span class="fc" id="L139">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L140">        field.setAccessible(true);</span>
-<span class="fc" id="L141">        field.set(obj, value);</span>
-<span class="fc" id="L142">    }</span>
+<span class="fc" id="L249">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L250">        field.setAccessible(true);</span>
+<span class="fc" id="L251">        field.set(obj, value);</span>
+<span class="fc" id="L252">    }</span>
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

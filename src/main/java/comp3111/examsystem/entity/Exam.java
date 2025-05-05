@@ -36,7 +36,8 @@ public class Exam extends Entity {
         this.isPublished = isPublished != null ? isPublished.toString() : "0"; // Convert to String
         this.published = isPublished != null && isPublished > 0; // Set published boolean based on isPublished integer
         this.enabled = true; // Default to enabled
-        this.questionIds = questionIds != null ? questionIds : new ArrayList<>();
+        // Always copy input list to ensure mutability
+        this.questionIds = questionIds != null ? new ArrayList<>(questionIds) : new ArrayList<>();
         updateQuestionsField(); // Initialize questions field
     }
     
@@ -251,7 +252,6 @@ public class Exam extends Entity {
     
     public void setQuestions(String questions) {
         this.questions = questions;
-        
         // Try to parse and update questionIds from questions string
         if (questions != null && !questions.isEmpty()) {
             try {
@@ -267,7 +267,7 @@ public class Exam extends Entity {
                     this.questionIds = ids;
                 }
             } catch (NumberFormatException e) {
-                // If parsing fails, keep the existing questionIds
+                // If parsing fails, keep the existing questionIds (does NOT clear the list)
             }
         }
     }

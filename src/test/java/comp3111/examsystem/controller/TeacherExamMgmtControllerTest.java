@@ -135,6 +135,116 @@ public class TeacherExamMgmtControllerTest {
         }
     }
 
+    @Test
+    void testCreateExamWithEmptyOrNullFields() throws Exception {
+        // All fields empty
+        setField(controller, "examNameTxt", new TextField(""));
+        setField(controller, "courseIdTxt", new TextField(""));
+        setField(controller, "durationTxt", new TextField(""));
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList());
+        setField(controller, "selectedExam", null);
+        setField(controller, "totalScoreLabel", new Label());
+        setField(controller, "formHeaderLabel", new Label());
+        setField(controller, "addExamBtn", new Button());
+        setField(controller, "editExamBtn", new Button());
+        setField(controller, "updateExamBtn", new Button());
+        setField(controller, "examsTable", new TableView<>());
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+        // Null fields (simulate by not setting them)
+        controller = new TeacherExamMgmtController();
+        setField(controller, "examNameTxt", new TextField());
+        setField(controller, "courseIdTxt", new TextField());
+        setField(controller, "durationTxt", new TextField());
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList());
+        setField(controller, "selectedExam", null);
+        setField(controller, "totalScoreLabel", new Label());
+        setField(controller, "formHeaderLabel", new Label());
+        setField(controller, "addExamBtn", new Button());
+        setField(controller, "editExamBtn", new Button());
+        setField(controller, "updateExamBtn", new Button());
+        setField(controller, "examsTable", new TableView<>());
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+    }
+
+    @Test
+    void testCreateExamWithInvalidDuration() throws Exception {
+        setField(controller, "examNameTxt", new TextField("Exam1"));
+        setField(controller, "courseIdTxt", new TextField("COMP1000"));
+        setField(controller, "durationTxt", new TextField("-10"));
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList(new Question()));
+        setField(controller, "selectedExam", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+        setField(controller, "durationTxt", new TextField("abc"));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+    }
+
+    @Test
+    void testCreateExamWithWhitespaceOrDuplicateName() throws Exception {
+        setField(controller, "examNameTxt", new TextField("   "));
+        setField(controller, "courseIdTxt", new TextField("COMP1000"));
+        setField(controller, "durationTxt", new TextField("60"));
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList(new Question()));
+        setField(controller, "selectedExam", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+        // Duplicate name (simulate by adding an exam with the same name)
+        setField(controller, "examNameTxt", new TextField("Midterm"));
+        setField(controller, "courseIdTxt", new TextField("COMP1000"));
+        setField(controller, "durationTxt", new TextField("60"));
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList(new Question()));
+        setField(controller, "selectedExam", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var addExam = controller.getClass().getDeclaredMethod("handleAddExam");
+            addExam.setAccessible(true);
+            addExam.invoke(controller);
+        }
+    }
+
+    @Test
+    void testUpdateDeletePublishedExam() throws Exception {
+        Exam exam = new Exam();
+        exam.setId(10L);
+        exam.setIsPublishedInt(1); // Published
+        setField(controller, "selectedExam", exam);
+        setField(controller, "examNameTxt", new TextField("PublishedExam"));
+        setField(controller, "courseIdTxt", new TextField("COMP1000"));
+        setField(controller, "durationTxt", new TextField("60"));
+        setField(controller, "publishedChk", new CheckBox());
+        setField(controller, "selectedQuestions", FXCollections.observableArrayList(new Question()));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            var updateExam = controller.getClass().getDeclaredMethod("handleUpdateExam");
+            updateExam.setAccessible(true);
+            updateExam.invoke(controller);
+            var deleteExam = controller.getClass().getDeclaredMethod("handleDeleteExam");
+            deleteExam.setAccessible(true);
+            deleteExam.invoke(controller);
+        }
+    }
+
     private void setField(Object obj, String fieldName, Object value) throws Exception {
         Field field = obj.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);

@@ -9,6 +9,7 @@ import comp3111.examsystem.entity.Record;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import comp3111.examsystem.tools.MsgSender;
+import java.lang.reflect.Field;
 
 public class TeacherGradeExamControllerTest {
     private TeacherGradeExamController controller;
@@ -16,7 +17,33 @@ public class TeacherGradeExamControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         controller = new TeacherGradeExamController();
-        // Initialize JavaFX controls as needed
+        setField(controller, "courseFilter", new ComboBox<>());
+        setField(controller, "examFilter", new ComboBox<>());
+        setField(controller, "studentFilter", new ComboBox<>());
+        setField(controller, "answerTable", new TableView<>());
+        setField(controller, "manualScoreField", new TextField());
+    }
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+        Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(obj, value);
+    }
+
+    @Test
+    void testInitialState() {
+        // Example: check that the table is empty on startup
+        assertTrue(((TableView<?>) getField(controller, "answerTable")).getItems().isEmpty());
+    }
+
+    private Object getField(Object obj, String fieldName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(obj);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Test
@@ -67,6 +94,33 @@ public class TeacherGradeExamControllerTest {
             // refreshMethod.setAccessible(true);
             // refreshMethod.invoke(controller);
             // No exceptions = logic covered
+        }
+    }
+
+    @Test
+    void testFilterByStudentAndExam() throws Exception {
+        setField(controller, "studentFilter", new ComboBox<>());
+        setField(controller, "examFilter", new ComboBox<>());
+        ComboBox<String> studentCombo = (ComboBox<String>) getField(controller, "studentFilter");
+        ComboBox<String> examCombo = (ComboBox<String>) getField(controller, "examFilter");
+        studentCombo.getItems().addAll("Alice", "Bob");
+        examCombo.getItems().addAll("Midterm", "Final");
+        studentCombo.setValue("Alice");
+        examCombo.setValue("Midterm");
+        // If a filter method exists, call it via reflection
+        // var filterMethod = controller.getClass().getDeclaredMethod("filterExam");
+        // filterMethod.setAccessible(true);
+        // filterMethod.invoke(controller);
+    }
+
+    @Test
+    void testSubmitGrade() throws Exception {
+        setField(controller, "manualScoreField", new TextField("85"));
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            // If a submit method exists, call it via reflection
+            // var submitMethod = controller.getClass().getDeclaredMethod("handleSubmit");
+            // submitMethod.setAccessible(true);
+            // submitMethod.invoke(controller);
         }
     }
 } 

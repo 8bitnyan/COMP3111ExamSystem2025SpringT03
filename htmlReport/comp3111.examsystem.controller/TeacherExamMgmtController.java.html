@@ -583,16 +583,16 @@ import java.util.stream.Collectors;
 <span class="nc" id="L583">                return;</span>
             }
             
-<span class="pc bpc" id="L586" title="1 of 2 branches missed.">            if (selectedQuestions.isEmpty()) {</span>
+<span class="fc bfc" id="L586" title="All 2 branches covered.">            if (selectedQuestions.isEmpty()) {</span>
 <span class="fc" id="L587">                MsgSender.showMsg(&quot;Please add at least one question to the exam.&quot;);</span>
 <span class="fc" id="L588">                return;</span>
             }
 
             // Check whether the course exists
-<span class="nc" id="L592">            Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
-<span class="nc bnc" id="L593" title="All 2 branches missed.">            if (courseDB.queryByField(&quot;courseCode&quot;, courseIdTxt.getText()).isEmpty()) {</span>
-<span class="nc" id="L594">                MsgSender.showMsg(&quot;No such course found.&quot;);</span>
-<span class="nc" id="L595">                return;</span>
+<span class="fc" id="L592">            Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="pc bpc" id="L593" title="1 of 2 branches missed.">            if (courseDB.queryByField(&quot;courseCode&quot;, courseIdTxt.getText()).isEmpty()) {</span>
+<span class="fc" id="L594">                MsgSender.showMsg(&quot;No such course found.&quot;);</span>
+<span class="fc" id="L595">                return;</span>
             }
             
             // Create or update exam
@@ -666,9 +666,9 @@ import java.util.stream.Collectors;
 <span class="nc" id="L666">            return;</span>
         }
         
-<span class="pc bpc" id="L669" title="2 of 4 branches missed.">        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</span>
-<span class="nc" id="L670">            MsgSender.showMsg(&quot;Published exams cannot be deleted.&quot;);</span>
-<span class="nc" id="L671">            return;</span>
+<span class="pc bpc" id="L669" title="1 of 4 branches missed.">        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</span>
+<span class="fc" id="L670">            MsgSender.showMsg(&quot;Published exams cannot be deleted.&quot;);</span>
+<span class="fc" id="L671">            return;</span>
         }
         
 <span class="fc" id="L674">        MsgSender.showConfirm(</span>

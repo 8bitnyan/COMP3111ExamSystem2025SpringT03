@@ -12,11 +12,11 @@ public class Exam extends Entity {
     private String courseCode; // Changed from courseId to courseCode
     private Integer duration; // in minutes
     private String examTime; // Added for database compatibility
-<span class="pc" id="L15">    private String isPublished = &quot;0&quot;; // Changed from Integer to String</span>
-<span class="pc" id="L16">    private Integer isPublishedInt = 0; // Added for API compatibility</span>
-<span class="pc" id="L17">    private Boolean published = false; // Added for database compatibility</span>
-<span class="pc" id="L18">    private Boolean enabled = true; // Added for compatibility with Entity.isAble</span>
-<span class="pc" id="L19">    private List&lt;Long&gt; questionIds = new ArrayList&lt;&gt;(); // IDs of questions included in this exam</span>
+<span class="fc" id="L15">    private String isPublished = &quot;0&quot;; // Changed from Integer to String</span>
+<span class="fc" id="L16">    private Integer isPublishedInt = 0; // Added for API compatibility</span>
+<span class="fc" id="L17">    private Boolean published = false; // Added for database compatibility</span>
+<span class="fc" id="L18">    private Boolean enabled = true; // Added for compatibility with Entity.isAble</span>
+<span class="fc" id="L19">    private List&lt;Long&gt; questionIds = new ArrayList&lt;&gt;(); // IDs of questions included in this exam</span>
     private String questions; // Added for database compatibility
     
     // Default constructor required for Database.java reflection
@@ -25,31 +25,32 @@ public class Exam extends Entity {
     /**
      * Full constructor for creating a new exam
      */
-<span class="nc" id="L28">    public Exam(Long teacherId, String name, String courseCode, Integer duration, Integer isPublished, List&lt;Long&gt; questionIds) {</span>
-<span class="nc" id="L29">        this.teacherId = teacherId;</span>
-<span class="nc" id="L30">        this.name = name;</span>
-<span class="nc" id="L31">        this.examName = name; // Set examName to match name</span>
-<span class="nc" id="L32">        this.courseCode = courseCode;</span>
-<span class="nc" id="L33">        this.duration = duration;</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</span>
-<span class="nc" id="L35">        this.isPublishedInt = isPublished;</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</span>
-<span class="nc bnc" id="L37" title="All 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
-<span class="nc" id="L38">        this.enabled = true; // Default to enabled</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">        this.questionIds = questionIds != null ? questionIds : new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L40">        updateQuestionsField(); // Initialize questions field</span>
-<span class="nc" id="L41">    }</span>
+<span class="fc" id="L28">    public Exam(Long teacherId, String name, String courseCode, Integer duration, Integer isPublished, List&lt;Long&gt; questionIds) {</span>
+<span class="fc" id="L29">        this.teacherId = teacherId;</span>
+<span class="fc" id="L30">        this.name = name;</span>
+<span class="fc" id="L31">        this.examName = name; // Set examName to match name</span>
+<span class="fc" id="L32">        this.courseCode = courseCode;</span>
+<span class="fc" id="L33">        this.duration = duration;</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</span>
+<span class="fc" id="L35">        this.isPublishedInt = isPublished;</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</span>
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
+<span class="fc" id="L38">        this.enabled = true; // Default to enabled</span>
+        // Always copy input list to ensure mutability
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        this.questionIds = questionIds != null ? new ArrayList&lt;&gt;(questionIds) : new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L41">        updateQuestionsField(); // Initialize questions field</span>
+<span class="fc" id="L42">    }</span>
     
     /**
      * Updates the questions field based on questionIds
      */
     private void updateQuestionsField() {
-<span class="nc bnc" id="L47" title="All 4 branches missed.">        if (questionIds != null &amp;&amp; !questionIds.isEmpty()) {</span>
-<span class="nc" id="L48">            this.questions = String.join(&quot;,&quot;, questionIds.stream().map(Object::toString).toArray(String[]::new));</span>
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (questionIds != null &amp;&amp; !questionIds.isEmpty()) {</span>
+<span class="fc" id="L49">            this.questions = String.join(&quot;,&quot;, questionIds.stream().map(Object::toString).toArray(String[]::new));</span>
         } else {
-<span class="nc" id="L50">            this.questions = &quot;&quot;;</span>
+<span class="fc" id="L51">            this.questions = &quot;&quot;;</span>
         }
-<span class="nc" id="L52">    }</span>
+<span class="fc" id="L53">    }</span>
     
     /**
      * Add a question to this exam
@@ -57,12 +58,12 @@ public class Exam extends Entity {
      * @return true if added, false if already exists
      */
     public boolean addQuestion(Long questionId) {
-<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (!questionIds.contains(questionId)) {</span>
-<span class="nc" id="L61">            questionIds.add(questionId);</span>
-<span class="nc" id="L62">            updateQuestionsField();</span>
-<span class="nc" id="L63">            return true;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!questionIds.contains(questionId)) {</span>
+<span class="fc" id="L62">            questionIds.add(questionId);</span>
+<span class="fc" id="L63">            updateQuestionsField();</span>
+<span class="fc" id="L64">            return true;</span>
         }
-<span class="nc" id="L65">        return false;</span>
+<span class="fc" id="L66">        return false;</span>
     }
     
     /**
@@ -71,11 +72,11 @@ public class Exam extends Entity {
      * @return true if removed, false if not found
      */
     public boolean removeQuestion(Long questionId) {
-<span class="nc" id="L74">        boolean removed = questionIds.remove(questionId);</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (removed) {</span>
-<span class="nc" id="L76">            updateQuestionsField();</span>
+<span class="fc" id="L75">        boolean removed = questionIds.remove(questionId);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (removed) {</span>
+<span class="fc" id="L77">            updateQuestionsField();</span>
         }
-<span class="nc" id="L78">        return removed;</span>
+<span class="fc" id="L79">        return removed;</span>
     }
     
     /**
@@ -83,193 +84,192 @@ public class Exam extends Entity {
      * @return The question count
      */
     public int getQuestionCount() {
-<span class="nc" id="L86">        return questionIds.size();</span>
+<span class="fc" id="L87">        return questionIds.size();</span>
     }
     
     // Getters and Setters
     
     @Override
     public Long getId() {
-<span class="nc" id="L93">        return id;</span>
+<span class="nc" id="L94">        return id;</span>
     }
     
     @Override
     public void setId(Long id) {
-<span class="fc" id="L98">        this.id = id;</span>
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L99">        this.id = id;</span>
+<span class="fc" id="L100">    }</span>
     
     public Long getTeacherId() {
-<span class="nc" id="L102">        return teacherId;</span>
+<span class="nc" id="L103">        return teacherId;</span>
     }
     
     public void setTeacherId(Long teacherId) {
-<span class="nc" id="L106">        this.teacherId = teacherId;</span>
-<span class="nc" id="L107">    }</span>
+<span class="nc" id="L107">        this.teacherId = teacherId;</span>
+<span class="nc" id="L108">    }</span>
     
     public String getName() {
-<span class="fc" id="L110">        return name;</span>
+<span class="fc" id="L111">        return name;</span>
     }
     
     public void setName(String name) {
-<span class="nc" id="L114">        this.name = name;</span>
-<span class="nc" id="L115">        this.examName = name; // Keep examName in sync with name</span>
-<span class="nc" id="L116">    }</span>
+<span class="fc" id="L115">        this.name = name;</span>
+<span class="fc" id="L116">        this.examName = name; // Keep examName in sync with name</span>
+<span class="fc" id="L117">    }</span>
     
     public String getExamName() {
-<span class="nc" id="L119">        return examName;</span>
+<span class="fc" id="L120">        return examName;</span>
     }
     
     public void setExamName(String examName) {
-<span class="nc" id="L123">        this.examName = examName;</span>
-<span class="nc" id="L124">        this.name = examName; // Keep name in sync with examName</span>
-<span class="nc" id="L125">    }</span>
+<span class="fc" id="L124">        this.examName = examName;</span>
+<span class="fc" id="L125">        this.name = examName; // Keep name in sync with examName</span>
+<span class="fc" id="L126">    }</span>
     
     public String getCourseCode() {
-<span class="fc" id="L128">        return courseCode;</span>
+<span class="fc" id="L129">        return courseCode;</span>
     }
     
     public void setCourseCode(String courseCode) {
-<span class="nc" id="L132">        this.courseCode = courseCode;</span>
-<span class="nc" id="L133">    }</span>
+<span class="nc" id="L133">        this.courseCode = courseCode;</span>
+<span class="nc" id="L134">    }</span>
     
     // For backwards compatibility in case any code still uses the old method names
     @Deprecated
     public String getCourseId() {
-<span class="nc" id="L138">        return courseCode;</span>
+<span class="nc" id="L139">        return courseCode;</span>
     }
     
     @Deprecated
     public void setCourseId(String courseCode) {
-<span class="nc" id="L143">        this.courseCode = courseCode;</span>
-<span class="nc" id="L144">    }</span>
+<span class="nc" id="L144">        this.courseCode = courseCode;</span>
+<span class="nc" id="L145">    }</span>
     
     public Integer getDuration() {
-<span class="nc" id="L147">        return duration;</span>
+<span class="fc" id="L148">        return duration;</span>
     }
     
     public void setDuration(Integer duration) {
-<span class="nc" id="L151">        this.duration = duration;</span>
-<span class="nc bnc" id="L152" title="All 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Update examTime when duration changes</span>
-<span class="nc" id="L153">    }</span>
+<span class="fc" id="L152">        this.duration = duration;</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Update examTime when duration changes</span>
+<span class="fc" id="L154">    }</span>
     
     public String getExamTime() {
-<span class="nc" id="L156">        return examTime;</span>
+<span class="fc" id="L157">        return examTime;</span>
     }
     
     public void setExamTime(String examTime) {
-<span class="nc" id="L160">        this.examTime = examTime;</span>
+<span class="fc" id="L161">        this.examTime = examTime;</span>
         // Try to parse duration from examTime if possible
-<span class="nc bnc" id="L162" title="All 4 branches missed.">        if (examTime != null &amp;&amp; examTime.contains(&quot; minutes&quot;)) {</span>
+<span class="pc bpc" id="L163" title="1 of 4 branches missed.">        if (examTime != null &amp;&amp; examTime.contains(&quot; minutes&quot;)) {</span>
             try {
-<span class="nc" id="L164">                String durationStr = examTime.replace(&quot; minutes&quot;, &quot;&quot;).trim();</span>
-<span class="nc" id="L165">                this.duration = Integer.parseInt(durationStr);</span>
-<span class="nc" id="L166">            } catch (NumberFormatException e) {</span>
+<span class="fc" id="L165">                String durationStr = examTime.replace(&quot; minutes&quot;, &quot;&quot;).trim();</span>
+<span class="fc" id="L166">                this.duration = Integer.parseInt(durationStr);</span>
+<span class="nc" id="L167">            } catch (NumberFormatException e) {</span>
                 // If parsing fails, keep the existing duration
-<span class="nc" id="L168">            }</span>
+<span class="fc" id="L169">            }</span>
         }
-<span class="nc" id="L170">    }</span>
+<span class="fc" id="L171">    }</span>
     
     public String getIsPublished() {
-<span class="nc" id="L173">        return isPublished;</span>
+<span class="fc" id="L174">        return isPublished;</span>
     }
     
     public void setIsPublished(String isPublished) {
-<span class="nc" id="L177">        this.isPublished = isPublished;</span>
+<span class="fc" id="L178">        this.isPublished = isPublished;</span>
         // Try to update isPublishedInt
         try {
-<span class="nc" id="L180">            this.isPublishedInt = Integer.parseInt(isPublished);</span>
-<span class="nc" id="L181">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L181">            this.isPublishedInt = Integer.parseInt(isPublished);</span>
+<span class="fc" id="L182">        } catch (NumberFormatException e) {</span>
             // If parsing fails, default to 0
-<span class="nc" id="L183">            this.isPublishedInt = 0;</span>
-<span class="nc" id="L184">        }</span>
+<span class="fc" id="L184">            this.isPublishedInt = 0;</span>
+<span class="fc" id="L185">        }</span>
         // Update published boolean
-<span class="nc bnc" id="L186" title="All 2 branches missed.">        this.published = this.isPublishedInt &gt; 0;</span>
-<span class="nc" id="L187">    }</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        this.published = this.isPublishedInt &gt; 0;</span>
+<span class="fc" id="L188">    }</span>
     
     // For API compatibility with existing code
     public Integer getIsPublishedInt() {
-<span class="fc" id="L191">        return isPublishedInt;</span>
+<span class="fc" id="L192">        return isPublishedInt;</span>
     }
     
     public void setIsPublishedInt(Integer isPublishedInt) {
-<span class="fc" id="L195">        this.isPublishedInt = isPublishedInt;</span>
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">        this.isPublished = isPublishedInt != null ? isPublishedInt.toString() : &quot;0&quot;;</span>
-<span class="pc bpc" id="L197" title="2 of 4 branches missed.">        this.published = isPublishedInt != null &amp;&amp; isPublishedInt &gt; 0;</span>
-<span class="fc" id="L198">    }</span>
+<span class="fc" id="L196">        this.isPublishedInt = isPublishedInt;</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        this.isPublished = isPublishedInt != null ? isPublishedInt.toString() : &quot;0&quot;;</span>
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        this.published = isPublishedInt != null &amp;&amp; isPublishedInt &gt; 0;</span>
+<span class="fc" id="L199">    }</span>
     
     public Boolean getPublished() {
-<span class="nc" id="L201">        return published;</span>
+<span class="fc" id="L202">        return published;</span>
     }
     
     public void setPublished(Boolean published) {
-<span class="nc" id="L205">        this.published = published;</span>
-<span class="nc bnc" id="L206" title="All 4 branches missed.">        this.isPublishedInt = published != null &amp;&amp; published ? 1 : 0;</span>
-<span class="nc" id="L207">        this.isPublished = this.isPublishedInt.toString();</span>
-<span class="nc" id="L208">    }</span>
+<span class="nc" id="L206">        this.published = published;</span>
+<span class="nc bnc" id="L207" title="All 4 branches missed.">        this.isPublishedInt = published != null &amp;&amp; published ? 1 : 0;</span>
+<span class="nc" id="L208">        this.isPublished = this.isPublishedInt.toString();</span>
+<span class="nc" id="L209">    }</span>
     
     @Override
     public Boolean getIsAble() {
-<span class="nc" id="L212">        return enabled;</span>
+<span class="fc" id="L213">        return enabled;</span>
     }
     
     public Boolean getEnabled() {
-<span class="nc" id="L216">        return enabled;</span>
+<span class="fc" id="L217">        return enabled;</span>
     }
     
     public void setEnabled(Boolean enabled) {
-<span class="nc" id="L220">        this.enabled = enabled;</span>
-<span class="nc" id="L221">        super.isAble = enabled; // Keep base class isAble in sync</span>
-<span class="nc" id="L222">    }</span>
+<span class="fc" id="L221">        this.enabled = enabled;</span>
+<span class="fc" id="L222">        super.isAble = enabled; // Keep base class isAble in sync</span>
+<span class="fc" id="L223">    }</span>
     
     public List&lt;Long&gt; getQuestionIds() {
-<span class="nc" id="L225">        return questionIds;</span>
+<span class="fc" id="L226">        return questionIds;</span>
     }
     
     public void setQuestionIds(List&lt;?&gt; questionIds) {
-<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (questionIds == null) {</span>
-<span class="nc" id="L230">            this.questionIds = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (questionIds == null) {</span>
+<span class="fc" id="L231">            this.questionIds = new ArrayList&lt;&gt;();</span>
         } else {
-<span class="nc" id="L232">            this.questionIds = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L233" title="All 2 branches missed.">            for (Object id : questionIds) {</span>
-<span class="nc bnc" id="L234" title="All 2 branches missed.">                if (id instanceof Long) {</span>
-<span class="nc" id="L235">                    this.questionIds.add((Long) id);</span>
-<span class="nc bnc" id="L236" title="All 2 branches missed.">                } else if (id instanceof String) {</span>
+<span class="fc" id="L233">            this.questionIds = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            for (Object id : questionIds) {</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                if (id instanceof Long) {</span>
+<span class="nc" id="L236">                    this.questionIds.add((Long) id);</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">                } else if (id instanceof String) {</span>
                     try {
-<span class="nc" id="L238">                        this.questionIds.add(Long.parseLong((String) id));</span>
-<span class="nc" id="L239">                    } catch (NumberFormatException e) {</span>
+<span class="fc" id="L239">                        this.questionIds.add(Long.parseLong((String) id));</span>
+<span class="nc" id="L240">                    } catch (NumberFormatException e) {</span>
                         // Skip invalid string IDs
-<span class="nc" id="L241">                    }</span>
+<span class="fc" id="L242">                    }</span>
                 }
-<span class="nc" id="L243">            }</span>
+<span class="fc" id="L244">            }</span>
         }
-<span class="nc" id="L245">        updateQuestionsField(); // Update questions field when questionIds changes</span>
-<span class="nc" id="L246">    }</span>
+<span class="fc" id="L246">        updateQuestionsField(); // Update questions field when questionIds changes</span>
+<span class="fc" id="L247">    }</span>
     
     public String getQuestions() {
-<span class="nc" id="L249">        return questions;</span>
+<span class="nc" id="L250">        return questions;</span>
     }
     
     public void setQuestions(String questions) {
-<span class="nc" id="L253">        this.questions = questions;</span>
-        
+<span class="fc" id="L254">        this.questions = questions;</span>
         // Try to parse and update questionIds from questions string
-<span class="nc bnc" id="L256" title="All 4 branches missed.">        if (questions != null &amp;&amp; !questions.isEmpty()) {</span>
+<span class="pc bpc" id="L256" title="1 of 4 branches missed.">        if (questions != null &amp;&amp; !questions.isEmpty()) {</span>
             try {
-<span class="nc" id="L258">                String[] idStrings = questions.split(&quot;,&quot;);</span>
-<span class="nc" id="L259">                List&lt;Long&gt; ids = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L260" title="All 2 branches missed.">                for (String idStr : idStrings) {</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">                    if (!idStr.trim().isEmpty()) {</span>
-<span class="nc" id="L262">                        ids.add(Long.parseLong(idStr.trim()));</span>
+<span class="fc" id="L258">                String[] idStrings = questions.split(&quot;,&quot;);</span>
+<span class="fc" id="L259">                List&lt;Long&gt; ids = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                for (String idStr : idStrings) {</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">                    if (!idStr.trim().isEmpty()) {</span>
+<span class="fc" id="L262">                        ids.add(Long.parseLong(idStr.trim()));</span>
                     }
                 }
                 // Only update questionIds if we parsed at least one valid ID
-<span class="nc bnc" id="L266" title="All 2 branches missed.">                if (!ids.isEmpty()) {</span>
-<span class="nc" id="L267">                    this.questionIds = ids;</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                if (!ids.isEmpty()) {</span>
+<span class="fc" id="L267">                    this.questionIds = ids;</span>
                 }
-<span class="nc" id="L269">            } catch (NumberFormatException e) {</span>
-                // If parsing fails, keep the existing questionIds
-<span class="nc" id="L271">            }</span>
+<span class="fc" id="L269">            } catch (NumberFormatException e) {</span>
+                // If parsing fails, keep the existing questionIds (does NOT clear the list)
+<span class="fc" id="L271">            }</span>
         }
-<span class="nc" id="L273">    }</span>
+<span class="fc" id="L273">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
