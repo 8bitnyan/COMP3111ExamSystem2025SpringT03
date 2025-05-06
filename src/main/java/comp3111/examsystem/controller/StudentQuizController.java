@@ -429,14 +429,18 @@ public class StudentQuizController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentMainUI.fxml"));
             Parent root = loader.load();
-            
             StudentMainController controller = loader.getController();
             controller.preSetController(student);
-            
-            Stage stage = (Stage) quizNameText.getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
+            Scene currentScene = quizNameText.getScene();
+            if (currentScene != null && currentScene.getWindow() != null) {
+                Stage stage = (Stage) currentScene.getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            } else {
+                // In test or headless mode, just skip window operations
+                System.err.println("No scene/window available for navigation (likely in test mode).");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

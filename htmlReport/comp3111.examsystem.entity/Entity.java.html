@@ -35,7 +35,7 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @return true if active, false otherwise.
      */
     public Boolean getIsAble() {
-<span class="nc" id="L38">        return isAble;</span>
+<span class="fc" id="L38">        return isAble;</span>
     }
 
     /**
@@ -61,7 +61,7 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @return -1 if this.id is smaller than o.id, 0 if equal, 1 otherwise.
      */
     public int compareTo(Entity o) {
-<span class="nc" id="L64">        return Long.compare(this.id, o.id);</span>
+<span class="fc" id="L64">        return Long.compare(this.id, o.id);</span>
     }
 
     /**
@@ -70,8 +70,8 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @return true if str contains any of these special strings, false otherwise.
      */
     public static Boolean containsSpecialString(String str) {
-<span class="nc bnc" id="L73" title="All 4 branches missed.">        return str.contains(Database.ListItemSeparator) || str.contains(Database.PropertySeparator)</span>
-<span class="nc bnc" id="L74" title="All 2 branches missed.">                || str.contains(Database.NameValueSeparator);</span>
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        return str.contains(Database.ListItemSeparator) || str.contains(Database.PropertySeparator)</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                || str.contains(Database.NameValueSeparator);</span>
     }
 
     /**

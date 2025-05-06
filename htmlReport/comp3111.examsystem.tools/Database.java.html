@@ -115,7 +115,7 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L115">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        for (T e : list) {</span>
 <span class="fc" id="L117">            Object value = getValue(e, fieldName);</span>
-<span class="pc bpc" id="L118" title="5 of 10 branches missed.">            if ((value == null &amp;&amp; fieldValue != null) || (value != null &amp;&amp; fieldValue == null) || !value.toString().equals(fieldValue)) {</span>
+<span class="pc bpc" id="L118" title="3 of 10 branches missed.">            if ((value == null &amp;&amp; fieldValue != null) || (value != null &amp;&amp; fieldValue == null) || !value.toString().equals(fieldValue)) {</span>
 <span class="fc" id="L119">                continue;</span>
             }
 <span class="fc" id="L121">            resList.add(e);</span>
@@ -428,7 +428,7 @@ public class Database&lt;T&gt; {
 <span class="fc bfc" id="L428" title="All 2 branches covered.">            for (Field field : clazz.getDeclaredFields()) {</span>
 <span class="pc bpc" id="L429" title="1 of 2 branches missed.">                if (!field.getName().equals(&quot;dbutil&quot;)) {</span>
 <span class="fc" id="L430">                    Object obj = getValue(t, field.getName());</span>
-<span class="pc bpc" id="L431" title="1 of 4 branches missed.">                    if (obj != null &amp;&amp; !obj.toString().isEmpty()) {</span>
+<span class="fc bfc" id="L431" title="All 4 branches covered.">                    if (obj != null &amp;&amp; !obj.toString().isEmpty()) {</span>
 <span class="fc bfc" id="L432" title="All 2 branches covered.">                        if (obj instanceof List&lt;?&gt; list) {</span>
 <span class="fc bfc" id="L433" title="All 2 branches covered.">                            if (list.isEmpty()) sbf.append(field.getName()).append(NameValueSeparator).append(&quot;[]&quot;).append(PropertySeparator);</span>
                             else {

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EntityTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">EntityTest.java</span></div><h1>EntityTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L6">public class EntityTest {</span>
+    @Test
+    void testDefaultConstructor() {
+<span class="fc" id="L9">        Entity entity = new Entity();</span>
+<span class="fc" id="L10">        assertNull(entity.getId());</span>
+<span class="fc" id="L11">        assertTrue(entity.getIsAble());</span>
+<span class="fc" id="L12">    }</span>
+
+    @Test
+    void testConstructorWithId() {
+<span class="fc" id="L16">        Entity entity = new Entity(42L);</span>
+<span class="fc" id="L17">        assertEquals(42L, entity.getId());</span>
+<span class="fc" id="L18">        assertTrue(entity.getIsAble());</span>
+<span class="fc" id="L19">    }</span>
+
+    @Test
+    void testSettersAndGetters() {
+<span class="fc" id="L23">        Entity entity = new Entity();</span>
+<span class="fc" id="L24">        entity.setId(100L);</span>
+<span class="fc" id="L25">        assertEquals(100L, entity.getId());</span>
+<span class="fc" id="L26">    }</span>
+
+    @Test
+    void testEquals() {
+<span class="fc" id="L30">        Entity e1 = new Entity(1L);</span>
+<span class="fc" id="L31">        Entity e2 = new Entity(1L);</span>
+<span class="fc" id="L32">        Entity e3 = new Entity(2L);</span>
+<span class="fc" id="L33">        assertTrue(e1.equals(e2));</span>
+<span class="fc" id="L34">        assertFalse(e1.equals(e3));</span>
+<span class="fc" id="L35">        assertFalse(e1.equals(null));</span>
+<span class="fc" id="L36">        assertFalse(e1.equals(&quot;not an entity&quot;));</span>
+        // Null id case
+<span class="fc" id="L38">        Entity e4 = new Entity();</span>
+<span class="fc" id="L39">        Entity e5 = new Entity();</span>
+<span class="fc" id="L40">        assertFalse(e4.equals(e5));</span>
+<span class="fc" id="L41">        assertTrue(e4.equals(e4));</span>
+<span class="fc" id="L42">    }</span>
+
+    @Test
+    void testCompareTo() {
+<span class="fc" id="L46">        Entity e1 = new Entity(1L);</span>
+<span class="fc" id="L47">        Entity e2 = new Entity(2L);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        assertTrue(e1.compareTo(e2) &lt; 0);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        assertTrue(e2.compareTo(e1) &gt; 0);</span>
+<span class="fc" id="L50">        assertEquals(0, e1.compareTo(new Entity(1L)));</span>
+<span class="fc" id="L51">    }</span>
+
+    @Test
+    void testContainsSpecialString() {
+<span class="fc" id="L55">        assertTrue(Entity.containsSpecialString(&quot;abc&quot; + comp3111.examsystem.tools.Database.ListItemSeparator));</span>
+<span class="fc" id="L56">        assertTrue(Entity.containsSpecialString(&quot;abc&quot; + comp3111.examsystem.tools.Database.PropertySeparator));</span>
+<span class="fc" id="L57">        assertTrue(Entity.containsSpecialString(&quot;abc&quot; + comp3111.examsystem.tools.Database.NameValueSeparator));</span>
+<span class="fc" id="L58">        assertFalse(Entity.containsSpecialString(&quot;normalstring&quot;));</span>
+<span class="fc" id="L59">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

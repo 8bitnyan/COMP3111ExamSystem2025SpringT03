@@ -6,24 +6,61 @@ import javafx.scene.control.*;
 import javafx.scene.chart.*;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
-import comp3111.examsystem.entity.Stats;
+import comp3111.examsystem.entity.*;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import comp3111.examsystem.tools.MsgSender;
 import java.lang.reflect.Field;
+import javafx.collections.FXCollections;
+import org.junit.jupiter.api.BeforeAll;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.data.Department;
 
 public class TeacherGradeStatisticControllerTest {
     private TeacherGradeStatisticController controller;
+    private InMemoryDB<comp3111.examsystem.entity.Record> recordDB;
+    private InMemoryDB<Student> studentDB;
+    private InMemoryDB<Exam> examDB;
+    private InMemoryDB<Course> courseDB;
+    private InMemoryDB<Question> questionDB;
+
+    @BeforeAll
+    static void initJfx() {
+        new javafx.embed.swing.JFXPanel();
+    }
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new TeacherGradeStatisticController();
+        recordDB = new InMemoryDB<>(comp3111.examsystem.entity.Record.class);
+        studentDB = new InMemoryDB<>(Student.class);
+        examDB = new InMemoryDB<>(Exam.class);
+        courseDB = new InMemoryDB<>(Course.class);
+        questionDB = new InMemoryDB<>(Question.class);
+        // Pre-populate with minimal valid data
+        Student student = new Student(1L, "user1", "pass1", "Alice", Gender.FEMALE, 20, Department.CSE);
+        studentDB.add(student);
+        Course course = new Course(1L, "COMP3111", "Software Engineering", Department.CSE);
+        courseDB.add(course);
+        Exam exam = new Exam(1L, "Alice", "COMP3111", 60, 1, new ArrayList<>());
+        exam.setExamName("Midterm");
+        examDB.add(exam);
+        Question question = new Question(1L, "MCQ", "What is 2+2?", "2", "3", "4", "5", "4", 5);
+        questionDB.add(question);
+        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record(1L, 1L, 1L, "4", 5);
+        recordDB.add(record);
+        controller = new TeacherGradeStatisticController(recordDB, studentDB, examDB, courseDB, questionDB);
         setField(controller, "courseCmb", new ComboBox<>());
         setField(controller, "examCmb", new ComboBox<>());
         setField(controller, "studentCmb", new ComboBox<>());
-        setField(controller, "recordTable", new TableView<>());
+        setField(controller, "recordTable", new TableView<Stats>());
         setField(controller, "barChart", new BarChart<>(new CategoryAxis(), new NumberAxis()));
         setField(controller, "lineChart", new LineChart<>(new CategoryAxis(), new NumberAxis()));
+        setField(controller, "colStudent", new TableColumn<>());
+        setField(controller, "colCourse", new TableColumn<>());
+        setField(controller, "colExam", new TableColumn<>());
+        setField(controller, "colScore", new TableColumn<>());
+        setField(controller, "colMaxScore", new TableColumn<>());
+        setField(controller, "colTimeSpent", new TableColumn<>());
     }
 
     private void setField(Object obj, String fieldName, Object value) throws Exception {
@@ -33,9 +70,65 @@ public class TeacherGradeStatisticControllerTest {
     }
 
     @Test
-    void testInitialState() {
-        // Example: check that the table is empty on startup
-        assertTrue(((TableView<?>) getField(controller, "recordTable")).getItems().isEmpty());
+    void testInitializationAndMockData() {
+        // Should generate mock data if DBs are empty
+        controller.initialize(null, null);
+        TableView<Stats> table = (TableView<Stats>) getField(controller, "recordTable");
+        assertFalse(table.getItems().isEmpty(), "Table should be populated with mock data");
+    }
+
+    @Test
+    void testFilterLogic() throws Exception {
+        controller.initialize(null, null);
+        TableView<Stats> table = (TableView<Stats>) getField(controller, "recordTable");
+        ComboBox<String> courseCmb = (ComboBox<String>) getField(controller, "courseCmb");
+        ComboBox<String> examCmb = (ComboBox<String>) getField(controller, "examCmb");
+        ComboBox<String> studentCmb = (ComboBox<String>) getField(controller, "studentCmb");
+        Stats sample = table.getItems().get(0);
+        courseCmb.setValue(sample.getCourseCode());
+        examCmb.setValue(sample.getExamName());
+        studentCmb.setValue(sample.getStudentName());
+        // Call private handleFilter via reflection
+        var method = controller.getClass().getDeclaredMethod("handleFilter");
+        method.setAccessible(true);
+        method.invoke(controller);
+        assertTrue(table.getItems().stream().allMatch(s ->
+            s.getCourseCode().equals(sample.getCourseCode()) &&
+            s.getExamName().equals(sample.getExamName()) &&
+            s.getStudentName().equals(sample.getStudentName())
+        ));
+    }
+
+    @Test
+    void testResetLogic() throws Exception {
+        controller.initialize(null, null);
+        TableView<Stats> table = (TableView<Stats>) getField(controller, "recordTable");
+        ComboBox<String> courseCmb = (ComboBox<String>) getField(controller, "courseCmb");
+        ComboBox<String> examCmb = (ComboBox<String>) getField(controller, "examCmb");
+        ComboBox<String> studentCmb = (ComboBox<String>) getField(controller, "studentCmb");
+        courseCmb.setValue("SomeCourse");
+        examCmb.setValue("SomeExam");
+        studentCmb.setValue("SomeStudent");
+        // Call private handleReset via reflection
+        var method = controller.getClass().getDeclaredMethod("handleReset");
+        method.setAccessible(true);
+        method.invoke(controller);
+        assertEquals("Any", courseCmb.getValue());
+        assertEquals("Any", examCmb.getValue());
+        assertEquals("Any", studentCmb.getValue());
+        assertEquals(table.getItems().size(), ((List<?>)getField(controller, "allStats")).size());
+    }
+
+    // Simple in-memory DB for test isolation
+    static class InMemoryDB<T> extends comp3111.examsystem.tools.Database<T> {
+        private final List<T> items = new ArrayList<>();
+        public InMemoryDB(Class<T> clazz) { super(clazz); }
+        @Override public List<T> getAll() { return new ArrayList<>(items); }
+        @Override public List<T> getAllEnabled() { return new ArrayList<>(items); }
+        @Override public void add(T t) { items.add(t); }
+        @Override public void delByKey(String key) { items.clear(); }
+        @Override public T queryByKey(String key) { return items.isEmpty() ? null : items.get(0); }
+        @Override public List<T> queryByField(String field, String value) { return getAll(); }
     }
 
     private Object getField(Object obj, String fieldName) {
@@ -46,88 +139,5 @@ public class TeacherGradeStatisticControllerTest {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @Test
-    void testManualGradingInput() throws Exception {
-        // Simulate grading: assign score to a student/question
-        // (Assume method handleGrade or similar exists)
-        // Setup fields as needed
-        // Example: setField(controller, "scoreField", new TextField("8"));
-        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-            // If a grading method exists, call it via reflection
-            // Example:
-            // var gradeMethod = controller.getClass().getDeclaredMethod("handleGrade");
-            // gradeMethod.setAccessible(true);
-            // gradeMethod.invoke(controller);
-            // No exceptions = logic covered
-        }
-    }
-
-    @Test
-    void testGradeStatisticsFilters() {
-        // Simulate filter: only show results for a specific course/exam
-        List<String> allResults = Arrays.asList("Math-Exam1", "Physics-Exam2");
-        String filter = "Math";
-        List<String> filtered = allResults.stream().filter(r -> r.contains(filter)).toList();
-        assertEquals(1, filtered.size());
-        assertEquals("Math-Exam1", filtered.get(0));
-    }
-
-    @Test
-    void testFiltersWork() throws Exception {
-        // Simulate filter controls and call filter method if present
-        // Example: setField(controller, "filterStudentTxt", new TextField("Alice"));
-        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-            // If a filter method exists, call it via reflection
-            // Example:
-            // var filterMethod = controller.getClass().getDeclaredMethod("handleFilter");
-            // filterMethod.setAccessible(true);
-            // filterMethod.invoke(controller);
-            // No exceptions = logic covered
-        }
-    }
-
-    @Test
-    void testNoStudentResultsEdgeCase() throws Exception {
-        // Simulate empty student results and call refresh/statistics method
-        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-            // If a refresh/statistics method exists, call it via reflection
-            // Example:
-            // var refreshMethod = controller.getClass().getDeclaredMethod("handleRefresh");
-            // refreshMethod.setAccessible(true);
-            // refreshMethod.invoke(controller);
-            // No exceptions = logic covered
-        }
-    }
-
-    @Test
-    void testFilterByCourseExamStudent() throws Exception {
-        setField(controller, "courseCmb", new ComboBox<>());
-        setField(controller, "examCmb", new ComboBox<>());
-        setField(controller, "studentCmb", new ComboBox<>());
-        ComboBox<String> courseCombo = (ComboBox<String>) getField(controller, "courseCmb");
-        ComboBox<String> examCombo = (ComboBox<String>) getField(controller, "examCmb");
-        ComboBox<String> studentCombo = (ComboBox<String>) getField(controller, "studentCmb");
-        courseCombo.getItems().add("COMP3111");
-        examCombo.getItems().add("Midterm");
-        studentCombo.getItems().add("Alice");
-        courseCombo.setValue("COMP3111");
-        examCombo.setValue("Midterm");
-        studentCombo.setValue("Alice");
-        // If a filter/statistics method exists, call it via reflection
-        // var filterMethod = controller.getClass().getDeclaredMethod("handleFilter");
-        // filterMethod.setAccessible(true);
-        // filterMethod.invoke(controller);
-    }
-
-    @Test
-    void testChartUpdates() throws Exception {
-        setField(controller, "barChart", new BarChart<>(new CategoryAxis(), new NumberAxis()));
-        setField(controller, "lineChart", new LineChart<>(new CategoryAxis(), new NumberAxis()));
-        // If a method like updateCharts exists, call it via reflection
-        // var updateCharts = controller.getClass().getDeclaredMethod("updateCharts");
-        // updateCharts.setAccessible(true);
-        // updateCharts.invoke(controller);
     }
 } 

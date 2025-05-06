@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecordTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">RecordTest.java</span></div><h1>RecordTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L6">public class RecordTest {</span>
+    @Test
+    void testDefaultConstructor() {
+<span class="fc" id="L9">        Record r = new Record();</span>
+<span class="fc" id="L10">        assertNull(r.getQuestionID());</span>
+<span class="fc" id="L11">        assertNull(r.getStudentID());</span>
+<span class="fc" id="L12">        assertNull(r.getExamID());</span>
+<span class="fc" id="L13">        assertNull(r.getResponse());</span>
+<span class="fc" id="L14">        assertNull(r.getScore());</span>
+<span class="fc" id="L15">    }</span>
+
+    @Test
+    void testConstructorAndGetters() {
+<span class="fc" id="L19">        Record r = new Record(1L, 2L, 3L, &quot;A&quot;, 10);</span>
+<span class="fc" id="L20">        assertEquals(1L, r.getQuestionID());</span>
+<span class="fc" id="L21">        assertEquals(2L, r.getStudentID());</span>
+<span class="fc" id="L22">        assertEquals(3L, r.getExamID());</span>
+<span class="fc" id="L23">        assertEquals(&quot;A&quot;, r.getResponse());</span>
+<span class="fc" id="L24">        assertEquals(10, r.getScore());</span>
+<span class="fc" id="L25">    }</span>
+
+    @Test
+    void testSetters() {
+<span class="fc" id="L29">        Record r = new Record();</span>
+<span class="fc" id="L30">        r.setQuestionID(4L);</span>
+<span class="fc" id="L31">        r.setStudent(5L);</span>
+<span class="fc" id="L32">        r.setExamID(6L);</span>
+<span class="fc" id="L33">        r.setResponse(&quot;B&quot;);</span>
+<span class="fc" id="L34">        r.setScore(20);</span>
+<span class="fc" id="L35">        assertEquals(4L, r.getQuestionID());</span>
+<span class="fc" id="L36">        assertEquals(5L, r.getStudentID());</span>
+<span class="fc" id="L37">        assertEquals(6L, r.getExamID());</span>
+<span class="fc" id="L38">        assertEquals(&quot;B&quot;, r.getResponse());</span>
+<span class="fc" id="L39">        assertEquals(20, r.getScore());</span>
+<span class="fc" id="L40">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

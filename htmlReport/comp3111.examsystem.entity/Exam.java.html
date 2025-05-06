@@ -34,7 +34,7 @@ public class Exam extends Entity {
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</span>
 <span class="fc" id="L35">        this.isPublishedInt = isPublished;</span>
 <span class="pc bpc" id="L36" title="1 of 2 branches missed.">        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</span>
-<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
 <span class="fc" id="L38">        this.enabled = true; // Default to enabled</span>
         // Always copy input list to ensure mutability
 <span class="pc bpc" id="L40" title="1 of 2 branches missed.">        this.questionIds = questionIds != null ? new ArrayList&lt;&gt;(questionIds) : new ArrayList&lt;&gt;();</span>
@@ -91,7 +91,7 @@ public class Exam extends Entity {
     
     @Override
     public Long getId() {
-<span class="nc" id="L94">        return id;</span>
+<span class="fc" id="L94">        return id;</span>
     }
     
     @Override
@@ -247,7 +247,7 @@ public class Exam extends Entity {
 <span class="fc" id="L247">    }</span>
     
     public String getQuestions() {
-<span class="nc" id="L250">        return questions;</span>
+<span class="fc" id="L250">        return questions;</span>
     }
     
     public void setQuestions(String questions) {

@@ -58,6 +58,20 @@ public class TeacherGradeStatisticController implements Initializable {
     
     private ObservableList<Stats> allStats = FXCollections.observableArrayList();
 
+    // Default constructor for production
+    public TeacherGradeStatisticController() {
+        // fields will be initialized in initialize()
+    }
+
+    // Constructor for tests
+    public TeacherGradeStatisticController(Database<Record> recordDB, Database<Student> studentDB, Database<Exam> examDB, Database<Course> courseDB, Database<Question> questionDB) {
+        this.recordDB = recordDB;
+        this.studentDB = studentDB;
+        this.examDB = examDB;
+        this.courseDB = courseDB;
+        this.questionDB = questionDB;
+    }
+
     /**
      * Initializes the page and loads the data into the table and charts.
      * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
@@ -67,54 +81,54 @@ public class TeacherGradeStatisticController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             // Initialize databases
-        recordDB = new Database<>(Record.class);
-        studentDB = new Database<>(Student.class);
-        examDB = new Database<>(Exam.class);
-        courseDB = new Database<>(Course.class);
-        questionDB = new Database<>(Question.class);
+            if (recordDB == null) recordDB = new Database<>(Record.class);
+            if (studentDB == null) studentDB = new Database<>(Student.class);
+            if (examDB == null) examDB = new Database<>(Exam.class);
+            if (courseDB == null) courseDB = new Database<>(Course.class);
+            if (questionDB == null) questionDB = new Database<>(Question.class);
 
             // Initialize default values for filters
-        courseCmb.setValue("Any");
-        examCmb.setValue("Any");
-        studentCmb.setValue("Any");
+            courseCmb.setValue("Any");
+            examCmb.setValue("Any");
+            studentCmb.setValue("Any");
 
             // Load filter options (with error handling)
             try {
-        loadCourseCodes();
+                loadCourseCodes();
             } catch (Exception e) {
                 System.err.println("Error loading course codes: " + e.getMessage());
             }
             
             try {
-        loadExam();
+                loadExam();
             } catch (Exception e) {
                 System.err.println("Error loading exams: " + e.getMessage());
             }
             
             try {
-        loadStudent();
+                loadStudent();
             } catch (Exception e) {
                 System.err.println("Error loading students: " + e.getMessage());
             }
 
             // Setup table
-        recordTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            recordTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
             // Configure table columns
-        colStudent.setCellValueFactory(new PropertyValueFactory<>("studentName"));
-        colCourse.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
-        colExam.setCellValueFactory(new PropertyValueFactory<>("examName"));
-        colScore.setCellValueFactory(new PropertyValueFactory<>("score"));
-        colMaxScore.setCellValueFactory(new PropertyValueFactory<>("maxScore"));
-        colTimeSpent.setCellValueFactory(new PropertyValueFactory<>("timeSpent"));
+            colStudent.setCellValueFactory(new PropertyValueFactory<>("studentName"));
+            colCourse.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
+            colExam.setCellValueFactory(new PropertyValueFactory<>("examName"));
+            colScore.setCellValueFactory(new PropertyValueFactory<>("score"));
+            colMaxScore.setCellValueFactory(new PropertyValueFactory<>("maxScore"));
+            colTimeSpent.setCellValueFactory(new PropertyValueFactory<>("timeSpent"));
             
             // Generate mock data for development/testing
             generateMockDataIfEmpty();
             
             // Initialize data and charts
             setupTableColumns();
-        setUpBarGraph();
-        setUpLineGraph();
+            setUpBarGraph();
+            setUpLineGraph();
         } catch (Exception e) {
             System.err.println("Error during initialization: " + e.getMessage());
             e.printStackTrace();

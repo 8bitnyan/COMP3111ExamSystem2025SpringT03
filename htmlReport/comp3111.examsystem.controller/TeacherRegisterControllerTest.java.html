@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherRegisterControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherRegisterControllerTest.java</span></div><h1>TeacherRegisterControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.data.Position;
+import comp3111.examsystem.entity.Teacher;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.scene.control.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import java.lang.reflect.Field;
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L16">public class TeacherRegisterControllerTest {</span>
+    private TeacherRegisterController controller;
+
+    @BeforeEach
+    void setUp() throws Exception {
+<span class="fc" id="L21">        controller = new TeacherRegisterController();</span>
+<span class="fc" id="L22">        setField(controller, &quot;usernameTxt&quot;, new TextField());</span>
+<span class="fc" id="L23">        setField(controller, &quot;nameTxt&quot;, new TextField());</span>
+<span class="fc" id="L24">        setField(controller, &quot;ageTxt&quot;, new TextField());</span>
+<span class="fc" id="L25">        setField(controller, &quot;passwordTxt&quot;, new PasswordField());</span>
+<span class="fc" id="L26">        setField(controller, &quot;passwordConfirmTxt&quot;, new PasswordField());</span>
+<span class="fc" id="L27">        setField(controller, &quot;genderCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L28">        setField(controller, &quot;departmentCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L29">        setField(controller, &quot;positionCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L30">        ((ComboBox&lt;Gender&gt;) getField(controller, &quot;genderCmb&quot;)).getItems().setAll(Gender.values());</span>
+<span class="fc" id="L31">        ((ComboBox&lt;Department&gt;) getField(controller, &quot;departmentCmb&quot;)).getItems().setAll(Department.values());</span>
+<span class="fc" id="L32">        ((ComboBox&lt;Position&gt;) getField(controller, &quot;positionCmb&quot;)).getItems().setAll(Position.values());</span>
+<span class="fc" id="L33">        ((ComboBox&lt;Gender&gt;) getField(controller, &quot;genderCmb&quot;)).setValue(Gender.MALE);</span>
+<span class="fc" id="L34">        ((ComboBox&lt;Department&gt;) getField(controller, &quot;departmentCmb&quot;)).setValue(Department.CSE);</span>
+<span class="fc" id="L35">        ((ComboBox&lt;Position&gt;) getField(controller, &quot;positionCmb&quot;)).setValue(Position.P);</span>
+<span class="fc" id="L36">    }</span>
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+<span class="fc" id="L39">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L40">        field.setAccessible(true);</span>
+<span class="fc" id="L41">        field.set(obj, value);</span>
+<span class="fc" id="L42">    }</span>
+    private Object getField(Object obj, String fieldName) throws Exception {
+<span class="fc" id="L44">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L45">        field.setAccessible(true);</span>
+<span class="fc" id="L46">        return field.get(obj);</span>
+    }
+
+    @Test
+    void testRegisterWithValidFields() throws Exception {
+<span class="fc" id="L51">        String uniqueUsername = &quot;teacher1_&quot; + System.currentTimeMillis();</span>
+<span class="fc" id="L52">        ((TextField) getField(controller, &quot;usernameTxt&quot;)).setText(uniqueUsername);</span>
+<span class="fc" id="L53">        ((TextField) getField(controller, &quot;nameTxt&quot;)).setText(&quot;Alice&quot;);</span>
+<span class="fc" id="L54">        ((TextField) getField(controller, &quot;ageTxt&quot;)).setText(&quot;30&quot;);</span>
+<span class="fc" id="L55">        ((PasswordField) getField(controller, &quot;passwordTxt&quot;)).setText(&quot;pass123&quot;);</span>
+<span class="fc" id="L56">        ((PasswordField) getField(controller, &quot;passwordConfirmTxt&quot;)).setText(&quot;pass123&quot;);</span>
+<span class="fc" id="L57">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L58">            msgSenderMocked.when(() -&gt; MsgSender.showMsg(Mockito.anyString()))</span>
+<span class="fc" id="L59">                .thenAnswer(invocation -&gt; {</span>
+<span class="fc" id="L60">                    System.out.println(&quot;MsgSender.showMsg called with: &quot; + invocation.getArgument(0));</span>
+<span class="fc" id="L61">                    return null;</span>
+                });
+<span class="fc" id="L63">            var register = controller.getClass().getDeclaredMethod(&quot;register&quot;, javafx.event.ActionEvent.class);</span>
+<span class="fc" id="L64">            register.setAccessible(true);</span>
+<span class="fc" id="L65">            register.invoke(controller, (Object) null);</span>
+<span class="fc" id="L66">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(Mockito.anyString()));</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    @Test
+    void testRegisterWithMissingFields() throws Exception {
+<span class="fc" id="L72">        ((TextField) getField(controller, &quot;usernameTxt&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L73">        ((TextField) getField(controller, &quot;nameTxt&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L74">        ((TextField) getField(controller, &quot;ageTxt&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L75">        ((PasswordField) getField(controller, &quot;passwordTxt&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L76">        ((PasswordField) getField(controller, &quot;passwordConfirmTxt&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L77">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L78">            var register = controller.getClass().getDeclaredMethod(&quot;register&quot;, javafx.event.ActionEvent.class);</span>
+<span class="fc" id="L79">            register.setAccessible(true);</span>
+<span class="fc" id="L80">            register.invoke(controller, (Object) null);</span>
+<span class="fc" id="L81">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(Mockito.contains(&quot;Please fill in all fields&quot;)));</span>
+        }
+<span class="fc" id="L83">    }</span>
+
+    @Test
+    void testRegisterWithMismatchedPasswords() throws Exception {
+<span class="fc" id="L87">        ((TextField) getField(controller, &quot;usernameTxt&quot;)).setText(&quot;teacher2&quot;);</span>
+<span class="fc" id="L88">        ((TextField) getField(controller, &quot;nameTxt&quot;)).setText(&quot;Bob&quot;);</span>
+<span class="fc" id="L89">        ((TextField) getField(controller, &quot;ageTxt&quot;)).setText(&quot;40&quot;);</span>
+<span class="fc" id="L90">        ((PasswordField) getField(controller, &quot;passwordTxt&quot;)).setText(&quot;pass123&quot;);</span>
+<span class="fc" id="L91">        ((PasswordField) getField(controller, &quot;passwordConfirmTxt&quot;)).setText(&quot;pass456&quot;);</span>
+<span class="fc" id="L92">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="fc" id="L93">            var register = controller.getClass().getDeclaredMethod(&quot;register&quot;, javafx.event.ActionEvent.class);</span>
+<span class="fc" id="L94">            register.setAccessible(true);</span>
+<span class="fc" id="L95">            register.invoke(controller, (Object) null);</span>
+<span class="fc" id="L96">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(Mockito.contains(&quot;Password and Confirm Password do not match&quot;)));</span>
+        }
+<span class="fc" id="L98">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

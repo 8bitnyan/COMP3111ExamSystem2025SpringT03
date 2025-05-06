@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 /**
  * The controller for teacher registration page.
  */
-<span class="nc" id="L25">public class TeacherRegisterController implements Initializable {</span>
+<span class="fc" id="L25">public class TeacherRegisterController implements Initializable {</span>
 
     @FXML
     private TextField ageTxt, usernameTxt, nameTxt;
@@ -35,26 +35,26 @@ import java.util.ResourceBundle;
     @FXML
     private PasswordField passwordConfirmTxt, passwordTxt;
 
-<span class="nc" id="L38">    private final Database&lt;Teacher&gt; teacherDatabase = new Database&lt;&gt;(Teacher.class);</span>
+<span class="fc" id="L38">    private final Database&lt;Teacher&gt; teacherDatabase = new Database&lt;&gt;(Teacher.class);</span>
 
     /**
      * Validates the registration information.
      * @return An error message if the registration information is invalid, empty string otherwise.
      */
     private StringBuilder validateTeacherRegistration() {
-<span class="nc" id="L45">        StringBuilder stringBuilder = new StringBuilder();</span>
-<span class="nc bnc" id="L46" title="All 4 branches missed.">        if (usernameTxt.getText().isEmpty() || nameTxt.getText().isEmpty() ||</span>
-<span class="nc bnc" id="L47" title="All 6 branches missed.">                ageTxt.getText().isEmpty() || passwordTxt.getText().isEmpty() || passwordConfirmTxt.getText().isEmpty()) {</span>
-<span class="nc" id="L48">            stringBuilder.append(&quot;Please fill in all fields!\n&quot;);</span>
-<span class="nc" id="L49">            return stringBuilder;</span>
+<span class="fc" id="L45">        StringBuilder stringBuilder = new StringBuilder();</span>
+<span class="pc bpc" id="L46" title="1 of 4 branches missed.">        if (usernameTxt.getText().isEmpty() || nameTxt.getText().isEmpty() ||</span>
+<span class="pc bpc" id="L47" title="3 of 6 branches missed.">                ageTxt.getText().isEmpty() || passwordTxt.getText().isEmpty() || passwordConfirmTxt.getText().isEmpty()) {</span>
+<span class="fc" id="L48">            stringBuilder.append(&quot;Please fill in all fields!\n&quot;);</span>
+<span class="fc" id="L49">            return stringBuilder;</span>
         } else {
-<span class="nc" id="L51">            stringBuilder.append(Teacher.validateWithMessage(usernameTxt.getText(), passwordTxt.getText(),</span>
-<span class="nc" id="L52">                    nameTxt.getText(), ageTxt.getText(), departmentCmb.getValue()));</span>
-<span class="nc" id="L53">            List&lt;Teacher&gt; teachers = teacherDatabase.getAllEnabled();</span>
-<span class="nc bnc" id="L54" title="All 4 branches missed.">            for (Teacher teacher : teachers) if (teacher.getUsername().equals(usernameTxt.getText())) stringBuilder.append(&quot;Username has been used!\n&quot;);</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (!passwordTxt.getText().equals(passwordConfirmTxt.getText())) stringBuilder.append(&quot;Password and Confirm Password do not match!\n&quot;);</span>
+<span class="fc" id="L51">            stringBuilder.append(Teacher.validateWithMessage(usernameTxt.getText(), passwordTxt.getText(),</span>
+<span class="fc" id="L52">                    nameTxt.getText(), ageTxt.getText(), departmentCmb.getValue()));</span>
+<span class="fc" id="L53">            List&lt;Teacher&gt; teachers = teacherDatabase.getAllEnabled();</span>
+<span class="pc bpc" id="L54" title="1 of 4 branches missed.">            for (Teacher teacher : teachers) if (teacher.getUsername().equals(usernameTxt.getText())) stringBuilder.append(&quot;Username has been used!\n&quot;);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (!passwordTxt.getText().equals(passwordConfirmTxt.getText())) stringBuilder.append(&quot;Password and Confirm Password do not match!\n&quot;);</span>
         }
-<span class="nc" id="L57">        return stringBuilder;</span>
+<span class="fc" id="L57">        return stringBuilder;</span>
     }
 
     /**
@@ -117,10 +117,10 @@ import java.util.ResourceBundle;
      */
     @FXML
     void register(ActionEvent e) {
-<span class="nc" id="L120">        StringBuilder msg = validateTeacherRegistration();</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (!msg.isEmpty()) {</span>
-<span class="nc" id="L122">            MsgSender.showMsg(msg.toString());</span>
-<span class="nc" id="L123">            return;</span>
+<span class="fc" id="L120">        StringBuilder msg = validateTeacherRegistration();</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (!msg.isEmpty()) {</span>
+<span class="fc" id="L122">            MsgSender.showMsg(msg.toString());</span>
+<span class="fc" id="L123">            return;</span>
         }
 <span class="nc" id="L125">        Teacher teacher = saveRegistration();</span>
 <span class="nc" id="L126">        MsgSender.showMsg(&quot;Successful Register&quot;);</span>

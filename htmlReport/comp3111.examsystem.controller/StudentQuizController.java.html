@@ -81,100 +81,100 @@ import java.util.ResourceBundle;
      * @param timeLimit The time limit for the quiz in minutes.
      */
     public void preSetController(Student student, String quizName, List&lt;QuizQuestion&gt; questions, int timeLimit) {
-<span class="nc" id="L84">        this.student = student;</span>
-<span class="nc" id="L85">        this.quizName = quizName;</span>
-<span class="nc" id="L86">        this.questions = questions;</span>
-<span class="nc" id="L87">        this.totalQuestions = questions.size();</span>
-<span class="nc" id="L88">        this.studentAnswers = new ArrayList&lt;&gt;(totalQuestions);</span>
+<span class="fc" id="L84">        this.student = student;</span>
+<span class="fc" id="L85">        this.quizName = quizName;</span>
+<span class="fc" id="L86">        this.questions = questions;</span>
+<span class="fc" id="L87">        this.totalQuestions = questions.size();</span>
+<span class="fc" id="L88">        this.studentAnswers = new ArrayList&lt;&gt;(totalQuestions);</span>
         
         // Initialize student answers
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        for (int i = 0; i &lt; totalQuestions; i++) {</span>
-<span class="nc" id="L92">            studentAnswers.add(&quot;&quot;);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        for (int i = 0; i &lt; totalQuestions; i++) {</span>
+<span class="fc" id="L92">            studentAnswers.add(&quot;&quot;);</span>
         }
         
         // Set quiz name and total questions
-<span class="nc" id="L96">        quizNameText.setText(quizName);</span>
-<span class="nc" id="L97">        totalQuestionsText.setText(String.valueOf(totalQuestions));</span>
+<span class="fc" id="L96">        quizNameText.setText(quizName);</span>
+<span class="fc" id="L97">        totalQuestionsText.setText(String.valueOf(totalQuestions));</span>
         
         // Setup timer with the time limit
-<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (timeLimit &gt; 0) {</span>
-<span class="nc" id="L101">            this.hours = timeLimit / 60;</span>
-<span class="nc" id="L102">            this.minutes = timeLimit % 60;</span>
-<span class="nc" id="L103">            this.seconds = 0;</span>
-<span class="nc" id="L104">            updateTimerDisplay();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (timeLimit &gt; 0) {</span>
+<span class="fc" id="L101">            this.hours = timeLimit / 60;</span>
+<span class="fc" id="L102">            this.minutes = timeLimit % 60;</span>
+<span class="fc" id="L103">            this.seconds = 0;</span>
+<span class="fc" id="L104">            updateTimerDisplay();</span>
             
             // Start the timer
-<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (timeline != null) {</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            if (timeline != null) {</span>
 <span class="nc" id="L108">                timeline.play();</span>
             }
         }
         
         // Create question navigation buttons
-<span class="nc" id="L113">        setupQuestionList();</span>
+<span class="fc" id="L113">        setupQuestionList();</span>
         
         // Load the first question
-<span class="nc" id="L116">        loadQuestion(0);</span>
+<span class="fc" id="L116">        loadQuestion(0);</span>
         
         // Apply initial styles to question buttons
-<span class="nc" id="L119">        updateQuestionButtonStyles();</span>
+<span class="fc" id="L119">        updateQuestionButtonStyles();</span>
         
         // Setup window close handler after UI is fully loaded
-<span class="nc" id="L122">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L122">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="nc" id="L124">                Stage stage = (Stage) questionText.getScene().getWindow();</span>
-<span class="nc bnc" id="L125" title="All 2 branches missed.">                if (stage != null) {</span>
-<span class="nc" id="L126">                    stage.setOnCloseRequest(this::handleWindowClose);</span>
+<span class="fc" id="L124">                Stage stage = (Stage) questionText.getScene().getWindow();</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                if (stage != null) {</span>
+<span class="fc" id="L126">                    stage.setOnCloseRequest(this::handleWindowClose);</span>
                 }
 <span class="nc" id="L128">            } catch (Exception e) {</span>
 <span class="nc" id="L129">                System.err.println(&quot;Failed to set up window close handler: &quot; + e.getMessage());</span>
-<span class="nc" id="L130">            }</span>
-<span class="nc" id="L131">        });</span>
-<span class="nc" id="L132">    }</span>
+<span class="fc" id="L130">            }</span>
+<span class="fc" id="L131">        });</span>
+<span class="fc" id="L132">    }</span>
     
     /**
      * Sets up the question list for navigation.
      */
     private void setupQuestionList() {
-<span class="nc" id="L138">        questionListContainer.getChildren().clear();</span>
-<span class="nc bnc" id="L139" title="All 2 branches missed.">        for (int i = 0; i &lt; questions.size(); i++) {</span>
-<span class="nc" id="L140">            final int questionIndex = i;</span>
-<span class="nc" id="L141">            Button questionButton = new Button(&quot;Question &quot; + (i + 1));</span>
-<span class="nc" id="L142">            questionButton.setPrefWidth(180);</span>
-<span class="nc" id="L143">            questionButton.setOnAction(e -&gt; loadQuestion(questionIndex));</span>
+<span class="fc" id="L138">        questionListContainer.getChildren().clear();</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for (int i = 0; i &lt; questions.size(); i++) {</span>
+<span class="fc" id="L140">            final int questionIndex = i;</span>
+<span class="fc" id="L141">            Button questionButton = new Button(&quot;Question &quot; + (i + 1));</span>
+<span class="fc" id="L142">            questionButton.setPrefWidth(180);</span>
+<span class="pc" id="L143">            questionButton.setOnAction(e -&gt; loadQuestion(questionIndex));</span>
             
             // Add a style class to the button
-<span class="nc" id="L146">            questionButton.getStyleClass().add(&quot;question-button&quot;);</span>
+<span class="fc" id="L146">            questionButton.getStyleClass().add(&quot;question-button&quot;);</span>
             
-<span class="nc" id="L148">            questionListContainer.getChildren().add(questionButton);</span>
+<span class="fc" id="L148">            questionListContainer.getChildren().add(questionButton);</span>
         }
-<span class="nc" id="L150">    }</span>
+<span class="fc" id="L150">    }</span>
     
     /**
      * Updates the question navigation buttons to indicate which questions have been answered.
      */
     private void updateQuestionButtonStyles() {
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        for (int i = 0; i &lt; questionListContainer.getChildren().size(); i++) {</span>
-<span class="nc" id="L157">            Button button = (Button) questionListContainer.getChildren().get(i);</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        for (int i = 0; i &lt; questionListContainer.getChildren().size(); i++) {</span>
+<span class="fc" id="L157">            Button button = (Button) questionListContainer.getChildren().get(i);</span>
             
             // Check if this question has been answered
-<span class="nc bnc" id="L160" title="All 4 branches missed.">            boolean isAnswered = i &lt; studentAnswers.size() &amp;&amp; !studentAnswers.get(i).isEmpty();</span>
+<span class="pc bpc" id="L160" title="1 of 4 branches missed.">            boolean isAnswered = i &lt; studentAnswers.size() &amp;&amp; !studentAnswers.get(i).isEmpty();</span>
             
             // Add or remove the &quot;answered&quot; style class
-<span class="nc bnc" id="L163" title="All 2 branches missed.">            if (isAnswered) {</span>
-<span class="nc bnc" id="L164" title="All 2 branches missed.">                if (!button.getStyleClass().contains(&quot;answered-question&quot;)) {</span>
-<span class="nc" id="L165">                    button.getStyleClass().add(&quot;answered-question&quot;);</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (isAnswered) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                if (!button.getStyleClass().contains(&quot;answered-question&quot;)) {</span>
+<span class="fc" id="L165">                    button.getStyleClass().add(&quot;answered-question&quot;);</span>
                 }
             } else {
-<span class="nc" id="L168">                button.getStyleClass().remove(&quot;answered-question&quot;);</span>
+<span class="fc" id="L168">                button.getStyleClass().remove(&quot;answered-question&quot;);</span>
             }
             
             // Highlight current question
-<span class="nc bnc" id="L172" title="All 2 branches missed.">            if (i == currentQuestionIndex) {</span>
-<span class="nc bnc" id="L173" title="All 2 branches missed.">                if (!button.getStyleClass().contains(&quot;current-question&quot;)) {</span>
-<span class="nc" id="L174">                    button.getStyleClass().add(&quot;current-question&quot;);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">            if (i == currentQuestionIndex) {</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">                if (!button.getStyleClass().contains(&quot;current-question&quot;)) {</span>
+<span class="fc" id="L174">                    button.getStyleClass().add(&quot;current-question&quot;);</span>
                 }
             } else {
-<span class="nc" id="L177">                button.getStyleClass().remove(&quot;current-question&quot;);</span>
+<span class="fc" id="L177">                button.getStyleClass().remove(&quot;current-question&quot;);</span>
             }
         }
 <span class="fc" id="L180">    }</span>
@@ -201,35 +201,35 @@ import java.util.ResourceBundle;
 <span class="fc" id="L201">        questionText.setText(&quot;Question &quot; + (currentQuestionIndex + 1) + &quot;: &quot; + question.getQuestionText());</span>
         
         // Update UI based on question type
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (question.isMultipleChoice()) {</span>
-<span class="nc" id="L205">            multipleChoiceContainer.setVisible(true);</span>
-<span class="nc" id="L206">            shortAnswerContainer.setVisible(false);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if (question.isMultipleChoice()) {</span>
+<span class="fc" id="L205">            multipleChoiceContainer.setVisible(true);</span>
+<span class="fc" id="L206">            shortAnswerContainer.setVisible(false);</span>
             
             // Set multiple choice options
-<span class="nc" id="L209">            List&lt;String&gt; options = question.getOptions();</span>
+<span class="fc" id="L209">            List&lt;String&gt; options = question.getOptions();</span>
             
             // Clear all options first
-<span class="nc" id="L212">            option1.setText(&quot;&quot;);</span>
-<span class="nc" id="L213">            option2.setText(&quot;&quot;);</span>
-<span class="nc" id="L214">            option3.setText(&quot;&quot;);</span>
-<span class="nc" id="L215">            option4.setText(&quot;&quot;);</span>
+<span class="fc" id="L212">            option1.setText(&quot;&quot;);</span>
+<span class="fc" id="L213">            option2.setText(&quot;&quot;);</span>
+<span class="fc" id="L214">            option3.setText(&quot;&quot;);</span>
+<span class="fc" id="L215">            option4.setText(&quot;&quot;);</span>
             
             // Set options based on available count
-<span class="nc" id="L218">            int optionsCount = options.size();</span>
-<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (optionsCount &gt; 0) option1.setText(options.get(0));</span>
-<span class="nc bnc" id="L220" title="All 2 branches missed.">            if (optionsCount &gt; 1) option2.setText(options.get(1));</span>
-<span class="nc bnc" id="L221" title="All 2 branches missed.">            if (optionsCount &gt; 2) option3.setText(options.get(2));</span>
-<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (optionsCount &gt; 3) option4.setText(options.get(3));</span>
+<span class="fc" id="L218">            int optionsCount = options.size();</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (optionsCount &gt; 0) option1.setText(options.get(0));</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">            if (optionsCount &gt; 1) option2.setText(options.get(1));</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (optionsCount &gt; 2) option3.setText(options.get(2));</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (optionsCount &gt; 3) option4.setText(options.get(3));</span>
             
             // Set visibility based on available options
-<span class="nc bnc" id="L225" title="All 2 branches missed.">            option1.setVisible(optionsCount &gt; 0);</span>
-<span class="nc bnc" id="L226" title="All 2 branches missed.">            option2.setVisible(optionsCount &gt; 1);</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">            option3.setVisible(optionsCount &gt; 2);</span>
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            option4.setVisible(optionsCount &gt; 3);</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            option1.setVisible(optionsCount &gt; 0);</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">            option2.setVisible(optionsCount &gt; 1);</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            option3.setVisible(optionsCount &gt; 2);</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            option4.setVisible(optionsCount &gt; 3);</span>
             
             // Set selected option if an answer exists
-<span class="nc" id="L231">            String savedAnswer = studentAnswers.get(currentQuestionIndex);</span>
-<span class="nc bnc" id="L232" title="All 2 branches missed.">            if (!savedAnswer.isEmpty()) {</span>
+<span class="fc" id="L231">            String savedAnswer = studentAnswers.get(currentQuestionIndex);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (!savedAnswer.isEmpty()) {</span>
 <span class="nc bnc" id="L233" title="All 4 branches missed.">                if (savedAnswer.equals(option1.getText()) &amp;&amp; !option1.getText().isEmpty()) {</span>
 <span class="nc" id="L234">                    option1.setSelected(true);</span>
 <span class="nc bnc" id="L235" title="All 4 branches missed.">                } else if (savedAnswer.equals(option2.getText()) &amp;&amp; !option2.getText().isEmpty()) {</span>
@@ -240,9 +240,9 @@ import java.util.ResourceBundle;
 <span class="nc" id="L240">                    option4.setSelected(true);</span>
                 }
             } else {
-<span class="nc" id="L243">                answerGroup.selectToggle(null);</span>
+<span class="fc" id="L243">                answerGroup.selectToggle(null);</span>
             }
-<span class="nc" id="L245">        } else {</span>
+<span class="fc" id="L245">        } else {</span>
 <span class="fc" id="L246">            multipleChoiceContainer.setVisible(false);</span>
 <span class="fc" id="L247">            shortAnswerContainer.setVisible(true);</span>
             
@@ -262,14 +262,14 @@ import java.util.ResourceBundle;
      */
     private void saveCurrentAnswer() {
 <span class="pc bpc" id="L264" title="2 of 4 branches missed.">        if (currentQuestionIndex &gt;= 0 &amp;&amp; currentQuestionIndex &lt; questions.size()) {</span>
-<span class="pc bpc" id="L265" title="1 of 2 branches missed.">            if (questions.get(currentQuestionIndex).isMultipleChoice()) {</span>
-<span class="nc" id="L266">                RadioButton selectedButton = (RadioButton) answerGroup.getSelectedToggle();</span>
-<span class="nc bnc" id="L267" title="All 2 branches missed.">                if (selectedButton != null) {</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">            if (questions.get(currentQuestionIndex).isMultipleChoice()) {</span>
+<span class="fc" id="L266">                RadioButton selectedButton = (RadioButton) answerGroup.getSelectedToggle();</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                if (selectedButton != null) {</span>
 <span class="nc" id="L268">                    studentAnswers.set(currentQuestionIndex, selectedButton.getText());</span>
                 } else {
-<span class="nc" id="L270">                    studentAnswers.set(currentQuestionIndex, &quot;&quot;);</span>
+<span class="fc" id="L270">                    studentAnswers.set(currentQuestionIndex, &quot;&quot;);</span>
                 }
-<span class="nc" id="L272">            } else {</span>
+<span class="fc" id="L272">            } else {</span>
 <span class="fc" id="L273">                studentAnswers.set(currentQuestionIndex, shortAnswerField.getText());</span>
             }
             
@@ -282,7 +282,7 @@ import java.util.ResourceBundle;
      * Updates the navigation buttons based on the current question index.
      */
     private void updateNavigationButtons() {
-<span class="pc bpc" id="L285" title="1 of 2 branches missed.">        previousButton.setDisable(currentQuestionIndex == 0);</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        previousButton.setDisable(currentQuestionIndex == 0);</span>
 <span class="fc bfc" id="L286" title="All 2 branches covered.">        nextButton.setDisable(currentQuestionIndex == questions.size() - 1);</span>
 <span class="fc" id="L287">    }</span>
     
@@ -290,7 +290,7 @@ import java.util.ResourceBundle;
      * Sets up the timer for the quiz.
      */
     private void setupTimer() {
-<span class="fc" id="L293">        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -&gt; {</span>
+<span class="nc" id="L293">        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -&gt; {</span>
 <span class="nc bnc" id="L294" title="All 2 branches missed.">            if (seconds &gt; 0) {</span>
 <span class="nc" id="L295">                seconds--;</span>
 <span class="nc bnc" id="L296" title="All 2 branches missed.">            } else if (minutes &gt; 0) {</span>
@@ -308,9 +308,9 @@ import java.util.ResourceBundle;
 <span class="nc" id="L308">            updateTimerDisplay();</span>
 <span class="nc" id="L309">        }));</span>
         
-<span class="fc" id="L311">        timeline.setCycleCount(Timeline.INDEFINITE);</span>
-<span class="fc" id="L312">        timeline.play();</span>
-<span class="fc" id="L313">    }</span>
+<span class="nc" id="L311">        timeline.setCycleCount(Timeline.INDEFINITE);</span>
+<span class="nc" id="L312">        timeline.play();</span>
+<span class="nc" id="L313">    }</span>
     
     /**
      * Updates the timer display.
@@ -320,9 +320,9 @@ import java.util.ResourceBundle;
         
         // Change timer color to red when less than 5 minutes remain
 <span class="pc bpc" id="L322" title="2 of 4 branches missed.">        if (hours == 0 &amp;&amp; minutes &lt; 5) {</span>
-<span class="fc" id="L323">            timerText.setStyle(&quot;-fx-fill: red;&quot;);</span>
+<span class="nc" id="L323">            timerText.setStyle(&quot;-fx-fill: red;&quot;);</span>
         } else {
-<span class="nc" id="L325">            timerText.setStyle(&quot;-fx-fill: black;&quot;);</span>
+<span class="fc" id="L325">            timerText.setStyle(&quot;-fx-fill: black;&quot;);</span>
         }
 <span class="fc" id="L327">    }</span>
     
@@ -333,30 +333,30 @@ import java.util.ResourceBundle;
     @FXML
     public void handleSubmit(ActionEvent event) {
         // Save current answer before submitting
-<span class="nc" id="L336">        saveCurrentAnswer();</span>
+<span class="fc" id="L336">        saveCurrentAnswer();</span>
         
         // Stop the timer
-<span class="nc bnc" id="L339" title="All 2 branches missed.">        if (timeline != null) {</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        if (timeline != null) {</span>
 <span class="nc" id="L340">            timeline.stop();</span>
         }
         
         // Show confirmation dialog
-<span class="nc" id="L344">        Alert confirmSubmit = new Alert(Alert.AlertType.CONFIRMATION);</span>
-<span class="nc" id="L345">        confirmSubmit.setTitle(&quot;Submit Quiz&quot;);</span>
-<span class="nc" id="L346">        confirmSubmit.setHeaderText(&quot;Submit Quiz&quot;);</span>
-<span class="nc" id="L347">        confirmSubmit.setContentText(&quot;Are you sure you want to submit this quiz?&quot;);</span>
+<span class="fc" id="L344">        Alert confirmSubmit = new Alert(Alert.AlertType.CONFIRMATION);</span>
+<span class="fc" id="L345">        confirmSubmit.setTitle(&quot;Submit Quiz&quot;);</span>
+<span class="fc" id="L346">        confirmSubmit.setHeaderText(&quot;Submit Quiz&quot;);</span>
+<span class="fc" id="L347">        confirmSubmit.setContentText(&quot;Are you sure you want to submit this quiz?&quot;);</span>
         
-<span class="nc" id="L349">        Optional&lt;ButtonType&gt; result = confirmSubmit.showAndWait();</span>
-<span class="nc bnc" id="L350" title="All 4 branches missed.">        if (result.isPresent() &amp;&amp; result.get() == ButtonType.OK) {</span>
+<span class="fc" id="L349">        Optional&lt;ButtonType&gt; result = confirmSubmit.showAndWait();</span>
+<span class="pc bpc" id="L350" title="2 of 4 branches missed.">        if (result.isPresent() &amp;&amp; result.get() == ButtonType.OK) {</span>
             // Submit the quiz
-<span class="nc" id="L352">            submitQuiz();</span>
+<span class="fc" id="L352">            submitQuiz();</span>
         } else {
             // Resume the timer if submission was cancelled
 <span class="nc bnc" id="L355" title="All 2 branches missed.">            if (timeline != null) {</span>
 <span class="nc" id="L356">                timeline.play();</span>
             }
         }
-<span class="nc" id="L359">    }</span>
+<span class="fc" id="L359">    }</span>
     
     /**
      * Handles the window close event.
@@ -395,52 +395,56 @@ import java.util.ResourceBundle;
      */
     private void submitQuiz() {
         // Save all answers one final time
-<span class="nc" id="L398">        saveCurrentAnswer();</span>
+<span class="fc" id="L398">        saveCurrentAnswer();</span>
         
         // In a real application, you would save the quiz results to a database here
-<span class="nc" id="L401">        saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);</span>
+<span class="fc" id="L401">        saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);</span>
         
         // Show completion message
-<span class="nc" id="L404">        Alert completionMessage = new Alert(Alert.AlertType.INFORMATION);</span>
-<span class="nc" id="L405">        completionMessage.setTitle(&quot;Quiz Completed&quot;);</span>
-<span class="nc" id="L406">        completionMessage.setHeaderText(&quot;Quiz Submitted Successfully&quot;);</span>
-<span class="nc" id="L407">        completionMessage.setContentText(&quot;You have completed the quiz: &quot; + quizName);</span>
+<span class="fc" id="L404">        Alert completionMessage = new Alert(Alert.AlertType.INFORMATION);</span>
+<span class="fc" id="L405">        completionMessage.setTitle(&quot;Quiz Completed&quot;);</span>
+<span class="fc" id="L406">        completionMessage.setHeaderText(&quot;Quiz Submitted Successfully&quot;);</span>
+<span class="fc" id="L407">        completionMessage.setContentText(&quot;You have completed the quiz: &quot; + quizName);</span>
         
-<span class="nc" id="L409">        completionMessage.showAndWait().ifPresent(buttonType -&gt; {</span>
-<span class="nc bnc" id="L410" title="All 2 branches missed.">            if (buttonType == ButtonType.OK) {</span>
+<span class="fc" id="L409">        completionMessage.showAndWait().ifPresent(buttonType -&gt; {</span>
+<span class="pc bpc" id="L410" title="1 of 2 branches missed.">            if (buttonType == ButtonType.OK) {</span>
                 // Show final message about viewing results
-<span class="nc" id="L412">                Alert resultsMessage = new Alert(Alert.AlertType.INFORMATION);</span>
-<span class="nc" id="L413">                resultsMessage.setTitle(&quot;Quiz Results&quot;);</span>
-<span class="nc" id="L414">                resultsMessage.setHeaderText(&quot;Results Available After Grading&quot;);</span>
-<span class="nc" id="L415">                resultsMessage.setContentText(&quot;You will be able to see your quiz results after your teacher grades this quiz.&quot;);</span>
+<span class="fc" id="L412">                Alert resultsMessage = new Alert(Alert.AlertType.INFORMATION);</span>
+<span class="fc" id="L413">                resultsMessage.setTitle(&quot;Quiz Results&quot;);</span>
+<span class="fc" id="L414">                resultsMessage.setHeaderText(&quot;Results Available After Grading&quot;);</span>
+<span class="fc" id="L415">                resultsMessage.setContentText(&quot;You will be able to see your quiz results after your teacher grades this quiz.&quot;);</span>
                 
-<span class="nc" id="L417">                resultsMessage.showAndWait().ifPresent(finalButton -&gt; {</span>
+<span class="fc" id="L417">                resultsMessage.showAndWait().ifPresent(finalButton -&gt; {</span>
                     // Return to student main page
-<span class="nc" id="L419">                    returnToMainPage();</span>
-<span class="nc" id="L420">                });</span>
+<span class="fc" id="L419">                    returnToMainPage();</span>
+<span class="fc" id="L420">                });</span>
             }
-<span class="nc" id="L422">        });</span>
-<span class="nc" id="L423">    }</span>
+<span class="fc" id="L422">        });</span>
+<span class="fc" id="L423">    }</span>
     
     /**
      * Returns to the student main page.
      */
     private void returnToMainPage() {
         try {
-<span class="nc" id="L430">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
-<span class="nc" id="L431">            Parent root = loader.load();</span>
-            
-<span class="nc" id="L433">            StudentMainController controller = loader.getController();</span>
-<span class="nc" id="L434">            controller.preSetController(student);</span>
-            
-<span class="nc" id="L436">            Stage stage = (Stage) quizNameText.getScene().getWindow();</span>
-<span class="nc" id="L437">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L438">            stage.setScene(scene);</span>
-<span class="nc" id="L439">            stage.show();</span>
-<span class="nc" id="L440">        } catch (IOException e) {</span>
-<span class="nc" id="L441">            e.printStackTrace();</span>
-<span class="nc" id="L442">        }</span>
-<span class="nc" id="L443">    }</span>
+<span class="fc" id="L430">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
+<span class="fc" id="L431">            Parent root = loader.load();</span>
+<span class="fc" id="L432">            StudentMainController controller = loader.getController();</span>
+<span class="fc" id="L433">            controller.preSetController(student);</span>
+<span class="fc" id="L434">            Scene currentScene = quizNameText.getScene();</span>
+<span class="pc bpc" id="L435" title="3 of 4 branches missed.">            if (currentScene != null &amp;&amp; currentScene.getWindow() != null) {</span>
+<span class="nc" id="L436">                Stage stage = (Stage) currentScene.getWindow();</span>
+<span class="nc" id="L437">                Scene scene = new Scene(root);</span>
+<span class="nc" id="L438">                stage.setScene(scene);</span>
+<span class="nc" id="L439">                stage.show();</span>
+<span class="nc" id="L440">            } else {</span>
+                // In test or headless mode, just skip window operations
+<span class="fc" id="L442">                System.err.println(&quot;No scene/window available for navigation (likely in test mode).&quot;);</span>
+            }
+<span class="nc" id="L444">        } catch (IOException e) {</span>
+<span class="nc" id="L445">            e.printStackTrace();</span>
+<span class="fc" id="L446">        }</span>
+<span class="fc" id="L447">    }</span>
     
     /**
      * Saves the quiz results to a database or persistent storage.
@@ -454,101 +458,101 @@ import java.util.ResourceBundle;
     private void saveQuizResultsToDatabase(Student student, String quizName, List&lt;QuizQuestion&gt; questions, List&lt;String&gt; studentAnswers) {
         try {
             // Get the exam from the database
-<span class="nc" id="L457">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="nc" id="L458">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
-<span class="nc" id="L459">            Exam exam = null;</span>
+<span class="fc" id="L461">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="fc" id="L462">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
+<span class="fc" id="L463">            Exam exam = null;</span>
             
             // Find the exam with the matching name
-<span class="nc bnc" id="L462" title="All 2 branches missed.">            for (Exam e : exams) {</span>
-<span class="nc bnc" id="L463" title="All 2 branches missed.">                if (quizName.equals(e.getName())) {</span>
-<span class="nc" id="L464">                    exam = e;</span>
-<span class="nc" id="L465">                    break;</span>
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">            for (Exam e : exams) {</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">                if (quizName.equals(e.getName())) {</span>
+<span class="fc" id="L468">                    exam = e;</span>
+<span class="fc" id="L469">                    break;</span>
                 }
-<span class="nc" id="L467">            }</span>
+<span class="fc" id="L471">            }</span>
             
-<span class="nc bnc" id="L469" title="All 2 branches missed.">            if (exam == null) {</span>
-<span class="nc" id="L470">                System.err.println(&quot;Error: Could not find exam with name: &quot; + quizName);</span>
-<span class="nc" id="L471">                return;</span>
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if (exam == null) {</span>
+<span class="nc" id="L474">                System.err.println(&quot;Error: Could not find exam with name: &quot; + quizName);</span>
+<span class="nc" id="L475">                return;</span>
             }
             
             // Get the questions string from the exam
-<span class="nc" id="L475">            String questionsStr = exam.getQuestions();</span>
+<span class="fc" id="L479">            String questionsStr = exam.getQuestions();</span>
             
-<span class="nc bnc" id="L477" title="All 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
-<span class="nc" id="L478">                System.err.println(&quot;Error: No questions found for exam: &quot; + quizName);</span>
-<span class="nc" id="L479">                return;</span>
+<span class="pc bpc" id="L481" title="2 of 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
+<span class="nc" id="L482">                System.err.println(&quot;Error: No questions found for exam: &quot; + quizName);</span>
+<span class="nc" id="L483">                return;</span>
             }
             
             // Split the question IDs string
-<span class="nc" id="L483">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
+<span class="fc" id="L487">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
             
-<span class="nc bnc" id="L485" title="All 2 branches missed.">            if (questionIdArr.length != questions.size()) {</span>
-<span class="nc" id="L486">                System.err.println(&quot;Error: Question count mismatch. Database: &quot; + questionIdArr.length + &quot;, Actual: &quot; + questions.size());</span>
-<span class="nc" id="L487">                return;</span>
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">            if (questionIdArr.length != questions.size()) {</span>
+<span class="nc" id="L490">                System.err.println(&quot;Error: Question count mismatch. Database: &quot; + questionIdArr.length + &quot;, Actual: &quot; + questions.size());</span>
+<span class="nc" id="L491">                return;</span>
             }
             
             // Create records for each question
-<span class="nc" id="L491">            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="fc" id="L495">            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
             
             // Delete any existing records for this student and exam (in case they're retaking the quiz)
-<span class="nc" id="L494">            List&lt;comp3111.examsystem.entity.Record&gt; existingRecords = recordDB.getAll();</span>
-<span class="nc bnc" id="L495" title="All 2 branches missed.">            for (comp3111.examsystem.entity.Record record : existingRecords) {</span>
-<span class="nc bnc" id="L496" title="All 4 branches missed.">                if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</span>
-<span class="nc bnc" id="L497" title="All 4 branches missed.">                    record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</span>
-<span class="nc" id="L498">                    recordDB.delByKey(record.getId().toString());</span>
+<span class="fc" id="L498">            List&lt;comp3111.examsystem.entity.Record&gt; existingRecords = recordDB.getAll();</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">            for (comp3111.examsystem.entity.Record record : existingRecords) {</span>
+<span class="pc bpc" id="L500" title="1 of 4 branches missed.">                if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</span>
+<span class="nc bnc" id="L501" title="All 4 branches missed.">                    record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</span>
+<span class="nc" id="L502">                    recordDB.delByKey(record.getId().toString());</span>
                 }
-<span class="nc" id="L500">            }</span>
+<span class="fc" id="L504">            }</span>
             
             // Create new records
-<span class="nc bnc" id="L503" title="All 6 branches missed.">            for (int i = 0; i &lt; questions.size() &amp;&amp; i &lt; questionIdArr.length &amp;&amp; i &lt; studentAnswers.size(); i++) {</span>
+<span class="pc bpc" id="L507" title="2 of 6 branches missed.">            for (int i = 0; i &lt; questions.size() &amp;&amp; i &lt; questionIdArr.length &amp;&amp; i &lt; studentAnswers.size(); i++) {</span>
                 try {
-<span class="nc" id="L505">                    String questionIdStr = questionIdArr[i].trim();</span>
-<span class="nc bnc" id="L506" title="All 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
+<span class="fc" id="L509">                    String questionIdStr = questionIdArr[i].trim();</span>
+<span class="pc bpc" id="L510" title="1 of 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
                     
                     // Parse the question ID string to Long
-<span class="nc" id="L509">                    Long questionId = Long.parseLong(questionIdStr);</span>
+<span class="fc" id="L513">                    Long questionId = Long.parseLong(questionIdStr);</span>
                     
-<span class="nc" id="L511">                    comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</span>
-<span class="nc" id="L512">                    record.setStudent(student.getId());</span>
-<span class="nc" id="L513">                    record.setExamID(exam.getId());</span>
-<span class="nc" id="L514">                    record.setQuestionID(questionId);</span>
-<span class="nc" id="L515">                    record.setResponse(studentAnswers.get(i));</span>
+<span class="fc" id="L515">                    comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</span>
+<span class="fc" id="L516">                    record.setStudent(student.getId());</span>
+<span class="fc" id="L517">                    record.setExamID(exam.getId());</span>
+<span class="fc" id="L518">                    record.setQuestionID(questionId);</span>
+<span class="fc" id="L519">                    record.setResponse(studentAnswers.get(i));</span>
                     
                     // For now, set a default score of 0 - teacher will grade later
-<span class="nc" id="L518">                    record.setScore(0);</span>
+<span class="fc" id="L522">                    record.setScore(0);</span>
                     
                     // Save the record to the database
-<span class="nc" id="L521">                    recordDB.add(record);</span>
-<span class="nc" id="L522">                } catch (NumberFormatException e) {</span>
-<span class="nc" id="L523">                    System.err.println(&quot;Error parsing question ID: &quot; + questionIdArr[i] + &quot;. Skipping this question.&quot;);</span>
-<span class="nc" id="L524">                }</span>
+<span class="fc" id="L525">                    recordDB.add(record);</span>
+<span class="nc" id="L526">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L527">                    System.err.println(&quot;Error parsing question ID: &quot; + questionIdArr[i] + &quot;. Skipping this question.&quot;);</span>
+<span class="fc" id="L528">                }</span>
             }
             
             // Also save time spent on the quiz (for future implementations)
-<span class="nc" id="L528">            Database&lt;TimeSpent&gt; timeSpentDB = new Database&lt;&gt;(TimeSpent.class);</span>
-<span class="nc" id="L529">            TimeSpent timeSpent = new TimeSpent();</span>
-<span class="nc" id="L530">            timeSpent.setStudentId(student.getId());</span>
-<span class="nc" id="L531">            timeSpent.setExamId(exam.getId());</span>
+<span class="fc" id="L532">            Database&lt;TimeSpent&gt; timeSpentDB = new Database&lt;&gt;(TimeSpent.class);</span>
+<span class="fc" id="L533">            TimeSpent timeSpent = new TimeSpent();</span>
+<span class="fc" id="L534">            timeSpent.setStudentId(student.getId());</span>
+<span class="fc" id="L535">            timeSpent.setExamId(exam.getId());</span>
             
             // Calculate time spent in minutes (initial time limit minus remaining time)
-<span class="nc bnc" id="L534" title="All 2 branches missed.">            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;</span>
-<span class="nc" id="L535">            int remainingMinutes = hours * 60 + minutes;</span>
-<span class="nc" id="L536">            int timeSpentMinutes = initialTimeLimit - remainingMinutes;</span>
+<span class="pc bpc" id="L538" title="1 of 2 branches missed.">            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;</span>
+<span class="fc" id="L539">            int remainingMinutes = hours * 60 + minutes;</span>
+<span class="fc" id="L540">            int timeSpentMinutes = initialTimeLimit - remainingMinutes;</span>
             
             // Make sure time spent is positive
-<span class="nc bnc" id="L539" title="All 2 branches missed.">            if (timeSpentMinutes &lt; 0) {</span>
-<span class="nc" id="L540">                timeSpentMinutes = 0;</span>
+<span class="pc bpc" id="L543" title="1 of 2 branches missed.">            if (timeSpentMinutes &lt; 0) {</span>
+<span class="nc" id="L544">                timeSpentMinutes = 0;</span>
             }
             
-<span class="nc" id="L543">            timeSpent.setTimeSpent(timeSpentMinutes);</span>
-<span class="nc" id="L544">            timeSpentDB.add(timeSpent);</span>
+<span class="fc" id="L547">            timeSpent.setTimeSpent(timeSpentMinutes);</span>
+<span class="fc" id="L548">            timeSpentDB.add(timeSpent);</span>
             
-<span class="nc" id="L546">            System.out.println(&quot;Successfully saved quiz results for student: &quot; + student.getName());</span>
-<span class="nc" id="L547">        } catch (Exception e) {</span>
-<span class="nc" id="L548">            System.err.println(&quot;Error saving quiz results: &quot; + e.getMessage());</span>
-<span class="nc" id="L549">            e.printStackTrace();</span>
-<span class="nc" id="L550">        }</span>
-<span class="nc" id="L551">    }</span>
+<span class="fc" id="L550">            System.out.println(&quot;Successfully saved quiz results for student: &quot; + student.getName());</span>
+<span class="nc" id="L551">        } catch (Exception e) {</span>
+<span class="nc" id="L552">            System.err.println(&quot;Error saving quiz results: &quot; + e.getMessage());</span>
+<span class="nc" id="L553">            e.printStackTrace();</span>
+<span class="fc" id="L554">        }</span>
+<span class="fc" id="L555">    }</span>
     
     /**
      * Handles the next button action.
@@ -556,10 +560,10 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handleNext(ActionEvent event) {
-<span class="fc bfc" id="L559" title="All 2 branches covered.">        if (currentQuestionIndex &lt; questions.size() - 1) {</span>
-<span class="fc" id="L560">            loadQuestion(currentQuestionIndex + 1);</span>
+<span class="pc bpc" id="L563" title="1 of 2 branches missed.">        if (currentQuestionIndex &lt; questions.size() - 1) {</span>
+<span class="fc" id="L564">            loadQuestion(currentQuestionIndex + 1);</span>
         }
-<span class="fc" id="L562">    }</span>
+<span class="fc" id="L566">    }</span>
     
     /**
      * Handles the previous button action.
@@ -567,10 +571,10 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handlePrevious(ActionEvent event) {
-<span class="fc bfc" id="L570" title="All 2 branches covered.">        if (currentQuestionIndex &gt; 0) {</span>
-<span class="fc" id="L571">            loadQuestion(currentQuestionIndex - 1);</span>
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if (currentQuestionIndex &gt; 0) {</span>
+<span class="fc" id="L575">            loadQuestion(currentQuestionIndex - 1);</span>
         }
-<span class="fc" id="L573">    }</span>
+<span class="fc" id="L577">    }</span>
     
     /**
      * QuizQuestion class to represent a question in the quiz.
@@ -585,28 +589,28 @@ import java.util.ResourceBundle;
          * @param questionText The text of the question.
          * @param options The list of options for the question.
          */
-<span class="fc" id="L588">        public QuizQuestion(String questionText, List&lt;String&gt; options) {</span>
-<span class="fc" id="L589">            this.questionText = questionText;</span>
-<span class="fc" id="L590">            this.isMultipleChoice = true;</span>
-<span class="fc" id="L591">            this.options = options;</span>
-<span class="fc" id="L592">        }</span>
+<span class="fc" id="L592">        public QuizQuestion(String questionText, List&lt;String&gt; options) {</span>
+<span class="fc" id="L593">            this.questionText = questionText;</span>
+<span class="fc" id="L594">            this.isMultipleChoice = true;</span>
+<span class="fc" id="L595">            this.options = options;</span>
+<span class="fc" id="L596">        }</span>
         
         /**
          * Constructor for a short answer question.
          * @param questionText The text of the question.
          */
-<span class="fc" id="L598">        public QuizQuestion(String questionText) {</span>
-<span class="fc" id="L599">            this.questionText = questionText;</span>
-<span class="fc" id="L600">            this.isMultipleChoice = false;</span>
-<span class="fc" id="L601">            this.options = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L602">        }</span>
+<span class="fc" id="L602">        public QuizQuestion(String questionText) {</span>
+<span class="fc" id="L603">            this.questionText = questionText;</span>
+<span class="fc" id="L604">            this.isMultipleChoice = false;</span>
+<span class="fc" id="L605">            this.options = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L606">        }</span>
         
         /**
          * Gets the question text.
          * @return The question text.
          */
         public String getQuestionText() {
-<span class="fc" id="L609">            return questionText;</span>
+<span class="fc" id="L613">            return questionText;</span>
         }
         
         /**
@@ -614,7 +618,7 @@ import java.util.ResourceBundle;
          * @return True if the question is multiple choice, false otherwise.
          */
         public boolean isMultipleChoice() {
-<span class="fc" id="L617">            return isMultipleChoice;</span>
+<span class="fc" id="L621">            return isMultipleChoice;</span>
         }
         
         /**
@@ -622,7 +626,7 @@ import java.util.ResourceBundle;
          * @return The list of options.
          */
         public List&lt;String&gt; getOptions() {
-<span class="fc" id="L625">            return options;</span>
+<span class="fc" id="L629">            return options;</span>
         }
     }
 } 

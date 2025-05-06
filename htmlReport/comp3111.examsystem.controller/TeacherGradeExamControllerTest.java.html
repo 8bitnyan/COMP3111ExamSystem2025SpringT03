@@ -1,127 +1,334 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeExamControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeExamControllerTest.java</span></div><h1>TeacherGradeExamControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import javafx.scene.control.*;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
 import comp3111.examsystem.entity.Record;
+import comp3111.examsystem.entity.Teacher;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.control.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import comp3111.examsystem.tools.MsgSender;
-import java.lang.reflect.Field;
 
-<span class="fc" id="L14">public class TeacherGradeExamControllerTest {</span>
-    private TeacherGradeExamController controller;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+
+<span class="fc" id="L25">class TeacherGradeExamControllerTest {</span>
+    @TempDir Path tempDir;
+    Path examFile;
+    Path questionFile;
+    Path studentFile;
+    TeacherGradeExamController controller;
+    MockedStatic&lt;MsgSender&gt; msgSenderMocked;
+    FakeRecordDatabase fakeRecordDb;
+
+    @BeforeAll
+    static void initJfx() {
+<span class="fc" id="L36">        new JFXPanel();</span>
+<span class="fc" id="L37">        Platform.setImplicitExit(false);</span>
+<span class="fc" id="L38">    }</span>
 
     @BeforeEach
     void setUp() throws Exception {
-<span class="fc" id="L19">        controller = new TeacherGradeExamController();</span>
-<span class="fc" id="L20">        setField(controller, &quot;courseFilter&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L21">        setField(controller, &quot;examFilter&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L22">        setField(controller, &quot;studentFilter&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L23">        setField(controller, &quot;answerTable&quot;, new TableView&lt;&gt;());</span>
-<span class="fc" id="L24">        setField(controller, &quot;manualScoreField&quot;, new TextField());</span>
-<span class="fc" id="L25">    }</span>
+<span class="fc" id="L42">        examFile = tempDir.resolve(&quot;exam.txt&quot;);</span>
+<span class="fc" id="L43">        questionFile = tempDir.resolve(&quot;question.txt&quot;);</span>
+<span class="fc" id="L44">        studentFile = tempDir.resolve(&quot;student.txt&quot;);</span>
 
+        // Write test data
+<span class="fc" id="L47">        Files.write(examFile, List.of(</span>
+            &quot;id%&amp;:1!@#courseCode%&amp;:COMP!@#examName%&amp;:Midterm!@#questions%&amp;:101,102!@#isAble%&amp;:true&quot;
+        ));
+<span class="fc" id="L50">        Files.write(questionFile, List.of(</span>
+            &quot;id%&amp;:101!@#questionText%&amp;:What is 2+2?!@#isAble%&amp;:true!@#answer%&amp;:4!@#score%&amp;:10&quot;
+        ));
+<span class="fc" id="L53">        Files.write(studentFile, List.of(</span>
+            &quot;id%&amp;:1!@#name%&amp;:Alice!@#isAble%&amp;:true&quot;
+        ));
+
+<span class="fc" id="L57">        fakeRecordDb = new FakeRecordDatabase();</span>
+<span class="fc" id="L58">        controller = new TeacherGradeExamController(examFile, questionFile, studentFile, fakeRecordDb);</span>
+<span class="fc" id="L59">        setField(controller, &quot;courseFilter&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L60">        setField(controller, &quot;examFilter&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L61">        setField(controller, &quot;studentFilter&quot;, new ComboBox&lt;&gt;());</span>
+<span class="fc" id="L62">        setField(controller, &quot;questionList&quot;, new ListView&lt;&gt;());</span>
+<span class="fc" id="L63">        setField(controller, &quot;answerTable&quot;, new TableView&lt;&gt;());</span>
+<span class="fc" id="L64">        setField(controller, &quot;manualScoreField&quot;, new TextField());</span>
+<span class="fc" id="L65">        setField(controller, &quot;colStudentName&quot;, new TableColumn&lt;&gt;());</span>
+<span class="fc" id="L66">        setField(controller, &quot;colStudentAnswer&quot;, new TableColumn&lt;&gt;());</span>
+<span class="fc" id="L67">        setField(controller, &quot;colScore&quot;, new TableColumn&lt;&gt;());</span>
+<span class="fc" id="L68">        setField(controller, &quot;correctAnswerLabel&quot;, new Label());</span>
+<span class="fc" id="L69">        setField(controller, &quot;maxScoreLabel&quot;, new Label());</span>
+
+<span class="fc" id="L71">        msgSenderMocked = Mockito.mockStatic(MsgSender.class);</span>
+<span class="fc" id="L72">        msgSenderMocked.when(() -&gt; MsgSender.showMsg(Mockito.anyString())).then(invocation -&gt; null);</span>
+<span class="fc" id="L73">        msgSenderMocked.when(() -&gt; MsgSender.showConfirm(Mockito.anyString(), Mockito.anyString(), Mockito.any())).then(invocation -&gt; {</span>
+<span class="fc" id="L74">            Runnable callback = invocation.getArgument(2);</span>
+<span class="fc" id="L75">            callback.run();</span>
+<span class="fc" id="L76">            return null;</span>
+        });
+<span class="fc" id="L78">    }</span>
+
+    @AfterEach
+    void tearDown() {
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (msgSenderMocked != null) msgSenderMocked.close();</span>
+<span class="fc" id="L83">    }</span>
+
+    // --- Helper methods ---
     private void setField(Object obj, String fieldName, Object value) throws Exception {
-<span class="fc" id="L28">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L29">        field.setAccessible(true);</span>
-<span class="fc" id="L30">        field.set(obj, value);</span>
-<span class="fc" id="L31">    }</span>
-
-    @Test
-    void testInitialState() {
-        // Example: check that the table is empty on startup
-<span class="fc" id="L36">        assertTrue(((TableView&lt;?&gt;) getField(controller, &quot;answerTable&quot;)).getItems().isEmpty());</span>
-<span class="fc" id="L37">    }</span>
-
+<span class="fc" id="L87">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L88">        field.setAccessible(true);</span>
+<span class="fc" id="L89">        field.set(obj, value);</span>
+<span class="fc" id="L90">    }</span>
     private Object getField(Object obj, String fieldName) {
         try {
-<span class="fc" id="L41">            Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L42">            field.setAccessible(true);</span>
-<span class="fc" id="L43">            return field.get(obj);</span>
-<span class="nc" id="L44">        } catch (Exception e) {</span>
-<span class="nc" id="L45">            return null;</span>
+<span class="fc" id="L93">            Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L94">            field.setAccessible(true);</span>
+<span class="fc" id="L95">            return field.get(obj);</span>
+<span class="nc" id="L96">        } catch (Exception e) {</span>
+<span class="nc" id="L97">            return null;</span>
         }
     }
 
-    @Test
-    void testManualGradingInput() throws Exception {
-        // Simulate grading: assign score to a student/question
-        // (Assume method handleGrade or similar exists)
-        // Setup fields as needed
-<span class="fc" id="L54">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-            // If a grading method exists, call it via reflection
-            // Example:
-            // var gradeMethod = controller.getClass().getDeclaredMethod(&quot;handleGrade&quot;);
-            // gradeMethod.setAccessible(true);
-            // gradeMethod.invoke(controller);
-            // No exceptions = logic covered
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L62">    }</span>
+    // --- TESTS ---
 
     @Test
-    void testGradeStatisticsFilters() {
-        // Simulate filter: only show results for a specific exam
-<span class="fc" id="L67">        List&lt;String&gt; allResults = Arrays.asList(&quot;Exam1-student1&quot;, &quot;Exam2-student2&quot;);</span>
-<span class="fc" id="L68">        String filter = &quot;Exam1&quot;;</span>
-<span class="fc" id="L69">        List&lt;String&gt; filtered = allResults.stream().filter(r -&gt; r.contains(filter)).toList();</span>
-<span class="fc" id="L70">        assertEquals(1, filtered.size());</span>
-<span class="fc" id="L71">        assertEquals(&quot;Exam1-student1&quot;, filtered.get(0));</span>
-<span class="fc" id="L72">    }</span>
+    void testInitialState() {
+<span class="fc" id="L105">        assertTrue(((TableView&lt;?&gt;) getField(controller, &quot;answerTable&quot;)).getItems().isEmpty());</span>
+<span class="fc" id="L106">    }</span>
 
     @Test
-    void testFiltersWork() throws Exception {
-        // Simulate filter controls and call filter method if present
-<span class="fc" id="L77">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-            // If a filter method exists, call it via reflection
-            // Example:
-            // var filterMethod = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);
-            // filterMethod.setAccessible(true);
-            // filterMethod.invoke(controller);
-            // No exceptions = logic covered
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L85">    }</span>
+    void testFilterExam_HappyPath() throws Exception {
+<span class="fc" id="L110">        ComboBox&lt;String&gt; courseFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;courseFilter&quot;);</span>
+<span class="fc" id="L111">        ComboBox&lt;String&gt; examFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;examFilter&quot;);</span>
+        // Simulate examLineMap and courseToExamsMap
+<span class="fc" id="L113">        setField(controller, &quot;currentExamID&quot;, 1L);</span>
+<span class="fc" id="L114">        Map&lt;String, String&gt; examLineMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L115">        String examLine = &quot;id%&amp;:1!@#courseCode%&amp;:COMP!@#examName%&amp;:Midterm!@#questions%&amp;:101,102!@#isAble%&amp;:true&quot;;</span>
+<span class="fc" id="L116">        examLineMap.put(&quot;COMP|Midterm&quot;, examLine);</span>
+<span class="fc" id="L117">        setField(controller, &quot;examLineMap&quot;, examLineMap);</span>
+<span class="fc" id="L118">        courseFilter.getItems().add(&quot;COMP&quot;);</span>
+<span class="fc" id="L119">        examFilter.getItems().add(&quot;Midterm&quot;);</span>
+<span class="fc" id="L120">        courseFilter.getSelectionModel().select(&quot;COMP&quot;);</span>
+<span class="fc" id="L121">        examFilter.getSelectionModel().select(&quot;Midterm&quot;);</span>
+        // Patch displayQuestionsFromExamLine to avoid file IO
+<span class="fc" id="L123">        Field qMapField = TeacherGradeExamController.class.getDeclaredField(&quot;questionTextToId&quot;);</span>
+<span class="fc" id="L124">        qMapField.setAccessible(true);</span>
+<span class="fc" id="L125">        qMapField.set(controller, new HashMap&lt;&gt;());</span>
+        // Call filterExam
+<span class="fc" id="L127">        var method = controller.getClass().getDeclaredMethod(&quot;filterExam&quot;);</span>
+<span class="fc" id="L128">        method.setAccessible(true);</span>
+<span class="fc" id="L129">        method.invoke(controller);</span>
+        // Should not call error message
+<span class="fc" id="L131">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(anyString()), Mockito.never());</span>
+<span class="fc" id="L132">    }</span>
 
     @Test
-    void testNoStudentResultsEdgeCase() throws Exception {
-        // Simulate empty student results and call refresh/statistics method
-<span class="fc" id="L90">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-            // If a refresh/statistics method exists, call it via reflection
-            // Example:
-            // var refreshMethod = controller.getClass().getDeclaredMethod(&quot;handleRefresh&quot;);
-            // refreshMethod.setAccessible(true);
-            // refreshMethod.invoke(controller);
-            // No exceptions = logic covered
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L98">    }</span>
+    void testFilterExam_MissingCourseOrExam() throws Exception {
+<span class="fc" id="L136">        ComboBox&lt;String&gt; courseFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;courseFilter&quot;);</span>
+<span class="fc" id="L137">        ComboBox&lt;String&gt; examFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;examFilter&quot;);</span>
+        // Only course selected
+<span class="fc" id="L139">        courseFilter.getItems().add(&quot;COMP&quot;);</span>
+<span class="fc" id="L140">        courseFilter.getSelectionModel().select(&quot;COMP&quot;);</span>
+<span class="fc" id="L141">        var method = controller.getClass().getDeclaredMethod(&quot;filterExam&quot;);</span>
+<span class="fc" id="L142">        method.setAccessible(true);</span>
+<span class="fc" id="L143">        method.invoke(controller);</span>
+<span class="fc" id="L144">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;Please select both a course and an exam.&quot;)));</span>
+        // Only exam selected
+<span class="fc" id="L146">        courseFilter.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L147">        examFilter.getItems().add(&quot;Midterm&quot;);</span>
+<span class="fc" id="L148">        examFilter.getSelectionModel().select(&quot;Midterm&quot;);</span>
+<span class="fc" id="L149">        method.invoke(controller);</span>
+<span class="fc" id="L150">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;Please select both a course and an exam.&quot;)), Mockito.times(2));</span>
+<span class="fc" id="L151">    }</span>
 
     @Test
-    void testFilterByStudentAndExam() throws Exception {
-<span class="fc" id="L102">        setField(controller, &quot;studentFilter&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L103">        setField(controller, &quot;examFilter&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L104">        ComboBox&lt;String&gt; studentCombo = (ComboBox&lt;String&gt;) getField(controller, &quot;studentFilter&quot;);</span>
-<span class="fc" id="L105">        ComboBox&lt;String&gt; examCombo = (ComboBox&lt;String&gt;) getField(controller, &quot;examFilter&quot;);</span>
-<span class="fc" id="L106">        studentCombo.getItems().addAll(&quot;Alice&quot;, &quot;Bob&quot;);</span>
-<span class="fc" id="L107">        examCombo.getItems().addAll(&quot;Midterm&quot;, &quot;Final&quot;);</span>
-<span class="fc" id="L108">        studentCombo.setValue(&quot;Alice&quot;);</span>
-<span class="fc" id="L109">        examCombo.setValue(&quot;Midterm&quot;);</span>
-        // If a filter method exists, call it via reflection
-        // var filterMethod = controller.getClass().getDeclaredMethod(&quot;filterExam&quot;);
-        // filterMethod.setAccessible(true);
-        // filterMethod.invoke(controller);
-<span class="fc" id="L114">    }</span>
+    void testFilterExam_NonExistentExam() throws Exception {
+<span class="fc" id="L155">        ComboBox&lt;String&gt; courseFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;courseFilter&quot;);</span>
+<span class="fc" id="L156">        ComboBox&lt;String&gt; examFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;examFilter&quot;);</span>
+<span class="fc" id="L157">        courseFilter.getItems().add(&quot;COMP&quot;);</span>
+<span class="fc" id="L158">        examFilter.getItems().add(&quot;Midterm&quot;);</span>
+<span class="fc" id="L159">        courseFilter.getSelectionModel().select(&quot;COMP&quot;);</span>
+<span class="fc" id="L160">        examFilter.getSelectionModel().select(&quot;Midterm&quot;);</span>
+<span class="fc" id="L161">        setField(controller, &quot;examLineMap&quot;, new HashMap&lt;&gt;()); // empty</span>
+<span class="fc" id="L162">        var method = controller.getClass().getDeclaredMethod(&quot;filterExam&quot;);</span>
+<span class="fc" id="L163">        method.setAccessible(true);</span>
+<span class="fc" id="L164">        method.invoke(controller);</span>
+<span class="fc" id="L165">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;No exam found&quot;)));</span>
+<span class="fc" id="L166">    }</span>
 
     @Test
-    void testSubmitGrade() throws Exception {
-<span class="fc" id="L118">        setField(controller, &quot;manualScoreField&quot;, new TextField(&quot;85&quot;));</span>
-<span class="fc" id="L119">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-            // If a submit method exists, call it via reflection
-            // var submitMethod = controller.getClass().getDeclaredMethod(&quot;handleSubmit&quot;);
-            // submitMethod.setAccessible(true);
-            // submitMethod.invoke(controller);
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        }</span>
-<span class="fc" id="L125">    }</span>
+    void testResetFilter() throws Exception {
+<span class="fc" id="L170">        ComboBox&lt;String&gt; courseFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;courseFilter&quot;);</span>
+<span class="fc" id="L171">        ComboBox&lt;String&gt; examFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;examFilter&quot;);</span>
+<span class="fc" id="L172">        ListView&lt;String&gt; questionList = (ListView&lt;String&gt;) getField(controller, &quot;questionList&quot;);</span>
+<span class="fc" id="L173">        courseFilter.getItems().add(&quot;COMP&quot;);</span>
+<span class="fc" id="L174">        examFilter.getItems().add(&quot;Midterm&quot;);</span>
+<span class="fc" id="L175">        questionList.getItems().add(&quot;Q1&quot;);</span>
+<span class="fc" id="L176">        var method = controller.getClass().getDeclaredMethod(&quot;resetFilter&quot;);</span>
+<span class="fc" id="L177">        method.setAccessible(true);</span>
+<span class="fc" id="L178">        method.invoke(controller);</span>
+<span class="fc" id="L179">        assertTrue(courseFilter.getSelectionModel().isEmpty());</span>
+<span class="fc" id="L180">        assertTrue(examFilter.getSelectionModel().isEmpty());</span>
+<span class="fc" id="L181">        assertTrue(examFilter.getItems().isEmpty());</span>
+<span class="fc" id="L182">        assertTrue(questionList.getItems().isEmpty());</span>
+<span class="fc" id="L183">    }</span>
+
+    @Test
+    void testUpdateScore_NoRecordSelected() throws Exception {
+<span class="fc" id="L187">        setField(controller, &quot;selectedRecord&quot;, null);</span>
+<span class="fc" id="L188">        var method = controller.getClass().getDeclaredMethod(&quot;updateScore&quot;);</span>
+<span class="fc" id="L189">        method.setAccessible(true);</span>
+<span class="fc" id="L190">        method.invoke(controller);</span>
+<span class="fc" id="L191">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;Please select a student answer first.&quot;)));</span>
+<span class="fc" id="L192">    }</span>
+
+    @Test
+    void testUpdateScore_EmptyScore() throws Exception {
+<span class="fc" id="L196">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L197">        setField(controller, &quot;selectedRecord&quot;, rec);</span>
+<span class="fc" id="L198">        ((TextField) getField(controller, &quot;manualScoreField&quot;)).setText(&quot;&quot;);</span>
+<span class="fc" id="L199">        var method = controller.getClass().getDeclaredMethod(&quot;updateScore&quot;);</span>
+<span class="fc" id="L200">        method.setAccessible(true);</span>
+<span class="fc" id="L201">        method.invoke(controller);</span>
+<span class="fc" id="L202">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;Score cannot be empty.&quot;)));</span>
+<span class="fc" id="L203">    }</span>
+
+    @Test
+    void testUpdateScore_NonNumericScore() throws Exception {
+<span class="fc" id="L207">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L208">        setField(controller, &quot;selectedRecord&quot;, rec);</span>
+<span class="fc" id="L209">        ((TextField) getField(controller, &quot;manualScoreField&quot;)).setText(&quot;abc&quot;);</span>
+<span class="fc" id="L210">        var method = controller.getClass().getDeclaredMethod(&quot;updateScore&quot;);</span>
+<span class="fc" id="L211">        method.setAccessible(true);</span>
+<span class="fc" id="L212">        method.invoke(controller);</span>
+<span class="fc" id="L213">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;valid numeric score&quot;)));</span>
+<span class="fc" id="L214">    }</span>
+
+    @Test
+    void testUpdateScore_ScoreOutOfRange() throws Exception {
+<span class="fc" id="L218">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L219">        setField(controller, &quot;selectedRecord&quot;, rec);</span>
+<span class="fc" id="L220">        ((TextField) getField(controller, &quot;manualScoreField&quot;)).setText(&quot;100&quot;);</span>
+<span class="fc" id="L221">        ((Label) getField(controller, &quot;maxScoreLabel&quot;)).setText(&quot;10&quot;);</span>
+<span class="fc" id="L222">        var method = controller.getClass().getDeclaredMethod(&quot;updateScore&quot;);</span>
+<span class="fc" id="L223">        method.setAccessible(true);</span>
+<span class="fc" id="L224">        method.invoke(controller);</span>
+<span class="fc" id="L225">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(contains(&quot;Score must be between 0 and 10&quot;)));</span>
+<span class="fc" id="L226">    }</span>
+
+    @Test
+    void testUpdateScore_ValidScore() throws Exception {
+<span class="fc" id="L230">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L231">        rec.setId(1L);</span>
+<span class="fc" id="L232">        fakeRecordDb.records.clear();</span>
+<span class="fc" id="L233">        fakeRecordDb.records.add(rec);</span>
+<span class="fc" id="L234">        setField(controller, &quot;selectedRecord&quot;, rec);</span>
+<span class="fc" id="L235">        ((TextField) getField(controller, &quot;manualScoreField&quot;)).setText(&quot;8&quot;);</span>
+<span class="fc" id="L236">        ((Label) getField(controller, &quot;maxScoreLabel&quot;)).setText(&quot;10&quot;);</span>
+<span class="fc" id="L237">        var method = controller.getClass().getDeclaredMethod(&quot;updateScore&quot;);</span>
+<span class="fc" id="L238">        method.setAccessible(true);</span>
+<span class="fc" id="L239">        method.invoke(controller);</span>
+<span class="fc" id="L240">        msgSenderMocked.verify(() -&gt; MsgSender.showMsg(Mockito.contains(&quot;Score updated successfully.&quot;)));</span>
+<span class="fc" id="L241">    }</span>
+
+    @Test
+    void testDisplayQuestionDetails_Valid() throws Exception {
+<span class="fc" id="L245">        var method = controller.getClass().getDeclaredMethod(&quot;displayQuestionDetails&quot;, String.class);</span>
+<span class="fc" id="L246">        method.setAccessible(true);</span>
+<span class="fc" id="L247">        method.invoke(controller, &quot;101&quot;);</span>
+<span class="fc" id="L248">        Label correctAnswerLabel = (Label) getField(controller, &quot;correctAnswerLabel&quot;);</span>
+<span class="fc" id="L249">        Label maxScoreLabel = (Label) getField(controller, &quot;maxScoreLabel&quot;);</span>
+<span class="fc" id="L250">        assertEquals(&quot;4&quot;, correctAnswerLabel.getText());</span>
+<span class="fc" id="L251">        assertEquals(&quot;10&quot;, maxScoreLabel.getText());</span>
+<span class="fc" id="L252">    }</span>
+
+    @Test
+    void testDisplayQuestionDetails_Invalid() throws Exception {
+<span class="fc" id="L256">        var method = controller.getClass().getDeclaredMethod(&quot;displayQuestionDetails&quot;, String.class);</span>
+<span class="fc" id="L257">        method.setAccessible(true);</span>
+<span class="fc" id="L258">        method.invoke(controller, &quot;999&quot;);</span>
+<span class="fc" id="L259">        Label correctAnswerLabel = (Label) getField(controller, &quot;correctAnswerLabel&quot;);</span>
+<span class="fc" id="L260">        Label maxScoreLabel = (Label) getField(controller, &quot;maxScoreLabel&quot;);</span>
+<span class="fc" id="L261">        assertEquals(&quot;N/A&quot;, correctAnswerLabel.getText());</span>
+<span class="fc" id="L262">        assertEquals(&quot;N/A&quot;, maxScoreLabel.getText());</span>
+<span class="fc" id="L263">    }</span>
+
+    @Test
+    void testDisplayStudentResponsesForQuestion() throws Exception {
+<span class="fc" id="L267">        fakeRecordDb.records.clear();</span>
+<span class="fc" id="L268">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L269">        rec.setId(1L);</span>
+<span class="fc" id="L270">        fakeRecordDb.records.add(rec);</span>
+<span class="fc" id="L271">        setField(controller, &quot;currentExamID&quot;, 1L);</span>
+<span class="fc" id="L272">        ComboBox&lt;String&gt; studentFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;studentFilter&quot;);</span>
+<span class="fc" id="L273">        studentFilter.getItems().addAll(&quot;ALL&quot;, &quot;Alice&quot;, &quot;Bob&quot;);</span>
+<span class="fc" id="L274">        studentFilter.getSelectionModel().select(&quot;ALL&quot;);</span>
+<span class="fc" id="L275">        var method = controller.getClass().getDeclaredMethod(&quot;displayStudentResponsesForQuestion&quot;, String.class);</span>
+<span class="fc" id="L276">        method.setAccessible(true);</span>
+<span class="fc" id="L277">        method.invoke(controller, &quot;101&quot;);</span>
+<span class="fc" id="L278">        TableView&lt;Record&gt; answerTable = (TableView&lt;Record&gt;) getField(controller, &quot;answerTable&quot;);</span>
+<span class="fc" id="L279">        assertEquals(1, answerTable.getItems().size());</span>
+<span class="fc" id="L280">    }</span>
+
+    @Test
+    void testCloseApplication() throws Exception {
+<span class="fc" id="L284">        var method = controller.getClass().getDeclaredMethod(&quot;closeApplication&quot;);</span>
+<span class="fc" id="L285">        method.setAccessible(true);</span>
+<span class="fc" id="L286">        method.invoke(controller);</span>
+<span class="fc" id="L287">        msgSenderMocked.verify(() -&gt; MsgSender.showConfirm(anyString(), anyString(), any()));</span>
+<span class="fc" id="L288">    }</span>
+
+    @Test
+    void testLoadExamOptions_FileIoSuccess() throws Exception {
+<span class="fc" id="L292">        var method = controller.getClass().getDeclaredMethod(&quot;loadExamOptions&quot;);</span>
+<span class="fc" id="L293">        method.setAccessible(true);</span>
+<span class="fc" id="L294">        method.invoke(controller);</span>
+<span class="fc" id="L295">        ComboBox&lt;String&gt; courseFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;courseFilter&quot;);</span>
+<span class="fc" id="L296">        assertTrue(courseFilter.getItems().contains(&quot;COMP&quot;));</span>
+<span class="fc" id="L297">    }</span>
+
+    @Test
+    void testGetStudentNameById_FileIo() throws Exception {
+<span class="fc" id="L301">        var method = controller.getClass().getDeclaredMethod(&quot;getStudentNameById&quot;, String.class);</span>
+<span class="fc" id="L302">        method.setAccessible(true);</span>
+<span class="fc" id="L303">        String name1 = (String) method.invoke(controller, &quot;1&quot;);</span>
+<span class="fc" id="L304">        String name2 = (String) method.invoke(controller, &quot;999&quot;);</span>
+<span class="fc" id="L305">        assertEquals(&quot;Alice&quot;, name1);</span>
+<span class="fc" id="L306">        assertEquals(&quot;Unknown&quot;, name2);</span>
+<span class="fc" id="L307">    }</span>
+
+    @Test
+    void testDisplayQuestionsFromExamLine_PopulatesQuestionsAndStudents() throws Exception {
+<span class="fc" id="L311">        fakeRecordDb.records.clear();</span>
+<span class="fc" id="L312">        Record rec = new Record(101L, 1L, 1L, &quot;A&quot;, 5);</span>
+<span class="fc" id="L313">        rec.setId(1L);</span>
+<span class="fc" id="L314">        fakeRecordDb.records.add(rec);</span>
+<span class="fc" id="L315">        setField(controller, &quot;currentExamID&quot;, 1L);</span>
+<span class="fc" id="L316">        var method = controller.getClass().getDeclaredMethod(&quot;displayQuestionsFromExamLine&quot;, String.class);</span>
+<span class="fc" id="L317">        method.setAccessible(true);</span>
+<span class="fc" id="L318">        String examLine = &quot;id%&amp;:1!@#courseCode%&amp;:COMP!@#examName%&amp;:Midterm!@#questions%&amp;:101!@#isAble%&amp;:true&quot;;</span>
+<span class="fc" id="L319">        method.invoke(controller, examLine);</span>
+<span class="fc" id="L320">        ListView&lt;String&gt; questionList = (ListView&lt;String&gt;) getField(controller, &quot;questionList&quot;);</span>
+<span class="fc" id="L321">        assertTrue(questionList.getItems().contains(&quot;What is 2+2?&quot;));</span>
+<span class="fc" id="L322">        ComboBox&lt;String&gt; studentFilter = (ComboBox&lt;String&gt;) getField(controller, &quot;studentFilter&quot;);</span>
+<span class="fc" id="L323">        assertTrue(studentFilter.getItems().contains(&quot;Alice&quot;));</span>
+<span class="fc" id="L324">    }</span>
+
+    static class FakeRecordDatabase extends comp3111.examsystem.tools.Database&lt;Record&gt; {
+<span class="fc" id="L327">        List&lt;Record&gt; records = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L328">        public FakeRecordDatabase() { super(Record.class); }</span>
+<span class="fc" id="L329">        @Override public List&lt;Record&gt; getAllEnabled() { return new ArrayList&lt;&gt;(records); }</span>
+<span class="nc" id="L330">        @Override public void add(Record r) { records.add(r); }</span>
+<span class="fc" id="L331">        @Override public void update(Record r) { /* no-op for test */ }</span>
+    }
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

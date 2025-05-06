@@ -856,6 +856,14 @@ public class TeacherQuestionBankMgmtController implements Initializable {
 
     @FXML
     public void handleUpdate() {
+        // If in edit mode and no question is selected, show the correct message and return early
+        if (editMode && selectedQuestion == null) {
+            MsgSender.showMsg("No question selected to update.");
+            editMode = false;
+            setFormFieldsEditable(false);
+            questionsTable.setDisable(false);
+            return;
+        }
         // Common validation for both adding and updating
         String questionText = questionTxt.getText().trim();
         String type = typeCmb.getValue();

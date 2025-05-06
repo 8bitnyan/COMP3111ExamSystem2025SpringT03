@@ -50,10 +50,35 @@ public class TeacherGradeExamController implements Initializable {
     @FXML private Label correctAnswerLabel;
     @FXML private Label maxScoreLabel;
     private final Map<String, String> questionTextToId = new HashMap<>();
-    private final Database<Record> recordDatabase = new Database<>(Record.class);
+    private final Database<Record> recordDatabase;
     private Record selectedRecord;
     @FXML private TextField manualScoreField;
+    private Path examFilePath;
+    private Path questionFilePath;
+    private Path studentFilePath;
 
+    // Default constructor for production
+    public TeacherGradeExamController() {
+        this(
+            Paths.get("src", "main", "resources", "database", "exam.txt"),
+            Paths.get("src", "main", "resources", "database", "question.txt"),
+            Paths.get("src", "main", "resources", "database", "student.txt"),
+            new Database<>(Record.class)
+        );
+    }
+
+    // Constructor for tests (3-arg, uses default DB)
+    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath) {
+        this(examFilePath, questionFilePath, studentFilePath, new Database<>(Record.class));
+    }
+
+    // Constructor for tests (4-arg, custom DB)
+    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath, Database<Record> recordDatabase) {
+        this.examFilePath = examFilePath;
+        this.questionFilePath = questionFilePath;
+        this.studentFilePath = studentFilePath;
+        this.recordDatabase = recordDatabase;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -114,9 +139,8 @@ public class TeacherGradeExamController implements Initializable {
      * Organizes exams by course in a map for later filtering.
      */
     private void loadExamOptions() {
-        Path examPath = Paths.get("src", "main", "resources", "database", "exam.txt");
         try {
-            List<String> lines = Files.readAllLines(examPath);
+            List<String> lines = Files.readAllLines(examFilePath);
             courseFilter.getItems().clear();
             examFilter.getItems().clear();
             examLineMap.clear();
@@ -158,10 +182,9 @@ public class TeacherGradeExamController implements Initializable {
                 .filter(id -> !id.isEmpty())
                 .collect(Collectors.toList());
 
-        Path questionDB = Paths.get("src", "main", "resources", "database", "question.txt");
         List<String> questionLines;
         try {
-            questionLines = Files.readAllLines(questionDB);
+            questionLines = Files.readAllLines(questionFilePath);
         } catch (IOException e) {
             MsgSender.showMsg("Failed to read question database.");
             return;
@@ -196,7 +219,6 @@ public class TeacherGradeExamController implements Initializable {
         studentFilter.getItems().add("ALL");
         studentFilter.getItems().addAll(uniqueStudentNames);
         studentFilter.getSelectionModel().select("ALL");
-
     }
 
     /**
@@ -294,9 +316,8 @@ public class TeacherGradeExamController implements Initializable {
      * @return The student's name, or "Unknown" if not found.
      */
     private String getStudentNameById(String studentId) {
-        Path studentFile = Paths.get("src", "main", "resources", "database", "student.txt");
         try {
-            for (String line : Files.readAllLines(studentFile)) {
+            for (String line : Files.readAllLines(studentFilePath)) {
                 if (line.contains("id%&:" + studentId + "!@#")) {
                     return extractField(line, "name");
                 }
@@ -312,9 +333,8 @@ public class TeacherGradeExamController implements Initializable {
      * @param questionId The question's unique ID.
      */
     private void displayQuestionDetails(String questionId) {
-        Path questionDB = Paths.get("src", "main", "resources", "database", "question.txt");
         try {
-            List<String> questionLines = Files.readAllLines(questionDB);
+            List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
                 if (line.contains("id%&:" + questionId + "!@#") && line.contains("isAble%&:true")) {
                     String answer = extractField(line, "answer");

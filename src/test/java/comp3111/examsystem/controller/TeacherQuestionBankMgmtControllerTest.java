@@ -17,9 +17,20 @@ import comp3111.examsystem.entity.Teacher;
 import comp3111.examsystem.data.Department;
 import comp3111.examsystem.data.Gender;
 import comp3111.examsystem.data.Position;
+import javafx.application.Platform;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class TeacherQuestionBankMgmtControllerTest {
     private TeacherQuestionBankMgmtController controller;
+
+    static {
+        try {
+            Platform.startup(() -> {});
+        } catch (IllegalStateException e) {
+            // JavaFX already started
+        }
+    }
 
     @BeforeAll
     static void initJfx() {
@@ -104,7 +115,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("5"));
         setField(controller, "answerTxt", new TextField("A"));
-        List<TextField> optionFields = Arrays.asList(new TextField("A1"), new TextField("A2"));
+        List<TextField> optionFields = new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2")));
         setField(controller, "optionFields", optionFields);
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
@@ -156,7 +167,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("5"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
         setField(controller, "updateBtn", new Button());
@@ -185,7 +196,7 @@ public class TeacherQuestionBankMgmtControllerTest {
     }
 
     @Test
-    void testDeleteBranches() throws Exception {
+    void testDeleteBranches_AllPaths() throws Exception {
         Teacher dummyTeacher = new Teacher(1L, "dummyuser", "dummypass", "Dummy Name", Gender.MALE, 30, Department.CSE, Position.P);
         setField(controller, "teacher", dummyTeacher);
         TableView<Question> table = new TableView<>();
@@ -202,13 +213,14 @@ public class TeacherQuestionBankMgmtControllerTest {
         table.getSelectionModel().clearSelection();
         try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
             controller.handleDelete();
+            msgSenderMocked.verify(() -> MsgSender.showMsg("No question selected to delete."), Mockito.atLeastOnce());
             // Published
             Question q = new Question();
-            q.setId(200L); // Set non-null ID
-            q.setPublished(1);
+            q.setId(200L); q.setPublished(1);
             table.getItems().add(q);
             table.getSelectionModel().select(q);
             controller.handleDelete();
+            msgSenderMocked.verify(() -> MsgSender.showMsg("Published question cannot be deleted."), Mockito.atLeastOnce());
             // Not published
             q.setPublished(0);
             table.getSelectionModel().select(q);
@@ -246,7 +258,7 @@ public class TeacherQuestionBankMgmtControllerTest {
     }
 
     @Test
-    void testCancelEditBranches() throws Exception {
+    void testCancelEditBranches_AllPaths() throws Exception {
         Teacher dummyTeacher = new Teacher(1L, "dummyuser", "dummypass", "Dummy Name", Gender.MALE, 30, Department.CSE, Position.P);
         setField(controller, "teacher", dummyTeacher);
         setField(controller, "addBtn", new Button());
@@ -267,12 +279,14 @@ public class TeacherQuestionBankMgmtControllerTest {
             setField(controller, "editMode", true);
             setField(controller, "selectedQuestion", null);
             controller.handleCancelEdit();
-            // In edit mode, selectedQuestion not null, question found
+            msgSenderMocked.verify(() -> MsgSender.showMsg("Adding new question cancelled."), Mockito.atLeastOnce());
+            // In edit mode, selectedQuestion not null, question not found
             setField(controller, "editMode", true);
             Question q2 = new Question();
-            q2.setId(400L); // Set non-null ID
+            q2.setId(400L);
             setField(controller, "selectedQuestion", q2);
             controller.handleCancelEdit();
+            msgSenderMocked.verify(() -> MsgSender.showMsg("Question could not be found. Edit cancelled."), Mockito.atLeastOnce());
         }
     }
 
@@ -301,7 +315,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("1"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
         setField(controller, "updateBtn", new Button());
@@ -328,8 +342,8 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("5"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(
-            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(
+            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5"))));
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
         setField(controller, "updateBtn", new Button());
@@ -356,7 +370,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("2"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"))));
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
         setField(controller, "updateBtn", new Button());
@@ -372,8 +386,8 @@ public class TeacherQuestionBankMgmtControllerTest {
             controller.handleAdd(); // Should not add, but should not throw
         }
         // 6 options (should fail)
-        setField(controller, "optionFields", Arrays.asList(
-            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5"), new TextField("A6")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(
+            new TextField("A1"), new TextField("A2"), new TextField("A3"), new TextField("A4"), new TextField("A5"), new TextField("A6"))));
         try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
             controller.handleAdd(); // Should not add, but should not throw
         }
@@ -389,7 +403,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField(""));
         setField(controller, "answerTxt", new TextField(""));
-        setField(controller, "optionFields", Arrays.asList(new TextField(""), new TextField("")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField(""), new TextField(""))));
         setField(controller, "questionsTable", new TableView<Question>());
         setField(controller, "addBtn", new Button());
         setField(controller, "updateBtn", new Button());
@@ -408,7 +422,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "questionTxt", new TextArea("Q?"));
         setField(controller, "scoreTxt", new TextField(""));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
         try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
             controller.handleAdd();
         }
@@ -443,7 +457,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "typeCmb", typeCmb);
         setField(controller, "scoreTxt", new TextField("2"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
         setField(controller, "editMode", false);
         setField(controller, "selectedQuestion", null);
         try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
@@ -457,7 +471,7 @@ public class TeacherQuestionBankMgmtControllerTest {
         setField(controller, "questionTxt", new TextArea("Q?"));
         setField(controller, "scoreTxt", new TextField("2"));
         setField(controller, "answerTxt", new TextField("A"));
-        setField(controller, "optionFields", Arrays.asList(new TextField("A1"), new TextField("A2")));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
         try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
             controller.handleUpdate();
         }
@@ -485,6 +499,118 @@ public class TeacherQuestionBankMgmtControllerTest {
         // Switch back to MCQ
         typeCmb.setValue("MCQ");
         controller.updateOptionFieldsVisibility("MCQ");
+    }
+
+    @Test
+    void testUpdateBranches_AllPaths() throws Exception {
+        Teacher dummyTeacher = new Teacher(1L, "dummyuser", "dummypass", "Dummy Name", Gender.MALE, 30, Department.CSE, Position.P);
+        setField(controller, "teacher", dummyTeacher);
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        setField(controller, "questionTxt", new TextArea(""));
+        ComboBox<String> typeCmb = new ComboBox<>();
+        typeCmb.getItems().addAll("MCQ", "Short Answer");
+        typeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", typeCmb);
+        setField(controller, "scoreTxt", new TextField(""));
+        setField(controller, "answerTxt", new TextField(""));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField(""), new TextField(""))));
+        setField(controller, "questionsTable", new TableView<Question>());
+        setField(controller, "addBtn", new Button());
+        setField(controller, "updateBtn", new Button());
+        setField(controller, "cancelEditBtn", new Button());
+        setField(controller, "editBtn", new Button());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "options", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        setField(controller, "mainbox", new VBox());
+        // Invalid fields
+        CountDownLatch latchInvalid = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+                msgSenderMocked.when(() -> MsgSender.showMsg(Mockito.anyString()))
+                    .then(invocation -> {
+                        System.out.println("MsgSender.showMsg called with: " + invocation.getArgument(0));
+                        return null;
+                    });
+                // Set all required fields to empty or null
+                setField(controller, "questionTxt", new TextArea(""));
+                ComboBox<String> emptyTypeCmb = new ComboBox<>();
+                emptyTypeCmb.setValue(null);
+                setField(controller, "typeCmb", emptyTypeCmb);
+                setField(controller, "scoreTxt", new TextField(""));
+                setField(controller, "answerTxt", new TextField(""));
+                controller.handleUpdate();
+                msgSenderMocked.verify(() -> MsgSender.showMsg("Please fill in all required fields."), Mockito.atLeastOnce());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                latchInvalid.countDown();
+            }
+        });
+        latchInvalid.await(5, TimeUnit.SECONDS);
+        // Not in editMode, selectedQuestion null
+        setField(controller, "editMode", false);
+        setField(controller, "selectedQuestion", null);
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        setField(controller, "scoreTxt", new TextField("5"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
+        ComboBox<String> validTypeCmbForAdd = new ComboBox<>();
+        validTypeCmbForAdd.getItems().addAll("MCQ", "Short Answer");
+        validTypeCmbForAdd.setValue("MCQ");
+        setField(controller, "typeCmb", validTypeCmbForAdd);
+        CountDownLatch latchAdd = new CountDownLatch(1);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            Platform.runLater(() -> {
+                controller.handleUpdate(); // Should add new question
+                latchAdd.countDown();
+            });
+            latchAdd.await(5, TimeUnit.SECONDS);
+            // No verify needed if no dialog expected
+        }
+        // Now test editMode true, selectedQuestion null
+        // Set all required fields to valid values
+        setField(controller, "questionTxt", new TextArea("Q?"));
+        ComboBox<String> validTypeCmb = new ComboBox<>();
+        validTypeCmb.getItems().addAll("MCQ", "Short Answer");
+        validTypeCmb.setValue("MCQ");
+        setField(controller, "typeCmb", validTypeCmb);
+        setField(controller, "scoreTxt", new TextField("5"));
+        setField(controller, "answerTxt", new TextField("A"));
+        setField(controller, "optionFields", new ArrayList<>(Arrays.asList(new TextField("A1"), new TextField("A2"))));
+        setField(controller, "editMode", true);
+        setField(controller, "selectedQuestion", null);
+        CountDownLatch latchNull = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+                controller.handleUpdate();
+                msgSenderMocked.verify(() -> MsgSender.showMsg("No question selected to update."), Mockito.atLeastOnce());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                latchNull.countDown();
+            }
+        });
+        latchNull.await(5, TimeUnit.SECONDS);
+
+        // Published
+        Question q = new Question();
+        q.setId(300L); q.setPublished(1);
+        setField(controller, "selectedQuestion", q);
+        setField(controller, "editMode", true);
+        CountDownLatch latchPublished = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+                controller.handleUpdate();
+                msgSenderMocked.verify(() -> MsgSender.showMsg("Published question cannot be modified."), Mockito.atLeastOnce());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                latchPublished.countDown();
+            }
+        });
+        latchPublished.await(5, TimeUnit.SECONDS);
     }
 
     private Object getField(Object obj, String fieldName) throws Exception {

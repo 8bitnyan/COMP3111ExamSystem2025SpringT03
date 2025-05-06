@@ -107,4 +107,16 @@ public class ExamTest {
         assertTrue(exam.getEnabled());
         assertTrue(exam.getIsAble());
     }
+
+    // SKELETONS FOR UNCOVERED ENTITY CLASSES
+    // TODO: Add tests for User
+    // TODO: Add tests for Entity
+    // TODO: Add tests for Student
+    // TODO: Add tests for Teacher
+    // TODO: Add tests for TimeSpent
+    // TODO: Add tests for Course
+    // TODO: Add tests for Manager
+    // TODO: Add tests for Person
+    // TODO: Add tests for Record
+    // TODO: Add tests for Stats
 } 

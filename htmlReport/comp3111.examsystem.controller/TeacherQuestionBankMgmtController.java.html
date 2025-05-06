@@ -856,342 +856,350 @@ import java.util.stream.Collectors;
 
     @FXML
     public void handleUpdate() {
+        // If in edit mode and no question is selected, show the correct message and return early
+<span class="fc bfc" id="L860" title="All 4 branches covered.">        if (editMode &amp;&amp; selectedQuestion == null) {</span>
+<span class="fc" id="L861">            MsgSender.showMsg(&quot;No question selected to update.&quot;);</span>
+<span class="fc" id="L862">            editMode = false;</span>
+<span class="fc" id="L863">            setFormFieldsEditable(false);</span>
+<span class="fc" id="L864">            questionsTable.setDisable(false);</span>
+<span class="fc" id="L865">            return;</span>
+        }
         // Common validation for both adding and updating
-<span class="fc" id="L860">        String questionText = questionTxt.getText().trim();</span>
-<span class="fc" id="L861">        String type = typeCmb.getValue();</span>
-<span class="fc" id="L862">        String scoreText = scoreTxt.getText().trim();</span>
-<span class="fc" id="L863">        String answer = answerTxt.getText().trim();</span>
+<span class="fc" id="L868">        String questionText = questionTxt.getText().trim();</span>
+<span class="fc" id="L869">        String type = typeCmb.getValue();</span>
+<span class="fc" id="L870">        String scoreText = scoreTxt.getText().trim();</span>
+<span class="fc" id="L871">        String answer = answerTxt.getText().trim();</span>
 
-<span class="pc bpc" id="L865" title="3 of 10 branches missed.">        if (questionText.isEmpty() || type == null || type.isEmpty() || scoreText.isEmpty() || answer.isEmpty()) {</span>
-<span class="fc" id="L866">            MsgSender.showMsg(&quot;Please fill in all required fields.&quot;);</span>
-<span class="fc" id="L867">            return;</span>
+<span class="pc bpc" id="L873" title="3 of 10 branches missed.">        if (questionText.isEmpty() || type == null || type.isEmpty() || scoreText.isEmpty() || answer.isEmpty()) {</span>
+<span class="fc" id="L874">            MsgSender.showMsg(&quot;Please fill in all required fields.&quot;);</span>
+<span class="fc" id="L875">            return;</span>
         }
         
         // For MCQ, validate options
-<span class="fc" id="L871">        List&lt;String&gt; optionValues = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L872" title="All 2 branches covered.">        if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
-<span class="fc bfc" id="L873" title="All 2 branches covered.">            for (TextField field : optionFields) {</span>
-<span class="fc" id="L874">                String value = field.getText().trim();</span>
-<span class="pc bpc" id="L875" title="1 of 2 branches missed.">                if (value.isEmpty()) {</span>
-<span class="nc" id="L876">                    MsgSender.showMsg(&quot;Please fill in all MCQ options.&quot;);</span>
-<span class="nc" id="L877">                    return;</span>
+<span class="fc" id="L879">        List&lt;String&gt; optionValues = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L880" title="All 2 branches covered.">        if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
+<span class="fc bfc" id="L881" title="All 2 branches covered.">            for (TextField field : optionFields) {</span>
+<span class="fc" id="L882">                String value = field.getText().trim();</span>
+<span class="fc bfc" id="L883" title="All 2 branches covered.">                if (value.isEmpty()) {</span>
+<span class="fc" id="L884">                    MsgSender.showMsg(&quot;Please fill in all MCQ options.&quot;);</span>
+<span class="fc" id="L885">                    return;</span>
                 }
-<span class="fc" id="L879">                optionValues.add(value);</span>
-<span class="fc" id="L880">            }</span>
+<span class="fc" id="L887">                optionValues.add(value);</span>
+<span class="fc" id="L888">            }</span>
             
             // Validate that answer matches one of the options
-<span class="fc" id="L883">            boolean validAnswer = false;</span>
-<span class="fc bfc" id="L884" title="All 2 branches covered.">            for (int i = 0; i &lt; optionValues.size(); i++) {</span>
-<span class="fc" id="L885">                String optionLetter = String.valueOf((char)('A' + i));</span>
-<span class="fc bfc" id="L886" title="All 2 branches covered.">                if (answer.equalsIgnoreCase(optionLetter)) {</span>
-<span class="fc" id="L887">                    validAnswer = true;</span>
-<span class="fc" id="L888">                    break;</span>
+<span class="fc" id="L891">            boolean validAnswer = false;</span>
+<span class="pc bpc" id="L892" title="1 of 2 branches missed.">            for (int i = 0; i &lt; optionValues.size(); i++) {</span>
+<span class="fc" id="L893">                String optionLetter = String.valueOf((char)('A' + i));</span>
+<span class="pc bpc" id="L894" title="1 of 2 branches missed.">                if (answer.equalsIgnoreCase(optionLetter)) {</span>
+<span class="fc" id="L895">                    validAnswer = true;</span>
+<span class="fc" id="L896">                    break;</span>
                 }
             }
             
-<span class="fc bfc" id="L892" title="All 2 branches covered.">            if (!validAnswer) {</span>
-<span class="fc" id="L893">                MsgSender.showMsg(&quot;Answer must be one of the option letters (A, B, C, etc.)&quot;);</span>
-<span class="fc" id="L894">                return;</span>
+<span class="pc bpc" id="L900" title="1 of 2 branches missed.">            if (!validAnswer) {</span>
+<span class="nc" id="L901">                MsgSender.showMsg(&quot;Answer must be one of the option letters (A, B, C, etc.)&quot;);</span>
+<span class="nc" id="L902">                return;</span>
             }
         }
 
         int score;
         try {
-<span class="fc" id="L900">            score = Integer.parseInt(scoreText);</span>
-<span class="pc bpc" id="L901" title="1 of 2 branches missed.">            if (score &lt; 0) {</span>
-<span class="nc" id="L902">                MsgSender.showMsg(&quot;Score must be a non-negative integer.&quot;);</span>
-<span class="nc" id="L903">                return;</span>
+<span class="fc" id="L908">            score = Integer.parseInt(scoreText);</span>
+<span class="pc bpc" id="L909" title="1 of 2 branches missed.">            if (score &lt; 0) {</span>
+<span class="nc" id="L910">                MsgSender.showMsg(&quot;Score must be a non-negative integer.&quot;);</span>
+<span class="nc" id="L911">                return;</span>
             }
-<span class="nc" id="L905">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L906">            MsgSender.showMsg(&quot;Score should be an integer.&quot;);</span>
-<span class="nc" id="L907">            return;</span>
-<span class="fc" id="L908">        }</span>
+<span class="nc" id="L913">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L914">            MsgSender.showMsg(&quot;Score should be an integer.&quot;);</span>
+<span class="nc" id="L915">            return;</span>
+<span class="fc" id="L916">        }</span>
         
         // Determine if we're adding a new question or updating an existing one
-<span class="fc bfc" id="L911" title="All 4 branches covered.">        boolean isAdding = !editMode &amp;&amp; selectedQuestion == null;</span>
+<span class="fc bfc" id="L919" title="All 4 branches covered.">        boolean isAdding = !editMode &amp;&amp; selectedQuestion == null;</span>
 
-<span class="fc bfc" id="L913" title="All 2 branches covered.">        if (isAdding) {</span>
+<span class="fc bfc" id="L921" title="All 2 branches covered.">        if (isAdding) {</span>
             // Adding a new question
-<span class="fc" id="L915">            addNewQuestion(questionText, type, score, answer, optionValues);</span>
+<span class="fc" id="L923">            addNewQuestion(questionText, type, score, answer, optionValues);</span>
         } else {
             // Updating an existing question - validate edit mode
-<span class="fc bfc" id="L918" title="All 2 branches covered.">            if (!editMode) {</span>
-<span class="fc" id="L919">                MsgSender.showMsg(&quot;Please click Edit first to modify a question.&quot;);</span>
-<span class="fc" id="L920">                return;</span>
-            }
-            
-<span class="fc bfc" id="L923" title="All 2 branches covered.">            if (selectedQuestion == null) {</span>
-<span class="fc" id="L924">                MsgSender.showMsg(&quot;No question selected to update.&quot;);</span>
-<span class="fc" id="L925">                editMode = false;</span>
-<span class="fc" id="L926">                setFormFieldsEditable(false);</span>
-<span class="fc" id="L927">                questionsTable.setDisable(false);</span>
+<span class="fc bfc" id="L926" title="All 2 branches covered.">            if (!editMode) {</span>
+<span class="fc" id="L927">                MsgSender.showMsg(&quot;Please click Edit first to modify a question.&quot;);</span>
 <span class="fc" id="L928">                return;</span>
             }
             
-<span class="pc bpc" id="L931" title="1 of 2 branches missed.">            if (selectedQuestion.getPublished() != 0) {</span>
-<span class="nc" id="L932">                MsgSender.showMsg(&quot;Published question cannot be modified.&quot;);</span>
+<span class="pc bpc" id="L931" title="1 of 2 branches missed.">            if (selectedQuestion == null) {</span>
+<span class="nc" id="L932">                MsgSender.showMsg(&quot;No question selected to update.&quot;);</span>
 <span class="nc" id="L933">                editMode = false;</span>
 <span class="nc" id="L934">                setFormFieldsEditable(false);</span>
 <span class="nc" id="L935">                questionsTable.setDisable(false);</span>
 <span class="nc" id="L936">                return;</span>
             }
+            
+<span class="pc bpc" id="L939" title="1 of 2 branches missed.">            if (selectedQuestion.getPublished() != 0) {</span>
+<span class="nc" id="L940">                MsgSender.showMsg(&quot;Published question cannot be modified.&quot;);</span>
+<span class="nc" id="L941">                editMode = false;</span>
+<span class="nc" id="L942">                setFormFieldsEditable(false);</span>
+<span class="nc" id="L943">                questionsTable.setDisable(false);</span>
+<span class="nc" id="L944">                return;</span>
+            }
 
             // Store the index for re-selection
-<span class="fc" id="L940">            int selectedIndex = questionsTable.getSelectionModel().getSelectedIndex();</span>
+<span class="fc" id="L948">            int selectedIndex = questionsTable.getSelectionModel().getSelectedIndex();</span>
             
             // Store question ID for later verification
-<span class="fc" id="L943">            final Long questionId = selectedQuestion.getId();</span>
+<span class="fc" id="L951">            final Long questionId = selectedQuestion.getId();</span>
             
             // Create a copy of the question to avoid race conditions
-<span class="fc" id="L946">            final Question questionToUpdate = selectedQuestion;</span>
+<span class="fc" id="L954">            final Question questionToUpdate = selectedQuestion;</span>
             
             // Update question properties
-<span class="fc" id="L949">            questionToUpdate.setQuestionText(questionText);</span>
-<span class="fc" id="L950">            questionToUpdate.setType(type);</span>
-<span class="fc" id="L951">            questionToUpdate.setScore(score);</span>
-<span class="fc" id="L952">            questionToUpdate.setAnswer(answer);</span>
+<span class="fc" id="L957">            questionToUpdate.setQuestionText(questionText);</span>
+<span class="fc" id="L958">            questionToUpdate.setType(type);</span>
+<span class="fc" id="L959">            questionToUpdate.setScore(score);</span>
+<span class="fc" id="L960">            questionToUpdate.setAnswer(answer);</span>
             
             // For MCQ, set the options
-<span class="pc bpc" id="L955" title="1 of 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
-<span class="fc" id="L956">                questionToUpdate.setOptions(optionValues);</span>
+<span class="pc bpc" id="L963" title="1 of 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
+<span class="fc" id="L964">                questionToUpdate.setOptions(optionValues);</span>
             } else {
                 // Clear options for non-MCQ questions
-<span class="nc" id="L959">                questionToUpdate.setOptions(new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L967">                questionToUpdate.setOptions(new ArrayList&lt;&gt;());</span>
             }
 
             // Update in the database
-<span class="fc" id="L963">            Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
-<span class="fc" id="L964">            questionDB.update(questionToUpdate);</span>
+<span class="fc" id="L971">            Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="fc" id="L972">            questionDB.update(questionToUpdate);</span>
 
             // Exit edit mode
-<span class="fc" id="L967">            editMode = false;</span>
+<span class="fc" id="L975">            editMode = false;</span>
             
             // First clear the form to prevent UI conflicts
-<span class="fc" id="L970">            Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L978">            Platform.runLater(() -&gt; {</span>
                 try {
                     // Enable table selection again
-<span class="nc" id="L973">                    questionsTable.setDisable(false);</span>
+<span class="nc" id="L981">                    questionsTable.setDisable(false);</span>
                     
                     // Set form back to read-only mode
-<span class="nc" id="L976">                    setFormFieldsEditable(false);</span>
+<span class="nc" id="L984">                    setFormFieldsEditable(false);</span>
                     
                     // Temporarily clear selection to avoid event conflicts
-<span class="nc" id="L979">                    questionsTable.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L987">                    questionsTable.getSelectionModel().clearSelection();</span>
                     
                     // Clear the form
-<span class="nc" id="L982">                    clearFormFields();</span>
+<span class="nc" id="L990">                    clearFormFields();</span>
                     
                     // Reload the question from the database to ensure we have all properties
-<span class="nc bnc" id="L985" title="All 2 branches missed.">                    if (questionId != null) {</span>
-<span class="nc" id="L986">                        Question updatedQuestion = questionDB.queryByKey(questionId.toString());</span>
-<span class="nc bnc" id="L987" title="All 2 branches missed.">                        if (updatedQuestion != null) {</span>
+<span class="nc bnc" id="L993" title="All 2 branches missed.">                    if (questionId != null) {</span>
+<span class="nc" id="L994">                        Question updatedQuestion = questionDB.queryByKey(questionId.toString());</span>
+<span class="nc bnc" id="L995" title="All 2 branches missed.">                        if (updatedQuestion != null) {</span>
                             // Replace in the table
-<span class="nc bnc" id="L989" title="All 4 branches missed.">                            if (selectedIndex &gt;= 0 &amp;&amp; selectedIndex &lt; questionsTable.getItems().size()) {</span>
-<span class="nc" id="L990">                                questionsTable.getItems().set(selectedIndex, updatedQuestion);</span>
+<span class="nc bnc" id="L997" title="All 4 branches missed.">                            if (selectedIndex &gt;= 0 &amp;&amp; selectedIndex &lt; questionsTable.getItems().size()) {</span>
+<span class="nc" id="L998">                                questionsTable.getItems().set(selectedIndex, updatedQuestion);</span>
                                 
                                 // Force refresh the table to show updated data
-<span class="nc" id="L993">                                questionsTable.refresh();</span>
+<span class="nc" id="L1001">                                questionsTable.refresh();</span>
                                 
                                 // Display success message
-<span class="nc" id="L996">                                MsgSender.showMsg(&quot;Question updated successfully!&quot;);</span>
+<span class="nc" id="L1004">                                MsgSender.showMsg(&quot;Question updated successfully!&quot;);</span>
                                 
                                 // Wait a moment to let UI settle, then reselect the question
                                 try {
-<span class="nc" id="L1000">                                    Thread.sleep(100);</span>
-<span class="nc" id="L1001">                                } catch (InterruptedException e) {</span>
+<span class="nc" id="L1008">                                    Thread.sleep(100);</span>
+<span class="nc" id="L1009">                                } catch (InterruptedException e) {</span>
                                     // Ignore
-<span class="nc" id="L1003">                                }</span>
+<span class="nc" id="L1011">                                }</span>
                                 
                                 // Select the updated question
-<span class="nc" id="L1006">                                questionsTable.getSelectionModel().select(selectedIndex);</span>
-<span class="nc" id="L1007">                                questionsTable.scrollTo(selectedIndex);</span>
+<span class="nc" id="L1014">                                questionsTable.getSelectionModel().select(selectedIndex);</span>
+<span class="nc" id="L1015">                                questionsTable.scrollTo(selectedIndex);</span>
                                 
                                 // Display the question in read-only mode
-<span class="nc" id="L1010">                                selectedQuestion = updatedQuestion;</span>
-<span class="nc" id="L1011">                                displaySelectedQuestionReadOnly(updatedQuestion);</span>
+<span class="nc" id="L1018">                                selectedQuestion = updatedQuestion;</span>
+<span class="nc" id="L1019">                                displaySelectedQuestionReadOnly(updatedQuestion);</span>
                                 
                                 // Update edit button state
-<span class="nc bnc" id="L1014" title="All 2 branches missed.">                                if (editBtn != null) {</span>
-<span class="nc" id="L1015">                                    editBtn.setDisable(false);</span>
+<span class="nc bnc" id="L1022" title="All 2 branches missed.">                                if (editBtn != null) {</span>
+<span class="nc" id="L1023">                                    editBtn.setDisable(false);</span>
                                 }
                             } else {
                                 // If index is out of bounds, do a full refresh
-<span class="nc" id="L1019">                                handleHardRefresh();</span>
-<span class="nc" id="L1020">                                MsgSender.showMsg(&quot;Question updated successfully!&quot;);</span>
+<span class="nc" id="L1027">                                handleHardRefresh();</span>
+<span class="nc" id="L1028">                                MsgSender.showMsg(&quot;Question updated successfully!&quot;);</span>
                             }
                         } else {
                             // If question not found, refresh the entire table
-<span class="nc" id="L1024">                            handleHardRefresh();</span>
-<span class="nc" id="L1025">                            MsgSender.showMsg(&quot;Question updated - refresh completed.&quot;);</span>
+<span class="nc" id="L1032">                            handleHardRefresh();</span>
+<span class="nc" id="L1033">                            MsgSender.showMsg(&quot;Question updated - refresh completed.&quot;);</span>
                         }
-<span class="nc" id="L1027">                    } else {</span>
+<span class="nc" id="L1035">                    } else {</span>
                         // No valid ID, refresh everything
-<span class="nc" id="L1029">                        handleHardRefresh();</span>
-<span class="nc" id="L1030">                        MsgSender.showMsg(&quot;Question update attempted - full refresh completed.&quot;);</span>
+<span class="nc" id="L1037">                        handleHardRefresh();</span>
+<span class="nc" id="L1038">                        MsgSender.showMsg(&quot;Question update attempted - full refresh completed.&quot;);</span>
                     }
-<span class="nc" id="L1032">                } catch (Exception e) {</span>
-<span class="nc" id="L1033">                    System.err.println(&quot;Error in handleUpdate: &quot; + e.getMessage());</span>
-<span class="nc" id="L1034">                    e.printStackTrace();</span>
+<span class="nc" id="L1040">                } catch (Exception e) {</span>
+<span class="nc" id="L1041">                    System.err.println(&quot;Error in handleUpdate: &quot; + e.getMessage());</span>
+<span class="nc" id="L1042">                    e.printStackTrace();</span>
                     
                     // Exit edit mode and re-enable table
-<span class="nc" id="L1037">                    editMode = false;</span>
-<span class="nc" id="L1038">                    questionsTable.setDisable(false);</span>
-<span class="nc" id="L1039">                    setFormFieldsEditable(false);</span>
+<span class="nc" id="L1045">                    editMode = false;</span>
+<span class="nc" id="L1046">                    questionsTable.setDisable(false);</span>
+<span class="nc" id="L1047">                    setFormFieldsEditable(false);</span>
                     
-<span class="nc" id="L1041">                    handleHardRefresh();</span>
-<span class="nc" id="L1042">                }</span>
-<span class="nc" id="L1043">            });</span>
+<span class="nc" id="L1049">                    handleHardRefresh();</span>
+<span class="nc" id="L1050">                }</span>
+<span class="nc" id="L1051">            });</span>
         }
-<span class="fc" id="L1045">    }</span>
+<span class="fc" id="L1053">    }</span>
     
     /**
      * Helper method to add a new question to the database
      */
     private void addNewQuestion(String questionText, String type, int score, String answer, List&lt;String&gt; optionValues) {
-<span class="fc" id="L1051">        Long teacherID = teacher.getId();</span>
-<span class="fc" id="L1052">        Long ID = UUID.randomUUID().getMostSignificantBits() &amp; Long.MAX_VALUE;</span>
+<span class="fc" id="L1059">        Long teacherID = teacher.getId();</span>
+<span class="fc" id="L1060">        Long ID = UUID.randomUUID().getMostSignificantBits() &amp; Long.MAX_VALUE;</span>
         
-<span class="fc" id="L1054">        Question newQuestion = new Question();</span>
-<span class="fc" id="L1055">        newQuestion.setId(ID);</span>
-<span class="fc" id="L1056">        newQuestion.setTeacherId(teacherID);</span>
-<span class="fc" id="L1057">        newQuestion.setQuestionText(questionText);</span>
-<span class="fc" id="L1058">        newQuestion.setType(type);</span>
-<span class="fc" id="L1059">        newQuestion.setScore(score);</span>
-<span class="fc" id="L1060">        newQuestion.setAnswer(answer);</span>
+<span class="fc" id="L1062">        Question newQuestion = new Question();</span>
+<span class="fc" id="L1063">        newQuestion.setId(ID);</span>
+<span class="fc" id="L1064">        newQuestion.setTeacherId(teacherID);</span>
+<span class="fc" id="L1065">        newQuestion.setQuestionText(questionText);</span>
+<span class="fc" id="L1066">        newQuestion.setType(type);</span>
+<span class="fc" id="L1067">        newQuestion.setScore(score);</span>
+<span class="fc" id="L1068">        newQuestion.setAnswer(answer);</span>
         
         // For MCQ, set the options
-<span class="pc bpc" id="L1063" title="1 of 2 branches missed.">        if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
-<span class="nc" id="L1064">            newQuestion.setOptions(optionValues);</span>
+<span class="pc bpc" id="L1071" title="1 of 2 branches missed.">        if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
+<span class="nc" id="L1072">            newQuestion.setOptions(optionValues);</span>
         }
 
         // Add to database first
-<span class="fc" id="L1068">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
-<span class="fc" id="L1069">        questionDB.add(newQuestion);</span>
+<span class="fc" id="L1076">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="fc" id="L1077">        questionDB.add(newQuestion);</span>
 
         // Use Platform.runLater to update UI safely
-<span class="fc" id="L1072">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L1080">        Platform.runLater(() -&gt; {</span>
             try {
                 // First clear selection to avoid side effects
-<span class="nc" id="L1075">                questionsTable.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L1083">                questionsTable.getSelectionModel().clearSelection();</span>
                 
                 // Enable table selection
-<span class="nc" id="L1078">                questionsTable.setDisable(false);</span>
+<span class="nc" id="L1086">                questionsTable.setDisable(false);</span>
                 
                 // Then add to table
-<span class="nc" id="L1081">                questionsTable.getItems().add(newQuestion);</span>
-<span class="nc" id="L1082">                questionsTable.refresh();</span>
+<span class="nc" id="L1089">                questionsTable.getItems().add(newQuestion);</span>
+<span class="nc" id="L1090">                questionsTable.refresh();</span>
                 
                 // Clear the form completely
-<span class="nc" id="L1085">                clearFormFields();</span>
+<span class="nc" id="L1093">                clearFormFields();</span>
                 
                 // Return to read-only mode
-<span class="nc" id="L1088">                setFormFieldsEditable(false);</span>
+<span class="nc" id="L1096">                setFormFieldsEditable(false);</span>
                 
                 // Reset edit mode flag
-<span class="nc" id="L1091">                editMode = false;</span>
+<span class="nc" id="L1099">                editMode = false;</span>
                 
                 // Display success message
-<span class="nc" id="L1094">                MsgSender.showMsg(&quot;Question added successfully!&quot;);</span>
-<span class="nc" id="L1095">            } catch (Exception e) {</span>
-<span class="nc" id="L1096">                System.err.println(&quot;Error updating UI after adding question: &quot; + e.getMessage());</span>
-<span class="nc" id="L1097">                e.printStackTrace();</span>
+<span class="nc" id="L1102">                MsgSender.showMsg(&quot;Question added successfully!&quot;);</span>
+<span class="nc" id="L1103">            } catch (Exception e) {</span>
+<span class="nc" id="L1104">                System.err.println(&quot;Error updating UI after adding question: &quot; + e.getMessage());</span>
+<span class="nc" id="L1105">                e.printStackTrace();</span>
                 // Try a hard refresh as fallback
-<span class="nc" id="L1099">                handleHardRefresh();</span>
-<span class="nc" id="L1100">            }</span>
-<span class="nc" id="L1101">        });</span>
-<span class="fc" id="L1102">    }</span>
+<span class="nc" id="L1107">                handleHardRefresh();</span>
+<span class="nc" id="L1108">            }</span>
+<span class="nc" id="L1109">        });</span>
+<span class="fc" id="L1110">    }</span>
 
     @FXML
     public void handleBack() {
         try {
-<span class="nc" id="L1107">            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
-<span class="nc" id="L1108">            Stage stage = new Stage();</span>
-<span class="nc" id="L1109">            stage.setTitle(&quot;Welcome to HKUST Examination System&quot;);</span>
-<span class="nc" id="L1110">            stage.setScene(new Scene(fxmlLoader.load()));</span>
-<span class="nc" id="L1111">            TeacherMainController newController = fxmlLoader.getController();</span>
-<span class="nc bnc" id="L1112" title="All 2 branches missed.">            if (teacher == null) {</span>
-<span class="nc" id="L1113">                MsgSender.showMsg(&quot;NULL Teacher&quot;);</span>
+<span class="nc" id="L1115">            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
+<span class="nc" id="L1116">            Stage stage = new Stage();</span>
+<span class="nc" id="L1117">            stage.setTitle(&quot;Welcome to HKUST Examination System&quot;);</span>
+<span class="nc" id="L1118">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L1119">            TeacherMainController newController = fxmlLoader.getController();</span>
+<span class="nc bnc" id="L1120" title="All 2 branches missed.">            if (teacher == null) {</span>
+<span class="nc" id="L1121">                MsgSender.showMsg(&quot;NULL Teacher&quot;);</span>
             }
-<span class="nc" id="L1115">            newController.presetController(teacher); // Pass the Teacher object to the next controller</span>
-<span class="nc" id="L1116">            UIhelper.expandToFullScreen(stage);</span>
-<span class="nc" id="L1117">            stage.show();</span>
-<span class="nc" id="L1118">            ((Stage) mainbox.getScene().getWindow()).close();</span>
-<span class="nc" id="L1119">        } catch (Exception e) {</span>
-<span class="nc" id="L1120">            e.printStackTrace();</span>
-<span class="nc" id="L1121">        }</span>
-<span class="nc" id="L1122">    }</span>
+<span class="nc" id="L1123">            newController.presetController(teacher); // Pass the Teacher object to the next controller</span>
+<span class="nc" id="L1124">            UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L1125">            stage.show();</span>
+<span class="nc" id="L1126">            ((Stage) mainbox.getScene().getWindow()).close();</span>
+<span class="nc" id="L1127">        } catch (Exception e) {</span>
+<span class="nc" id="L1128">            e.printStackTrace();</span>
+<span class="nc" id="L1129">        }</span>
+<span class="nc" id="L1130">    }</span>
 
     @FXML
     public void handleCloseApplication() {
-<span class="nc" id="L1126">        Platform.exit();</span>
-<span class="nc" id="L1127">        System.exit(0);</span>
-<span class="nc" id="L1128">    }</span>
+<span class="nc" id="L1134">        Platform.exit();</span>
+<span class="nc" id="L1135">        System.exit(0);</span>
+<span class="nc" id="L1136">    }</span>
 
     private void clearFormFields() {
         try {
             // First clear the selection to avoid selection events
-<span class="pc bpc" id="L1133" title="1 of 2 branches missed.">            if (questionsTable != null) {</span>
-<span class="fc" id="L1134">                questionsTable.getSelectionModel().clearSelection();</span>
+<span class="pc bpc" id="L1141" title="1 of 2 branches missed.">            if (questionsTable != null) {</span>
+<span class="fc" id="L1142">                questionsTable.getSelectionModel().clearSelection();</span>
             }
             
             // Exit edit mode
-<span class="fc" id="L1138">            editMode = false;</span>
+<span class="fc" id="L1146">            editMode = false;</span>
             
             // Clear text fields
-<span class="pc bpc" id="L1141" title="1 of 2 branches missed.">            if (questionTxt != null) questionTxt.clear();</span>
-<span class="pc bpc" id="L1142" title="1 of 2 branches missed.">            if (scoreTxt != null) scoreTxt.clear();</span>
-<span class="pc bpc" id="L1143" title="1 of 2 branches missed.">            if (answerTxt != null) answerTxt.clear();</span>
+<span class="pc bpc" id="L1149" title="1 of 2 branches missed.">            if (questionTxt != null) questionTxt.clear();</span>
+<span class="pc bpc" id="L1150" title="1 of 2 branches missed.">            if (scoreTxt != null) scoreTxt.clear();</span>
+<span class="pc bpc" id="L1151" title="1 of 2 branches missed.">            if (answerTxt != null) answerTxt.clear();</span>
             
             // Clear selected question reference
-<span class="fc" id="L1146">            selectedQuestion = null;</span>
+<span class="fc" id="L1154">            selectedQuestion = null;</span>
             
             // Completely rebuild the options section
-<span class="pc bpc" id="L1149" title="1 of 2 branches missed.">            if (optionsContainer != null) {</span>
+<span class="pc bpc" id="L1157" title="1 of 2 branches missed.">            if (optionsContainer != null) {</span>
                 // Remove all existing option fields
-<span class="fc" id="L1151">                optionsContainer.getChildren().clear();</span>
+<span class="fc" id="L1159">                optionsContainer.getChildren().clear();</span>
                 
                 // Clear the fields list
-<span class="pc bpc" id="L1154" title="1 of 2 branches missed.">                if (optionFields != null) {</span>
-<span class="fc" id="L1155">                    optionFields.clear();</span>
+<span class="pc bpc" id="L1162" title="1 of 2 branches missed.">                if (optionFields != null) {</span>
+<span class="fc" id="L1163">                    optionFields.clear();</span>
                 }
                 
                 // Recreate from scratch with empty fields
-<span class="fc" id="L1159">                initializeOptions(MIN_OPTIONS);</span>
+<span class="fc" id="L1167">                initializeOptions(MIN_OPTIONS);</span>
             }
             
             // Set to default type if the combo box is initialized
-<span class="pc bpc" id="L1163" title="1 of 2 branches missed.">            if (typeCmb != null) {</span>
-<span class="fc" id="L1164">                Platform.runLater(() -&gt; {</span>
-<span class="nc" id="L1165">                    typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="pc bpc" id="L1171" title="1 of 2 branches missed.">            if (typeCmb != null) {</span>
+<span class="fc" id="L1172">                Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L1173">                    typeCmb.setValue(&quot;MCQ&quot;);</span>
                     // Update UI for MCQ
-<span class="nc" id="L1167">                    updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
-<span class="nc" id="L1168">                    updateAnswerHint(&quot;MCQ&quot;);</span>
-<span class="nc" id="L1169">                });</span>
+<span class="nc" id="L1175">                    updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
+<span class="nc" id="L1176">                    updateAnswerHint(&quot;MCQ&quot;);</span>
+<span class="nc" id="L1177">                });</span>
             }
             
             // Update the Add Option button state to reflect current options count
-<span class="pc bpc" id="L1173" title="1 of 2 branches missed.">            if (addOptionBtn != null) {</span>
-<span class="pc bpc" id="L1174" title="1 of 2 branches missed.">                addOptionBtn.setDisable(optionFields.size() &gt;= MAX_OPTIONS);</span>
+<span class="pc bpc" id="L1181" title="1 of 2 branches missed.">            if (addOptionBtn != null) {</span>
+<span class="pc bpc" id="L1182" title="1 of 2 branches missed.">                addOptionBtn.setDisable(optionFields.size() &gt;= MAX_OPTIONS);</span>
             }
             
             // Enable table selection
-<span class="pc bpc" id="L1178" title="1 of 2 branches missed.">            if (questionsTable != null) {</span>
-<span class="fc" id="L1179">                questionsTable.setDisable(false);</span>
+<span class="pc bpc" id="L1186" title="1 of 2 branches missed.">            if (questionsTable != null) {</span>
+<span class="fc" id="L1187">                questionsTable.setDisable(false);</span>
             }
             
             // Update button states
-<span class="pc bpc" id="L1183" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(false);</span>
-<span class="pc bpc" id="L1184" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1185" title="1 of 2 branches missed.">            if (editBtn != null) editBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1186" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1191" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1192" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1193" title="1 of 2 branches missed.">            if (editBtn != null) editBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1194" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(true);</span>
             
             // Set form to read-only mode
-<span class="fc" id="L1189">            setFormFieldsEditable(false);</span>
-<span class="fc" id="L1190">        } catch (Exception e) {</span>
-<span class="fc" id="L1191">            System.err.println(&quot;Error clearing form fields: &quot; + e.getMessage());</span>
-<span class="fc" id="L1192">            e.printStackTrace();</span>
-<span class="fc" id="L1193">        }</span>
-<span class="fc" id="L1194">    }</span>
+<span class="fc" id="L1197">            setFormFieldsEditable(false);</span>
+<span class="nc" id="L1198">        } catch (Exception e) {</span>
+<span class="nc" id="L1199">            System.err.println(&quot;Error clearing form fields: &quot; + e.getMessage());</span>
+<span class="nc" id="L1200">            e.printStackTrace();</span>
+<span class="fc" id="L1201">        }</span>
+<span class="fc" id="L1202">    }</span>
 
     /**
      * Updates the hint/label for the answer field based on question type
@@ -1199,19 +1207,19 @@ import java.util.stream.Collectors;
      */
     private void updateAnswerHint(String questionType) {
         // Find the answer label (which is right before the answer text field)
-<span class="nc" id="L1202">        VBox form = (VBox) answerTxt.getParent();</span>
-<span class="nc" id="L1203">        int answerLabelIndex = form.getChildren().indexOf(answerTxt) - 1;</span>
+<span class="nc" id="L1210">        VBox form = (VBox) answerTxt.getParent();</span>
+<span class="nc" id="L1211">        int answerLabelIndex = form.getChildren().indexOf(answerTxt) - 1;</span>
         
-<span class="nc bnc" id="L1205" title="All 4 branches missed.">        if (answerLabelIndex &gt;= 0 &amp;&amp; form.getChildren().get(answerLabelIndex) instanceof Label) {</span>
-<span class="nc" id="L1206">            Label answerLabel = (Label) form.getChildren().get(answerLabelIndex);</span>
+<span class="nc bnc" id="L1213" title="All 4 branches missed.">        if (answerLabelIndex &gt;= 0 &amp;&amp; form.getChildren().get(answerLabelIndex) instanceof Label) {</span>
+<span class="nc" id="L1214">            Label answerLabel = (Label) form.getChildren().get(answerLabelIndex);</span>
             
-<span class="nc bnc" id="L1208" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(questionType)) {</span>
-<span class="nc" id="L1209">                answerLabel.setText(&quot;Answer (enter option letter A, B, C, etc.):&quot;);</span>
+<span class="nc bnc" id="L1216" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(questionType)) {</span>
+<span class="nc" id="L1217">                answerLabel.setText(&quot;Answer (enter option letter A, B, C, etc.):&quot;);</span>
             } else {
-<span class="nc" id="L1211">                answerLabel.setText(&quot;Answer:&quot;);</span>
+<span class="nc" id="L1219">                answerLabel.setText(&quot;Answer:&quot;);</span>
             }
         }
-<span class="nc" id="L1214">    }</span>
+<span class="nc" id="L1222">    }</span>
 
     /**
      * Displays a question in read-only mode (for viewing only)
@@ -1219,85 +1227,85 @@ import java.util.stream.Collectors;
      */
     private void displaySelectedQuestionReadOnly(Question question) {
         // If null question, clear fields and return
-<span class="nc bnc" id="L1222" title="All 2 branches missed.">        if (question == null) {</span>
-<span class="nc" id="L1223">            clearFormFields();</span>
-<span class="nc" id="L1224">            return;</span>
+<span class="nc bnc" id="L1230" title="All 2 branches missed.">        if (question == null) {</span>
+<span class="nc" id="L1231">            clearFormFields();</span>
+<span class="nc" id="L1232">            return;</span>
         }
         
         try {
             // Make fields read-only
-<span class="nc" id="L1229">            setFormFieldsEditable(false);</span>
+<span class="nc" id="L1237">            setFormFieldsEditable(false);</span>
             
             // Set text fields safely
-<span class="nc bnc" id="L1232" title="All 2 branches missed.">            questionTxt.setText(question.getQuestionText() != null ? question.getQuestionText() : &quot;&quot;);</span>
-<span class="nc bnc" id="L1233" title="All 2 branches missed.">            scoreTxt.setText(question.getScore() != null ? String.valueOf(question.getScore()) : &quot;&quot;);</span>
-<span class="nc bnc" id="L1234" title="All 2 branches missed.">            answerTxt.setText(question.getAnswer() != null ? question.getAnswer() : &quot;&quot;);</span>
+<span class="nc bnc" id="L1240" title="All 2 branches missed.">            questionTxt.setText(question.getQuestionText() != null ? question.getQuestionText() : &quot;&quot;);</span>
+<span class="nc bnc" id="L1241" title="All 2 branches missed.">            scoreTxt.setText(question.getScore() != null ? String.valueOf(question.getScore()) : &quot;&quot;);</span>
+<span class="nc bnc" id="L1242" title="All 2 branches missed.">            answerTxt.setText(question.getAnswer() != null ? question.getAnswer() : &quot;&quot;);</span>
             
-<span class="nc bnc" id="L1236" title="All 2 branches missed.">            final String questionType = question.getType() != null ? question.getType() : &quot;MCQ&quot;;</span>
+<span class="nc bnc" id="L1244" title="All 2 branches missed.">            final String questionType = question.getType() != null ? question.getType() : &quot;MCQ&quot;;</span>
             
             // Set type in the UI thread to ensure proper event handling
-<span class="nc" id="L1239">            typeCmb.setValue(questionType);</span>
+<span class="nc" id="L1247">            typeCmb.setValue(questionType);</span>
             
             // Handle options for MCQ questions
-<span class="nc bnc" id="L1242" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(questionType)) {</span>
+<span class="nc bnc" id="L1250" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(questionType)) {</span>
                 // Get the options from the question
-<span class="nc" id="L1244">                List&lt;String&gt; options = question.getOptions();</span>
+<span class="nc" id="L1252">                List&lt;String&gt; options = question.getOptions();</span>
                 
                 // If options list is empty but we have legacy fields, try to use those
-<span class="nc bnc" id="L1247" title="All 2 branches missed.">                if (options.isEmpty()) {</span>
+<span class="nc bnc" id="L1255" title="All 2 branches missed.">                if (options.isEmpty()) {</span>
                     // Create a new list with legacy fields
-<span class="nc" id="L1249">                    options = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L1250" title="All 4 branches missed.">                    if (question.getOptionA() != null &amp;&amp; !question.getOptionA().isEmpty()) options.add(question.getOptionA());</span>
-<span class="nc bnc" id="L1251" title="All 4 branches missed.">                    if (question.getOptionB() != null &amp;&amp; !question.getOptionB().isEmpty()) options.add(question.getOptionB());</span>
-<span class="nc bnc" id="L1252" title="All 4 branches missed.">                    if (question.getOptionC() != null &amp;&amp; !question.getOptionC().isEmpty()) options.add(question.getOptionC());</span>
-<span class="nc bnc" id="L1253" title="All 4 branches missed.">                    if (question.getOptionD() != null &amp;&amp; !question.getOptionD().isEmpty()) options.add(question.getOptionD());</span>
-<span class="nc bnc" id="L1254" title="All 4 branches missed.">                    if (question.getOptionE() != null &amp;&amp; !question.getOptionE().isEmpty()) options.add(question.getOptionE());</span>
+<span class="nc" id="L1257">                    options = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L1258" title="All 4 branches missed.">                    if (question.getOptionA() != null &amp;&amp; !question.getOptionA().isEmpty()) options.add(question.getOptionA());</span>
+<span class="nc bnc" id="L1259" title="All 4 branches missed.">                    if (question.getOptionB() != null &amp;&amp; !question.getOptionB().isEmpty()) options.add(question.getOptionB());</span>
+<span class="nc bnc" id="L1260" title="All 4 branches missed.">                    if (question.getOptionC() != null &amp;&amp; !question.getOptionC().isEmpty()) options.add(question.getOptionC());</span>
+<span class="nc bnc" id="L1261" title="All 4 branches missed.">                    if (question.getOptionD() != null &amp;&amp; !question.getOptionD().isEmpty()) options.add(question.getOptionD());</span>
+<span class="nc bnc" id="L1262" title="All 4 branches missed.">                    if (question.getOptionE() != null &amp;&amp; !question.getOptionE().isEmpty()) options.add(question.getOptionE());</span>
                 }
                 
                 // Ensure we have at least MIN_OPTIONS
-<span class="nc" id="L1258">                int optionCount = Math.max(options.size(), MIN_OPTIONS);</span>
+<span class="nc" id="L1266">                int optionCount = Math.max(options.size(), MIN_OPTIONS);</span>
                 
                 // Clear existing options container and rebuild
-<span class="nc" id="L1261">                optionsContainer.getChildren().clear();</span>
-<span class="nc" id="L1262">                optionFields.clear();</span>
+<span class="nc" id="L1269">                optionsContainer.getChildren().clear();</span>
+<span class="nc" id="L1270">                optionFields.clear();</span>
                 
                 // Create fresh option fields
-<span class="nc bnc" id="L1265" title="All 2 branches missed.">                for (int i = 0; i &lt; optionCount; i++) {</span>
-<span class="nc bnc" id="L1266" title="All 2 branches missed.">                    String optionValue = i &lt; options.size() ? options.get(i) : &quot;&quot;;</span>
-<span class="nc" id="L1267">                    addOptionFieldToUI(i, optionValue);</span>
+<span class="nc bnc" id="L1273" title="All 2 branches missed.">                for (int i = 0; i &lt; optionCount; i++) {</span>
+<span class="nc bnc" id="L1274" title="All 2 branches missed.">                    String optionValue = i &lt; options.size() ? options.get(i) : &quot;&quot;;</span>
+<span class="nc" id="L1275">                    addOptionFieldToUI(i, optionValue);</span>
                 }
                 
                 // Show options UI for MCQ questions
-<span class="nc" id="L1271">                this.options.setVisible(true);</span>
-<span class="nc" id="L1272">                this.options.setManaged(true);</span>
-<span class="nc" id="L1273">                optionsContainer.setVisible(true);</span>
-<span class="nc" id="L1274">                optionsContainer.setManaged(true);</span>
-<span class="nc" id="L1275">            } else {</span>
+<span class="nc" id="L1279">                this.options.setVisible(true);</span>
+<span class="nc" id="L1280">                this.options.setManaged(true);</span>
+<span class="nc" id="L1281">                optionsContainer.setVisible(true);</span>
+<span class="nc" id="L1282">                optionsContainer.setManaged(true);</span>
+<span class="nc" id="L1283">            } else {</span>
                 // For non-MCQ questions, hide options section
-<span class="nc" id="L1277">                this.options.setVisible(false);</span>
-<span class="nc" id="L1278">                this.options.setManaged(false);</span>
+<span class="nc" id="L1285">                this.options.setVisible(false);</span>
+<span class="nc" id="L1286">                this.options.setManaged(false);</span>
             }
             
             // Update form based on question type
-<span class="nc" id="L1282">            updateOptionFieldsVisibility(questionType);</span>
-<span class="nc" id="L1283">            updateAnswerHint(questionType);</span>
+<span class="nc" id="L1290">            updateOptionFieldsVisibility(questionType);</span>
+<span class="nc" id="L1291">            updateAnswerHint(questionType);</span>
             
             // Update Edit button state specifically
-<span class="nc bnc" id="L1286" title="All 2 branches missed.">            if (editBtn != null) {</span>
-<span class="nc bnc" id="L1287" title="All 2 branches missed.">                editBtn.setDisable(question.getPublished() != 0);</span>
+<span class="nc bnc" id="L1294" title="All 2 branches missed.">            if (editBtn != null) {</span>
+<span class="nc bnc" id="L1295" title="All 2 branches missed.">                editBtn.setDisable(question.getPublished() != 0);</span>
             }
             
             // Make sure the table has this question selected
-<span class="nc" id="L1291">            int index = questionsTable.getItems().indexOf(question);</span>
-<span class="nc bnc" id="L1292" title="All 2 branches missed.">            if (index &gt;= 0) {</span>
-<span class="nc" id="L1293">                questionsTable.getSelectionModel().select(index);</span>
-<span class="nc" id="L1294">                questionsTable.scrollTo(index);</span>
+<span class="nc" id="L1299">            int index = questionsTable.getItems().indexOf(question);</span>
+<span class="nc bnc" id="L1300" title="All 2 branches missed.">            if (index &gt;= 0) {</span>
+<span class="nc" id="L1301">                questionsTable.getSelectionModel().select(index);</span>
+<span class="nc" id="L1302">                questionsTable.scrollTo(index);</span>
             }
-<span class="nc" id="L1296">        } catch (Exception e) {</span>
-<span class="nc" id="L1297">            System.err.println(&quot;Error displaying question: &quot; + e.getMessage());</span>
-<span class="nc" id="L1298">            e.printStackTrace();</span>
-<span class="nc" id="L1299">        }</span>
-<span class="nc" id="L1300">    }</span>
+<span class="nc" id="L1304">        } catch (Exception e) {</span>
+<span class="nc" id="L1305">            System.err.println(&quot;Error displaying question: &quot; + e.getMessage());</span>
+<span class="nc" id="L1306">            e.printStackTrace();</span>
+<span class="nc" id="L1307">        }</span>
+<span class="nc" id="L1308">    }</span>
     
     /**
      * Sets whether form fields are editable or read-only
@@ -1305,67 +1313,67 @@ import java.util.stream.Collectors;
      */
     private void setFormFieldsEditable(boolean editable) {
         // Set field editability
-<span class="fc" id="L1308">        questionTxt.setEditable(editable);</span>
-<span class="fc" id="L1309">        scoreTxt.setEditable(editable);</span>
-<span class="fc" id="L1310">        answerTxt.setEditable(editable);</span>
+<span class="fc" id="L1316">        questionTxt.setEditable(editable);</span>
+<span class="fc" id="L1317">        scoreTxt.setEditable(editable);</span>
+<span class="fc" id="L1318">        answerTxt.setEditable(editable);</span>
         // Keep type ComboBox always enabled
         // typeCmb.setDisable(!editable);
-<span class="fc bfc" id="L1313" title="All 2 branches covered.">        addOptionBtn.setDisable(!editable);</span>
+<span class="fc bfc" id="L1321" title="All 2 branches covered.">        addOptionBtn.setDisable(!editable);</span>
         
         // Update form header with prompt
-<span class="fc" id="L1316">        updateFormHeaderPrompt(editable);</span>
+<span class="fc" id="L1324">        updateFormHeaderPrompt(editable);</span>
         
         // Add tooltips to guide users when in read-only mode
-<span class="fc bfc" id="L1319" title="All 2 branches covered.">        String tooltip = editable ? null : &quot;Click 'Add New' to create a new question&quot;;</span>
-<span class="fc bfc" id="L1320" title="All 2 branches covered.">        questionTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
-<span class="fc bfc" id="L1321" title="All 2 branches covered.">        scoreTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
-<span class="fc bfc" id="L1322" title="All 2 branches covered.">        answerTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
-<span class="fc bfc" id="L1323" title="All 2 branches covered.">        typeCmb.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L1327" title="All 2 branches covered.">        String tooltip = editable ? null : &quot;Click 'Add New' to create a new question&quot;;</span>
+<span class="fc bfc" id="L1328" title="All 2 branches covered.">        questionTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L1329" title="All 2 branches covered.">        scoreTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L1330" title="All 2 branches covered.">        answerTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc bfc" id="L1331" title="All 2 branches covered.">        typeCmb.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
         
         // Visual cues for read-only state
-<span class="fc bfc" id="L1326" title="All 2 branches covered.">        String style = editable ? &quot;&quot; : &quot;-fx-background-color: #f5f5f5;&quot;;</span>
-<span class="fc" id="L1327">        questionTxt.setStyle(style);</span>
-<span class="fc" id="L1328">        scoreTxt.setStyle(style);</span>
-<span class="fc" id="L1329">        answerTxt.setStyle(style);</span>
+<span class="fc bfc" id="L1334" title="All 2 branches covered.">        String style = editable ? &quot;&quot; : &quot;-fx-background-color: #f5f5f5;&quot;;</span>
+<span class="fc" id="L1335">        questionTxt.setStyle(style);</span>
+<span class="fc" id="L1336">        scoreTxt.setStyle(style);</span>
+<span class="fc" id="L1337">        answerTxt.setStyle(style);</span>
         
         // Make option fields read-only/editable
-<span class="fc bfc" id="L1332" title="All 2 branches covered.">        for (TextField field : optionFields) {</span>
-<span class="fc" id="L1333">            field.setEditable(editable);</span>
-<span class="fc bfc" id="L1334" title="All 2 branches covered.">            field.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
-<span class="fc" id="L1335">            field.setStyle(style);</span>
-<span class="fc" id="L1336">        }</span>
+<span class="fc bfc" id="L1340" title="All 2 branches covered.">        for (TextField field : optionFields) {</span>
+<span class="fc" id="L1341">            field.setEditable(editable);</span>
+<span class="fc bfc" id="L1342" title="All 2 branches covered.">            field.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
+<span class="fc" id="L1343">            field.setStyle(style);</span>
+<span class="fc" id="L1344">        }</span>
         
         // Update the delete buttons on option fields
-<span class="fc bfc" id="L1339" title="All 2 branches covered.">        for (Node node : optionsContainer.getChildren()) {</span>
-<span class="pc bpc" id="L1340" title="1 of 2 branches missed.">            if (node instanceof HBox) {</span>
-<span class="fc" id="L1341">                HBox box = (HBox) node;</span>
-<span class="fc bfc" id="L1342" title="All 2 branches covered.">                for (Node child : box.getChildren()) {</span>
-<span class="pc bpc" id="L1343" title="1 of 2 branches missed.">                    if (child instanceof Button) {</span>
-<span class="nc bnc" id="L1344" title="All 2 branches missed.">                        child.setDisable(!editable);</span>
+<span class="fc bfc" id="L1347" title="All 2 branches covered.">        for (Node node : optionsContainer.getChildren()) {</span>
+<span class="pc bpc" id="L1348" title="1 of 2 branches missed.">            if (node instanceof HBox) {</span>
+<span class="fc" id="L1349">                HBox box = (HBox) node;</span>
+<span class="fc bfc" id="L1350" title="All 2 branches covered.">                for (Node child : box.getChildren()) {</span>
+<span class="pc bpc" id="L1351" title="1 of 2 branches missed.">                    if (child instanceof Button) {</span>
+<span class="nc bnc" id="L1352" title="All 2 branches missed.">                        child.setDisable(!editable);</span>
                     }
-<span class="fc" id="L1346">                }</span>
+<span class="fc" id="L1354">                }</span>
             }
-<span class="fc" id="L1348">        }</span>
+<span class="fc" id="L1356">        }</span>
         
         // Update button states based on current mode
-<span class="fc bfc" id="L1351" title="All 2 branches covered.">        if (editable) {</span>
+<span class="fc bfc" id="L1359" title="All 2 branches covered.">        if (editable) {</span>
             // In editing mode (either adding new or editing existing)
-<span class="pc bpc" id="L1353" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1354" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(false);</span>
-<span class="pc bpc" id="L1355" title="1 of 2 branches missed.">            if (editBtn != null) editBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1356" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1361" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1362" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1363" title="1 of 2 branches missed.">            if (editBtn != null) editBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1364" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(false);</span>
         } else {
             // In viewing mode
-<span class="pc bpc" id="L1359" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1367" title="1 of 2 branches missed.">            if (addBtn != null) addBtn.setDisable(false);</span>
             
-<span class="fc bfc" id="L1361" title="All 2 branches covered.">            boolean hasSelection = selectedQuestion != null;</span>
-<span class="pc bpc" id="L1362" title="1 of 4 branches missed.">            boolean isPublished = hasSelection &amp;&amp; selectedQuestion.getPublished() != 0;</span>
+<span class="fc bfc" id="L1369" title="All 2 branches covered.">            boolean hasSelection = selectedQuestion != null;</span>
+<span class="pc bpc" id="L1370" title="1 of 4 branches missed.">            boolean isPublished = hasSelection &amp;&amp; selectedQuestion.getPublished() != 0;</span>
             
-<span class="pc bpc" id="L1364" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1365" title="2 of 6 branches missed.">            if (editBtn != null) editBtn.setDisable(!hasSelection || isPublished);</span>
-<span class="pc bpc" id="L1366" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1372" title="1 of 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1373" title="2 of 6 branches missed.">            if (editBtn != null) editBtn.setDisable(!hasSelection || isPublished);</span>
+<span class="pc bpc" id="L1374" title="1 of 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(true);</span>
         }
-<span class="fc" id="L1368">    }</span>
+<span class="fc" id="L1376">    }</span>
     
     /**
      * Updates the form header to show a prompt when in read-only mode
@@ -1374,68 +1382,68 @@ import java.util.stream.Collectors;
     private void updateFormHeaderPrompt(boolean editable) {
         try {
             // Find the form header label
-<span class="fc" id="L1377">            VBox form = (VBox) questionTxt.getParent();</span>
-<span class="pc bpc" id="L1378" title="3 of 4 branches missed.">            if (form != null &amp;&amp; form.getChildren().size() &gt; 0) {</span>
-<span class="nc" id="L1379">                Node firstNode = form.getChildren().get(0);</span>
-<span class="nc bnc" id="L1380" title="All 2 branches missed.">                if (firstNode instanceof HBox) {</span>
-<span class="nc" id="L1381">                    HBox headerBox = (HBox) firstNode;</span>
-<span class="nc bnc" id="L1382" title="All 2 branches missed.">                    for (Node node : headerBox.getChildren()) {</span>
-<span class="nc bnc" id="L1383" title="All 2 branches missed.">                        if (node instanceof Label) {</span>
-<span class="nc" id="L1384">                            Label headerLabel = (Label) node;</span>
-<span class="nc bnc" id="L1385" title="All 2 branches missed.">                            if (editable) {</span>
+<span class="fc" id="L1385">            VBox form = (VBox) questionTxt.getParent();</span>
+<span class="pc bpc" id="L1386" title="3 of 4 branches missed.">            if (form != null &amp;&amp; form.getChildren().size() &gt; 0) {</span>
+<span class="nc" id="L1387">                Node firstNode = form.getChildren().get(0);</span>
+<span class="nc bnc" id="L1388" title="All 2 branches missed.">                if (firstNode instanceof HBox) {</span>
+<span class="nc" id="L1389">                    HBox headerBox = (HBox) firstNode;</span>
+<span class="nc bnc" id="L1390" title="All 2 branches missed.">                    for (Node node : headerBox.getChildren()) {</span>
+<span class="nc bnc" id="L1391" title="All 2 branches missed.">                        if (node instanceof Label) {</span>
+<span class="nc" id="L1392">                            Label headerLabel = (Label) node;</span>
+<span class="nc bnc" id="L1393" title="All 2 branches missed.">                            if (editable) {</span>
                                 // In edit mode, show normal header
-<span class="nc" id="L1387">                                headerLabel.setText(&quot;Question Details&quot;);</span>
-<span class="nc" id="L1388">                                headerLabel.setStyle(&quot;-fx-font-size: 16px;&quot;);</span>
+<span class="nc" id="L1395">                                headerLabel.setText(&quot;Question Details&quot;);</span>
+<span class="nc" id="L1396">                                headerLabel.setStyle(&quot;-fx-font-size: 16px;&quot;);</span>
                             } else {
                                 // In read-only mode, show prompt
-<span class="nc" id="L1391">                                headerLabel.setText(&quot;Question Details (Click 'Add New' to create)&quot;);</span>
-<span class="nc" id="L1392">                                headerLabel.setStyle(&quot;-fx-font-size: 16px; -fx-text-fill: #1976D2;&quot;);</span>
+<span class="nc" id="L1399">                                headerLabel.setText(&quot;Question Details (Click 'Add New' to create)&quot;);</span>
+<span class="nc" id="L1400">                                headerLabel.setStyle(&quot;-fx-font-size: 16px; -fx-text-fill: #1976D2;&quot;);</span>
                             }
-<span class="nc" id="L1394">                            break;</span>
+<span class="nc" id="L1402">                            break;</span>
                         }
-<span class="nc" id="L1396">                    }</span>
+<span class="nc" id="L1404">                    }</span>
                 }
             }
-<span class="nc" id="L1399">        } catch (Exception e) {</span>
-<span class="nc" id="L1400">            System.err.println(&quot;Error updating form header: &quot; + e.getMessage());</span>
-<span class="fc" id="L1401">        }</span>
-<span class="fc" id="L1402">    }</span>
+<span class="nc" id="L1407">        } catch (Exception e) {</span>
+<span class="nc" id="L1408">            System.err.println(&quot;Error updating form header: &quot; + e.getMessage());</span>
+<span class="fc" id="L1409">        }</span>
+<span class="fc" id="L1410">    }</span>
 
     /**
      * Handles the Edit button click to enable editing of the selected question
      */
     @FXML
     public void handleEdit() {
-<span class="fc bfc" id="L1409" title="All 2 branches covered.">        if (selectedQuestion == null) {</span>
-<span class="fc" id="L1410">            MsgSender.showMsg(&quot;No question selected to edit.&quot;);</span>
-<span class="fc" id="L1411">            return;</span>
+<span class="fc bfc" id="L1417" title="All 2 branches covered.">        if (selectedQuestion == null) {</span>
+<span class="fc" id="L1418">            MsgSender.showMsg(&quot;No question selected to edit.&quot;);</span>
+<span class="fc" id="L1419">            return;</span>
         }
         
-<span class="fc bfc" id="L1414" title="All 2 branches covered.">        if (selectedQuestion.getPublished() != 0) {</span>
-<span class="fc" id="L1415">            MsgSender.showMsg(&quot;Published questions cannot be modified.&quot;);</span>
-<span class="fc" id="L1416">            return;</span>
+<span class="fc bfc" id="L1422" title="All 2 branches covered.">        if (selectedQuestion.getPublished() != 0) {</span>
+<span class="fc" id="L1423">            MsgSender.showMsg(&quot;Published questions cannot be modified.&quot;);</span>
+<span class="fc" id="L1424">            return;</span>
         }
         
         // Enter edit mode
-<span class="fc" id="L1420">        editMode = true;</span>
+<span class="fc" id="L1428">        editMode = true;</span>
         
         // Make form fields editable
-<span class="fc" id="L1423">        setFormFieldsEditable(true);</span>
+<span class="fc" id="L1431">        setFormFieldsEditable(true);</span>
         
         // Fill fields with the selected question for editing (not needed if already filled)
         // fillFieldsFromSelectedQuestion(selectedQuestion);
         
         // Disable table selection while editing
-<span class="fc" id="L1429">        questionsTable.setDisable(true);</span>
+<span class="fc" id="L1437">        questionsTable.setDisable(true);</span>
         
         // Update button states
-<span class="pc bpc" id="L1432" title="1 of 2 branches missed.">        if (addBtn != null) addBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1433" title="1 of 2 branches missed.">        if (updateBtn != null) updateBtn.setDisable(false);</span>
-<span class="pc bpc" id="L1434" title="1 of 2 branches missed.">        if (editBtn != null) editBtn.setDisable(true);</span>
-<span class="pc bpc" id="L1435" title="1 of 2 branches missed.">        if (cancelEditBtn != null) cancelEditBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1440" title="1 of 2 branches missed.">        if (addBtn != null) addBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1441" title="1 of 2 branches missed.">        if (updateBtn != null) updateBtn.setDisable(false);</span>
+<span class="pc bpc" id="L1442" title="1 of 2 branches missed.">        if (editBtn != null) editBtn.setDisable(true);</span>
+<span class="pc bpc" id="L1443" title="1 of 2 branches missed.">        if (cancelEditBtn != null) cancelEditBtn.setDisable(false);</span>
         
-<span class="fc" id="L1437">        MsgSender.showMsg(&quot;Now editing question. Make changes and click Save Changes when done.&quot;);</span>
-<span class="fc" id="L1438">    }</span>
+<span class="fc" id="L1445">        MsgSender.showMsg(&quot;Now editing question. Make changes and click Save Changes when done.&quot;);</span>
+<span class="fc" id="L1446">    }</span>
 
     /**
      * Handles canceling the edit operation without saving changes
@@ -1443,83 +1451,83 @@ import java.util.stream.Collectors;
     @FXML
     public void handleCancelEdit() {
         // If we're not in edit mode, do nothing
-<span class="pc bpc" id="L1446" title="1 of 4 branches missed.">        if (!editMode &amp;&amp; selectedQuestion != null) {</span>
-<span class="fc" id="L1447">            return; // Nothing to cancel for viewing existing question</span>
+<span class="pc bpc" id="L1454" title="1 of 4 branches missed.">        if (!editMode &amp;&amp; selectedQuestion != null) {</span>
+<span class="fc" id="L1455">            return; // Nothing to cancel for viewing existing question</span>
         }
         
         // Exit edit mode
-<span class="fc" id="L1451">        editMode = false;</span>
+<span class="fc" id="L1459">        editMode = false;</span>
         
         // Re-enable table selection
-<span class="fc" id="L1454">        questionsTable.setDisable(false);</span>
+<span class="fc" id="L1462">        questionsTable.setDisable(false);</span>
         
         // Set form fields to read-only
-<span class="fc" id="L1457">        setFormFieldsEditable(false);</span>
+<span class="fc" id="L1465">        setFormFieldsEditable(false);</span>
         
         // If selectedQuestion is null, we were in add mode, just clear the form
-<span class="fc bfc" id="L1460" title="All 2 branches covered.">        if (selectedQuestion == null) {</span>
-<span class="fc" id="L1461">            clearFormFields();</span>
-<span class="fc" id="L1462">            MsgSender.showMsg(&quot;Adding new question cancelled.&quot;);</span>
-<span class="fc" id="L1463">            return;</span>
+<span class="fc bfc" id="L1468" title="All 2 branches covered.">        if (selectedQuestion == null) {</span>
+<span class="fc" id="L1469">            clearFormFields();</span>
+<span class="fc" id="L1470">            MsgSender.showMsg(&quot;Adding new question cancelled.&quot;);</span>
+<span class="fc" id="L1471">            return;</span>
         }
         
         // Otherwise, we were editing an existing question, reload it
         // Fetch a fresh copy from the database to discard any edits
-<span class="fc" id="L1468">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
-<span class="fc" id="L1469">        Question freshQuestion = questionDB.queryByKey(selectedQuestion.getId().toString());</span>
-<span class="pc bpc" id="L1470" title="1 of 2 branches missed.">        if (freshQuestion != null) {</span>
+<span class="fc" id="L1476">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="fc" id="L1477">        Question freshQuestion = questionDB.queryByKey(selectedQuestion.getId().toString());</span>
+<span class="pc bpc" id="L1478" title="1 of 2 branches missed.">        if (freshQuestion != null) {</span>
             // Display the fresh question data
-<span class="nc" id="L1472">            displaySelectedQuestionReadOnly(freshQuestion);</span>
+<span class="nc" id="L1480">            displaySelectedQuestionReadOnly(freshQuestion);</span>
             
             // Enable edit button
-<span class="nc bnc" id="L1475" title="All 2 branches missed.">            if (editBtn != null) {</span>
-<span class="nc bnc" id="L1476" title="All 2 branches missed.">                editBtn.setDisable(freshQuestion.getPublished() != 0);</span>
+<span class="nc bnc" id="L1483" title="All 2 branches missed.">            if (editBtn != null) {</span>
+<span class="nc bnc" id="L1484" title="All 2 branches missed.">                editBtn.setDisable(freshQuestion.getPublished() != 0);</span>
             }
             
-<span class="nc" id="L1479">            MsgSender.showMsg(&quot;Edit cancelled. No changes were saved.&quot;);</span>
+<span class="nc" id="L1487">            MsgSender.showMsg(&quot;Edit cancelled. No changes were saved.&quot;);</span>
         } else {
             // If question not found, clear the form
-<span class="fc" id="L1482">            clearFormFields();</span>
-<span class="fc" id="L1483">            MsgSender.showMsg(&quot;Question could not be found. Edit cancelled.&quot;);</span>
+<span class="fc" id="L1490">            clearFormFields();</span>
+<span class="fc" id="L1491">            MsgSender.showMsg(&quot;Question could not be found. Edit cancelled.&quot;);</span>
         }
-<span class="fc" id="L1485">    }</span>
+<span class="fc" id="L1493">    }</span>
 
     /**
      * Adds click handlers to all form fields to guide users when fields are read-only
      */
     private void addClickHandlersToFormFields() {
         // Create handler for each form field
-<span class="nc" id="L1492">        javafx.event.EventHandler&lt;javafx.scene.input.MouseEvent&gt; clickHandler = event -&gt; {</span>
-<span class="nc bnc" id="L1493" title="All 4 branches missed.">            if (!editMode &amp;&amp; selectedQuestion == null) {</span>
-<span class="nc" id="L1494">                Node source = (Node) event.getSource();</span>
-<span class="nc bnc" id="L1495" title="All 6 branches missed.">                if (!source.isDisabled() &amp;&amp; !((source instanceof TextInputControl) &amp;&amp; ((TextInputControl)source).isEditable())) {</span>
+<span class="nc" id="L1500">        javafx.event.EventHandler&lt;javafx.scene.input.MouseEvent&gt; clickHandler = event -&gt; {</span>
+<span class="nc bnc" id="L1501" title="All 4 branches missed.">            if (!editMode &amp;&amp; selectedQuestion == null) {</span>
+<span class="nc" id="L1502">                Node source = (Node) event.getSource();</span>
+<span class="nc bnc" id="L1503" title="All 6 branches missed.">                if (!source.isDisabled() &amp;&amp; !((source instanceof TextInputControl) &amp;&amp; ((TextInputControl)source).isEditable())) {</span>
                     // Show message to guide the user
-<span class="nc" id="L1497">                    MsgSender.showMsg(&quot;Click 'Add New' to create a question&quot;);</span>
+<span class="nc" id="L1505">                    MsgSender.showMsg(&quot;Click 'Add New' to create a question&quot;);</span>
                     
                     // Highlight the Add New button
-<span class="nc" id="L1500">                    String originalStyle = addBtn.getStyle();</span>
-<span class="nc" id="L1501">                    addBtn.setStyle(originalStyle + &quot; -fx-background-color: #69F0AE; -fx-scale-x: 1.1; -fx-scale-y: 1.1;&quot;);</span>
+<span class="nc" id="L1508">                    String originalStyle = addBtn.getStyle();</span>
+<span class="nc" id="L1509">                    addBtn.setStyle(originalStyle + &quot; -fx-background-color: #69F0AE; -fx-scale-x: 1.1; -fx-scale-y: 1.1;&quot;);</span>
                     
                     // Reset style after a short delay
-<span class="nc" id="L1504">                    new java.util.Timer().schedule(</span>
-<span class="nc" id="L1505">                        new java.util.TimerTask() {</span>
+<span class="nc" id="L1512">                    new java.util.Timer().schedule(</span>
+<span class="nc" id="L1513">                        new java.util.TimerTask() {</span>
                             @Override
                             public void run() {
-<span class="nc" id="L1508">                                Platform.runLater(() -&gt; {</span>
-<span class="nc" id="L1509">                                    addBtn.setStyle(originalStyle);</span>
-<span class="nc" id="L1510">                                });</span>
-<span class="nc" id="L1511">                            }</span>
+<span class="nc" id="L1516">                                Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L1517">                                    addBtn.setStyle(originalStyle);</span>
+<span class="nc" id="L1518">                                });</span>
+<span class="nc" id="L1519">                            }</span>
                         }, 
                         1500 // Reset after 1.5 seconds
                     );
                 }
             }
-<span class="nc" id="L1517">        };</span>
+<span class="nc" id="L1525">        };</span>
         
         // Apply handler to all form fields except the type ComboBox
-<span class="nc" id="L1520">        questionTxt.setOnMouseClicked(clickHandler);</span>
-<span class="nc" id="L1521">        scoreTxt.setOnMouseClicked(clickHandler);</span>
-<span class="nc" id="L1522">        answerTxt.setOnMouseClicked(clickHandler);</span>
-<span class="nc" id="L1523">    }</span>
+<span class="nc" id="L1528">        questionTxt.setOnMouseClicked(clickHandler);</span>
+<span class="nc" id="L1529">        scoreTxt.setOnMouseClicked(clickHandler);</span>
+<span class="nc" id="L1530">        answerTxt.setOnMouseClicked(clickHandler);</span>
+<span class="nc" id="L1531">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

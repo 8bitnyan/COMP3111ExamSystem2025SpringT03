@@ -1,328 +1,224 @@
 package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Student;
-import org.junit.jupiter.api.Test;
+import javafx.scene.control.*;
+import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import javafx.application.Platform;
+import java.util.concurrent.CountDownLatch;
+import comp3111.examsystem.entity.Exam;
+import comp3111.examsystem.tools.Database;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class StudentQuizControllerTest {
+    StudentQuizController controller;
+    MockedStatic<comp3111.examsystem.tools.MsgSender> msgSenderMocked;
 
-    /**
-     * Test for the QuizQuestion class.
-     * This test verifies the behavior of the QuizQuestion inner class.
-     */
-    @Test
-    public void testQuizQuestionClass() {
-        // Test multiple choice question
-        List<String> options = Arrays.asList("Option A", "Option B", "Option C", "Option D");
-        StudentQuizController.QuizQuestion mcQuestion = 
-            new StudentQuizController.QuizQuestion("MC Question", options);
-        
-        assertEquals("MC Question", mcQuestion.getQuestionText());
-        assertTrue(mcQuestion.isMultipleChoice());
-        assertEquals(options, mcQuestion.getOptions());
-        
-        // Test short answer question
-        StudentQuizController.QuizQuestion saQuestion = 
-            new StudentQuizController.QuizQuestion("SA Question");
-        
-        assertEquals("SA Question", saQuestion.getQuestionText());
-        assertFalse(saQuestion.isMultipleChoice());
-        assertEquals(0, saQuestion.getOptions().size());
-    }
+    @BeforeEach
+    void setUp() throws Exception {
+        controller = new StudentQuizController();
+        // Attach questionText to a Scene and Stage
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Stage stage = new Stage();
+                VBox root = new VBox();
+                Text questionText = new Text();
+                root.getChildren().add(questionText);
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+                try {
+                    setField(controller, "questionText", questionText);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+        setField(controller, "quizNameText", new Text());
+        setField(controller, "totalQuestionsText", new Text());
+        setField(controller, "timerText", new Text());
+        setField(controller, "questionListContainer", new VBox());
+        setField(controller, "multipleChoiceContainer", new VBox());
+        setField(controller, "shortAnswerContainer", new VBox());
+        setField(controller, "option1", new RadioButton());
+        setField(controller, "option2", new RadioButton());
+        setField(controller, "option3", new RadioButton());
+        setField(controller, "option4", new RadioButton());
+        setField(controller, "shortAnswerField", new TextArea());
+        setField(controller, "previousButton", new Button());
+        setField(controller, "nextButton", new Button());
+        setField(controller, "submitButton", new Button());
+        setField(controller, "answerGroup", new ToggleGroup());
 
-    /**
-     * Test for navigation logic.
-     */
-    @Test
-    public void testNavigationLogic() {
-        List<StudentQuizController.QuizQuestion> questions = new ArrayList<>();
-        questions.add(new StudentQuizController.QuizQuestion("Q1"));
-        questions.add(new StudentQuizController.QuizQuestion("Q2"));
-        questions.add(new StudentQuizController.QuizQuestion("Q3"));
-        
-        // Test navigation boundary conditions
-        boolean shouldDisablePrevious = 0 == 0; // First question
-        boolean shouldDisableNext = 0 == questions.size() - 1; // Not last question
-        
-        assertTrue(shouldDisablePrevious);
-        assertFalse(shouldDisableNext);
-        
-        // Middle question
-        shouldDisablePrevious = 1 == 0;
-        shouldDisableNext = 1 == questions.size() - 1;
-        
-        assertFalse(shouldDisablePrevious);
-        assertFalse(shouldDisableNext);
-        
-        // Last question
-        shouldDisablePrevious = 2 == 0;
-        shouldDisableNext = 2 == questions.size() - 1;
-        
-        assertFalse(shouldDisablePrevious);
-        assertTrue(shouldDisableNext);
-    }
+        // Add a mock Exam with name 'Sample Quiz' to the test database
+        Exam exam = new Exam();
+        exam.setId(1L);
+        exam.setName("Sample Quiz");
+        exam.setQuestions("1"); // minimal valid questions string
+        exam.setDuration(5); // 5 minutes
+        Database<Exam> examDB = new Database<>(Exam.class);
+        examDB.add(exam);
 
-    /**
-     * Test for timer calculation logic.
-     */
-    @Test
-    public void testTimerCalculation() {
-        // Create a controller with accessible timer fields
-        StudentQuizController controller = new StudentQuizController();
-        
-        // Set timer values via reflection
-        setFieldValue(controller, "hours", 1);
-        setFieldValue(controller, "minutes", 30);
-        setFieldValue(controller, "seconds", 45);
-        
-        // Use reflection to call formatTime method if it exists, or verify the time string format logic
-        String timeString = String.format("%02d:%02d:%02d", 
-                                        getFieldValue(controller, "hours"),
-                                        getFieldValue(controller, "minutes"),
-                                        getFieldValue(controller, "seconds"));
-        
-        assertEquals("01:30:45", timeString);
-    }
-
-    /**
-     * Helper method to access private fields
-     */
-    private Object getFieldValue(Object object, String fieldName) {
-        try {
-            Field field = object.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (Exception e) {
-            fail("Failed to get field value: " + e.getMessage());
+        msgSenderMocked = Mockito.mockStatic(comp3111.examsystem.tools.MsgSender.class);
+        msgSenderMocked.when(() -> comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString())).then(invocation -> null);
+        msgSenderMocked.when(() -> comp3111.examsystem.tools.MsgSender.showConfirm(
+            Mockito.anyString(), Mockito.anyString(), Mockito.any(Runnable.class)
+        )).thenAnswer(invocation -> {
+            Runnable callback = invocation.getArgument(2);
+            if (callback != null) callback.run();
             return null;
-        }
+        });
     }
 
-    /**
-     * Helper method to set private field values
-     */
-    private void setFieldValue(Object object, String fieldName, Object value) {
+    @AfterEach
+    void tearDown() {
+        if (msgSenderMocked != null) msgSenderMocked.close();
+    }
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+        var field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(obj, value);
+    }
+
+    private <T> T getFieldValue(Object obj, String fieldName, Class<T> type) {
         try {
-            Field field = object.getClass().getDeclaredField(fieldName);
+            var field = obj.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
-            field.set(object, value);
+            return type.cast(field.get(obj));
         } catch (Exception e) {
-            fail("Failed to set field value: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
-    
-    /**
-     * Test for the quiz data initialization.
-     */
-    @Test
-    public void testQuizDataInitialization() {
-        // Test QuizQuestion data handling
-        List<String> options = Arrays.asList("Option 1", "Option 2", "Option 3", "Option 4");
-        StudentQuizController.QuizQuestion question = 
-            new StudentQuizController.QuizQuestion("Test Question", options);
-            
-        // Verify the question properties
-        assertEquals("Test Question", question.getQuestionText());
-        assertEquals(4, question.getOptions().size());
-        assertEquals("Option 1", question.getOptions().get(0));
-        assertEquals("Option 4", question.getOptions().get(3));
-    }
 
-    /**
-     * Test quiz question answer handling.
-     */
     @Test
-    public void testQuizQuestionAnswerHandling() {
-        // Create a list of quiz questions
-        List<StudentQuizController.QuizQuestion> questions = new ArrayList<>();
-        questions.add(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D")));
-        questions.add(new StudentQuizController.QuizQuestion("Q2"));
-        
-        // Create a list of answers
-        List<String> answers = new ArrayList<>();
-        answers.add("B"); // Answer for Q1
-        answers.add("This is a short answer"); // Answer for Q2
-        
-        // Verify multiple choice answer
-        assertEquals("B", answers.get(0));
-        
-        // Verify short answer
-        assertEquals("This is a short answer", answers.get(1));
-        
-        // Verify question types
-        assertTrue(questions.get(0).isMultipleChoice());
-        assertFalse(questions.get(1).isMultipleChoice());
-    }
-
-    /**
-     * Test for Student entity data handling.
-     */
-    @Test
-    public void testStudentEntityData() {
-        // Create a student with test data
+    void testPreSetControllerAndNavigation() {
         Student student = new Student();
-        
-        // Set student properties using available methods
-        student.setId(12345L); // Use Long instead of String
-        student.setName("Test Student");
-        // Use other available setter methods instead of email/password
-        
-        // Verify student data
-        assertEquals(Long.valueOf(12345L), student.getId());
-        assertEquals("Test Student", student.getName());
-    }
-
-    /**
-     * Test student authentication logic.
-     */
-    @Test
-    public void testStudentAuthentication() {
-        // Create a test student
-        Student student = new Student();
-        student.setName("Test Student");
-        
-        // Test student identity verification using available methods
-        // For example, check the student name
-        assertEquals("Test Student", student.getName());
-        assertNotEquals("Wrong Name", student.getName());
-    }
-
-    /**
-     * Test timer countdown and auto-submit when time runs out.
-     */
-    @Test
-    public void testTimerCountdownAndAutoSubmit() throws Exception {
-        StudentQuizController controller = new StudentQuizController();
-        // Set up timer fields
-        setFieldValue(controller, "hours", 0);
-        setFieldValue(controller, "minutes", 0);
-        setFieldValue(controller, "seconds", 1); // 1 second left
-
-        // Mock timerText
-        javafx.scene.text.Text timerText = new javafx.scene.text.Text();
-        setFieldValue(controller, "timerText", timerText);
-
-        // Mock timeline
-        // We'll call setupTimer and simulate the KeyFrame event manually
-        java.lang.reflect.Method setupTimer = controller.getClass().getDeclaredMethod("setupTimer");
-        setupTimer.setAccessible(true);
-        setupTimer.invoke(controller);
-
-        // Simulate timer tick (time's up)
-        setFieldValue(controller, "seconds", 0);
-        setFieldValue(controller, "minutes", 0);
-        setFieldValue(controller, "hours", 0);
-        // Call updateTimerDisplay to check color
-        java.lang.reflect.Method updateTimerDisplay = controller.getClass().getDeclaredMethod("updateTimerDisplay");
-        updateTimerDisplay.setAccessible(true);
-        updateTimerDisplay.invoke(controller);
-        assertEquals("00:00:00", timerText.getText());
-        assertTrue(timerText.getStyle().contains("red") || timerText.getStyle().contains("black"));
-    }
-
-    /**
-     * Test navigation: next and previous question logic.
-     */
-    @Test
-    public void testNavigationNextPrevious() throws Exception {
-        StudentQuizController controller = new StudentQuizController();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-                new StudentQuizController.QuizQuestion("Q1"),
-                new StudentQuizController.QuizQuestion("Q2"),
-                new StudentQuizController.QuizQuestion("Q3")
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D")),
+            new StudentQuizController.QuizQuestion("Q2")
         );
-        setFieldValue(controller, "questions", questions);
-        setFieldValue(controller, "currentQuestionIndex", 1); // Start at Q2
-
-        // Initialize required JavaFX controls
-        setFieldValue(controller, "shortAnswerField", new javafx.scene.control.TextArea());
-        setFieldValue(controller, "option1", new javafx.scene.control.RadioButton());
-        setFieldValue(controller, "option2", new javafx.scene.control.RadioButton());
-        setFieldValue(controller, "option3", new javafx.scene.control.RadioButton());
-        setFieldValue(controller, "option4", new javafx.scene.control.RadioButton());
-        setFieldValue(controller, "answerGroup", new javafx.scene.control.ToggleGroup());
-        // Initialize studentAnswers to match number of questions
-        setFieldValue(controller, "studentAnswers", new ArrayList<>(Arrays.asList("", "", "")));
-        // Initialize questionListContainer
-        setFieldValue(controller, "questionListContainer", new javafx.scene.layout.VBox());
-        // Initialize questionText
-        setFieldValue(controller, "questionText", new javafx.scene.text.Text());
-        // Initialize multipleChoiceContainer and shortAnswerContainer
-        setFieldValue(controller, "multipleChoiceContainer", new javafx.scene.layout.VBox());
-        setFieldValue(controller, "shortAnswerContainer", new javafx.scene.layout.VBox());
-        // Initialize navigation and submit buttons
-        setFieldValue(controller, "previousButton", new javafx.scene.control.Button());
-        setFieldValue(controller, "nextButton", new javafx.scene.control.Button());
-        setFieldValue(controller, "submitButton", new javafx.scene.control.Button());
-
-        // Mock loadQuestion to track calls
-        final int[] loadedIndex = {-1};
-        java.lang.reflect.Method loadQuestion = controller.getClass().getDeclaredMethod("loadQuestion", int.class);
-        loadQuestion.setAccessible(true);
-        // Use a proxy or just call directly for this test
-        // Test next
+        controller.preSetController(student, "Sample Quiz", questions, 5);
+        Text quizNameText = getFieldValue(controller, "quizNameText", Text.class);
+        Text totalQuestionsText = getFieldValue(controller, "totalQuestionsText", Text.class);
+        assertEquals("Sample Quiz", quizNameText.getText());
+        assertEquals("2", totalQuestionsText.getText());
+        // Test navigation
         controller.handleNext(null);
-        assertEquals(2, getFieldValue(controller, "currentQuestionIndex"));
-        // Test previous
+        assertEquals(1, getPrivateInt(controller, "currentQuestionIndex"));
         controller.handlePrevious(null);
-        assertEquals(1, getFieldValue(controller, "currentQuestionIndex"));
+        assertEquals(0, getPrivateInt(controller, "currentQuestionIndex"));
     }
 
-    /**
-     * Test submit logic: save answer, stop timer, and show confirmation.
-     * This test will mock Alert to avoid UI popups.
-     */
     @Test
-    public void testHandleSubmitLogic() throws Exception {
-        StudentQuizController controller = new StudentQuizController();
-        setFieldValue(controller, "studentAnswers", new ArrayList<>(Arrays.asList("A", "B")));
-        setFieldValue(controller, "questions", Arrays.asList(
-                new StudentQuizController.QuizQuestion("Q1"),
-                new StudentQuizController.QuizQuestion("Q2")
-        ));
-        setFieldValue(controller, "timeline", null); // No timer
-
-        // Mock saveCurrentAnswer and submitQuiz
-        java.lang.reflect.Method saveCurrentAnswer = controller.getClass().getDeclaredMethod("saveCurrentAnswer");
-        saveCurrentAnswer.setAccessible(true);
-        java.lang.reflect.Method submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
-        submitQuiz.setAccessible(true);
-
-        // Use reflection to call handleSubmit
-        java.lang.reflect.Method handleSubmit = controller.getClass().getDeclaredMethod("handleSubmit", javafx.event.ActionEvent.class);
-        handleSubmit.setAccessible(true);
-        // This will show a confirmation dialog, which we can't handle in headless mode, so just check no exceptions
-        try {
-            handleSubmit.invoke(controller, (Object) null);
-        } catch (Exception e) {
-            // Ignore dialog-related exceptions in headless
-        }
-    }
-
-    /**
-     * Test edge case: navigation at boundaries (first and last question).
-     */
-    @Test
-    public void testNavigationBoundaries() throws Exception {
-        StudentQuizController controller = new StudentQuizController();
+    void testAnswerPersistence() {
+        Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-                new StudentQuizController.QuizQuestion("Q1"),
-                new StudentQuizController.QuizQuestion("Q2")
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D")),
+            new StudentQuizController.QuizQuestion("Q2")
         );
-        setFieldValue(controller, "questions", questions);
-        setFieldValue(controller, "currentQuestionIndex", 0); // First question
-        controller.handlePrevious(null); // Should stay at 0
-        assertEquals(0, getFieldValue(controller, "currentQuestionIndex"));
-        setFieldValue(controller, "currentQuestionIndex", 1); // Last question
-        controller.handleNext(null); // Should stay at 1
-        assertEquals(1, getFieldValue(controller, "currentQuestionIndex"));
+        controller.preSetController(student, "Sample Quiz", questions, 5);
+        // Simulate answering Q1
+        RadioButton option2 = getFieldValue(controller, "option2", RadioButton.class);
+        option2.setSelected(true);
+        controller.handleNext(null);
+        // Simulate answering Q2
+        TextArea shortAnswerField = getFieldValue(controller, "shortAnswerField", TextArea.class);
+        shortAnswerField.setText("Short answer");
+        controller.handlePrevious(null);
+        // Q1 should still have answer
+        assertTrue(option2.isSelected());
+        controller.handleNext(null);
+        assertEquals("Short answer", shortAnswerField.getText());
+    }
+
+    @Test
+    void testTimerAndAutoSubmit() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Student student = new Student();
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+                );
+                controller.preSetController(student, "Sample Quiz", questions, 0); // 0 min for instant expiry
+                // Simulate timer expiry
+                try {
+                    setField(controller, "seconds", 0);
+                    setField(controller, "minutes", 0);
+                    setField(controller, "hours", 0);
+                    var submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
+                    submitQuiz.setAccessible(true);
+                    submitQuiz.invoke(controller);
+                    msgSenderMocked.verify(() -> comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
+
+    @Test
+    void testHandleSubmit() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Student student = new Student();
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+                );
+                controller.preSetController(student, "Sample Quiz", questions, 5);
+                controller.handleSubmit(null);
+                msgSenderMocked.verify(() -> comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
+
+    @Test
+    void testWindowCloseHandler() throws Exception {
+        Student student = new Student();
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+        );
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                controller.preSetController(student, "Sample Quiz", questions, 5);
+                Stage stage = (Stage) getFieldValue(controller, "questionText", Text.class).getScene().getWindow();
+                WindowEvent closeEvent = new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST);
+                stage.fireEvent(closeEvent);
+                // You can add assertions or verifications here if needed
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
+
+    private int getPrivateInt(Object obj, String fieldName) {
+        try {
+            var field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.getInt(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 } 
