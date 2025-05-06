@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * The controller for student grade statistics page.
  */
-<span class="nc" id="L30">public class StudentGradeStatisticsController implements Initializable {</span>
+<span class="fc" id="L30">public class StudentGradeStatisticsController implements Initializable {</span>
     
     // UI Components - Filtering
     @FXML private ComboBox&lt;String&gt; courseComboBox;
@@ -61,6 +61,13 @@ import java.util.stream.Collectors;
     private List&lt;QuizGrade&gt; allQuizGrades;
     private List&lt;QuizGrade&gt; filteredQuizGrades;
     
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+<span class="fc" id="L69">    AlertShower showAlert = null;</span>
+    
     /**
      * Initializes the student grade statistics page UI.
      * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
@@ -69,159 +76,159 @@ import java.util.stream.Collectors;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize filter components
-<span class="nc" id="L72">        minScoreField.setPromptText(&quot;0&quot;);</span>
-<span class="nc" id="L73">        maxScoreField.setPromptText(&quot;100&quot;);</span>
+<span class="fc" id="L79">        minScoreField.setPromptText(&quot;0&quot;);</span>
+<span class="fc" id="L80">        maxScoreField.setPromptText(&quot;100&quot;);</span>
         
         // Configure listeners for input validation
-<span class="nc" id="L76">        minScoreField.textProperty().addListener((observable, oldValue, newValue) -&gt; {</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (!newValue.matches(&quot;\\d*&quot;)) {</span>
-<span class="nc" id="L78">                minScoreField.setText(newValue.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;));</span>
+<span class="fc" id="L83">        minScoreField.textProperty().addListener((observable, oldValue, newValue) -&gt; {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (!newValue.matches(&quot;\\d*&quot;)) {</span>
+<span class="fc" id="L85">                minScoreField.setText(newValue.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;));</span>
             }
-<span class="nc" id="L80">        });</span>
+<span class="fc" id="L87">        });</span>
         
-<span class="nc" id="L82">        maxScoreField.textProperty().addListener((observable, oldValue, newValue) -&gt; {</span>
-<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (!newValue.matches(&quot;\\d*&quot;)) {</span>
-<span class="nc" id="L84">                maxScoreField.setText(newValue.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;));</span>
+<span class="fc" id="L89">        maxScoreField.textProperty().addListener((observable, oldValue, newValue) -&gt; {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            if (!newValue.matches(&quot;\\d*&quot;)) {</span>
+<span class="fc" id="L91">                maxScoreField.setText(newValue.replaceAll(&quot;[^\\d]&quot;, &quot;&quot;));</span>
             }
-<span class="nc" id="L86">        });</span>
-<span class="nc" id="L87">    }</span>
+<span class="fc" id="L93">        });</span>
+<span class="fc" id="L94">    }</span>
     
     /**
      * Sets up the controller with the required data.
      * @param student The student viewing the grade statistics.
      */
     public void preSetController(Student student) {
-<span class="nc" id="L94">        this.student = student;</span>
+<span class="fc" id="L101">        this.student = student;</span>
         
         // Load demo quiz grades
-<span class="nc" id="L97">        loadDemoQuizGrades();</span>
+<span class="fc" id="L104">        loadDemoQuizGrades();</span>
         
         // Load available courses
-<span class="nc" id="L100">        loadCourses();</span>
+<span class="fc" id="L107">        loadCourses();</span>
         
         // Apply initial filter
-<span class="nc" id="L103">        applyFilter();</span>
-<span class="nc" id="L104">    }</span>
+<span class="fc" id="L110">        applyFilter();</span>
+<span class="fc" id="L111">    }</span>
     
     /**
      * Loads demo quiz grades for testing.
      */
     private void loadDemoQuizGrades() {
-<span class="nc" id="L110">        allQuizGrades = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L117">        allQuizGrades = new ArrayList&lt;&gt;();</span>
         
         // Demo data for COMP3111
-<span class="nc" id="L113">        allQuizGrades.add(new QuizGrade(&quot;Week 1 Quiz&quot;, &quot;COMP3111&quot;, 85.0, LocalDate.now().minusDays(30)));</span>
-<span class="nc" id="L114">        allQuizGrades.add(new QuizGrade(&quot;Week 2 Quiz&quot;, &quot;COMP3111&quot;, 78.0, LocalDate.now().minusDays(23)));</span>
-<span class="nc" id="L115">        allQuizGrades.add(new QuizGrade(&quot;Midterm Assessment&quot;, &quot;COMP3111&quot;, 92.0, LocalDate.now().minusDays(15)));</span>
+<span class="fc" id="L120">        allQuizGrades.add(new QuizGrade(&quot;Week 1 Quiz&quot;, &quot;COMP3111&quot;, 85.0, LocalDate.now().minusDays(30)));</span>
+<span class="fc" id="L121">        allQuizGrades.add(new QuizGrade(&quot;Week 2 Quiz&quot;, &quot;COMP3111&quot;, 78.0, LocalDate.now().minusDays(23)));</span>
+<span class="fc" id="L122">        allQuizGrades.add(new QuizGrade(&quot;Midterm Assessment&quot;, &quot;COMP3111&quot;, 92.0, LocalDate.now().minusDays(15)));</span>
         
         // Demo data for COMP3021
-<span class="nc" id="L118">        allQuizGrades.add(new QuizGrade(&quot;OOP Quiz&quot;, &quot;COMP3021&quot;, 88.0, LocalDate.now().minusDays(28)));</span>
-<span class="nc" id="L119">        allQuizGrades.add(new QuizGrade(&quot;Java Collection Quiz&quot;, &quot;COMP3021&quot;, 75.0, LocalDate.now().minusDays(20)));</span>
-<span class="nc" id="L120">        allQuizGrades.add(new QuizGrade(&quot;Multithreading Quiz&quot;, &quot;COMP3021&quot;, 68.0, LocalDate.now().minusDays(10)));</span>
+<span class="fc" id="L125">        allQuizGrades.add(new QuizGrade(&quot;OOP Quiz&quot;, &quot;COMP3021&quot;, 88.0, LocalDate.now().minusDays(28)));</span>
+<span class="fc" id="L126">        allQuizGrades.add(new QuizGrade(&quot;Java Collection Quiz&quot;, &quot;COMP3021&quot;, 75.0, LocalDate.now().minusDays(20)));</span>
+<span class="fc" id="L127">        allQuizGrades.add(new QuizGrade(&quot;Multithreading Quiz&quot;, &quot;COMP3021&quot;, 68.0, LocalDate.now().minusDays(10)));</span>
         
         // Demo data for COMP2012
-<span class="nc" id="L123">        allQuizGrades.add(new QuizGrade(&quot;Pointers Quiz&quot;, &quot;COMP2012&quot;, 80.0, LocalDate.now().minusDays(40)));</span>
-<span class="nc" id="L124">        allQuizGrades.add(new QuizGrade(&quot;Dynamic Memory Quiz&quot;, &quot;COMP2012&quot;, 65.0, LocalDate.now().minusDays(35)));</span>
-<span class="nc" id="L125">        allQuizGrades.add(new QuizGrade(&quot;Inheritance Quiz&quot;, &quot;COMP2012&quot;, 95.0, LocalDate.now().minusDays(25)));</span>
-<span class="nc" id="L126">    }</span>
+<span class="fc" id="L130">        allQuizGrades.add(new QuizGrade(&quot;Pointers Quiz&quot;, &quot;COMP2012&quot;, 80.0, LocalDate.now().minusDays(40)));</span>
+<span class="fc" id="L131">        allQuizGrades.add(new QuizGrade(&quot;Dynamic Memory Quiz&quot;, &quot;COMP2012&quot;, 65.0, LocalDate.now().minusDays(35)));</span>
+<span class="fc" id="L132">        allQuizGrades.add(new QuizGrade(&quot;Inheritance Quiz&quot;, &quot;COMP2012&quot;, 95.0, LocalDate.now().minusDays(25)));</span>
+<span class="fc" id="L133">    }</span>
     
     /**
      * Loads available courses from the quiz grades.
      */
     private void loadCourses() {
-<span class="nc" id="L132">        Set&lt;String&gt; courses = allQuizGrades.stream()</span>
-<span class="nc" id="L133">                .map(QuizGrade::getCourse)</span>
-<span class="nc" id="L134">                .collect(Collectors.toSet());</span>
+<span class="fc" id="L139">        Set&lt;String&gt; courses = allQuizGrades.stream()</span>
+<span class="fc" id="L140">                .map(QuizGrade::getCourse)</span>
+<span class="fc" id="L141">                .collect(Collectors.toSet());</span>
         
-<span class="nc" id="L136">        ObservableList&lt;String&gt; courseList = FXCollections.observableArrayList(new ArrayList&lt;&gt;(courses));</span>
-<span class="nc" id="L137">        courseList.add(0, &quot;All Courses&quot;);</span>
-<span class="nc" id="L138">        courseComboBox.setItems(courseList);</span>
-<span class="nc" id="L139">        courseComboBox.getSelectionModel().select(0);</span>
-<span class="nc" id="L140">    }</span>
+<span class="fc" id="L143">        ObservableList&lt;String&gt; courseList = FXCollections.observableArrayList(new ArrayList&lt;&gt;(courses));</span>
+<span class="fc" id="L144">        courseList.add(0, &quot;All Courses&quot;);</span>
+<span class="fc" id="L145">        courseComboBox.setItems(courseList);</span>
+<span class="fc" id="L146">        courseComboBox.getSelectionModel().select(0);</span>
+<span class="fc" id="L147">    }</span>
     
     /**
      * Applies the filter based on the selected criteria.
      */
     private void applyFilter() {
-<span class="nc" id="L146">        filteredQuizGrades = new ArrayList&lt;&gt;(allQuizGrades);</span>
+<span class="fc" id="L153">        filteredQuizGrades = new ArrayList&lt;&gt;(allQuizGrades);</span>
         
         // Apply course filter
-<span class="nc" id="L149">        String selectedCourse = courseComboBox.getValue();</span>
-<span class="nc bnc" id="L150" title="All 4 branches missed.">        if (selectedCourse != null &amp;&amp; !selectedCourse.equals(&quot;All Courses&quot;)) {</span>
-<span class="nc" id="L151">            filteredQuizGrades = filteredQuizGrades.stream()</span>
-<span class="nc" id="L152">                    .filter(grade -&gt; grade.getCourse().equals(selectedCourse))</span>
-<span class="nc" id="L153">                    .collect(Collectors.toList());</span>
+<span class="fc" id="L156">        String selectedCourse = courseComboBox.getValue();</span>
+<span class="pc bpc" id="L157" title="1 of 4 branches missed.">        if (selectedCourse != null &amp;&amp; !selectedCourse.equals(&quot;All Courses&quot;)) {</span>
+<span class="fc" id="L158">            filteredQuizGrades = filteredQuizGrades.stream()</span>
+<span class="fc" id="L159">                    .filter(grade -&gt; grade.getCourse().equals(selectedCourse))</span>
+<span class="fc" id="L160">                    .collect(Collectors.toList());</span>
         }
         
         // Apply score range filter
         try {
-<span class="nc bnc" id="L158" title="All 2 branches missed.">            double minScore = minScoreField.getText().isEmpty() ? 0 : Double.parseDouble(minScoreField.getText());</span>
-<span class="nc bnc" id="L159" title="All 2 branches missed.">            double maxScore = maxScoreField.getText().isEmpty() ? 100 : Double.parseDouble(maxScoreField.getText());</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            double minScore = minScoreField.getText().isEmpty() ? 0 : Double.parseDouble(minScoreField.getText());</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            double maxScore = maxScoreField.getText().isEmpty() ? 100 : Double.parseDouble(maxScoreField.getText());</span>
             
-<span class="nc" id="L161">            filteredQuizGrades = filteredQuizGrades.stream()</span>
-<span class="nc bnc" id="L162" title="All 4 branches missed.">                    .filter(grade -&gt; grade.getScore() &gt;= minScore &amp;&amp; grade.getScore() &lt;= maxScore)</span>
-<span class="nc" id="L163">                    .collect(Collectors.toList());</span>
-<span class="nc" id="L164">        } catch (NumberFormatException e) {</span>
-<span class="nc" id="L165">            showAlert(Alert.AlertType.WARNING, &quot;Invalid Input&quot;, &quot;Please enter valid numbers for score range.&quot;);</span>
-<span class="nc" id="L166">        }</span>
+<span class="fc" id="L168">            filteredQuizGrades = filteredQuizGrades.stream()</span>
+<span class="fc bfc" id="L169" title="All 4 branches covered.">                    .filter(grade -&gt; grade.getScore() &gt;= minScore &amp;&amp; grade.getScore() &lt;= maxScore)</span>
+<span class="fc" id="L170">                    .collect(Collectors.toList());</span>
+<span class="fc" id="L171">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L172">            showAlert(Alert.AlertType.WARNING, &quot;Invalid Input&quot;, &quot;Please enter valid numbers for score range.&quot;);</span>
+<span class="fc" id="L173">        }</span>
         
         // Apply date range filter
-<span class="nc" id="L169">        LocalDate startDate = startDatePicker.getValue();</span>
-<span class="nc" id="L170">        LocalDate endDate = endDatePicker.getValue();</span>
+<span class="fc" id="L176">        LocalDate startDate = startDatePicker.getValue();</span>
+<span class="fc" id="L177">        LocalDate endDate = endDatePicker.getValue();</span>
         
-<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (startDate != null) {</span>
-<span class="nc" id="L173">            filteredQuizGrades = filteredQuizGrades.stream()</span>
-<span class="nc bnc" id="L174" title="All 4 branches missed.">                    .filter(grade -&gt; grade.getDate().isEqual(startDate) || grade.getDate().isAfter(startDate))</span>
-<span class="nc" id="L175">                    .collect(Collectors.toList());</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (startDate != null) {</span>
+<span class="fc" id="L180">            filteredQuizGrades = filteredQuizGrades.stream()</span>
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">                    .filter(grade -&gt; grade.getDate().isEqual(startDate) || grade.getDate().isAfter(startDate))</span>
+<span class="fc" id="L182">                    .collect(Collectors.toList());</span>
         }
         
-<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (endDate != null) {</span>
-<span class="nc" id="L179">            filteredQuizGrades = filteredQuizGrades.stream()</span>
-<span class="nc bnc" id="L180" title="All 4 branches missed.">                    .filter(grade -&gt; grade.getDate().isEqual(endDate) || grade.getDate().isBefore(endDate))</span>
-<span class="nc" id="L181">                    .collect(Collectors.toList());</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (endDate != null) {</span>
+<span class="fc" id="L186">            filteredQuizGrades = filteredQuizGrades.stream()</span>
+<span class="pc bpc" id="L187" title="2 of 4 branches missed.">                    .filter(grade -&gt; grade.getDate().isEqual(endDate) || grade.getDate().isBefore(endDate))</span>
+<span class="fc" id="L188">                    .collect(Collectors.toList());</span>
         }
         
         // Update UI
-<span class="nc" id="L185">        updateQuizList();</span>
-<span class="nc" id="L186">        updateChart();</span>
-<span class="nc" id="L187">        updateStatistics();</span>
-<span class="nc" id="L188">    }</span>
+<span class="fc" id="L192">        updateQuizList();</span>
+<span class="fc" id="L193">        updateChart();</span>
+<span class="fc" id="L194">        updateStatistics();</span>
+<span class="fc" id="L195">    }</span>
     
     /**
      * Updates the quiz list with filtered quiz grades.
      */
     private void updateQuizList() {
-<span class="nc" id="L194">        List&lt;String&gt; quizNames = filteredQuizGrades.stream()</span>
-<span class="nc" id="L195">                .map(grade -&gt; grade.getQuizName() + &quot; (&quot; + grade.getCourse() + &quot;)&quot;)</span>
-<span class="nc" id="L196">                .collect(Collectors.toList());</span>
+<span class="fc" id="L201">        List&lt;String&gt; quizNames = filteredQuizGrades.stream()</span>
+<span class="fc" id="L202">                .map(grade -&gt; grade.getQuizName() + &quot; (&quot; + grade.getCourse() + &quot;)&quot;)</span>
+<span class="fc" id="L203">                .collect(Collectors.toList());</span>
         
-<span class="nc" id="L198">        quizListView.setItems(FXCollections.observableArrayList(quizNames));</span>
-<span class="nc" id="L199">    }</span>
+<span class="fc" id="L205">        quizListView.setItems(FXCollections.observableArrayList(quizNames));</span>
+<span class="fc" id="L206">    }</span>
     
     /**
      * Updates the chart with filtered quiz grades.
      */
     private void updateChart() {
-<span class="nc" id="L205">        gradeChart.getData().clear();</span>
+<span class="fc" id="L212">        gradeChart.getData().clear();</span>
         
-<span class="nc" id="L207">        XYChart.Series&lt;String, Number&gt; series = new XYChart.Series&lt;&gt;();</span>
+<span class="fc" id="L214">        XYChart.Series&lt;String, Number&gt; series = new XYChart.Series&lt;&gt;();</span>
         
-<span class="nc bnc" id="L209" title="All 2 branches missed.">        for (QuizGrade grade : filteredQuizGrades) {</span>
-<span class="nc" id="L210">            series.getData().add(new XYChart.Data&lt;&gt;(grade.getQuizName(), grade.getScore()));</span>
-<span class="nc" id="L211">        }</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        for (QuizGrade grade : filteredQuizGrades) {</span>
+<span class="fc" id="L217">            series.getData().add(new XYChart.Data&lt;&gt;(grade.getQuizName(), grade.getScore()));</span>
+<span class="fc" id="L218">        }</span>
         
-<span class="nc" id="L213">        gradeChart.getData().add(series);</span>
+<span class="fc" id="L220">        gradeChart.getData().add(series);</span>
         
         // Style the bars
-<span class="nc bnc" id="L216" title="All 2 branches missed.">        for (XYChart.Data&lt;String, Number&gt; data : series.getData()) {</span>
-<span class="nc" id="L217">            String color = getColorForScore((double) data.getYValue());</span>
-<span class="nc" id="L218">            data.getNode().setStyle(&quot;-fx-bar-fill: &quot; + color + &quot;;&quot;);</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        for (XYChart.Data&lt;String, Number&gt; data : series.getData()) {</span>
+<span class="fc" id="L224">            String color = getColorForScore((double) data.getYValue());</span>
+<span class="fc" id="L225">            data.getNode().setStyle(&quot;-fx-bar-fill: &quot; + color + &quot;;&quot;);</span>
             
             // Add tooltip showing the exact score
-<span class="nc" id="L221">            Tooltip tooltip = new Tooltip(data.getXValue() + &quot;: &quot; + data.getYValue() + &quot;%&quot;);</span>
-<span class="nc" id="L222">            Tooltip.install(data.getNode(), tooltip);</span>
-<span class="nc" id="L223">        }</span>
-<span class="nc" id="L224">    }</span>
+<span class="fc" id="L228">            Tooltip tooltip = new Tooltip(data.getXValue() + &quot;: &quot; + data.getYValue() + &quot;%&quot;);</span>
+<span class="fc" id="L229">            Tooltip.install(data.getNode(), tooltip);</span>
+<span class="fc" id="L230">        }</span>
+<span class="fc" id="L231">    }</span>
     
     /**
      * Returns a color based on the score.
@@ -229,14 +236,14 @@ import java.util.stream.Collectors;
      * @return A CSS color string.
      */
     private String getColorForScore(double score) {
-<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (score &gt;= 90) {</span>
-<span class="nc" id="L233">            return &quot;#28a745&quot;; // Green</span>
-<span class="nc bnc" id="L234" title="All 2 branches missed.">        } else if (score &gt;= 75) {</span>
-<span class="nc" id="L235">            return &quot;#17a2b8&quot;; // Blue</span>
-<span class="nc bnc" id="L236" title="All 2 branches missed.">        } else if (score &gt;= 60) {</span>
-<span class="nc" id="L237">            return &quot;#ffc107&quot;; // Yellow</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        if (score &gt;= 90) {</span>
+<span class="fc" id="L240">            return &quot;#28a745&quot;; // Green</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        } else if (score &gt;= 75) {</span>
+<span class="fc" id="L242">            return &quot;#17a2b8&quot;; // Blue</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        } else if (score &gt;= 60) {</span>
+<span class="fc" id="L244">            return &quot;#ffc107&quot;; // Yellow</span>
         } else {
-<span class="nc" id="L239">            return &quot;#dc3545&quot;; // Red</span>
+<span class="nc" id="L246">            return &quot;#dc3545&quot;; // Red</span>
         }
     }
     
@@ -244,35 +251,35 @@ import java.util.stream.Collectors;
      * Updates the statistics based on filtered quiz grades.
      */
     private void updateStatistics() {
-<span class="nc bnc" id="L247" title="All 2 branches missed.">        if (filteredQuizGrades.isEmpty()) {</span>
-<span class="nc" id="L248">            averageScoreLabel.setText(&quot;N/A&quot;);</span>
-<span class="nc" id="L249">            highestScoreLabel.setText(&quot;N/A&quot;);</span>
-<span class="nc" id="L250">            lowestScoreLabel.setText(&quot;N/A&quot;);</span>
-<span class="nc" id="L251">            return;</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if (filteredQuizGrades.isEmpty()) {</span>
+<span class="nc" id="L255">            averageScoreLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L256">            highestScoreLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L257">            lowestScoreLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L258">            return;</span>
         }
         
         // Calculate average score
-<span class="nc" id="L255">        double totalScore = filteredQuizGrades.stream()</span>
-<span class="nc" id="L256">                .mapToDouble(QuizGrade::getScore)</span>
-<span class="nc" id="L257">                .sum();</span>
-<span class="nc" id="L258">        double averageScore = totalScore / filteredQuizGrades.size();</span>
+<span class="fc" id="L262">        double totalScore = filteredQuizGrades.stream()</span>
+<span class="fc" id="L263">                .mapToDouble(QuizGrade::getScore)</span>
+<span class="fc" id="L264">                .sum();</span>
+<span class="fc" id="L265">        double averageScore = totalScore / filteredQuizGrades.size();</span>
         
         // Find highest and lowest scores
-<span class="nc" id="L261">        double highestScore = filteredQuizGrades.stream()</span>
-<span class="nc" id="L262">                .mapToDouble(QuizGrade::getScore)</span>
-<span class="nc" id="L263">                .max()</span>
-<span class="nc" id="L264">                .orElse(0);</span>
+<span class="fc" id="L268">        double highestScore = filteredQuizGrades.stream()</span>
+<span class="fc" id="L269">                .mapToDouble(QuizGrade::getScore)</span>
+<span class="fc" id="L270">                .max()</span>
+<span class="fc" id="L271">                .orElse(0);</span>
         
-<span class="nc" id="L266">        double lowestScore = filteredQuizGrades.stream()</span>
-<span class="nc" id="L267">                .mapToDouble(QuizGrade::getScore)</span>
-<span class="nc" id="L268">                .min()</span>
-<span class="nc" id="L269">                .orElse(0);</span>
+<span class="fc" id="L273">        double lowestScore = filteredQuizGrades.stream()</span>
+<span class="fc" id="L274">                .mapToDouble(QuizGrade::getScore)</span>
+<span class="fc" id="L275">                .min()</span>
+<span class="fc" id="L276">                .orElse(0);</span>
         
         // Update labels
-<span class="nc" id="L272">        averageScoreLabel.setText(String.format(&quot;%.1f%%&quot;, averageScore));</span>
-<span class="nc" id="L273">        highestScoreLabel.setText(String.format(&quot;%.1f%%&quot;, highestScore));</span>
-<span class="nc" id="L274">        lowestScoreLabel.setText(String.format(&quot;%.1f%%&quot;, lowestScore));</span>
-<span class="nc" id="L275">    }</span>
+<span class="fc" id="L279">        averageScoreLabel.setText(String.format(&quot;%.1f%%&quot;, averageScore));</span>
+<span class="fc" id="L280">        highestScoreLabel.setText(String.format(&quot;%.1f%%&quot;, highestScore));</span>
+<span class="fc" id="L281">        lowestScoreLabel.setText(String.format(&quot;%.1f%%&quot;, lowestScore));</span>
+<span class="fc" id="L282">    }</span>
     
     /**
      * Handles the filter button action.
@@ -280,8 +287,8 @@ import java.util.stream.Collectors;
      */
     @FXML
     public void handleFilter(ActionEvent event) {
-<span class="nc" id="L283">        applyFilter();</span>
-<span class="nc" id="L284">    }</span>
+<span class="nc" id="L290">        applyFilter();</span>
+<span class="nc" id="L291">    }</span>
     
     /**
      * Handles the reset button action.
@@ -289,14 +296,14 @@ import java.util.stream.Collectors;
      */
     @FXML
     public void handleReset(ActionEvent event) {
-<span class="nc" id="L292">        courseComboBox.getSelectionModel().select(0);</span>
-<span class="nc" id="L293">        minScoreField.clear();</span>
-<span class="nc" id="L294">        maxScoreField.clear();</span>
-<span class="nc" id="L295">        startDatePicker.setValue(null);</span>
-<span class="nc" id="L296">        endDatePicker.setValue(null);</span>
+<span class="fc" id="L299">        courseComboBox.getSelectionModel().select(0);</span>
+<span class="fc" id="L300">        minScoreField.clear();</span>
+<span class="fc" id="L301">        maxScoreField.clear();</span>
+<span class="fc" id="L302">        startDatePicker.setValue(null);</span>
+<span class="fc" id="L303">        endDatePicker.setValue(null);</span>
         
-<span class="nc" id="L298">        applyFilter();</span>
-<span class="nc" id="L299">    }</span>
+<span class="fc" id="L305">        applyFilter();</span>
+<span class="fc" id="L306">    }</span>
     
     /**
      * Handles the refresh button action.
@@ -305,9 +312,9 @@ import java.util.stream.Collectors;
     @FXML
     public void handleRefresh(ActionEvent event) {
         // In a real application, this would reload data from the server
-<span class="nc" id="L308">        loadDemoQuizGrades();</span>
-<span class="nc" id="L309">        applyFilter();</span>
-<span class="nc" id="L310">    }</span>
+<span class="fc" id="L315">        loadDemoQuizGrades();</span>
+<span class="fc" id="L316">        applyFilter();</span>
+<span class="fc" id="L317">    }</span>
     
     /**
      * Handles the quiz selection in the list view.
@@ -315,31 +322,31 @@ import java.util.stream.Collectors;
      */
     @FXML
     public void handleQuizSelection(MouseEvent event) {
-<span class="nc" id="L318">        String selected = quizListView.getSelectionModel().getSelectedItem();</span>
-<span class="nc bnc" id="L319" title="All 2 branches missed.">        if (selected == null) {</span>
-<span class="nc" id="L320">            return;</span>
+<span class="fc" id="L325">        String selected = quizListView.getSelectionModel().getSelectedItem();</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        if (selected == null) {</span>
+<span class="nc" id="L327">            return;</span>
         }
         
         // Extract quiz name (without course)
-<span class="nc" id="L324">        String quizName = selected.substring(0, selected.lastIndexOf(&quot; (&quot;));</span>
+<span class="fc" id="L331">        String quizName = selected.substring(0, selected.lastIndexOf(&quot; (&quot;));</span>
         
         // Find the corresponding quiz grade
-<span class="nc" id="L327">        Optional&lt;QuizGrade&gt; selectedGrade = filteredQuizGrades.stream()</span>
-<span class="nc" id="L328">                .filter(grade -&gt; grade.getQuizName().equals(quizName))</span>
-<span class="nc" id="L329">                .findFirst();</span>
+<span class="fc" id="L334">        Optional&lt;QuizGrade&gt; selectedGrade = filteredQuizGrades.stream()</span>
+<span class="fc" id="L335">                .filter(grade -&gt; grade.getQuizName().equals(quizName))</span>
+<span class="fc" id="L336">                .findFirst();</span>
         
-<span class="nc bnc" id="L331" title="All 2 branches missed.">        if (selectedGrade.isPresent()) {</span>
-<span class="nc" id="L332">            QuizGrade grade = selectedGrade.get();</span>
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        if (selectedGrade.isPresent()) {</span>
+<span class="fc" id="L339">            QuizGrade grade = selectedGrade.get();</span>
             
             // Show additional details in an alert dialog
-<span class="nc" id="L335">            showAlert(Alert.AlertType.INFORMATION, &quot;Quiz Details: &quot; + grade.getQuizName(),</span>
-<span class="nc" id="L336">                    &quot;Course: &quot; + grade.getCourse() + &quot;\n&quot; +</span>
-<span class="nc" id="L337">                    &quot;Score: &quot; + grade.getScore() + &quot;%\n&quot; +</span>
-<span class="nc" id="L338">                    &quot;Date: &quot; + grade.getDate() + &quot;\n\n&quot; +</span>
+<span class="fc" id="L342">            showAlert(Alert.AlertType.INFORMATION, &quot;Quiz Details: &quot; + grade.getQuizName(),</span>
+<span class="fc" id="L343">                    &quot;Course: &quot; + grade.getCourse() + &quot;\n&quot; +</span>
+<span class="fc" id="L344">                    &quot;Score: &quot; + grade.getScore() + &quot;%\n&quot; +</span>
+<span class="fc" id="L345">                    &quot;Date: &quot; + grade.getDate() + &quot;\n\n&quot; +</span>
                     &quot;Click 'Check' from the main screen to view detailed results for this quiz.&quot;
             );
         }
-<span class="nc" id="L342">    }</span>
+<span class="fc" id="L349">    }</span>
     
     /**
      * Handles the back button action.
@@ -349,22 +356,22 @@ import java.util.stream.Collectors;
     public void handleBack(ActionEvent event) {
         try {
             // Load the student main screen
-<span class="nc" id="L352">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
-<span class="nc" id="L353">            Parent root = loader.load();</span>
+<span class="nc" id="L359">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
+<span class="nc" id="L360">            Parent root = loader.load();</span>
             
-<span class="nc" id="L355">            StudentMainController controller = loader.getController();</span>
-<span class="nc" id="L356">            controller.preSetController(student);</span>
+<span class="nc" id="L362">            StudentMainController controller = loader.getController();</span>
+<span class="nc" id="L363">            controller.preSetController(student);</span>
             
             // Show the student main screen
-<span class="nc" id="L359">            Stage stage = (Stage) backButton.getScene().getWindow();</span>
-<span class="nc" id="L360">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L361">            stage.setScene(scene);</span>
-<span class="nc" id="L362">            stage.show();</span>
-<span class="nc" id="L363">        } catch (IOException e) {</span>
-<span class="nc" id="L364">            e.printStackTrace();</span>
-<span class="nc" id="L365">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to main page: &quot; + e.getMessage());</span>
-<span class="nc" id="L366">        }</span>
-<span class="nc" id="L367">    }</span>
+<span class="nc" id="L366">            Stage stage = (Stage) backButton.getScene().getWindow();</span>
+<span class="nc" id="L367">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L368">            stage.setScene(scene);</span>
+<span class="nc" id="L369">            stage.show();</span>
+<span class="nc" id="L370">        } catch (IOException e) {</span>
+<span class="nc" id="L371">            e.printStackTrace();</span>
+<span class="nc" id="L372">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to main page: &quot; + e.getMessage());</span>
+<span class="nc" id="L373">        }</span>
+<span class="nc" id="L374">    }</span>
     
     /**
      * Handles the close button action.
@@ -373,18 +380,18 @@ import java.util.stream.Collectors;
     @FXML
     public void handleClose(ActionEvent event) {
         // Confirm before closing the application
-<span class="nc" id="L376">        Alert confirmClose = new Alert(Alert.AlertType.CONFIRMATION);</span>
-<span class="nc" id="L377">        confirmClose.setTitle(&quot;Close Application&quot;);</span>
-<span class="nc" id="L378">        confirmClose.setHeaderText(&quot;Close Application&quot;);</span>
-<span class="nc" id="L379">        confirmClose.setContentText(&quot;Are you sure you want to exit the application?&quot;);</span>
+<span class="nc" id="L383">        Alert confirmClose = new Alert(Alert.AlertType.CONFIRMATION);</span>
+<span class="nc" id="L384">        confirmClose.setTitle(&quot;Close Application&quot;);</span>
+<span class="nc" id="L385">        confirmClose.setHeaderText(&quot;Close Application&quot;);</span>
+<span class="nc" id="L386">        confirmClose.setContentText(&quot;Are you sure you want to exit the application?&quot;);</span>
         
-<span class="nc" id="L381">        confirmClose.showAndWait().ifPresent(response -&gt; {</span>
-<span class="nc bnc" id="L382" title="All 2 branches missed.">            if (response == ButtonType.OK) {</span>
+<span class="nc" id="L388">        confirmClose.showAndWait().ifPresent(response -&gt; {</span>
+<span class="nc bnc" id="L389" title="All 2 branches missed.">            if (response == ButtonType.OK) {</span>
                 // Close the application
-<span class="nc" id="L384">                Platform.exit();</span>
+<span class="nc" id="L391">                Platform.exit();</span>
             }
-<span class="nc" id="L386">        });</span>
-<span class="nc" id="L387">    }</span>
+<span class="nc" id="L393">        });</span>
+<span class="nc" id="L394">    }</span>
     
     /**
      * Shows an alert dialog.
@@ -393,12 +400,16 @@ import java.util.stream.Collectors;
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
-<span class="nc" id="L396">        Alert alert = new Alert(type);</span>
-<span class="nc" id="L397">        alert.setTitle(title);</span>
-<span class="nc" id="L398">        alert.setHeaderText(null);</span>
-<span class="nc" id="L399">        alert.setContentText(content);</span>
-<span class="nc" id="L400">        alert.showAndWait();</span>
-<span class="nc" id="L401">    }</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (showAlert != null) {</span>
+<span class="fc" id="L404">            showAlert.show(type, title, content);</span>
+        } else {
+<span class="nc" id="L406">            Alert alert = new Alert(type);</span>
+<span class="nc" id="L407">            alert.setTitle(title);</span>
+<span class="nc" id="L408">            alert.setHeaderText(null);</span>
+<span class="nc" id="L409">            alert.setContentText(content);</span>
+<span class="nc" id="L410">            alert.showAndWait();</span>
+        }
+<span class="fc" id="L412">    }</span>
     
     /**
      * QuizGrade class to represent a grade for a quiz.
@@ -416,19 +427,19 @@ import java.util.stream.Collectors;
          * @param score The score earned on the quiz.
          * @param date The date the quiz was taken.
          */
-<span class="nc" id="L419">        public QuizGrade(String quizName, String course, double score, LocalDate date) {</span>
-<span class="nc" id="L420">            this.quizName = quizName;</span>
-<span class="nc" id="L421">            this.course = course;</span>
-<span class="nc" id="L422">            this.score = score;</span>
-<span class="nc" id="L423">            this.date = date;</span>
-<span class="nc" id="L424">        }</span>
+<span class="fc" id="L430">        public QuizGrade(String quizName, String course, double score, LocalDate date) {</span>
+<span class="fc" id="L431">            this.quizName = quizName;</span>
+<span class="fc" id="L432">            this.course = course;</span>
+<span class="fc" id="L433">            this.score = score;</span>
+<span class="fc" id="L434">            this.date = date;</span>
+<span class="fc" id="L435">        }</span>
         
         /**
          * Gets the quiz name.
          * @return The quiz name.
          */
         public String getQuizName() {
-<span class="nc" id="L431">            return quizName;</span>
+<span class="fc" id="L442">            return quizName;</span>
         }
         
         /**
@@ -436,7 +447,7 @@ import java.util.stream.Collectors;
          * @return The course.
          */
         public String getCourse() {
-<span class="nc" id="L439">            return course;</span>
+<span class="fc" id="L450">            return course;</span>
         }
         
         /**
@@ -444,7 +455,7 @@ import java.util.stream.Collectors;
          * @return The score.
          */
         public double getScore() {
-<span class="nc" id="L447">            return score;</span>
+<span class="fc" id="L458">            return score;</span>
         }
         
         /**
@@ -452,7 +463,7 @@ import java.util.stream.Collectors;
          * @return The date.
          */
         public LocalDate getDate() {
-<span class="nc" id="L455">            return date;</span>
+<span class="fc" id="L466">            return date;</span>
         }
     }
 } 

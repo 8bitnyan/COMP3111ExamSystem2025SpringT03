@@ -61,6 +61,13 @@ public class StudentGradeStatisticsController implements Initializable {
     private List<QuizGrade> allQuizGrades;
     private List<QuizGrade> filteredQuizGrades;
     
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+    AlertShower showAlert = null;
+    
     /**
      * Initializes the student grade statistics page UI.
      * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
@@ -393,11 +400,15 @@ public class StudentGradeStatisticsController implements Initializable {
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        if (showAlert != null) {
+            showAlert.show(type, title, content);
+        } else {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        }
     }
     
     /**

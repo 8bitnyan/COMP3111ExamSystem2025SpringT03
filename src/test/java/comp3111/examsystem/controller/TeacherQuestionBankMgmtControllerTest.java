@@ -613,6 +613,81 @@ public class TeacherQuestionBankMgmtControllerTest {
         latchPublished.await(5, TimeUnit.SECONDS);
     }
 
+    @Test
+    void testHandleRefreshWithNullTeacher() throws Exception {
+        setField(controller, "teacher", null);
+        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
+            msgSenderMocked.when(() -> MsgSender.showMsg(Mockito.anyString())).then(invocation -> null);
+            // Should show error and not throw
+            assertDoesNotThrow(() -> controller.handleRefresh());
+            assertDoesNotThrow(() -> controller.handleRefreshWithoutMsg());
+        }
+    }
+
+    @Test
+    void testUpdateOptionFieldsVisibilityBranches() throws Exception {
+        // MCQ branch
+        setField(controller, "optionFields", new ArrayList<>());
+        setField(controller, "options", new VBox());
+        setField(controller, "optionsContainer", new VBox());
+        setField(controller, "addOptionBtn", new Button());
+        controller.updateOptionFieldsVisibility("MCQ");
+        // non-MCQ branch
+        controller.updateOptionFieldsVisibility("Short Answer");
+    }
+
+    @Test
+    void testTableSelectionLogicBranches() throws Exception {
+        TableView<Question> table = new TableView<>();
+        setField(controller, "questionsTable", table);
+        setField(controller, "editMode", true);
+        // Listener should return early if editMode true
+        table.getSelectionModel().select(null);
+        setField(controller, "editMode", false);
+        // Add a question and select it
+        Question q = new Question(); q.setId(1L); q.setQuestionText("Q?");
+        table.getItems().add(q);
+        table.getSelectionModel().select(q);
+        // Clear selection
+        table.getSelectionModel().clearSelection();
+    }
+
+    @Test
+    void testFillFieldsFromSelectedQuestion_ExceptionHandling() throws Exception {
+        // Should handle null question
+        assertDoesNotThrow(() -> {
+            var method = controller.getClass().getDeclaredMethod("fillFieldsFromSelectedQuestion", Question.class);
+            method.setAccessible(true);
+            method.invoke(controller, new Object[]{null});
+        });
+        // Should handle exception in Platform.runLater (simulate by passing a question with nulls)
+        Question q = new Question();
+        q.setId(2L);
+        assertDoesNotThrow(() -> {
+            var method = controller.getClass().getDeclaredMethod("fillFieldsFromSelectedQuestion", Question.class);
+            method.setAccessible(true);
+            method.invoke(controller, q);
+        });
+    }
+
+    @Test
+    void testDisplaySelectedQuestionReadOnly_ExceptionHandling() throws Exception {
+        // Should handle null question
+        assertDoesNotThrow(() -> {
+            var method = controller.getClass().getDeclaredMethod("displaySelectedQuestionReadOnly", Question.class);
+            method.setAccessible(true);
+            method.invoke(controller, new Object[]{null});
+        });
+        // Should handle exception in setting fields (simulate by passing a question with nulls)
+        Question q = new Question();
+        q.setId(3L);
+        assertDoesNotThrow(() -> {
+            var method = controller.getClass().getDeclaredMethod("displaySelectedQuestionReadOnly", Question.class);
+            method.setAccessible(true);
+            method.invoke(controller, q);
+        });
+    }
+
     private Object getField(Object obj, String fieldName) throws Exception {
         Field field = obj.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);

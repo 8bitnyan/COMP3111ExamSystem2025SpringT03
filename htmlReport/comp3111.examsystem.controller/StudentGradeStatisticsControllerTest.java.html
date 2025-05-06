@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentGradeStatisticsControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentGradeStatisticsControllerTest.java</span></div><h1>StudentGradeStatisticsControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.entity.Student;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.control.*;
+import javafx.scene.chart.*;
+import javafx.scene.input.MouseEvent;
+import org.junit.jupiter.api.*;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.util.concurrent.CountDownLatch;
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L15">public class StudentGradeStatisticsControllerTest {</span>
+    private StudentGradeStatisticsController controller;
+    private ComboBox&lt;String&gt; courseComboBox;
+    private TextField minScoreField;
+    private TextField maxScoreField;
+    private DatePicker startDatePicker;
+    private DatePicker endDatePicker;
+    private Button filterButton;
+    private Button resetButton;
+    private Button refreshButton;
+    private ListView&lt;String&gt; quizListView;
+    private BarChart&lt;String, Number&gt; gradeChart;
+    private CategoryAxis xAxis;
+    private NumberAxis yAxis;
+    private Label averageScoreLabel;
+    private Label highestScoreLabel;
+    private Label lowestScoreLabel;
+    private Button backButton;
+    private Button closeButton;
+
+    @BeforeAll
+    static void initJfx() {
+<span class="fc" id="L37">        new JFXPanel();</span>
+<span class="fc" id="L38">    }</span>
+
+    @BeforeEach
+    void setUp() throws Exception {
+<span class="fc" id="L42">        controller = new StudentGradeStatisticsController();</span>
+<span class="fc" id="L43">        courseComboBox = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L44">        minScoreField = new TextField();</span>
+<span class="fc" id="L45">        maxScoreField = new TextField();</span>
+<span class="fc" id="L46">        startDatePicker = new DatePicker();</span>
+<span class="fc" id="L47">        endDatePicker = new DatePicker();</span>
+<span class="fc" id="L48">        filterButton = new Button();</span>
+<span class="fc" id="L49">        resetButton = new Button();</span>
+<span class="fc" id="L50">        refreshButton = new Button();</span>
+<span class="fc" id="L51">        quizListView = new ListView&lt;&gt;();</span>
+<span class="fc" id="L52">        xAxis = new CategoryAxis();</span>
+<span class="fc" id="L53">        yAxis = new NumberAxis();</span>
+<span class="fc" id="L54">        gradeChart = new BarChart&lt;&gt;(xAxis, yAxis);</span>
+<span class="fc" id="L55">        averageScoreLabel = new Label();</span>
+<span class="fc" id="L56">        highestScoreLabel = new Label();</span>
+<span class="fc" id="L57">        lowestScoreLabel = new Label();</span>
+<span class="fc" id="L58">        backButton = new Button();</span>
+<span class="fc" id="L59">        closeButton = new Button();</span>
+<span class="fc" id="L60">        setField(controller, &quot;courseComboBox&quot;, courseComboBox);</span>
+<span class="fc" id="L61">        setField(controller, &quot;minScoreField&quot;, minScoreField);</span>
+<span class="fc" id="L62">        setField(controller, &quot;maxScoreField&quot;, maxScoreField);</span>
+<span class="fc" id="L63">        setField(controller, &quot;startDatePicker&quot;, startDatePicker);</span>
+<span class="fc" id="L64">        setField(controller, &quot;endDatePicker&quot;, endDatePicker);</span>
+<span class="fc" id="L65">        setField(controller, &quot;filterButton&quot;, filterButton);</span>
+<span class="fc" id="L66">        setField(controller, &quot;resetButton&quot;, resetButton);</span>
+<span class="fc" id="L67">        setField(controller, &quot;refreshButton&quot;, refreshButton);</span>
+<span class="fc" id="L68">        setField(controller, &quot;quizListView&quot;, quizListView);</span>
+<span class="fc" id="L69">        setField(controller, &quot;gradeChart&quot;, gradeChart);</span>
+<span class="fc" id="L70">        setField(controller, &quot;xAxis&quot;, xAxis);</span>
+<span class="fc" id="L71">        setField(controller, &quot;yAxis&quot;, yAxis);</span>
+<span class="fc" id="L72">        setField(controller, &quot;averageScoreLabel&quot;, averageScoreLabel);</span>
+<span class="fc" id="L73">        setField(controller, &quot;highestScoreLabel&quot;, highestScoreLabel);</span>
+<span class="fc" id="L74">        setField(controller, &quot;lowestScoreLabel&quot;, lowestScoreLabel);</span>
+<span class="fc" id="L75">        setField(controller, &quot;backButton&quot;, backButton);</span>
+<span class="fc" id="L76">        setField(controller, &quot;closeButton&quot;, closeButton);</span>
+<span class="fc" id="L77">    }</span>
+
+    private void setField(Object obj, String fieldName, Object value) throws Exception {
+<span class="fc" id="L80">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L81">        field.setAccessible(true);</span>
+<span class="fc" id="L82">        field.set(obj, value);</span>
+<span class="fc" id="L83">    }</span>
+
+    @Test
+    void testInitializeSetsPromptsAndListeners() {
+<span class="fc" id="L87">        controller.initialize(null, null);</span>
+<span class="fc" id="L88">        assertEquals(&quot;0&quot;, minScoreField.getPromptText());</span>
+<span class="fc" id="L89">        assertEquals(&quot;100&quot;, maxScoreField.getPromptText());</span>
+<span class="fc" id="L90">        minScoreField.setText(&quot;abc123&quot;);</span>
+<span class="fc" id="L91">        maxScoreField.setText(&quot;xyz456&quot;);</span>
+<span class="fc" id="L92">        assertEquals(&quot;123&quot;, minScoreField.getText());</span>
+<span class="fc" id="L93">        assertEquals(&quot;456&quot;, maxScoreField.getText());</span>
+<span class="fc" id="L94">    }</span>
+
+    @Test
+    void testPreSetControllerLoadsDataAndAppliesFilter() {
+<span class="fc" id="L98">        Student student = new Student();</span>
+<span class="fc" id="L99">        controller.preSetController(student);</span>
+<span class="fc" id="L100">        assertNotNull(courseComboBox.getItems());</span>
+<span class="fc" id="L101">        assertTrue(courseComboBox.getItems().contains(&quot;All Courses&quot;));</span>
+<span class="fc" id="L102">        assertFalse(quizListView.getItems().isEmpty());</span>
+<span class="fc" id="L103">        assertNotNull(gradeChart.getData());</span>
+<span class="fc" id="L104">        assertNotNull(averageScoreLabel.getText());</span>
+<span class="fc" id="L105">    }</span>
+
+    @Test
+    void testApplyFilter_AllBranches() throws Exception {
+<span class="fc" id="L109">        controller.preSetController(new Student());</span>
+        // Set course filter
+<span class="fc" id="L111">        courseComboBox.getSelectionModel().select(&quot;COMP3111&quot;);</span>
+<span class="fc" id="L112">        minScoreField.setText(&quot;80&quot;);</span>
+<span class="fc" id="L113">        maxScoreField.setText(&quot;90&quot;);</span>
+<span class="fc" id="L114">        startDatePicker.setValue(LocalDate.now().minusDays(31));</span>
+<span class="fc" id="L115">        endDatePicker.setValue(LocalDate.now().minusDays(14));</span>
+        // Call applyFilter via reflection
+<span class="fc" id="L117">        Field f = controller.getClass().getDeclaredField(&quot;filteredQuizGrades&quot;);</span>
+<span class="fc" id="L118">        f.setAccessible(true);</span>
+<span class="fc" id="L119">        var method = controller.getClass().getDeclaredMethod(&quot;applyFilter&quot;);</span>
+<span class="fc" id="L120">        method.setAccessible(true);</span>
+<span class="fc" id="L121">        method.invoke(controller);</span>
+<span class="fc" id="L122">        var filtered = (java.util.List&lt;?&gt;) f.get(controller);</span>
+<span class="fc" id="L123">        assertTrue(filtered.stream().allMatch(qg -&gt; {</span>
+            try {
+<span class="fc" id="L125">                Field course = qg.getClass().getDeclaredField(&quot;course&quot;);</span>
+<span class="fc" id="L126">                course.setAccessible(true);</span>
+<span class="fc" id="L127">                String c = (String) course.get(qg);</span>
+<span class="fc" id="L128">                Field score = qg.getClass().getDeclaredField(&quot;score&quot;);</span>
+<span class="fc" id="L129">                score.setAccessible(true);</span>
+<span class="fc" id="L130">                double s = (double) score.get(qg);</span>
+<span class="fc" id="L131">                Field date = qg.getClass().getDeclaredField(&quot;date&quot;);</span>
+<span class="fc" id="L132">                date.setAccessible(true);</span>
+<span class="fc" id="L133">                LocalDate d = (LocalDate) date.get(qg);</span>
+<span class="pc bpc" id="L134" title="3 of 6 branches missed.">                return c.equals(&quot;COMP3111&quot;) &amp;&amp; s &gt;= 80 &amp;&amp; s &lt;= 90 &amp;&amp;</span>
+<span class="pc bpc" id="L135" title="2 of 4 branches missed.">                        (d.isEqual(LocalDate.now().minusDays(31)) || d.isAfter(LocalDate.now().minusDays(31))) &amp;&amp;</span>
+<span class="pc bpc" id="L136" title="2 of 4 branches missed.">                        (d.isEqual(LocalDate.now().minusDays(14)) || d.isBefore(LocalDate.now().minusDays(14)));</span>
+<span class="nc" id="L137">            } catch (Exception e) { return false; }</span>
+        }));
+<span class="fc" id="L139">    }</span>
+
+    @Test
+    void testApplyFilter_InvalidScoreInputShowsAlert() throws Exception {
+<span class="fc" id="L143">        controller.preSetController(new Student());</span>
+<span class="fc" id="L144">        minScoreField.setText(&quot;abc&quot;);</span>
+<span class="fc" id="L145">        maxScoreField.setText(&quot;&quot;);</span>
+        // Patch showAlert to set a flag
+<span class="fc" id="L147">        Field alertFlag = StudentGradeStatisticsControllerTest.class.getDeclaredField(&quot;alertShown&quot;);</span>
+<span class="fc" id="L148">        alertFlag.setAccessible(true);</span>
+<span class="fc" id="L149">        alertShown = false;</span>
+<span class="fc" id="L150">        controller.showAlert = (type, title, content) -&gt; alertShown = true;</span>
+<span class="fc" id="L151">        var method = controller.getClass().getDeclaredMethod(&quot;applyFilter&quot;);</span>
+<span class="fc" id="L152">        method.setAccessible(true);</span>
+<span class="fc" id="L153">        method.invoke(controller);</span>
+<span class="fc" id="L154">        assertTrue(alertShown);</span>
+<span class="fc" id="L155">    }</span>
+
+<span class="fc" id="L157">    private static boolean alertShown = false;</span>
+
+    @Test
+    void testHandleResetClearsFilters() throws Exception {
+<span class="fc" id="L161">        controller.preSetController(new Student());</span>
+<span class="fc" id="L162">        courseComboBox.getSelectionModel().select(&quot;COMP3111&quot;);</span>
+<span class="fc" id="L163">        minScoreField.setText(&quot;80&quot;);</span>
+<span class="fc" id="L164">        maxScoreField.setText(&quot;90&quot;);</span>
+<span class="fc" id="L165">        startDatePicker.setValue(LocalDate.now().minusDays(31));</span>
+<span class="fc" id="L166">        endDatePicker.setValue(LocalDate.now().minusDays(14));</span>
+<span class="fc" id="L167">        controller.handleReset(null);</span>
+<span class="fc" id="L168">        assertEquals(0, courseComboBox.getSelectionModel().getSelectedIndex());</span>
+<span class="fc" id="L169">        assertEquals(&quot;&quot;, minScoreField.getText());</span>
+<span class="fc" id="L170">        assertEquals(&quot;&quot;, maxScoreField.getText());</span>
+<span class="fc" id="L171">        assertNull(startDatePicker.getValue());</span>
+<span class="fc" id="L172">        assertNull(endDatePicker.getValue());</span>
+<span class="fc" id="L173">    }</span>
+
+    @Test
+    void testHandleRefreshReloadsData() {
+<span class="fc" id="L177">        controller.preSetController(new Student());</span>
+<span class="fc" id="L178">        quizListView.getItems().clear();</span>
+<span class="fc" id="L179">        controller.handleRefresh(null);</span>
+<span class="fc" id="L180">        assertFalse(quizListView.getItems().isEmpty());</span>
+<span class="fc" id="L181">    }</span>
+
+    @Test
+    void testHandleQuizSelectionShowsAlert() throws Exception {
+<span class="fc" id="L185">        controller.preSetController(new Student());</span>
+<span class="fc" id="L186">        quizListView.getItems().add(&quot;Week 1 Quiz (COMP3111)&quot;);</span>
+<span class="fc" id="L187">        quizListView.getSelectionModel().select(0);</span>
+        // Patch showAlert to set a flag
+<span class="fc" id="L189">        Field alertFlag = StudentGradeStatisticsControllerTest.class.getDeclaredField(&quot;alertShown&quot;);</span>
+<span class="fc" id="L190">        alertFlag.setAccessible(true);</span>
+<span class="fc" id="L191">        alertShown = false;</span>
+<span class="fc" id="L192">        controller.showAlert = (type, title, content) -&gt; alertShown = true;</span>
+<span class="fc" id="L193">        controller.handleQuizSelection(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, null, 1, false, false, false, false, false, false, false, false, false, false, null));</span>
+<span class="fc" id="L194">        assertTrue(alertShown);</span>
+<span class="fc" id="L195">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

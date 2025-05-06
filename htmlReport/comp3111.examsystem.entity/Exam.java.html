@@ -253,7 +253,7 @@ public class Exam extends Entity {
     public void setQuestions(String questions) {
 <span class="fc" id="L254">        this.questions = questions;</span>
         // Try to parse and update questionIds from questions string
-<span class="pc bpc" id="L256" title="1 of 4 branches missed.">        if (questions != null &amp;&amp; !questions.isEmpty()) {</span>
+<span class="fc bfc" id="L256" title="All 4 branches covered.">        if (questions != null &amp;&amp; !questions.isEmpty()) {</span>
             try {
 <span class="fc" id="L258">                String[] idStrings = questions.split(&quot;,&quot;);</span>
 <span class="fc" id="L259">                List&lt;Long&gt; ids = new ArrayList&lt;&gt;();</span>

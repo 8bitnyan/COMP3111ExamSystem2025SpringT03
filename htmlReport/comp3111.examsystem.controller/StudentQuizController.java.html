@@ -184,8 +184,8 @@ import java.util.ResourceBundle;
      * @param index The index of the question to load.
      */
     private void loadQuestion(int index) {
-<span class="pc bpc" id="L187" title="2 of 4 branches missed.">        if (index &lt; 0 || index &gt;= questions.size()) {</span>
-<span class="nc" id="L188">            return;</span>
+<span class="fc bfc" id="L187" title="All 4 branches covered.">        if (index &lt; 0 || index &gt;= questions.size()) {</span>
+<span class="fc" id="L188">            return;</span>
         }
         
         // Save current answer before loading new question
@@ -216,16 +216,16 @@ import java.util.ResourceBundle;
             
             // Set options based on available count
 <span class="fc" id="L218">            int optionsCount = options.size();</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (optionsCount &gt; 0) option1.setText(options.get(0));</span>
-<span class="pc bpc" id="L220" title="1 of 2 branches missed.">            if (optionsCount &gt; 1) option2.setText(options.get(1));</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (optionsCount &gt; 2) option3.setText(options.get(2));</span>
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (optionsCount &gt; 3) option4.setText(options.get(3));</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            if (optionsCount &gt; 0) option1.setText(options.get(0));</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            if (optionsCount &gt; 1) option2.setText(options.get(1));</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (optionsCount &gt; 2) option3.setText(options.get(2));</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            if (optionsCount &gt; 3) option4.setText(options.get(3));</span>
             
             // Set visibility based on available options
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            option1.setVisible(optionsCount &gt; 0);</span>
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">            option2.setVisible(optionsCount &gt; 1);</span>
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            option3.setVisible(optionsCount &gt; 2);</span>
-<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            option4.setVisible(optionsCount &gt; 3);</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">            option1.setVisible(optionsCount &gt; 0);</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            option2.setVisible(optionsCount &gt; 1);</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            option3.setVisible(optionsCount &gt; 2);</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            option4.setVisible(optionsCount &gt; 3);</span>
             
             // Set selected option if an answer exists
 <span class="fc" id="L231">            String savedAnswer = studentAnswers.get(currentQuestionIndex);</span>
@@ -319,8 +319,8 @@ import java.util.ResourceBundle;
 <span class="fc" id="L319">        timerText.setText(String.format(&quot;%02d:%02d:%02d&quot;, hours, minutes, seconds));</span>
         
         // Change timer color to red when less than 5 minutes remain
-<span class="pc bpc" id="L322" title="2 of 4 branches missed.">        if (hours == 0 &amp;&amp; minutes &lt; 5) {</span>
-<span class="nc" id="L323">            timerText.setStyle(&quot;-fx-fill: red;&quot;);</span>
+<span class="fc bfc" id="L322" title="All 4 branches covered.">        if (hours == 0 &amp;&amp; minutes &lt; 5) {</span>
+<span class="fc" id="L323">            timerText.setStyle(&quot;-fx-fill: red;&quot;);</span>
         } else {
 <span class="fc" id="L325">            timerText.setStyle(&quot;-fx-fill: black;&quot;);</span>
         }
@@ -463,32 +463,32 @@ import java.util.ResourceBundle;
 <span class="fc" id="L463">            Exam exam = null;</span>
             
             // Find the exam with the matching name
-<span class="pc bpc" id="L466" title="1 of 2 branches missed.">            for (Exam e : exams) {</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">            for (Exam e : exams) {</span>
 <span class="fc bfc" id="L467" title="All 2 branches covered.">                if (quizName.equals(e.getName())) {</span>
 <span class="fc" id="L468">                    exam = e;</span>
 <span class="fc" id="L469">                    break;</span>
                 }
 <span class="fc" id="L471">            }</span>
             
-<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if (exam == null) {</span>
-<span class="nc" id="L474">                System.err.println(&quot;Error: Could not find exam with name: &quot; + quizName);</span>
-<span class="nc" id="L475">                return;</span>
+<span class="fc bfc" id="L473" title="All 2 branches covered.">            if (exam == null) {</span>
+<span class="fc" id="L474">                System.err.println(&quot;Error: Could not find exam with name: &quot; + quizName);</span>
+<span class="fc" id="L475">                return;</span>
             }
             
             // Get the questions string from the exam
 <span class="fc" id="L479">            String questionsStr = exam.getQuestions();</span>
             
-<span class="pc bpc" id="L481" title="2 of 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
-<span class="nc" id="L482">                System.err.println(&quot;Error: No questions found for exam: &quot; + quizName);</span>
-<span class="nc" id="L483">                return;</span>
+<span class="pc bpc" id="L481" title="1 of 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
+<span class="fc" id="L482">                System.err.println(&quot;Error: No questions found for exam: &quot; + quizName);</span>
+<span class="fc" id="L483">                return;</span>
             }
             
             // Split the question IDs string
 <span class="fc" id="L487">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
             
-<span class="pc bpc" id="L489" title="1 of 2 branches missed.">            if (questionIdArr.length != questions.size()) {</span>
-<span class="nc" id="L490">                System.err.println(&quot;Error: Question count mismatch. Database: &quot; + questionIdArr.length + &quot;, Actual: &quot; + questions.size());</span>
-<span class="nc" id="L491">                return;</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">            if (questionIdArr.length != questions.size()) {</span>
+<span class="fc" id="L490">                System.err.println(&quot;Error: Question count mismatch. Database: &quot; + questionIdArr.length + &quot;, Actual: &quot; + questions.size());</span>
+<span class="fc" id="L491">                return;</span>
             }
             
             // Create records for each question
@@ -523,8 +523,8 @@ import java.util.ResourceBundle;
                     
                     // Save the record to the database
 <span class="fc" id="L525">                    recordDB.add(record);</span>
-<span class="nc" id="L526">                } catch (NumberFormatException e) {</span>
-<span class="nc" id="L527">                    System.err.println(&quot;Error parsing question ID: &quot; + questionIdArr[i] + &quot;. Skipping this question.&quot;);</span>
+<span class="fc" id="L526">                } catch (NumberFormatException e) {</span>
+<span class="fc" id="L527">                    System.err.println(&quot;Error parsing question ID: &quot; + questionIdArr[i] + &quot;. Skipping this question.&quot;);</span>
 <span class="fc" id="L528">                }</span>
             }
             
@@ -535,7 +535,7 @@ import java.util.ResourceBundle;
 <span class="fc" id="L535">            timeSpent.setExamId(exam.getId());</span>
             
             // Calculate time spent in minutes (initial time limit minus remaining time)
-<span class="pc bpc" id="L538" title="1 of 2 branches missed.">            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;</span>
+<span class="fc bfc" id="L538" title="All 2 branches covered.">            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;</span>
 <span class="fc" id="L539">            int remainingMinutes = hours * 60 + minutes;</span>
 <span class="fc" id="L540">            int timeSpentMinutes = initialTimeLimit - remainingMinutes;</span>
             
@@ -560,7 +560,7 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handleNext(ActionEvent event) {
-<span class="pc bpc" id="L563" title="1 of 2 branches missed.">        if (currentQuestionIndex &lt; questions.size() - 1) {</span>
+<span class="fc bfc" id="L563" title="All 2 branches covered.">        if (currentQuestionIndex &lt; questions.size() - 1) {</span>
 <span class="fc" id="L564">            loadQuestion(currentQuestionIndex + 1);</span>
         }
 <span class="fc" id="L566">    }</span>
@@ -571,7 +571,7 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handlePrevious(ActionEvent event) {
-<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if (currentQuestionIndex &gt; 0) {</span>
+<span class="fc bfc" id="L574" title="All 2 branches covered.">        if (currentQuestionIndex &gt; 0) {</span>
 <span class="fc" id="L575">            loadQuestion(currentQuestionIndex - 1);</span>
         }
 <span class="fc" id="L577">    }</span>
