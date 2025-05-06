@@ -89,9 +89,14 @@
         <version>0.8.11</version>
         <executions>
           <execution>
+            <id>prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
+            <phase>initialize</phase>
+            <configuration>
+              <propertyName>jacoco.agent.argLine</propertyName>
+            </configuration>
           </execution>
           <execution>
             <id>report</id>
@@ -116,7 +121,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M9</version>
         <configuration>
-          <argLine>-javaagent:/Users/8bitnyan/.m2/repository/org/jacoco/org.jacoco.agent/0.8.10/org.jacoco.agent-0.8.10-runtime.jar=destfile=${project.build.directory}/jacoco.exec --add-exports=javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.embed=ALL-UNNAMED</argLine>
+          <argLine>${jacoco.agent.argLine} --add-exports=javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.embed=ALL-UNNAMED</argLine>
           <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
       </plugin>
