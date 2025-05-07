@@ -1,3 +1,6 @@
+
+<img width="907" alt="team member" src="https://github.com/user-attachments/assets/aee8bc16-fd37-4733-9797-b82d0c918156" />
+
 Screenshots
 https://docs.google.com/presentation/d/1GWG8FjLWg-eAeITueYIcZfqXQ1lVeAPr/edit?usp=sharing&ouid=107074450873944329060&rtpof=true&sd=true
 
