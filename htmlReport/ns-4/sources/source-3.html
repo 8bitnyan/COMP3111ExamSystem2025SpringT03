@@ -1,0 +1,154 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MsgSender</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.tools</a>
+</div>
+
+<h1>Coverage Summary for Class: MsgSender (comp3111.examsystem.tools)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MsgSender</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.tools;
+&nbsp;
+&nbsp;import javafx.scene.control.Alert;
+&nbsp;import javafx.scene.control.ButtonType;
+&nbsp;
+&nbsp;/**
+&nbsp; * The MsgSender class is a helper class for displaying javafx alert messages.
+&nbsp; * It supports displaying information popups and confirmation popups.
+&nbsp; */
+<b class="nc">&nbsp;public class MsgSender {</b>
+&nbsp;    /**
+&nbsp;     * Displays a popup message in the UI.
+&nbsp;     * @param msg The message string to be displayed.
+&nbsp;     */
+&nbsp;    static public void showMsg(String msg) {
+<b class="nc">&nbsp;        Alert alert = new Alert(Alert.AlertType.INFORMATION);</b>
+<b class="nc">&nbsp;        alert.titleProperty().set(&quot;Hint&quot;);</b>
+<b class="nc">&nbsp;        alert.headerTextProperty().set(msg);</b>
+<b class="nc">&nbsp;        alert.showAndWait();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays a confirmation message in the UI. If the user confirms the action, callback is executed.
+&nbsp;     * @param title The title string of the confirmation message.
+&nbsp;     * @param msg The message string to be displayed.
+&nbsp;     * @param callback The function to be executed if the user confirms.
+&nbsp;     */
+&nbsp;    static public void showConfirm(String title, String msg, Runnable callback) {
+<b class="nc">&nbsp;        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);</b>
+<b class="nc">&nbsp;        alert.setTitle(title);</b>
+<b class="nc">&nbsp;        alert.setHeaderText(msg);</b>
+<b class="nc">&nbsp;        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (result == ButtonType.OK) {</b>
+<b class="nc">&nbsp;            callback.run();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

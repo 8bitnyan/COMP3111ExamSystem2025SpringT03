@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * The controller for student grade statistics page.
+ * The controller for the student grade statistics page. Handles UI logic for displaying and filtering student quiz grades, statistics, and charts.
  */
 public class StudentGradeStatisticsController implements Initializable {
     
@@ -61,6 +61,11 @@ public class StudentGradeStatisticsController implements Initializable {
     private List<QuizGrade> allQuizGrades;
     private List<QuizGrade> filteredQuizGrades;
     
+    // Add database fields for fetching records and exams
+    private comp3111.examsystem.tools.Database<comp3111.examsystem.entity.Record> recordDB = new comp3111.examsystem.tools.Database<>(comp3111.examsystem.entity.Record.class);
+    private comp3111.examsystem.tools.Database<Exam> examDB = new comp3111.examsystem.tools.Database<>(Exam.class);
+    private comp3111.examsystem.tools.Database<Course> courseDB = new comp3111.examsystem.tools.Database<>(Course.class);
+    
     // For testability: allow patching alert logic
     @FunctionalInterface
     interface AlertShower {
@@ -69,8 +74,9 @@ public class StudentGradeStatisticsController implements Initializable {
     AlertShower showAlert = null;
     
     /**
-     * Initializes the student grade statistics page UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the student grade statistics page UI. Sets up input validation, loads courses, and applies the initial filter.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     @Override
@@ -100,20 +106,62 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Sets up the controller with the required data.
+     * Sets up the controller with the required data for the given student.
+     *
      * @param student The student viewing the grade statistics.
      */
     public void preSetController(Student student) {
         this.student = student;
-        // In a real application, load real quiz grades for this student here
-        // allQuizGrades = ...
-        // For now, just ensure empty state is handled
+        // Fetch all records for this student
+        List<comp3111.examsystem.entity.Record> studentRecords = recordDB.queryByField("studentID", String.valueOf(student.getId()));
+        // Group records by examID
+        Map<Long, List<comp3111.examsystem.entity.Record>> recordsByExam = studentRecords.stream()
+                .filter(r -> r.getExamID() != null)
+                .collect(Collectors.groupingBy(comp3111.examsystem.entity.Record::getExamID));
+        List<QuizGrade> quizGrades = new ArrayList<>();
+        for (Map.Entry<Long, List<comp3111.examsystem.entity.Record>> entry : recordsByExam.entrySet()) {
+            Long examId = entry.getKey();
+            List<comp3111.examsystem.entity.Record> records = entry.getValue();
+            Exam exam = examDB.queryByKey(String.valueOf(examId));
+            if (exam == null) continue;
+            String quizName = exam.getExamName();
+            String course = exam.getCourseCode();
+            double score = records.stream().mapToDouble(r -> r.getScore() != null ? r.getScore() : 0).sum();
+            // Calculate total possible score for the exam
+            double totalScore = 0;
+            // Fetch all questions for this exam
+            comp3111.examsystem.tools.Database<Question> questionDB = new comp3111.examsystem.tools.Database<>(Question.class);
+            for (Object qidObj : exam.getQuestionIds()) {
+                Long qid = null;
+                if (qidObj instanceof Long) {
+                    qid = (Long) qidObj;
+                } else if (qidObj instanceof String) {
+                    try {
+                        qid = Long.parseLong((String) qidObj);
+                    } catch (NumberFormatException e) {
+                        continue; // skip invalid
+                    }
+                }
+                if (qid != null) {
+                    Question q = questionDB.queryByKey(String.valueOf(qid));
+                    if (q != null && q.getScore() != null) {
+                        totalScore += q.getScore();
+                    }
+                }
+            }
+            // Calculate percentage score out of 100
+            double percentScore = (totalScore > 0) ? (score / totalScore) * 100.0 : 0.0;
+            // No date field in Record, so use LocalDate.now() as placeholder
+            LocalDate date = LocalDate.now();
+            quizGrades.add(new QuizGrade(quizName, course, percentScore, date));
+        }
+        this.allQuizGrades = quizGrades;
         loadCourses();
         applyFilter();
     }
     
     /**
-     * Loads available courses from the quiz grades.
+     * Loads available courses from the quiz grades and populates the course combo box.
      */
     private void loadCourses() {
         Set<String> courses = allQuizGrades.stream()
@@ -127,7 +175,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Applies the filter based on the selected criteria.
+     * Applies the filter based on the selected criteria (course, score range, date range).
+     * Updates the quiz list, chart, and statistics accordingly.
      */
     private void applyFilter() {
         filteredQuizGrades = new ArrayList<>(allQuizGrades);
@@ -175,7 +224,7 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Updates the quiz list with filtered quiz grades.
+     * Updates the quiz list view with filtered quiz grades.
      */
     private void updateQuizList() {
         List<String> quizNames = filteredQuizGrades.stream()
@@ -186,10 +235,16 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Updates the chart with filtered quiz grades.
+     * Updates the bar chart with filtered quiz grades.
      */
     private void updateChart() {
         gradeChart.getData().clear();
+        
+        // Always set y-axis from 0 to 100 (percentage)
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(100);
+        yAxis.setTickUnit(10);
         
         if (filteredQuizGrades.isEmpty()) return;
         
@@ -213,9 +268,10 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Returns a color based on the score.
+     * Returns a color based on the score for chart bar styling.
+     *
      * @param score The score to get a color for.
-     * @return A CSS color string.
+     * @return A CSS color string representing the bar color.
      */
     private String getColorForScore(double score) {
         if (score >= 90) {
@@ -230,7 +286,7 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Updates the statistics based on filtered quiz grades.
+     * Updates the statistics labels (average, highest, lowest) based on filtered quiz grades.
      */
     private void updateStatistics() {
         if (filteredQuizGrades.isEmpty()) {
@@ -264,7 +320,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the filter button action.
+     * Handles the filter button action. Applies the current filter settings.
+     *
      * @param event The action event.
      */
     @FXML
@@ -273,7 +330,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the reset button action.
+     * Handles the reset button action. Resets all filter fields to their default state.
+     *
      * @param event The action event.
      */
     @FXML
@@ -288,7 +346,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the refresh button action.
+     * Handles the refresh button action. Reloads courses and reapplies the filter.
+     *
      * @param event The action event.
      */
     @FXML
@@ -300,7 +359,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the quiz selection in the list view.
+     * Handles the quiz selection in the list view. Shows details for the selected quiz in an alert dialog.
+     *
      * @param event The mouse event.
      */
     @FXML
@@ -332,7 +392,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the back button action.
+     * Handles the back button action. Navigates back to the student main screen.
+     *
      * @param event The action event.
      */
     @FXML
@@ -357,7 +418,8 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Handles the close button action.
+     * Handles the close button action. Prompts the user to confirm before closing the application.
+     *
      * @param event The action event.
      */
     @FXML
@@ -377,9 +439,10 @@ public class StudentGradeStatisticsController implements Initializable {
     }
     
     /**
-     * Shows an alert dialog.
-     * @param type The type of the alert.
-     * @param title The title of the alert.
+     * Shows an alert dialog with the specified type, title, and content.
+     *
+     * @param type    The type of the alert.
+     * @param title   The title of the alert.
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
@@ -398,17 +461,29 @@ public class StudentGradeStatisticsController implements Initializable {
      * QuizGrade class to represent a grade for a quiz.
      */
     public static class QuizGrade {
+        /**
+         * The name of the quiz.
+         */
         private String quizName;
+        /**
+         * The course the quiz belongs to.
+         */
         private String course;
+        /**
+         * The score earned on the quiz.
+         */
         private double score;
+        /**
+         * The date the quiz was taken.
+         */
         private LocalDate date;
-        
         /**
          * Constructor for a quiz grade.
+         *
          * @param quizName The name of the quiz.
-         * @param course The course the quiz belongs to.
-         * @param score The score earned on the quiz.
-         * @param date The date the quiz was taken.
+         * @param course   The course the quiz belongs to.
+         * @param score    The score earned on the quiz.
+         * @param date     The date the quiz was taken.
          */
         public QuizGrade(String quizName, String course, double score, LocalDate date) {
             this.quizName = quizName;
@@ -416,33 +491,33 @@ public class StudentGradeStatisticsController implements Initializable {
             this.score = score;
             this.date = date;
         }
-        
         /**
          * Gets the quiz name.
+         *
          * @return The quiz name.
          */
         public String getQuizName() {
             return quizName;
         }
-        
         /**
          * Gets the course.
+         *
          * @return The course.
          */
         public String getCourse() {
             return course;
         }
-        
         /**
          * Gets the score.
+         *
          * @return The score.
          */
         public double getScore() {
             return score;
         }
-        
         /**
          * Gets the date.
+         *
          * @return The date.
          */
         public LocalDate getDate() {

@@ -1,0 +1,855 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeacherExamMgmtController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TeacherExamMgmtController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeacherExamMgmtController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/142)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/294)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;
+&nbsp;import comp3111.examsystem.Main;
+&nbsp;import comp3111.examsystem.entity.*;
+&nbsp;import comp3111.examsystem.tools.UIhelper;
+&nbsp;import comp3111.examsystem.tools.MsgSender;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.beans.property.ReadOnlyStringWrapper;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.fxml.Initializable;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+&nbsp;import javafx.scene.layout.VBox;
+&nbsp;import javafx.stage.Stage;
+&nbsp;
+&nbsp;import java.net.URL;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * The controller for teacher exam management page.
+&nbsp; */
+<b class="nc">&nbsp;public class TeacherExamMgmtController implements Initializable {</b>
+&nbsp;    private Teacher teacher;
+&nbsp;    private Exam selectedExam;
+<b class="nc">&nbsp;    private boolean editMode = false;</b>
+&nbsp;    
+&nbsp;    // ObservableList for the selected questions in the current exam
+<b class="nc">&nbsp;    private ObservableList&lt;Question&gt; selectedQuestions = FXCollections.observableArrayList();</b>
+&nbsp;    
+&nbsp;    @FXML private VBox mainbox;
+&nbsp;
+&nbsp;    // Filter fields
+&nbsp;    @FXML private TextField filterQuestionTxt;
+&nbsp;    @FXML private TextField filterScoreTxt;
+&nbsp;    @FXML private ComboBox&lt;String&gt; filterTypeCmb;
+&nbsp;
+&nbsp;    @FXML private TextField filterExamNameTxt;
+&nbsp;    @FXML private TextField filterCourseIdTxt;
+&nbsp;    @FXML private ComboBox&lt;String&gt; filterStatusCmb;
+&nbsp;
+&nbsp;    // Tables
+&nbsp;    @FXML private TableView&lt;Exam&gt; examsTable;
+&nbsp;    @FXML private TableColumn&lt;Exam, String&gt; colExamName;
+&nbsp;    @FXML private TableColumn&lt;Exam, String&gt; colCourseId;
+&nbsp;    @FXML private TableColumn&lt;Exam, Integer&gt; colDuration;
+&nbsp;    @FXML private TableColumn&lt;Exam, String&gt; colPublished;
+&nbsp;    @FXML private TableColumn&lt;Exam, Integer&gt; colQuestionCount;
+&nbsp;
+&nbsp;    @FXML private TableView&lt;Question&gt; selectedQuestionsTable;
+&nbsp;    @FXML private TableColumn&lt;Question, String&gt; colSelectedQuestion;
+&nbsp;    @FXML private TableColumn&lt;Question, String&gt; colSelectedType;
+&nbsp;    @FXML private TableColumn&lt;Question, Integer&gt; colSelectedScore;
+&nbsp;
+&nbsp;    @FXML private TableView&lt;Question&gt; questionsTable;
+&nbsp;    @FXML private TableColumn&lt;Question, String&gt; colQuestion;
+&nbsp;    @FXML private TableColumn&lt;Question, String&gt; colType;
+&nbsp;    @FXML private TableColumn&lt;Question, Integer&gt; colScore;
+&nbsp;
+&nbsp;    // Form fields
+&nbsp;    @FXML private Label formHeaderLabel;
+&nbsp;    @FXML private TextField examNameTxt;
+&nbsp;    @FXML private TextField courseIdTxt;
+&nbsp;    @FXML private TextField durationTxt;
+&nbsp;    @FXML private CheckBox publishedChk;
+&nbsp;    @FXML private Label totalScoreLabel;
+&nbsp;
+&nbsp;    // Buttons
+&nbsp;    @FXML private Button addExamBtn;
+&nbsp;    @FXML private Button editExamBtn;
+&nbsp;    @FXML private Button updateExamBtn;
+&nbsp;    @FXML private Button deleteExamBtn;
+&nbsp;    @FXML private Button addToExamBtn;
+&nbsp;    @FXML private Button removeSelectedQuestionBtn;
+&nbsp;    @FXML private Button clearSelectedQuestionsBtn;
+&nbsp;
+&nbsp;    // Main entity collections
+<b class="nc">&nbsp;    private ObservableList&lt;Exam&gt; allExams = FXCollections.observableArrayList();</b>
+<b class="nc">&nbsp;    private ObservableList&lt;Question&gt; availableQuestions = FXCollections.observableArrayList();</b>
+&nbsp;    
+&nbsp;    // Database reference for exams
+&nbsp;    private Database&lt;Exam&gt; examDB;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initializes the teacher exam management page UI.
+&nbsp;     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+&nbsp;     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void initialize(URL location, ResourceBundle resources) {
+&nbsp;        // Initialize filter ComboBoxes
+<b class="nc">&nbsp;        filterTypeCmb.setItems(FXCollections.observableArrayList(&quot;Any&quot;, &quot;MCQ&quot;, &quot;Short Answer&quot;));</b>
+<b class="nc">&nbsp;        filterTypeCmb.setValue(&quot;Any&quot;);</b>
+&nbsp;        
+<b class="nc">&nbsp;        filterStatusCmb.setItems(FXCollections.observableArrayList(&quot;Any&quot;, &quot;Published&quot;, &quot;Unpublished&quot;));</b>
+<b class="nc">&nbsp;        filterStatusCmb.setValue(&quot;Any&quot;);</b>
+&nbsp;
+&nbsp;        // Configure table columns
+<b class="nc">&nbsp;        colExamName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;name&quot;));</b>
+<b class="nc">&nbsp;        colCourseId.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseCode&quot;));</b>
+<b class="nc">&nbsp;        colDuration.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;duration&quot;));</b>
+<b class="nc">&nbsp;        colPublished.setCellValueFactory(cellData -&gt; {</b>
+<b class="nc">&nbsp;            Integer isPublished = cellData.getValue().getIsPublishedInt();</b>
+<b class="nc">&nbsp;            String displayText = isPublished != null &amp;&amp; isPublished &gt; 0 ? &quot;Yes&quot; : &quot;No&quot;;</b>
+<b class="nc">&nbsp;            return new ReadOnlyStringWrapper(displayText);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        colQuestionCount.setCellValueFactory(cellData -&gt; </b>
+<b class="nc">&nbsp;            new javafx.beans.property.SimpleObjectProperty&lt;&gt;(cellData.getValue().getQuestionCount()));</b>
+&nbsp;
+&nbsp;        // Configure selected questions table columns
+<b class="nc">&nbsp;        colSelectedQuestion.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;questionText&quot;));</b>
+<b class="nc">&nbsp;        colSelectedType.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;type&quot;));</b>
+<b class="nc">&nbsp;        colSelectedScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</b>
+&nbsp;
+&nbsp;        // Configure available questions table columns
+<b class="nc">&nbsp;        colQuestion.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;questionText&quot;));</b>
+<b class="nc">&nbsp;        colType.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;type&quot;));</b>
+<b class="nc">&nbsp;        colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</b>
+&nbsp;
+&nbsp;        // Set up exam selection handler
+<b class="nc">&nbsp;        examsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -&gt; {</b>
+<b class="nc">&nbsp;            if (editMode) {</b>
+&nbsp;                // Don&#39;t change selection during edit mode
+<b class="nc">&nbsp;                if (oldSelection != null) {</b>
+<b class="nc">&nbsp;                    Platform.runLater(() -&gt; examsTable.getSelectionModel().select(oldSelection));</b>
+&nbsp;                }
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            
+<b class="nc">&nbsp;            if (newSelection != null) {</b>
+<b class="nc">&nbsp;                selectedExam = newSelection;</b>
+<b class="nc">&nbsp;                loadExamDetails(newSelection);</b>
+&nbsp;                
+&nbsp;                // Enable/disable buttons based on publish status
+<b class="nc">&nbsp;                boolean isPublished = newSelection.getIsPublishedInt() != null &amp;&amp; newSelection.getIsPublishedInt() &gt; 0;</b>
+<b class="nc">&nbsp;                editExamBtn.setDisable(isPublished);</b>
+<b class="nc">&nbsp;                updateExamBtn.setDisable(true); // Initially disable until Edit is clicked</b>
+<b class="nc">&nbsp;                deleteExamBtn.setDisable(isPublished);</b>
+&nbsp;                
+&nbsp;                // Also disable add/remove question buttons if published
+<b class="nc">&nbsp;                addToExamBtn.setDisable(isPublished);</b>
+<b class="nc">&nbsp;                removeSelectedQuestionBtn.setDisable(isPublished);</b>
+<b class="nc">&nbsp;                clearSelectedQuestionsBtn.setDisable(isPublished);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                selectedExam = null;</b>
+<b class="nc">&nbsp;                clearForm();</b>
+&nbsp;                
+&nbsp;                // Disable buttons that require selection
+<b class="nc">&nbsp;                editExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;                updateExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;                deleteExamBtn.setDisable(true);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+&nbsp;        // Set selected questions to display in the middle table
+<b class="nc">&nbsp;        selectedQuestionsTable.setItems(selectedQuestions);</b>
+&nbsp;
+&nbsp;        //
+<b class="nc">&nbsp;        questionsTable.setItems(availableQuestions);</b>
+&nbsp;        
+&nbsp;        // Add listener to update total score when questions change
+<b class="nc">&nbsp;        selectedQuestions.addListener((javafx.collections.ListChangeListener.Change&lt;? extends Question&gt; c) -&gt; {</b>
+<b class="nc">&nbsp;            updateTotalScore();</b>
+&nbsp;        });
+&nbsp;        
+&nbsp;        // Initialize UI state
+<b class="nc">&nbsp;        setFormEditable(false);</b>
+<b class="nc">&nbsp;        clearForm();</b>
+&nbsp;        
+&nbsp;        // Set initial button states
+<b class="nc">&nbsp;        editExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;        updateExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;        deleteExamBtn.setDisable(true);</b>
+&nbsp;        
+&nbsp;        // Make Add Exam button more prominent
+<b class="nc">&nbsp;        addExamBtn.setStyle(&quot;-fx-background-color: #4CAF50; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 1);&quot;);</b>
+<b class="nc">&nbsp;        addExamBtn.setTooltip(new Tooltip(&quot;Click here to create a new exam&quot;));</b>
+&nbsp;        
+&nbsp;        // Add tooltips to other buttons
+<b class="nc">&nbsp;        editExamBtn.setTooltip(new Tooltip(&quot;Edit the selected exam&quot;));</b>
+<b class="nc">&nbsp;        updateExamBtn.setTooltip(new Tooltip(&quot;Save changes to the exam&quot;));</b>
+&nbsp;        
+&nbsp;        // Initialize database reference
+<b class="nc">&nbsp;        examDB = new Database&lt;&gt;(Exam.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the teacher object and initializes the UI.
+&nbsp;     * @param teacher The teacher object that is operating the page.
+&nbsp;     */
+&nbsp;    public void presetController(Teacher teacher) {
+<b class="nc">&nbsp;        this.teacher = teacher;</b>
+<b class="nc">&nbsp;        handleRefresh();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the total score display based on selected questions
+&nbsp;     */
+&nbsp;    private void updateTotalScore() {
+<b class="nc">&nbsp;        int total = selectedQuestions.stream()</b>
+<b class="nc">&nbsp;                .mapToInt(q -&gt; q.getScore() != null ? q.getScore() : 0)</b>
+<b class="nc">&nbsp;                .sum();</b>
+<b class="nc">&nbsp;        totalScoreLabel.setText(String.valueOf(total));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the form fields to be editable or read-only
+&nbsp;     * @param editable True to make editable, false for read-only
+&nbsp;     */
+&nbsp;    private void setFormEditable(boolean editable) {
+<b class="nc">&nbsp;        examNameTxt.setEditable(editable);</b>
+<b class="nc">&nbsp;        courseIdTxt.setEditable(editable);</b>
+<b class="nc">&nbsp;        durationTxt.setEditable(editable);</b>
+<b class="nc">&nbsp;        publishedChk.setDisable(!editable);</b>
+&nbsp;        
+&nbsp;        // Set visual cues for form state
+<b class="nc">&nbsp;        String style = editable ? &quot;&quot; : &quot;-fx-background-color: #f5f5f5;&quot;;</b>
+<b class="nc">&nbsp;        examNameTxt.setStyle(style);</b>
+<b class="nc">&nbsp;        courseIdTxt.setStyle(style);</b>
+<b class="nc">&nbsp;        durationTxt.setStyle(style);</b>
+&nbsp;        
+&nbsp;        // Update form header based on state
+<b class="nc">&nbsp;        formHeaderLabel.setText(editable ? </b>
+<b class="nc">&nbsp;            (selectedExam == null ? &quot;Create New Exam&quot; : &quot;Edit Exam&quot;) : </b>
+<b class="nc">&nbsp;            &quot;Exam Details (Select an exam or click &#39;Add New Exam&#39;)&quot;);</b>
+&nbsp;        
+&nbsp;        // Add tooltips when read-only
+<b class="nc">&nbsp;        String tooltip = editable ? null : &quot;Click &#39;Add New Exam&#39; to create a new exam&quot;;</b>
+<b class="nc">&nbsp;        examNameTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</b>
+<b class="nc">&nbsp;        courseIdTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</b>
+<b class="nc">&nbsp;        durationTxt.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</b>
+&nbsp;        
+&nbsp;        // Update button states
+<b class="nc">&nbsp;        if (editable) {</b>
+<b class="nc">&nbsp;            addExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;            editExamBtn.setDisable(true);</b>
+<b class="nc">&nbsp;            updateExamBtn.setDisable(false);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            addExamBtn.setDisable(false);</b>
+&nbsp;            
+&nbsp;            // Enable Edit button only for unpublished exams
+<b class="nc">&nbsp;            editExamBtn.setDisable(selectedExam == null || </b>
+<b class="nc">&nbsp;                (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0));</b>
+&nbsp;                
+&nbsp;            // Disable Update button when not in edit mode
+<b class="nc">&nbsp;            updateExamBtn.setDisable(true);</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Set table disabled state
+<b class="nc">&nbsp;        examsTable.setDisable(editable);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads exam details into the form
+&nbsp;     * @param exam The exam to load
+&nbsp;     */
+&nbsp;    private void loadExamDetails(Exam exam) {
+<b class="nc">&nbsp;        if (exam == null) {</b>
+<b class="nc">&nbsp;            clearForm();</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Set form fields
+<b class="nc">&nbsp;        examNameTxt.setText(exam.getName() != null ? exam.getName() : &quot;&quot;);</b>
+<b class="nc">&nbsp;        courseIdTxt.setText(exam.getCourseCode() != null ? exam.getCourseCode() : &quot;&quot;);</b>
+<b class="nc">&nbsp;        durationTxt.setText(exam.getDuration() != null ? exam.getDuration().toString() : &quot;&quot;);</b>
+<b class="nc">&nbsp;        publishedChk.setSelected(exam.getIsPublishedInt() != null &amp;&amp; exam.getIsPublishedInt() &gt; 0);</b>
+&nbsp;
+&nbsp;        // Load the exam questions
+<b class="nc">&nbsp;        loadExamQuestions(exam);</b>
+&nbsp;        
+&nbsp;        // Update form state
+<b class="nc">&nbsp;        setFormEditable(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads the questions for the given exam
+&nbsp;     * @param exam The exam to load questions for
+&nbsp;     */
+&nbsp;    private void loadExamQuestions(Exam exam) {
+<b class="nc">&nbsp;        selectedQuestions.clear();</b>
+&nbsp;
+&nbsp;        // Fetch all questions from the database
+<b class="nc">&nbsp;        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</b>
+<b class="nc">&nbsp;        List&lt;Question&gt; allQuestions = questionDB.getAllEnabled();</b>
+<b class="nc">&nbsp;        availableQuestions.setAll(allQuestions); // Reset available questions to all</b>
+&nbsp;
+<b class="nc">&nbsp;        if (exam != null &amp;&amp; exam.getQuestionIds() != null &amp;&amp; !exam.getQuestionIds().isEmpty()) {</b>
+&nbsp;            // Extract valid question IDs from the exam (Don&#39;t know why but they are String)
+<b class="nc">&nbsp;            List&lt;Long&gt; selectedQuestionIds = exam.getQuestionIds();</b>
+&nbsp;
+&nbsp;            // Split questions into selected (for the exam) and remaining (available)
+<b class="nc">&nbsp;            List&lt;Question&gt; remainingQuestions = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            List&lt;Question&gt; selected = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (Question q : allQuestions) {</b>
+&nbsp;                // MsgSender.showMsg(q.getId().getClass().getName());
+<b class="nc">&nbsp;                if (selectedQuestionIds.contains(Long.toString(q.getId()))) {</b>
+<b class="nc">&nbsp;                    selected.add(q); // Add to selected exam questions</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    remainingQuestions.add(q); // Add to available questions</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            // Update the lists and tables
+<b class="nc">&nbsp;            availableQuestions.setAll(remainingQuestions);</b>
+<b class="nc">&nbsp;            selectedQuestions.setAll(selected);</b>
+&nbsp;
+&nbsp;            // MsgSender.showMsg(String.valueOf(availableQuestions.size()));
+&nbsp;        }
+&nbsp;
+&nbsp;        // Refresh the tables
+<b class="nc">&nbsp;        questionsTable.setItems(availableQuestions);</b>
+<b class="nc">&nbsp;        selectedQuestionsTable.setItems(selectedQuestions);</b>
+<b class="nc">&nbsp;        updateTotalScore();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the form fields
+&nbsp;     */
+&nbsp;    private void clearForm() {
+<b class="nc">&nbsp;        examNameTxt.clear();</b>
+<b class="nc">&nbsp;        courseIdTxt.clear();</b>
+<b class="nc">&nbsp;        durationTxt.clear();</b>
+<b class="nc">&nbsp;        publishedChk.setSelected(false);</b>
+<b class="nc">&nbsp;        selectedQuestions.clear();</b>
+&nbsp;        
+&nbsp;        // Update UI
+<b class="nc">&nbsp;        updateTotalScore();</b>
+<b class="nc">&nbsp;        setFormEditable(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles filtering exams
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleFilterExams() {
+<b class="nc">&nbsp;        String nameFilter = filterExamNameTxt.getText().trim().toLowerCase();</b>
+<b class="nc">&nbsp;        String courseIdFilter = filterCourseIdTxt.getText().trim().toLowerCase();</b>
+<b class="nc">&nbsp;        String statusFilter = filterStatusCmb.getValue();</b>
+&nbsp;
+<b class="nc">&nbsp;        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</b>
+<b class="nc">&nbsp;        if (courseDB.queryByField(&quot;courseCode&quot;, courseIdFilter).isEmpty()) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;No such course found.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="nc">&nbsp;        List&lt;Exam&gt; allExams = examDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());</b>
+<b class="nc">&nbsp;        List&lt;Exam&gt; filteredExams = allExams.stream()</b>
+<b class="nc">&nbsp;            .filter(e -&gt; e.getName() != null &amp;&amp; e.getName().toLowerCase().contains(nameFilter))</b>
+<b class="nc">&nbsp;            .filter(e -&gt; e.getCourseCode() != null &amp;&amp; e.getCourseCode().toLowerCase().contains(courseIdFilter))</b>
+<b class="nc">&nbsp;            .filter(e -&gt; {</b>
+<b class="nc">&nbsp;                if (&quot;Any&quot;.equals(statusFilter)) return true;</b>
+<b class="nc">&nbsp;                boolean isPublished = e.getIsPublishedInt() != null &amp;&amp; e.getIsPublishedInt() &gt; 0;</b>
+<b class="nc">&nbsp;                return (&quot;Published&quot;.equals(statusFilter) &amp;&amp; isPublished) || </b>
+<b class="nc">&nbsp;                       (&quot;Unpublished&quot;.equals(statusFilter) &amp;&amp; !isPublished);</b>
+&nbsp;            })
+<b class="nc">&nbsp;            .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;        examsTable.getItems().clear();</b>
+<b class="nc">&nbsp;        examsTable.getItems().addAll(filteredExams);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles resetting the exam filter
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleResetExamFilter() {
+<b class="nc">&nbsp;        filterExamNameTxt.clear();</b>
+<b class="nc">&nbsp;        filterCourseIdTxt.clear();</b>
+<b class="nc">&nbsp;        filterStatusCmb.setValue(&quot;Any&quot;);</b>
+<b class="nc">&nbsp;        loadAllExams();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles filtering questions
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleFilterQuestions() {
+<b class="nc">&nbsp;        String questionFilter = filterQuestionTxt.getText().trim().toLowerCase();</b>
+<b class="nc">&nbsp;        String typeFilter = filterTypeCmb.getValue();</b>
+<b class="nc">&nbsp;        String scoreText = filterScoreTxt.getText().trim();</b>
+<b class="nc">&nbsp;        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</b>
+<b class="nc">&nbsp;        List&lt;Question&gt; allQuestions = questionDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());</b>
+<b class="nc">&nbsp;        int scoreFilter = -1;</b>
+<b class="nc">&nbsp;        if (!scoreText.isEmpty()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                scoreFilter = Integer.parseInt(scoreText);</b>
+&nbsp;            } catch (NumberFormatException e) {
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Score filter should be an integer or left blank.&quot;);</b>
+<b class="nc">&nbsp;                filterScoreTxt.clear();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        final int finalScoreFilter = scoreFilter;</b>
+<b class="nc">&nbsp;        List&lt;Question&gt; filteredQuestions = allQuestions.stream()</b>
+<b class="nc">&nbsp;            .filter(q -&gt; q.getQuestionText() != null &amp;&amp; q.getQuestionText().toLowerCase().contains(questionFilter))</b>
+<b class="nc">&nbsp;            .filter(q -&gt; &quot;Any&quot;.equals(typeFilter) || (q.getType() != null &amp;&amp; q.getType().equals(typeFilter)))</b>
+<b class="nc">&nbsp;            .filter(q -&gt; finalScoreFilter == -1 || (q.getScore() != null &amp;&amp; q.getScore() == finalScoreFilter))</b>
+<b class="nc">&nbsp;            .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;        questionsTable.getItems().clear();</b>
+<b class="nc">&nbsp;        questionsTable.getItems().addAll(filteredQuestions);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles resetting the question filter
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleResetQuestionFilter() {
+<b class="nc">&nbsp;        filterQuestionTxt.clear();</b>
+<b class="nc">&nbsp;        filterTypeCmb.setValue(&quot;Any&quot;);</b>
+<b class="nc">&nbsp;        filterScoreTxt.clear();</b>
+<b class="nc">&nbsp;        loadAllQuestions();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads all exams for the current teacher
+&nbsp;     */
+&nbsp;    private void loadAllExams() {
+<b class="nc">&nbsp;        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="nc">&nbsp;        List&lt;Exam&gt; exams = examDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());</b>
+<b class="nc">&nbsp;        examsTable.getItems().clear();</b>
+<b class="nc">&nbsp;        examsTable.getItems().addAll(exams);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads all questions for the current teacher
+&nbsp;     */
+&nbsp;    private void loadAllQuestions() {
+<b class="nc">&nbsp;        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</b>
+<b class="nc">&nbsp;        List&lt;Question&gt; questions = questionDB.queryByField(&quot;teacherId&quot;, teacher.getId().toString());</b>
+<b class="nc">&nbsp;        availableQuestions.clear();</b>
+<b class="nc">&nbsp;        selectedQuestions.clear();</b>
+<b class="nc">&nbsp;        availableQuestions.setAll(questions);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles adding a question to the exam
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleAddToExam() {
+<b class="nc">&nbsp;        Question selectedQuestion = questionsTable.getSelectionModel().getSelectedItem();</b>
+&nbsp;        
+<b class="nc">&nbsp;        if (selectedQuestion == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a question to add to the exam.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Check if the question is already in the selected questions
+<b class="nc">&nbsp;        boolean alreadySelected = selectedQuestions.stream()</b>
+<b class="nc">&nbsp;            .anyMatch(q -&gt; q.getId().equals(selectedQuestion.getId()));</b>
+&nbsp;        
+<b class="nc">&nbsp;        if (alreadySelected) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;This question is already added to the exam.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Add the question to the selected questions
+<b class="nc">&nbsp;        selectedQuestions.add(selectedQuestion);</b>
+&nbsp;
+<b class="nc">&nbsp;        questionsTable.getItems().remove(selectedQuestion);</b>
+&nbsp;        
+&nbsp;        // Update total score
+<b class="nc">&nbsp;        updateTotalScore();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles removing a selected question from the exam
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleRemoveSelectedQuestion() {
+<b class="nc">&nbsp;        Question questionToRemove = selectedQuestionsTable.getSelectionModel().getSelectedItem();</b>
+&nbsp;        
+<b class="nc">&nbsp;        if (questionToRemove == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a question to remove from the exam.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Remove the question from the selected questions
+<b class="nc">&nbsp;        selectedQuestions.remove(questionToRemove);</b>
+&nbsp;
+<b class="nc">&nbsp;        questionsTable.getItems().add(questionToRemove);</b>
+&nbsp;        
+&nbsp;        // Update total score
+<b class="nc">&nbsp;        updateTotalScore();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles clearing all selected questions
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleClearSelectedQuestions() {
+<b class="nc">&nbsp;        if (selectedQuestions.isEmpty()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;            &quot;Clear Selected Questions&quot;, </b>
+<b class="nc">&nbsp;            &quot;Are you sure you want to remove all questions from this exam?&quot;, </b>
+<b class="nc">&nbsp;            () -&gt; {</b>
+<b class="nc">&nbsp;                selectedQuestions.clear();</b>
+<b class="nc">&nbsp;                loadAllQuestions();</b>
+<b class="nc">&nbsp;                updateTotalScore();</b>
+&nbsp;            }
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles adding a new exam
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleAddExam() {
+&nbsp;        // Clear form and set to edit mode
+<b class="nc">&nbsp;        clearForm();</b>
+<b class="nc">&nbsp;        selectedExam = null;</b>
+<b class="nc">&nbsp;        loadAllQuestions();</b>
+<b class="nc">&nbsp;        editMode = true;</b>
+<b class="nc">&nbsp;        setFormEditable(true);</b>
+&nbsp;        
+&nbsp;        // Update UI
+<b class="nc">&nbsp;        formHeaderLabel.setText(&quot;Create New Exam&quot;);</b>
+<b class="nc">&nbsp;        formHeaderLabel.setStyle(&quot;-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4CAF50;&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles editing an existing exam
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleEditExam() {
+<b class="nc">&nbsp;        if (selectedExam == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select an exam to edit.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Published exams cannot be edited.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Enter edit mode
+<b class="nc">&nbsp;        editMode = true;</b>
+<b class="nc">&nbsp;        setFormEditable(true);</b>
+&nbsp;        
+&nbsp;        // Update UI
+<b class="nc">&nbsp;        formHeaderLabel.setText(&quot;Edit Exam&quot;);</b>
+<b class="nc">&nbsp;        formHeaderLabel.setStyle(&quot;-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2196F3;&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles creating a new exam or updating an existing one
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleUpdateExam() {
+&nbsp;        // Validate input
+<b class="nc">&nbsp;        if (examNameTxt.getText().isEmpty() || courseIdTxt.getText().isEmpty() || durationTxt.getText().isEmpty()) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please fill in all required fields.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        try {
+<b class="nc">&nbsp;            Integer duration = Integer.parseInt(durationTxt.getText());</b>
+<b class="nc">&nbsp;            if (duration &lt;= 0) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Duration must be a positive number.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            
+<b class="nc">&nbsp;            if (selectedQuestions.isEmpty()) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Please add at least one question to the exam.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;
+&nbsp;            // Check whether the course exists
+<b class="nc">&nbsp;            Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</b>
+<b class="nc">&nbsp;            if (courseDB.queryByField(&quot;courseCode&quot;, courseIdTxt.getText()).isEmpty()) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;No such course found.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Create or update exam
+<b class="nc">&nbsp;            if (selectedExam == null) {</b>
+&nbsp;                // Create new exam
+<b class="nc">&nbsp;                Exam newExam = new Exam();</b>
+<b class="nc">&nbsp;                newExam.setTeacherId(teacher.getId());</b>
+<b class="nc">&nbsp;                newExam.setName(examNameTxt.getText());</b>
+<b class="nc">&nbsp;                newExam.setCourseCode(courseIdTxt.getText());</b>
+<b class="nc">&nbsp;                newExam.setDuration(duration);</b>
+<b class="nc">&nbsp;                newExam.setExamTime(duration.toString()); // Sync with duration field</b>
+<b class="nc">&nbsp;                newExam.setIsPublishedInt(publishedChk.isSelected() ? 1 : 0);</b>
+&nbsp;                
+&nbsp;                // Set questions
+<b class="nc">&nbsp;                List&lt;Long&gt; questionIds = selectedQuestions.stream()</b>
+<b class="nc">&nbsp;                    .map(Question::getId)</b>
+<b class="nc">&nbsp;                    .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;                newExam.setQuestionIds(questionIds);</b>
+&nbsp;                
+&nbsp;                // Save exam to database
+<b class="nc">&nbsp;                examDB.add(newExam);</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Exam created successfully!&quot;);</b>
+&nbsp;                
+&nbsp;                // Add to list and select it
+<b class="nc">&nbsp;                allExams.add(newExam);</b>
+<b class="nc">&nbsp;                Platform.runLater(() -&gt; examsTable.getSelectionModel().select(newExam));</b>
+&nbsp;            } else {
+&nbsp;                // Update existing exam
+<b class="nc">&nbsp;                selectedExam.setName(examNameTxt.getText());</b>
+<b class="nc">&nbsp;                selectedExam.setCourseCode(courseIdTxt.getText());</b>
+<b class="nc">&nbsp;                selectedExam.setDuration(duration);</b>
+<b class="nc">&nbsp;                selectedExam.setExamTime(duration.toString()); // Sync with duration field</b>
+<b class="nc">&nbsp;                selectedExam.setIsPublishedInt(publishedChk.isSelected() ? 1 : 0);</b>
+&nbsp;                
+&nbsp;                // Set questions
+<b class="nc">&nbsp;                List&lt;Long&gt; questionIds = selectedQuestions.stream()</b>
+<b class="nc">&nbsp;                    .map(Question::getId)</b>
+<b class="nc">&nbsp;                    .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;                selectedExam.setQuestionIds(questionIds);</b>
+&nbsp;                
+&nbsp;                // Update in database
+<b class="nc">&nbsp;                examDB.update(selectedExam);</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Exam updated successfully!&quot;);</b>
+&nbsp;                
+&nbsp;                // Refresh table
+<b class="nc">&nbsp;                examsTable.refresh();</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Exit edit mode
+<b class="nc">&nbsp;            editMode = false;</b>
+<b class="nc">&nbsp;            setFormEditable(false);</b>
+&nbsp;            
+&nbsp;            // Refresh exam list
+<b class="nc">&nbsp;            loadAllExams();</b>
+&nbsp;            
+&nbsp;        } catch (NumberFormatException e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please enter a valid number for duration.&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Error: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles deleting an exam
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleDeleteExam() {
+<b class="nc">&nbsp;        if (selectedExam == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select an exam to delete.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (selectedExam.getIsPublishedInt() != null &amp;&amp; selectedExam.getIsPublishedInt() &gt; 0) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Published exams cannot be deleted.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;            &quot;Delete Exam&quot;, </b>
+<b class="nc">&nbsp;            &quot;Are you sure you want to delete this exam? This action cannot be undone.&quot;, </b>
+<b class="nc">&nbsp;            () -&gt; {</b>
+<b class="nc">&nbsp;                examDB.delByKey(selectedExam.getId().toString());</b>
+&nbsp;                
+&nbsp;                // Clear selection and form
+<b class="nc">&nbsp;                selectedExam = null;</b>
+<b class="nc">&nbsp;                clearForm();</b>
+&nbsp;                
+&nbsp;                // Refresh UI
+<b class="nc">&nbsp;                loadAllExams();</b>
+&nbsp;                
+&nbsp;                // Show success message
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Exam deleted successfully!&quot;);</b>
+&nbsp;            }
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles refreshing the UI
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleRefresh() {
+&nbsp;        // Save selected exam ID if any
+<b class="nc">&nbsp;        Long selectedExamId = selectedExam != null ? selectedExam.getId() : null;</b>
+&nbsp;
+&nbsp;        // Clear added questions
+<b class="nc">&nbsp;        selectedQuestionsTable.getItems().clear();</b>
+&nbsp;        
+&nbsp;        // Reload data
+<b class="nc">&nbsp;        loadAllExams();</b>
+<b class="nc">&nbsp;        loadAllQuestions();</b>
+&nbsp;        
+&nbsp;        // Restore selection if possible
+<b class="nc">&nbsp;        if (selectedExamId != null) {</b>
+<b class="nc">&nbsp;            for (Exam exam : examsTable.getItems()) {</b>
+<b class="nc">&nbsp;                if (exam.getId().equals(selectedExamId)) {</b>
+<b class="nc">&nbsp;                    examsTable.getSelectionModel().select(exam);</b>
+<b class="nc">&nbsp;                    examsTable.scrollTo(exam);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Reset edit mode
+<b class="nc">&nbsp;        editMode = false;</b>
+<b class="nc">&nbsp;        setFormEditable(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles navigating back to the teacher main menu
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleBack() {
+&nbsp;        try {
+<b class="nc">&nbsp;            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</b>
+<b class="nc">&nbsp;            Stage stage = new Stage();</b>
+<b class="nc">&nbsp;            stage.setTitle(&quot;Welcome to HKUST Examination System&quot;);</b>
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+<b class="nc">&nbsp;            TeacherMainController newController = fxmlLoader.getController();</b>
+<b class="nc">&nbsp;            if (teacher == null) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;NULL Teacher&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            newController.presetController(teacher); // Pass the Teacher object to the next controller</b>
+<b class="nc">&nbsp;            UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;            stage.show();</b>
+<b class="nc">&nbsp;            ((Stage) mainbox.getScene().getWindow()).close();</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles closing the application
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void handleCloseApplication() {
+<b class="nc">&nbsp;        Platform.exit();</b>
+<b class="nc">&nbsp;        System.exit(0);</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherLoginController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherLoginController.java</span></div><h1>TeacherLoginController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherLoginController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherLoginController.java</span></div><h1>TeacherLoginController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import java.io.IOException;
 import java.net.URL;
@@ -50,7 +50,7 @@ import javafx.stage.Stage;
 <span class="nc bnc" id="L50" title="All 4 branches missed.">            if (teacher.getUsername().equals(usernameTxt.getText()) &amp;&amp; teacher.getPassword().equals(passwordTxt.getText())) {</span>
 <span class="nc" id="L51">                return teacher;</span>
             }
-        }
+<span class="nc" id="L53">        }</span>
 <span class="nc" id="L54">        comp3111.examsystem.tools.MsgSender.showMsg(&quot;Invalid username or password&quot;);</span>
 <span class="nc" id="L55">        return null;</span>
     }
@@ -75,7 +75,7 @@ import javafx.stage.Stage;
 <span class="nc" id="L75">            controller.presetController(teacher);</span>
 <span class="nc" id="L76">        } catch (IOException e1) {</span>
 <span class="nc" id="L77">            e1.printStackTrace();</span>
-        }
+<span class="nc" id="L78">        }</span>
 <span class="nc" id="L79">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L80">        stage.show();</span>
 <span class="nc" id="L81">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
@@ -94,7 +94,7 @@ import javafx.stage.Stage;
 <span class="nc" id="L94">            stage.setScene(new Scene(fxmlLoader.load()));</span>
 <span class="nc" id="L95">        } catch (IOException e1) {</span>
 <span class="nc" id="L96">            e1.printStackTrace();</span>
-        }
+<span class="nc" id="L97">        }</span>
 <span class="nc" id="L98">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L99">        stage.show();</span>
 <span class="nc" id="L100">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
@@ -112,7 +112,7 @@ import javafx.stage.Stage;
 <span class="nc" id="L112">            stage.setScene(new Scene(fxmlLoader.load()));</span>
 <span class="nc" id="L113">        } catch (IOException e1) {</span>
 <span class="nc" id="L114">            e1.printStackTrace();</span>
-        }
+<span class="nc" id="L115">        }</span>
 <span class="nc" id="L116">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L117">        stage.show();</span>
 <span class="nc" id="L118">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>

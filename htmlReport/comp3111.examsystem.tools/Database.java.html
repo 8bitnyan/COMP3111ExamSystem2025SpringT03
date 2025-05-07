@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Database.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.tools</a> &gt; <span class="el_source">Database.java</span></div><h1>Database.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.tools;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Database.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.tools</a> &gt; <span class="el_source">Database.java</span></div><h1>Database.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.tools;
 
 import comp3111.examsystem.data.*;
 import comp3111.examsystem.entity.Entity;
@@ -41,7 +41,7 @@ public class Database&lt;T&gt; {
 <span class="nc" id="L41">                file.createNewFile();</span>
 <span class="nc" id="L42">            } catch (IOException e) {</span>
 <span class="nc" id="L43">                e.printStackTrace();</span>
-            }
+<span class="nc" id="L44">            }</span>
         }
 <span class="fc" id="L46">    }</span>
 
@@ -54,10 +54,10 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L54">        List&lt;T&gt; filteredList = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L55" title="All 2 branches covered.">        for (T item : list) {</span>
 <span class="fc" id="L56">            Object isAbleValue = getValue(item, &quot;isAble&quot;);</span>
-<span class="pc bpc" id="L57" title="2 of 4 branches missed.">            if (isAbleValue instanceof Boolean &amp;&amp; (Boolean) isAbleValue) {</span>
+<span class="pc bpc" id="L57" title="1 of 4 branches missed.">            if (isAbleValue instanceof Boolean &amp;&amp; (Boolean) isAbleValue) {</span>
 <span class="fc" id="L58">                filteredList.add(item);</span>
             }
-        }
+<span class="fc" id="L60">        }</span>
 <span class="fc" id="L61">        return filteredList;</span>
     }
 
@@ -67,19 +67,19 @@ public class Database&lt;T&gt; {
      * @return An (enabled) entity object that has the queried entity id. Returns null if no entities satisfy the query.
      */
     public T queryByKey(String key) {
-<span class="nc" id="L70">        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</span>
+<span class="fc" id="L70">        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</span>
 
-<span class="nc" id="L72">        T res = null;</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        for (String s : slist) {</span>
-<span class="nc" id="L74">            T t = txtToEntity(s);</span>
-<span class="nc" id="L75">            Object tvalue = getValue(t, &quot;id&quot;);</span>
-<span class="nc" id="L76">            Object isAbleValue = getValue(t, &quot;isAble&quot;);</span>
-<span class="nc bnc" id="L77" title="All 4 branches missed.">            if (tvalue.toString().equals(key) &amp;&amp; (Boolean) isAbleValue) {</span>
-<span class="nc" id="L78">                res = t;</span>
-<span class="nc" id="L79">                break;</span>
+<span class="fc" id="L72">        T res = null;</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        for (String s : slist) {</span>
+<span class="fc" id="L74">            T t = txtToEntity(s);</span>
+<span class="fc" id="L75">            Object tvalue = getValue(t, &quot;id&quot;);</span>
+<span class="fc" id="L76">            Object isAbleValue = getValue(t, &quot;isAble&quot;);</span>
+<span class="pc bpc" id="L77" title="1 of 4 branches missed.">            if (tvalue.toString().equals(key) &amp;&amp; (Boolean) isAbleValue) {</span>
+<span class="fc" id="L78">                res = t;</span>
+<span class="fc" id="L79">                break;</span>
             }
-        }
-<span class="nc" id="L82">        return res;</span>
+<span class="fc" id="L81">        }</span>
+<span class="fc" id="L82">        return res;</span>
     }
 
     /**
@@ -99,8 +99,8 @@ public class Database&lt;T&gt; {
 <span class="nc" id="L99">                    res.add(t);</span>
 <span class="nc" id="L100">                    break;</span>
                 }
-            }
-        }
+<span class="nc" id="L102">            }</span>
+<span class="nc" id="L103">        }</span>
 <span class="nc" id="L104">        return filterDisable(res);</span>
     }
 
@@ -115,11 +115,11 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L115">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">        for (T e : list) {</span>
 <span class="fc" id="L117">            Object value = getValue(e, fieldName);</span>
-<span class="pc bpc" id="L118" title="3 of 10 branches missed.">            if ((value == null &amp;&amp; fieldValue != null) || (value != null &amp;&amp; fieldValue == null) || !value.toString().equals(fieldValue)) {</span>
+<span class="pc bpc" id="L118" title="5 of 10 branches missed.">            if ((value == null &amp;&amp; fieldValue != null) || (value != null &amp;&amp; fieldValue == null) || !value.toString().equals(fieldValue)) {</span>
 <span class="fc" id="L119">                continue;</span>
             }
 <span class="fc" id="L121">            resList.add(e);</span>
-        }
+<span class="fc" id="L122">        }</span>
 <span class="fc" id="L123">        list.clear();</span>
 <span class="fc" id="L124">        list.addAll(resList);</span>
 <span class="fc" id="L125">        return filterDisable(list);</span>
@@ -132,17 +132,17 @@ public class Database&lt;T&gt; {
      * @return A list of (enabled) entity objects that has matching substrings in the corresponding field values in the queried field. Returns empty list if no entities satisfy the query.
      */
     public List&lt;T&gt; queryFuzzyByField(String fieldName, String fieldValue) {
-<span class="nc" id="L135">        List&lt;T&gt; list = getAllEnabled();</span>
-<span class="nc" id="L136">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (T e : list) {</span>
-<span class="nc" id="L138">            Object value = getValue(e, fieldName);</span>
-<span class="nc bnc" id="L139" title="All 4 branches missed.">            if (fieldValue == null || value.toString().contains(fieldValue)) {</span>
+<span class="fc" id="L135">        List&lt;T&gt; list = getAllEnabled();</span>
+<span class="fc" id="L136">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        for (T e : list) {</span>
+<span class="fc" id="L138">            Object value = getValue(e, fieldName);</span>
+<span class="pc bpc" id="L139" title="2 of 4 branches missed.">            if (fieldValue == null || value.toString().contains(fieldValue)) {</span>
 <span class="nc" id="L140">                resList.add(e);</span>
             }
-        }
-<span class="nc" id="L143">        list.clear();</span>
-<span class="nc" id="L144">        list.addAll(resList);</span>
-<span class="nc" id="L145">        return filterDisable(list);</span>
+<span class="fc" id="L142">        }</span>
+<span class="fc" id="L143">        list.clear();</span>
+<span class="fc" id="L144">        list.addAll(resList);</span>
+<span class="fc" id="L145">        return filterDisable(list);</span>
     }
 
     /**
@@ -154,7 +154,7 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L154">        List&lt;T&gt; tlist = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L155" title="All 2 branches covered.">        for (String s : slist) {</span>
 <span class="fc" id="L156">            tlist.add(txtToEntity(s));</span>
-        }
+<span class="fc" id="L157">        }</span>
 <span class="fc" id="L158">        return filterDisable(tlist);</span>
     }
 
@@ -167,7 +167,7 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L167">        List&lt;T&gt; tlist = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L168" title="All 2 branches covered.">        for (String s : slist) {</span>
 <span class="fc" id="L169">            tlist.add(txtToEntity(s));</span>
-        }
+<span class="fc" id="L170">        }</span>
 <span class="fc" id="L171">        return tlist;</span>
     }
 
@@ -178,8 +178,8 @@ public class Database&lt;T&gt; {
      * @return A list of entity objects in which their entity ids are in both list1 and list2.
      */
     public List&lt;T&gt; join(List&lt;T&gt; list1, List&lt;T&gt; list2) {
-<span class="nc" id="L181">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">        for (T t : list1) {</span>
+<span class="fc" id="L181">        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        for (T t : list1) {</span>
 <span class="nc bnc" id="L183" title="All 2 branches missed.">            for (T value : list2) {</span>
 <span class="nc" id="L184">                Long id1 = (Long) getValue(t, &quot;id&quot;);</span>
 <span class="nc" id="L185">                Long id2 = (Long) getValue(value, &quot;id&quot;);</span>
@@ -187,9 +187,9 @@ public class Database&lt;T&gt; {
 <span class="nc" id="L187">                    resList.add(t);</span>
 <span class="nc" id="L188">                    break;</span>
                 }
-            }
-        }
-<span class="nc" id="L192">        return resList;</span>
+<span class="nc" id="L190">            }</span>
+<span class="nc" id="L191">        }</span>
+<span class="fc" id="L192">        return resList;</span>
     }
 
     /**
@@ -197,20 +197,20 @@ public class Database&lt;T&gt; {
      * @param key The entity id of the entity to be deleted.
      */
     public void delByKey(String key) {
-<span class="nc" id="L200">        List&lt;T&gt; tlist = getAll();</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">        for (T t : tlist) {</span>
-<span class="nc" id="L202">            Object value = getValue(t, &quot;id&quot;);</span>
-<span class="nc bnc" id="L203" title="All 4 branches missed.">            if (value.toString().equals(key) &amp;&amp; (Boolean) getValue(t, &quot;isAble&quot;)) {</span>
-<span class="nc" id="L204">                setValue(t, &quot;isAble&quot;, false);</span>
-<span class="nc" id="L205">                break;</span>
+<span class="fc" id="L200">        List&lt;T&gt; tlist = getAll();</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        for (T t : tlist) {</span>
+<span class="fc" id="L202">            Object value = getValue(t, &quot;id&quot;);</span>
+<span class="fc bfc" id="L203" title="All 4 branches covered.">            if (value.toString().equals(key) &amp;&amp; (Boolean) getValue(t, &quot;isAble&quot;)) {</span>
+<span class="fc" id="L204">                setValue(t, &quot;isAble&quot;, false);</span>
+<span class="fc" id="L205">                break;</span>
             }
-        }
+<span class="fc" id="L207">        }</span>
         try {
-<span class="nc" id="L209">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
+<span class="fc" id="L209">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
 <span class="nc" id="L210">        } catch (Exception e) {</span>
 <span class="nc" id="L211">            e.printStackTrace();</span>
-        }
-<span class="nc" id="L213">    }</span>
+<span class="fc" id="L212">        }</span>
+<span class="fc" id="L213">    }</span>
 
     /**
      * Deletes all entities that has the exact field values in the field with the exact field name. Deletion is logical by setting &quot;isAble&quot; to false.
@@ -225,12 +225,12 @@ public class Database&lt;T&gt; {
                 // If database records are all valid, should work fine
 <span class="nc" id="L226">                setValue(t, &quot;isAble&quot;, false);</span>
             }
-        }
+<span class="nc" id="L228">        }</span>
         try {
 <span class="nc" id="L230">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
 <span class="nc" id="L231">        } catch (Exception e) {</span>
 <span class="nc" id="L232">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L233">        }</span>
 <span class="nc" id="L234">    }</span>
 
     /**
@@ -238,21 +238,21 @@ public class Database&lt;T&gt; {
      * @param entity The updated entity that has the same entity id as the entity that needs to be updated.
      */
     public void update(T entity) {
-<span class="fc" id="L241">        Long key1 = (Long) getValue(entity, &quot;id&quot;);</span>
-<span class="fc" id="L242">        List&lt;T&gt; tlist = getAll();</span>
-<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (int i = 0; i &lt; tlist.size(); i++) {</span>
-<span class="fc" id="L244">            Long key = (Long) getValue(tlist.get(i), &quot;id&quot;);</span>
-<span class="pc bpc" id="L245" title="3 of 4 branches missed.">            if (key.toString().equals(key1.toString()) &amp;&amp; (Boolean) getValue(tlist.get(i), &quot;isAble&quot;)) {</span>
+<span class="nc" id="L241">        Long key1 = (Long) getValue(entity, &quot;id&quot;);</span>
+<span class="nc" id="L242">        List&lt;T&gt; tlist = getAll();</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        for (int i = 0; i &lt; tlist.size(); i++) {</span>
+<span class="nc" id="L244">            Long key = (Long) getValue(tlist.get(i), &quot;id&quot;);</span>
+<span class="nc bnc" id="L245" title="All 4 branches missed.">            if (key.toString().equals(key1.toString()) &amp;&amp; (Boolean) getValue(tlist.get(i), &quot;isAble&quot;)) {</span>
                 // Only update enabled records
 <span class="nc" id="L247">                tlist.set(i, entity);</span>
             }
         }
         try {
-<span class="fc" id="L251">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
-<span class="pc" id="L252">        } catch (Exception e) {</span>
+<span class="nc" id="L251">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
+<span class="nc" id="L252">        } catch (Exception e) {</span>
 <span class="nc" id="L253">            e.printStackTrace();</span>
-        }
-<span class="fc" id="L255">    }</span>
+<span class="nc" id="L254">        }</span>
+<span class="nc" id="L255">    }</span>
 
     /**
      * Adds an entity into the database.
@@ -264,9 +264,9 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L264">        tlist.add(entity);</span>
         try {
 <span class="fc" id="L266">            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</span>
-<span class="pc" id="L267">        } catch (Exception e) {</span>
+<span class="nc" id="L267">        } catch (Exception e) {</span>
 <span class="nc" id="L268">            e.printStackTrace();</span>
-        }
+<span class="fc" id="L269">        }</span>
 <span class="fc" id="L270">    }</span>
 
     /**
@@ -279,7 +279,7 @@ public class Database&lt;T&gt; {
     private Object getValue(Object entity, String fieldName) {
         Object value;
 <span class="fc" id="L281">        Class&lt;?&gt; clazz = entity.getClass();</span>
-<span class="fc" id="L282">        while (true) {</span>
+        while (true) {
             try {
 <span class="fc" id="L284">                Field field = clazz.getDeclaredField(fieldName);</span>
 <span class="fc" id="L285">                field.setAccessible(true);</span>
@@ -292,7 +292,7 @@ public class Database&lt;T&gt; {
             }
 <span class="nc" id="L293">            catch (IllegalAccessException e) {</span>
 <span class="nc" id="L294">                throw new RuntimeException(e);</span>
-            }
+<span class="fc" id="L295">            }</span>
 <span class="fc" id="L296">            clazz = clazz.getSuperclass();</span>
         }
 <span class="fc" id="L298">        return value;</span>
@@ -307,9 +307,9 @@ public class Database&lt;T&gt; {
     private Object convertValue(Class&lt;?&gt; fieldType, Object fieldValue) {
 <span class="pc bpc" id="L308" title="1 of 4 branches missed.">        if (fieldType == Long.class || fieldType == long.class) {</span>
 <span class="fc" id="L309">            return Long.parseLong(fieldValue.toString());</span>
-<span class="pc bpc" id="L310" title="1 of 4 branches missed.">        } else if (fieldType == Integer.class || fieldType == int.class) {</span>
+<span class="fc bfc" id="L310" title="All 4 branches covered.">        } else if (fieldType == Integer.class || fieldType == int.class) {</span>
 <span class="fc" id="L311">            return Integer.parseInt(fieldValue.toString());</span>
-<span class="pc bpc" id="L312" title="1 of 4 branches missed.">        } else if (fieldType == Boolean.class || fieldType == boolean.class) {</span>
+<span class="fc bfc" id="L312" title="All 4 branches covered.">        } else if (fieldType == Boolean.class || fieldType == boolean.class) {</span>
 <span class="fc" id="L313">            return Boolean.parseBoolean(fieldValue.toString());</span>
 <span class="fc bfc" id="L314" title="All 2 branches covered.">        } else if (fieldType == List.class) {</span>
 <span class="fc bfc" id="L315" title="All 2 branches covered.">            if (fieldValue.toString().equals(&quot;[]&quot;)) {</span>
@@ -329,8 +329,8 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L329">            return Gender.fromString(fieldValue.toString());</span>
 <span class="fc bfc" id="L330" title="All 2 branches covered.">        } else if (fieldType == Department.class) {</span>
 <span class="fc" id="L331">            return Department.fromString(fieldValue.toString());</span>
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        } else if (fieldType == Position.class) {</span>
-<span class="nc" id="L333">            return Position.fromString(fieldValue.toString());</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        } else if (fieldType == Position.class) {</span>
+<span class="fc" id="L333">            return Position.fromString(fieldValue.toString());</span>
         } else {
 <span class="fc" id="L335">            return fieldValue;</span>
         }
@@ -345,7 +345,7 @@ public class Database&lt;T&gt; {
      */
     private void setValue(Object entity, String fieldName, Object fieldValue) {
 <span class="fc" id="L347">        Class&lt;?&gt; clazz = entity.getClass();</span>
-<span class="fc" id="L348">        while (true) {</span>
+        while (true) {
             try {
 <span class="fc" id="L350">                Field field = clazz.getDeclaredField(fieldName);</span>
 <span class="fc" id="L351">                field.setAccessible(true);</span>
@@ -356,7 +356,7 @@ public class Database&lt;T&gt; {
 <span class="nc" id="L356">                    throw new RuntimeException(e);</span>
 <span class="nc" id="L357">            } catch (IllegalAccessException e) {</span>
 <span class="nc" id="L358">                throw new RuntimeException(e);</span>
-            }
+<span class="fc" id="L359">            }</span>
 <span class="fc" id="L360">            clazz = clazz.getSuperclass();</span>
         }
 <span class="fc" id="L362">    }</span>
@@ -370,7 +370,7 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L370">        StringBuilder sbf = new StringBuilder();</span>
 <span class="fc bfc" id="L371" title="All 2 branches covered.">        for (T t : tlist) {</span>
 <span class="fc" id="L372">            sbf.append(entityToTxt(t)).append(&quot;\r\n&quot;);</span>
-        }
+<span class="fc" id="L373">        }</span>
 <span class="fc" id="L374">        return sbf.toString();</span>
     }
 
@@ -389,9 +389,9 @@ public class Database&lt;T&gt; {
 <span class="fc" id="L389">                String[] keyValue = pro.split(NameValueSeparator);</span>
 <span class="fc" id="L390">                setValue(t, keyValue[0], keyValue[1]);</span>
             }
-<span class="pc" id="L392">        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</span>
+<span class="nc" id="L392">        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</span>
 <span class="nc" id="L393">            throw new RuntimeException(e);</span>
-        }
+<span class="fc" id="L394">        }</span>
 <span class="fc" id="L395">        return t;</span>
     }
 
@@ -405,11 +405,11 @@ public class Database&lt;T&gt; {
 <span class="fc bfc" id="L405" title="All 2 branches covered.">        for (Object item : obj) {</span>
 <span class="pc bpc" id="L406" title="1 of 2 branches missed.">            if (item == null) {</span>
 <span class="nc" id="L407">                sb.append(ListItemSeparator);</span>
-<span class="nc" id="L408">            } else {</span>
+            } else {
 <span class="fc" id="L409">                sb.append(item).append(ListItemSeparator);</span>
             }
 
-        }
+<span class="fc" id="L412">        }</span>
 <span class="pc bpc" id="L413" title="1 of 2 branches missed.">        if (!sb.isEmpty()) {</span>
 <span class="fc" id="L414">            sb.setLength(sb.length() - ListItemSeparator.length()); // Remove the trailing comma and space</span>
         }
@@ -424,7 +424,7 @@ public class Database&lt;T&gt; {
     private String entityToTxt(T t) {
 <span class="fc" id="L425">        StringBuilder sbf = new StringBuilder();</span>
 <span class="fc" id="L426">        Class&lt;?&gt; clazz = entitySample;</span>
-<span class="fc" id="L427">        while (true) {</span>
+        while (true) {
 <span class="fc bfc" id="L428" title="All 2 branches covered.">            for (Field field : clazz.getDeclaredFields()) {</span>
 <span class="pc bpc" id="L429" title="1 of 2 branches missed.">                if (!field.getName().equals(&quot;dbutil&quot;)) {</span>
 <span class="fc" id="L430">                    Object obj = getValue(t, field.getName());</span>
@@ -434,12 +434,12 @@ public class Database&lt;T&gt; {
                             else {
 <span class="fc" id="L435">                                Class&lt;?&gt; listContentClass = list.getFirst().getClass();</span>
 <span class="fc" id="L436">                                sbf.append(field.getName()).append(NameValueSeparator + &quot;[&quot;).append(listContentClass.getSimpleName()).append(ListItemSeparator).append(myToString(list)).append(&quot;]&quot; + PropertySeparator);</span>
-                            }
-<span class="fc" id="L438">                        }</span>
+<span class="fc" id="L437">                            }</span>
+                        }
                         // Possible attribute of integer or boolean
 <span class="fc bfc" id="L440" title="All 4 branches covered.">                        else if (obj instanceof Integer || obj instanceof Boolean) {</span>
 <span class="fc" id="L441">                            sbf.append(field.getName()).append(NameValueSeparator).append(obj).append(PropertySeparator);</span>
-<span class="fc" id="L442">                        }</span>
+                        }
                         // String
                         else {
 <span class="fc" id="L445">                            sbf.append(field.getName()).append(NameValueSeparator).append(obj).append(PropertySeparator);</span>

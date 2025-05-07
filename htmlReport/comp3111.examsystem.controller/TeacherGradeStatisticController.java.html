@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeStatisticController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeStatisticController.java</span></div><h1>TeacherGradeStatisticController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeStatisticController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeStatisticController.java</span></div><h1>TeacherGradeStatisticController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 import comp3111.examsystem.Main;
 import comp3111.examsystem.entity.*;
 import comp3111.examsystem.entity.Record;
@@ -56,7 +56,7 @@ public class TeacherGradeStatisticController implements Initializable {
     @FXML private BarChart&lt;String, Integer&gt; barChart;
     @FXML private LineChart&lt;String, Integer&gt; lineChart;
     
-<span class="nc" id="L59">    private ObservableList&lt;Stats&gt; allStats = FXCollections.observableArrayList();</span>
+<span class="pc" id="L59">    private ObservableList&lt;Stats&gt; allStats = FXCollections.observableArrayList();</span>
 
     // Default constructor for production
 <span class="nc" id="L62">    public TeacherGradeStatisticController() {</span>
@@ -64,13 +64,13 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L64">    }</span>
 
     // Constructor for tests
-<span class="nc" id="L67">    public TeacherGradeStatisticController(Database&lt;Record&gt; recordDB, Database&lt;Student&gt; studentDB, Database&lt;Exam&gt; examDB, Database&lt;Course&gt; courseDB, Database&lt;Question&gt; questionDB) {</span>
-<span class="nc" id="L68">        this.recordDB = recordDB;</span>
-<span class="nc" id="L69">        this.studentDB = studentDB;</span>
-<span class="nc" id="L70">        this.examDB = examDB;</span>
-<span class="nc" id="L71">        this.courseDB = courseDB;</span>
-<span class="nc" id="L72">        this.questionDB = questionDB;</span>
-<span class="nc" id="L73">    }</span>
+<span class="fc" id="L67">    public TeacherGradeStatisticController(Database&lt;Record&gt; recordDB, Database&lt;Student&gt; studentDB, Database&lt;Exam&gt; examDB, Database&lt;Course&gt; courseDB, Database&lt;Question&gt; questionDB) {</span>
+<span class="fc" id="L68">        this.recordDB = recordDB;</span>
+<span class="fc" id="L69">        this.studentDB = studentDB;</span>
+<span class="fc" id="L70">        this.examDB = examDB;</span>
+<span class="fc" id="L71">        this.courseDB = courseDB;</span>
+<span class="fc" id="L72">        this.questionDB = questionDB;</span>
+<span class="fc" id="L73">    }</span>
 
     /**
      * Initializes the page and loads the data into the table and charts.
@@ -81,60 +81,60 @@ public class TeacherGradeStatisticController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             // Initialize databases
-<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (recordDB == null) recordDB = new Database&lt;&gt;(Record.class);</span>
-<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (studentDB == null) studentDB = new Database&lt;&gt;(Student.class);</span>
-<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (examDB == null) examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">            if (courseDB == null) courseDB = new Database&lt;&gt;(Course.class);</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (questionDB == null) questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            if (recordDB == null) recordDB = new Database&lt;&gt;(Record.class);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">            if (studentDB == null) studentDB = new Database&lt;&gt;(Student.class);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">            if (examDB == null) examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            if (courseDB == null) courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">            if (questionDB == null) questionDB = new Database&lt;&gt;(Question.class);</span>
 
             // Initialize default values for filters
-<span class="nc" id="L91">            courseCmb.setValue(&quot;Any&quot;);</span>
-<span class="nc" id="L92">            examCmb.setValue(&quot;Any&quot;);</span>
-<span class="nc" id="L93">            studentCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L91">            courseCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L92">            examCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L93">            studentCmb.setValue(&quot;Any&quot;);</span>
 
             // Load filter options (with error handling)
             try {
-<span class="nc" id="L97">                loadCourseCodes();</span>
+<span class="fc" id="L97">                loadCourseCodes();</span>
 <span class="nc" id="L98">            } catch (Exception e) {</span>
 <span class="nc" id="L99">                System.err.println(&quot;Error loading course codes: &quot; + e.getMessage());</span>
-            }
+<span class="fc" id="L100">            }</span>
             
             try {
-<span class="nc" id="L103">                loadExam();</span>
+<span class="fc" id="L103">                loadExam();</span>
 <span class="nc" id="L104">            } catch (Exception e) {</span>
 <span class="nc" id="L105">                System.err.println(&quot;Error loading exams: &quot; + e.getMessage());</span>
-            }
+<span class="fc" id="L106">            }</span>
             
             try {
-<span class="nc" id="L109">                loadStudent();</span>
+<span class="fc" id="L109">                loadStudent();</span>
 <span class="nc" id="L110">            } catch (Exception e) {</span>
 <span class="nc" id="L111">                System.err.println(&quot;Error loading students: &quot; + e.getMessage());</span>
-            }
+<span class="fc" id="L112">            }</span>
 
             // Setup table
-<span class="nc" id="L115">            recordTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);</span>
+<span class="fc" id="L115">            recordTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);</span>
 
             // Configure table columns
-<span class="nc" id="L118">            colStudent.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;studentName&quot;));</span>
-<span class="nc" id="L119">            colCourse.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseCode&quot;));</span>
-<span class="nc" id="L120">            colExam.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;examName&quot;));</span>
-<span class="nc" id="L121">            colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
-<span class="nc" id="L122">            colMaxScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;maxScore&quot;));</span>
-<span class="nc" id="L123">            colTimeSpent.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;timeSpent&quot;));</span>
+<span class="fc" id="L118">            colStudent.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;studentName&quot;));</span>
+<span class="fc" id="L119">            colCourse.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseCode&quot;));</span>
+<span class="fc" id="L120">            colExam.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;examName&quot;));</span>
+<span class="fc" id="L121">            colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
+<span class="fc" id="L122">            colMaxScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;maxScore&quot;));</span>
+<span class="fc" id="L123">            colTimeSpent.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;timeSpent&quot;));</span>
             
             // Do NOT generate mock data if empty
             // generateMockDataIfEmpty();
             
             // Initialize data and charts
-<span class="nc" id="L129">            setupTableColumns();</span>
-<span class="nc" id="L130">            setUpBarGraph();</span>
-<span class="nc" id="L131">            setUpLineGraph();</span>
+<span class="fc" id="L129">            setupTableColumns();</span>
+<span class="fc" id="L130">            setUpBarGraph();</span>
+<span class="fc" id="L131">            setUpLineGraph();</span>
 <span class="nc" id="L132">        } catch (Exception e) {</span>
 <span class="nc" id="L133">            System.err.println(&quot;Error during initialization: &quot; + e.getMessage());</span>
 <span class="nc" id="L134">            e.printStackTrace();</span>
 <span class="nc" id="L135">            MsgSender.showMsg(&quot;There was an error loading the grade statistics. Please try again.&quot;);</span>
-        }
-<span class="nc" id="L137">    }</span>
+<span class="fc" id="L136">        }</span>
+<span class="fc" id="L137">    }</span>
 
     /**
      * Sets the teacher object and initializes the UI.
@@ -151,277 +151,277 @@ public class TeacherGradeStatisticController implements Initializable {
      */
     private void loadCourseCodes() {
         try {
-<span class="nc" id="L154">            List&lt;Course&gt; courses = courseDB.getAllEnabled();</span>
-<span class="nc" id="L155">            Set&lt;String&gt; courseCodes = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L154">            List&lt;Course&gt; courses = courseDB.getAllEnabled();</span>
+<span class="fc" id="L155">            Set&lt;String&gt; courseCodes = new HashSet&lt;&gt;();</span>
 
             // Add course codes from available courses
-<span class="nc bnc" id="L158" title="All 4 branches missed.">            if (courses != null &amp;&amp; !courses.isEmpty()) {</span>
-<span class="nc" id="L159">                courseCodes = courses.stream()</span>
-<span class="nc bnc" id="L160" title="All 6 branches missed.">                        .filter(c -&gt; c != null &amp;&amp; c.getCourseCode() != null &amp;&amp; !c.getCourseCode().trim().isEmpty())</span>
-<span class="nc" id="L161">                    .map(Course::getCourseCode)</span>
-<span class="nc" id="L162">                    .collect(Collectors.toSet());</span>
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">            if (courses != null &amp;&amp; !courses.isEmpty()) {</span>
+<span class="fc" id="L159">                courseCodes = courses.stream()</span>
+<span class="pc bpc" id="L160" title="3 of 6 branches missed.">                        .filter(c -&gt; c != null &amp;&amp; c.getCourseCode() != null &amp;&amp; !c.getCourseCode().trim().isEmpty())</span>
+<span class="fc" id="L161">                    .map(Course::getCourseCode)</span>
+<span class="fc" id="L162">                    .collect(Collectors.toSet());</span>
             }
             
             // Always add &quot;Any&quot; option
-<span class="nc" id="L166">            courseCodes.add(&quot;Any&quot;);</span>
+<span class="fc" id="L166">            courseCodes.add(&quot;Any&quot;);</span>
 
-<span class="nc" id="L168">            ObservableList&lt;String&gt; observableCodes = FXCollections.observableArrayList(courseCodes);</span>
-<span class="nc" id="L169">            courseCmb.setItems(observableCodes);</span>
+<span class="fc" id="L168">            ObservableList&lt;String&gt; observableCodes = FXCollections.observableArrayList(courseCodes);</span>
+<span class="fc" id="L169">            courseCmb.setItems(observableCodes);</span>
 <span class="nc" id="L170">        } catch (Exception e) {</span>
 <span class="nc" id="L171">            System.err.println(&quot;Error loading course codes: &quot; + e.getMessage());</span>
             
             // Ensure at least &quot;Any&quot; option is available
 <span class="nc" id="L174">            ObservableList&lt;String&gt; fallback = FXCollections.observableArrayList(&quot;Any&quot;);</span>
 <span class="nc" id="L175">            courseCmb.setItems(fallback);</span>
-        }
-<span class="nc" id="L177">    }</span>
+<span class="fc" id="L176">        }</span>
+<span class="fc" id="L177">    }</span>
 
     /**
      * Loads exam names into the exam filter combobox
      */
     private void loadExam() {
         try {
-<span class="nc" id="L184">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
-<span class="nc" id="L185">            Set&lt;String&gt; examNames = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L184">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
+<span class="fc" id="L185">            Set&lt;String&gt; examNames = new HashSet&lt;&gt;();</span>
 
             // Add exam names from available exams
-<span class="nc bnc" id="L188" title="All 4 branches missed.">            if (exams != null &amp;&amp; !exams.isEmpty()) {</span>
-<span class="nc" id="L189">                examNames = exams.stream()</span>
-<span class="nc bnc" id="L190" title="All 6 branches missed.">                        .filter(e -&gt; e != null &amp;&amp; e.getExamName() != null &amp;&amp; !e.getExamName().trim().isEmpty())</span>
-<span class="nc" id="L191">                    .map(Exam::getExamName)</span>
-<span class="nc" id="L192">                    .collect(Collectors.toSet());</span>
+<span class="pc bpc" id="L188" title="2 of 4 branches missed.">            if (exams != null &amp;&amp; !exams.isEmpty()) {</span>
+<span class="fc" id="L189">                examNames = exams.stream()</span>
+<span class="pc bpc" id="L190" title="3 of 6 branches missed.">                        .filter(e -&gt; e != null &amp;&amp; e.getExamName() != null &amp;&amp; !e.getExamName().trim().isEmpty())</span>
+<span class="fc" id="L191">                    .map(Exam::getExamName)</span>
+<span class="fc" id="L192">                    .collect(Collectors.toSet());</span>
             }
             
             // Always add &quot;Any&quot; option
-<span class="nc" id="L196">            examNames.add(&quot;Any&quot;);</span>
+<span class="fc" id="L196">            examNames.add(&quot;Any&quot;);</span>
 
-<span class="nc" id="L198">            ObservableList&lt;String&gt; observableNames = FXCollections.observableArrayList(examNames);</span>
-<span class="nc" id="L199">            examCmb.setItems(observableNames);</span>
+<span class="fc" id="L198">            ObservableList&lt;String&gt; observableNames = FXCollections.observableArrayList(examNames);</span>
+<span class="fc" id="L199">            examCmb.setItems(observableNames);</span>
 <span class="nc" id="L200">        } catch (Exception e) {</span>
 <span class="nc" id="L201">            System.err.println(&quot;Error loading exam names: &quot; + e.getMessage());</span>
             
             // Ensure at least &quot;Any&quot; option is available
 <span class="nc" id="L204">            ObservableList&lt;String&gt; fallback = FXCollections.observableArrayList(&quot;Any&quot;);</span>
 <span class="nc" id="L205">            examCmb.setItems(fallback);</span>
-        }
-<span class="nc" id="L207">    }</span>
+<span class="fc" id="L206">        }</span>
+<span class="fc" id="L207">    }</span>
 
     /**
      * Loads student names into the student filter combobox
      */
     private void loadStudent() {
         try {
-<span class="nc" id="L214">            List&lt;Student&gt; students = studentDB.getAllEnabled();</span>
-<span class="nc" id="L215">            Set&lt;String&gt; names = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L214">            List&lt;Student&gt; students = studentDB.getAllEnabled();</span>
+<span class="fc" id="L215">            Set&lt;String&gt; names = new HashSet&lt;&gt;();</span>
 
             // Add student names from available students
-<span class="nc bnc" id="L218" title="All 4 branches missed.">            if (students != null &amp;&amp; !students.isEmpty()) {</span>
-<span class="nc" id="L219">                names = students.stream()</span>
-<span class="nc bnc" id="L220" title="All 6 branches missed.">                        .filter(s -&gt; s != null &amp;&amp; s.getName() != null &amp;&amp; !s.getName().trim().isEmpty())</span>
-<span class="nc" id="L221">                    .map(Student::getName)</span>
-<span class="nc" id="L222">                    .collect(Collectors.toSet());</span>
+<span class="pc bpc" id="L218" title="2 of 4 branches missed.">            if (students != null &amp;&amp; !students.isEmpty()) {</span>
+<span class="fc" id="L219">                names = students.stream()</span>
+<span class="pc bpc" id="L220" title="3 of 6 branches missed.">                        .filter(s -&gt; s != null &amp;&amp; s.getName() != null &amp;&amp; !s.getName().trim().isEmpty())</span>
+<span class="fc" id="L221">                    .map(Student::getName)</span>
+<span class="fc" id="L222">                    .collect(Collectors.toSet());</span>
             }
             
             // Always add &quot;Any&quot; option
-<span class="nc" id="L226">            names.add(&quot;Any&quot;);</span>
+<span class="fc" id="L226">            names.add(&quot;Any&quot;);</span>
 
-<span class="nc" id="L228">            ObservableList&lt;String&gt; observableNames = FXCollections.observableArrayList(names);</span>
-<span class="nc" id="L229">            studentCmb.setItems(observableNames);</span>
+<span class="fc" id="L228">            ObservableList&lt;String&gt; observableNames = FXCollections.observableArrayList(names);</span>
+<span class="fc" id="L229">            studentCmb.setItems(observableNames);</span>
 <span class="nc" id="L230">        } catch (Exception e) {</span>
 <span class="nc" id="L231">            System.err.println(&quot;Error loading student names: &quot; + e.getMessage());</span>
             
             // Ensure at least &quot;Any&quot; option is available
 <span class="nc" id="L234">            ObservableList&lt;String&gt; fallback = FXCollections.observableArrayList(&quot;Any&quot;);</span>
 <span class="nc" id="L235">            studentCmb.setItems(fallback);</span>
-        }
-<span class="nc" id="L237">    }</span>
+<span class="fc" id="L236">        }</span>
+<span class="fc" id="L237">    }</span>
 
     /**
      * Checks if a record matches the given student ID
      */
     private boolean matchesSID(Record r, Long SID) {
-<span class="nc bnc" id="L243" title="All 4 branches missed.">        return SID != null &amp;&amp; Objects.equals(r.getStudentID(), SID);</span>
+<span class="pc bpc" id="L243" title="2 of 4 branches missed.">        return SID != null &amp;&amp; Objects.equals(r.getStudentID(), SID);</span>
     }
 
     /**
      * Checks if a record matches the given exam ID
      */
     private boolean matchesEID(Record r, Long EID) {
-<span class="nc bnc" id="L250" title="All 4 branches missed.">        return EID != null &amp;&amp; Objects.equals(r.getExamID(), EID);</span>
+<span class="pc bpc" id="L250" title="2 of 4 branches missed.">        return EID != null &amp;&amp; Objects.equals(r.getExamID(), EID);</span>
     }
 
     /**
      * Loads and calculates all statistics data from the database
      */
     private void setupTableColumns() {
-<span class="nc" id="L257">        recordTable.getItems().clear();</span>
-<span class="nc" id="L258">        allStats.clear();</span>
+<span class="fc" id="L257">        recordTable.getItems().clear();</span>
+<span class="fc" id="L258">        allStats.clear();</span>
         
         try {
-<span class="nc" id="L261">        List&lt;Record&gt; records = recordDB.getAll();</span>
+<span class="fc" id="L261">        List&lt;Record&gt; records = recordDB.getAll();</span>
             
-<span class="nc bnc" id="L263" title="All 2 branches missed.">            if (records.isEmpty()) {</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">            if (records.isEmpty()) {</span>
                 // No records found, just return without trying to process
 <span class="nc" id="L265">                return;</span>
             }
             
-<span class="nc" id="L268">        Set&lt;Long&gt; studentID = records.stream()</span>
-<span class="nc bnc" id="L269" title="All 4 branches missed.">                    .filter(r -&gt; r != null &amp;&amp; r.getStudentID() != null)</span>
-<span class="nc" id="L270">                .map(Record::getStudentID)</span>
-<span class="nc" id="L271">                .collect(Collectors.toSet());</span>
+<span class="fc" id="L268">        Set&lt;Long&gt; studentID = records.stream()</span>
+<span class="pc bpc" id="L269" title="2 of 4 branches missed.">                    .filter(r -&gt; r != null &amp;&amp; r.getStudentID() != null)</span>
+<span class="fc" id="L270">                .map(Record::getStudentID)</span>
+<span class="fc" id="L271">                .collect(Collectors.toSet());</span>
                     
-<span class="nc bnc" id="L273" title="All 2 branches missed.">        for (Long SID : studentID) {</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        for (Long SID : studentID) {</span>
                 try {
-<span class="nc" id="L275">            List&lt;Record&gt; recordStudent = recordDB.queryByField(&quot;studentID&quot;, Long.toString(SID));</span>
-<span class="nc" id="L276">            Set&lt;Long&gt; examID = recordStudent.stream()</span>
-<span class="nc bnc" id="L277" title="All 4 branches missed.">                            .filter(r -&gt; r != null &amp;&amp; r.getExamID() != null)</span>
-<span class="nc" id="L278">                    .map(Record::getExamID)</span>
-<span class="nc" id="L279">                    .collect(Collectors.toSet());</span>
+<span class="fc" id="L275">            List&lt;Record&gt; recordStudent = recordDB.queryByField(&quot;studentID&quot;, Long.toString(SID));</span>
+<span class="fc" id="L276">            Set&lt;Long&gt; examID = recordStudent.stream()</span>
+<span class="pc bpc" id="L277" title="2 of 4 branches missed.">                            .filter(r -&gt; r != null &amp;&amp; r.getExamID() != null)</span>
+<span class="fc" id="L278">                    .map(Record::getExamID)</span>
+<span class="fc" id="L279">                    .collect(Collectors.toSet());</span>
                             
-<span class="nc bnc" id="L281" title="All 2 branches missed.">            for (Long EID : examID) {</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">            for (Long EID : examID) {</span>
                         try {
-<span class="nc" id="L283">                            List&lt;Record&gt; filteredRecord = records.stream()</span>
-<span class="nc bnc" id="L284" title="All 6 branches missed.">                                    .filter(r -&gt; r != null &amp;&amp; matchesSID(r, SID) &amp;&amp; matchesEID(r, EID))</span>
-<span class="nc" id="L285">                        .collect(Collectors.toList());</span>
+<span class="fc" id="L283">                            List&lt;Record&gt; filteredRecord = records.stream()</span>
+<span class="pc bpc" id="L284" title="3 of 6 branches missed.">                                    .filter(r -&gt; r != null &amp;&amp; matchesSID(r, SID) &amp;&amp; matchesEID(r, EID))</span>
+<span class="fc" id="L285">                        .collect(Collectors.toList());</span>
                                     
-<span class="nc" id="L287">                            Student student = studentDB.queryByKey(Long.toString(SID));</span>
-<span class="nc" id="L288">                            Exam exam = examDB.queryByKey(Long.toString(EID));</span>
+<span class="fc" id="L287">                            Student student = studentDB.queryByKey(Long.toString(SID));</span>
+<span class="fc" id="L288">                            Exam exam = examDB.queryByKey(Long.toString(EID));</span>
                             
-<span class="nc bnc" id="L290" title="All 4 branches missed.">                            if (student != null &amp;&amp; exam != null) {</span>
-<span class="nc" id="L291">                                String name = student.getName();</span>
-<span class="nc" id="L292">                                String courseCode = exam.getCourseCode();</span>
-<span class="nc" id="L293">                                String examName = exam.getExamName();</span>
+<span class="pc bpc" id="L290" title="2 of 4 branches missed.">                            if (student != null &amp;&amp; exam != null) {</span>
+<span class="fc" id="L291">                                String name = student.getName();</span>
+<span class="fc" id="L292">                                String courseCode = exam.getCourseCode();</span>
+<span class="fc" id="L293">                                String examName = exam.getExamName();</span>
                                 
                                 // Calculate total score and max possible score
-<span class="nc" id="L296">                Integer maxScore = 0;</span>
-<span class="nc" id="L297">                Integer score = 0;</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">                for (Record f : filteredRecord) {</span>
-<span class="nc bnc" id="L299" title="All 2 branches missed.">                                    if (f.getScore() != null) {</span>
-<span class="nc" id="L300">                    score += f.getScore();</span>
+<span class="fc" id="L296">                Integer maxScore = 0;</span>
+<span class="fc" id="L297">                Integer score = 0;</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">                for (Record f : filteredRecord) {</span>
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">                                    if (f.getScore() != null) {</span>
+<span class="fc" id="L300">                    score += f.getScore();</span>
                                     }
                                     
-<span class="nc bnc" id="L303" title="All 2 branches missed.">                                    if (f.getQuestionID() != null) {</span>
-<span class="nc" id="L304">                                        Question question = questionDB.queryByKey(Long.toString(f.getQuestionID()));</span>
-<span class="nc bnc" id="L305" title="All 4 branches missed.">                                        if (question != null &amp;&amp; question.getScore() != null) {</span>
-<span class="nc" id="L306">                                            maxScore += question.getScore();</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">                                    if (f.getQuestionID() != null) {</span>
+<span class="fc" id="L304">                                        Question question = questionDB.queryByKey(Long.toString(f.getQuestionID()));</span>
+<span class="pc bpc" id="L305" title="2 of 4 branches missed.">                                        if (question != null &amp;&amp; question.getScore() != null) {</span>
+<span class="fc" id="L306">                                            maxScore += question.getScore();</span>
                                         }
                                     }
-                                }
+<span class="fc" id="L309">                                }</span>
                                 
                                 // Calculate time spent (mock data for now)
-<span class="nc" id="L312">                                String timeSpent = generateMockTimeSpent();</span>
+<span class="fc" id="L312">                                String timeSpent = generateMockTimeSpent();</span>
                                 
-<span class="nc" id="L314">                                Stats examStat = new Stats(name, courseCode, examName, score, maxScore, timeSpent);</span>
-<span class="nc" id="L315">                                allStats.add(examStat);</span>
+<span class="fc" id="L314">                                Stats examStat = new Stats(name, courseCode, examName, score, maxScore, timeSpent);</span>
+<span class="fc" id="L315">                                allStats.add(examStat);</span>
                             }
 <span class="nc" id="L317">                        } catch (Exception ex) {</span>
                             // Log the error but continue processing other records
 <span class="nc" id="L319">                            System.err.println(&quot;Error processing exam ID &quot; + EID + &quot;: &quot; + ex.getMessage());</span>
-                        }
-                    }
+<span class="fc" id="L320">                        }</span>
+<span class="fc" id="L321">                    }</span>
 <span class="nc" id="L322">                } catch (Exception ex) {</span>
                     // Log the error but continue processing other students
 <span class="nc" id="L324">                    System.err.println(&quot;Error processing student ID &quot; + SID + &quot;: &quot; + ex.getMessage());</span>
-                }
-            }
+<span class="fc" id="L325">                }</span>
+<span class="fc" id="L326">            }</span>
             
-<span class="nc" id="L328">            recordTable.setItems(allStats);</span>
+<span class="fc" id="L328">            recordTable.setItems(allStats);</span>
 <span class="nc" id="L329">        } catch (Exception e) {</span>
             // Catch any database-related exceptions
 <span class="nc" id="L331">            System.err.println(&quot;Error loading statistics data: &quot; + e.getMessage());</span>
 <span class="nc" id="L332">            e.printStackTrace();</span>
-        }
-<span class="nc" id="L334">    }</span>
+<span class="fc" id="L333">        }</span>
+<span class="fc" id="L334">    }</span>
     
     /**
      * Generates mock time spent for demo purposes
      */
     private String generateMockTimeSpent() {
-<span class="nc" id="L340">        Random random = new Random();</span>
-<span class="nc" id="L341">        int minutes = 10 + random.nextInt(50); // Between 10-60 minutes</span>
-<span class="nc" id="L342">        return minutes + &quot; min&quot;;</span>
+<span class="fc" id="L340">        Random random = new Random();</span>
+<span class="fc" id="L341">        int minutes = 10 + random.nextInt(50); // Between 10-60 minutes</span>
+<span class="fc" id="L342">        return minutes + &quot; min&quot;;</span>
     }
 
     /**
      * Sets up the bar chart with current data
      */
     private void setUpBarGraph() {
-<span class="nc" id="L349">        ObservableList&lt;Stats&gt; filteredStats = recordTable.getItems();</span>
-<span class="nc" id="L350">        barChart.getData().clear();</span>
+<span class="fc" id="L349">        ObservableList&lt;Stats&gt; filteredStats = recordTable.getItems();</span>
+<span class="fc" id="L350">        barChart.getData().clear();</span>
         
         // Group by course
-<span class="nc" id="L353">        Map&lt;String, List&lt;Stats&gt;&gt; courseGroups = filteredStats.stream()</span>
-<span class="nc" id="L354">                .collect(Collectors.groupingBy(Stats::getCourseCode));</span>
+<span class="fc" id="L353">        Map&lt;String, List&lt;Stats&gt;&gt; courseGroups = filteredStats.stream()</span>
+<span class="fc" id="L354">                .collect(Collectors.groupingBy(Stats::getCourseCode));</span>
                 
-<span class="nc" id="L356">        XYChart.Series&lt;String, Integer&gt; avgScoreSeries = new XYChart.Series&lt;&gt;();</span>
-<span class="nc" id="L357">        avgScoreSeries.setName(&quot;Average Score (%)&quot;);</span>
+<span class="fc" id="L356">        XYChart.Series&lt;String, Integer&gt; avgScoreSeries = new XYChart.Series&lt;&gt;();</span>
+<span class="fc" id="L357">        avgScoreSeries.setName(&quot;Average Score (%)&quot;);</span>
         
-<span class="nc" id="L359">        XYChart.Series&lt;String, Integer&gt; passRateSeries = new XYChart.Series&lt;&gt;();</span>
-<span class="nc" id="L360">        passRateSeries.setName(&quot;Pass Rate (%)&quot;);</span>
+<span class="fc" id="L359">        XYChart.Series&lt;String, Integer&gt; passRateSeries = new XYChart.Series&lt;&gt;();</span>
+<span class="fc" id="L360">        passRateSeries.setName(&quot;Pass Rate (%)&quot;);</span>
         
-<span class="nc bnc" id="L362" title="All 2 branches missed.">        for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; entry : courseGroups.entrySet()) {</span>
-<span class="nc" id="L363">            String courseCode = entry.getKey();</span>
-<span class="nc" id="L364">            List&lt;Stats&gt; courseStats = entry.getValue();</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; entry : courseGroups.entrySet()) {</span>
+<span class="fc" id="L363">            String courseCode = entry.getKey();</span>
+<span class="fc" id="L364">            List&lt;Stats&gt; courseStats = entry.getValue();</span>
             
             // Calculate average percentage score for this course
-<span class="nc" id="L367">            double avgPercentage = courseStats.stream()</span>
-<span class="nc" id="L368">                    .mapToDouble(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()))</span>
-<span class="nc" id="L369">                    .average()</span>
-<span class="nc" id="L370">                    .orElse(0);</span>
+<span class="fc" id="L367">            double avgPercentage = courseStats.stream()</span>
+<span class="fc" id="L368">                    .mapToDouble(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()))</span>
+<span class="fc" id="L369">                    .average()</span>
+<span class="fc" id="L370">                    .orElse(0);</span>
                     
             // Calculate pass rate (score &gt;= 50%)
-<span class="nc" id="L373">            double passRate = courseStats.stream()</span>
-<span class="nc bnc" id="L374" title="All 2 branches missed.">                    .filter(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()) &gt;= 50)</span>
-<span class="nc" id="L375">                    .count() * 100.0 / courseStats.size();</span>
+<span class="fc" id="L373">            double passRate = courseStats.stream()</span>
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">                    .filter(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()) &gt;= 50)</span>
+<span class="fc" id="L375">                    .count() * 100.0 / courseStats.size();</span>
                     
-<span class="nc" id="L377">            avgScoreSeries.getData().add(new XYChart.Data&lt;&gt;(courseCode, (int)Math.round(avgPercentage)));</span>
-<span class="nc" id="L378">            passRateSeries.getData().add(new XYChart.Data&lt;&gt;(courseCode, (int)Math.round(passRate)));</span>
-        }
+<span class="fc" id="L377">            avgScoreSeries.getData().add(new XYChart.Data&lt;&gt;(courseCode, (int)Math.round(avgPercentage)));</span>
+<span class="fc" id="L378">            passRateSeries.getData().add(new XYChart.Data&lt;&gt;(courseCode, (int)Math.round(passRate)));</span>
+<span class="fc" id="L379">        }</span>
         
-<span class="nc" id="L381">        barChart.getData().add(avgScoreSeries);</span>
-<span class="nc" id="L382">        barChart.getData().add(passRateSeries);</span>
-<span class="nc" id="L383">    }</span>
+<span class="fc" id="L381">        barChart.getData().add(avgScoreSeries);</span>
+<span class="fc" id="L382">        barChart.getData().add(passRateSeries);</span>
+<span class="fc" id="L383">    }</span>
 
     /**
      * Sets up the line chart with current data
      */
     private void setUpLineGraph() {
-<span class="nc" id="L389">        ObservableList&lt;Stats&gt; filteredStats = recordTable.getItems();</span>
-<span class="nc" id="L390">        lineChart.getData().clear();</span>
+<span class="fc" id="L389">        ObservableList&lt;Stats&gt; filteredStats = recordTable.getItems();</span>
+<span class="fc" id="L390">        lineChart.getData().clear();</span>
         
         // Group first by course
-<span class="nc" id="L393">        Map&lt;String, List&lt;Stats&gt;&gt; coursesMap = filteredStats.stream()</span>
-<span class="nc" id="L394">                .collect(Collectors.groupingBy(Stats::getCourseCode));</span>
+<span class="fc" id="L393">        Map&lt;String, List&lt;Stats&gt;&gt; coursesMap = filteredStats.stream()</span>
+<span class="fc" id="L394">                .collect(Collectors.groupingBy(Stats::getCourseCode));</span>
                 
         // For each course, create a series
-<span class="nc bnc" id="L397" title="All 2 branches missed.">        for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; courseEntry : coursesMap.entrySet()) {</span>
-<span class="nc" id="L398">            String courseCode = courseEntry.getKey();</span>
-<span class="nc" id="L399">            List&lt;Stats&gt; courseStats = courseEntry.getValue();</span>
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; courseEntry : coursesMap.entrySet()) {</span>
+<span class="fc" id="L398">            String courseCode = courseEntry.getKey();</span>
+<span class="fc" id="L399">            List&lt;Stats&gt; courseStats = courseEntry.getValue();</span>
             
             // Group by exam within this course
-<span class="nc" id="L402">            Map&lt;String, List&lt;Stats&gt;&gt; examGroups = courseStats.stream()</span>
-<span class="nc" id="L403">                    .collect(Collectors.groupingBy(Stats::getExamName));</span>
+<span class="fc" id="L402">            Map&lt;String, List&lt;Stats&gt;&gt; examGroups = courseStats.stream()</span>
+<span class="fc" id="L403">                    .collect(Collectors.groupingBy(Stats::getExamName));</span>
                     
-<span class="nc" id="L405">            XYChart.Series&lt;String, Integer&gt; courseSeries = new XYChart.Series&lt;&gt;();</span>
-<span class="nc" id="L406">            courseSeries.setName(courseCode);</span>
+<span class="fc" id="L405">            XYChart.Series&lt;String, Integer&gt; courseSeries = new XYChart.Series&lt;&gt;();</span>
+<span class="fc" id="L406">            courseSeries.setName(courseCode);</span>
             
             // For each exam in this course, add a data point
-<span class="nc bnc" id="L409" title="All 2 branches missed.">            for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; examEntry : examGroups.entrySet()) {</span>
-<span class="nc" id="L410">                String examName = examEntry.getKey();</span>
-<span class="nc" id="L411">                List&lt;Stats&gt; examStats = examEntry.getValue();</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">            for (Map.Entry&lt;String, List&lt;Stats&gt;&gt; examEntry : examGroups.entrySet()) {</span>
+<span class="fc" id="L410">                String examName = examEntry.getKey();</span>
+<span class="fc" id="L411">                List&lt;Stats&gt; examStats = examEntry.getValue();</span>
                 
                 // Calculate average percentage for this exam
-<span class="nc" id="L414">                double avgPercentage = examStats.stream()</span>
-<span class="nc" id="L415">                        .mapToDouble(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()))</span>
-<span class="nc" id="L416">                        .average()</span>
-<span class="nc" id="L417">                        .orElse(0);</span>
+<span class="fc" id="L414">                double avgPercentage = examStats.stream()</span>
+<span class="fc" id="L415">                        .mapToDouble(s -&gt; (s.getScore() * 100.0) / Math.max(1, s.getMaxScore()))</span>
+<span class="fc" id="L416">                        .average()</span>
+<span class="fc" id="L417">                        .orElse(0);</span>
                         
-<span class="nc" id="L419">                courseSeries.getData().add(new XYChart.Data&lt;&gt;(examName, (int)Math.round(avgPercentage)));</span>
-            }
+<span class="fc" id="L419">                courseSeries.getData().add(new XYChart.Data&lt;&gt;(examName, (int)Math.round(avgPercentage)));</span>
+<span class="fc" id="L420">            }</span>
             
-<span class="nc" id="L422">            lineChart.getData().add(courseSeries);</span>
-        }
-<span class="nc" id="L424">    }</span>
+<span class="fc" id="L422">            lineChart.getData().add(courseSeries);</span>
+<span class="fc" id="L423">        }</span>
+<span class="fc" id="L424">    }</span>
     
     /**
      * Refreshes all data and chart displays
@@ -434,7 +434,7 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L434">            System.err.println(&quot;Error refreshing data: &quot; + e.getMessage());</span>
 <span class="nc" id="L435">            e.printStackTrace();</span>
 <span class="nc" id="L436">            MsgSender.showMsg(&quot;There was an error refreshing the data. Please try again.&quot;);</span>
-        }
+<span class="nc" id="L437">        }</span>
 <span class="nc" id="L438">    }</span>
 
     /**
@@ -442,60 +442,60 @@ public class TeacherGradeStatisticController implements Initializable {
      */
     @FXML
     private void handleReset() {
-<span class="nc" id="L445">        courseCmb.setValue(&quot;Any&quot;);</span>
-<span class="nc" id="L446">        examCmb.setValue(&quot;Any&quot;);</span>
-<span class="nc" id="L447">        studentCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L445">        courseCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L446">        examCmb.setValue(&quot;Any&quot;);</span>
+<span class="fc" id="L447">        studentCmb.setValue(&quot;Any&quot;);</span>
 
-<span class="nc" id="L449">        recordTable.setItems(allStats);</span>
-<span class="nc" id="L450">        setUpBarGraph();</span>
-<span class="nc" id="L451">        setUpLineGraph();</span>
-<span class="nc" id="L452">    }</span>
+<span class="fc" id="L449">        recordTable.setItems(allStats);</span>
+<span class="fc" id="L450">        setUpBarGraph();</span>
+<span class="fc" id="L451">        setUpLineGraph();</span>
+<span class="fc" id="L452">    }</span>
 
     /**
      * Applies the current filters to the data
      */
     @FXML
     private void handleFilter() {
-<span class="nc" id="L459">        applyFilters();</span>
-<span class="nc" id="L460">    }</span>
+<span class="fc" id="L459">        applyFilters();</span>
+<span class="fc" id="L460">    }</span>
     
     /**
      * Applies filters based on selected combobox values
      */
     private void applyFilters() {
-<span class="nc" id="L466">        String selectedCourse = courseCmb.getValue();</span>
-<span class="nc" id="L467">        String selectedExam = examCmb.getValue();</span>
-<span class="nc" id="L468">        String selectedStudent = studentCmb.getValue();</span>
+<span class="fc" id="L466">        String selectedCourse = courseCmb.getValue();</span>
+<span class="fc" id="L467">        String selectedExam = examCmb.getValue();</span>
+<span class="fc" id="L468">        String selectedStudent = studentCmb.getValue();</span>
         
         // Start with all stats
-<span class="nc" id="L471">        ObservableList&lt;Stats&gt; filteredStats = FXCollections.observableArrayList(allStats);</span>
+<span class="fc" id="L471">        ObservableList&lt;Stats&gt; filteredStats = FXCollections.observableArrayList(allStats);</span>
         
         // Apply course filter
-<span class="nc bnc" id="L474" title="All 4 branches missed.">        if (selectedCourse != null &amp;&amp; !selectedCourse.equals(&quot;Any&quot;)) {</span>
-<span class="nc" id="L475">            filteredStats = filteredStats.filtered(</span>
-<span class="nc" id="L476">                stats -&gt; stats.getCourseCode().equals(selectedCourse)</span>
+<span class="pc bpc" id="L474" title="2 of 4 branches missed.">        if (selectedCourse != null &amp;&amp; !selectedCourse.equals(&quot;Any&quot;)) {</span>
+<span class="fc" id="L475">            filteredStats = filteredStats.filtered(</span>
+<span class="fc" id="L476">                stats -&gt; stats.getCourseCode().equals(selectedCourse)</span>
             );
         }
         
         // Apply exam filter
-<span class="nc bnc" id="L481" title="All 4 branches missed.">        if (selectedExam != null &amp;&amp; !selectedExam.equals(&quot;Any&quot;)) {</span>
-<span class="nc" id="L482">            filteredStats = filteredStats.filtered(</span>
-<span class="nc" id="L483">                stats -&gt; stats.getExamName().equals(selectedExam)</span>
+<span class="pc bpc" id="L481" title="2 of 4 branches missed.">        if (selectedExam != null &amp;&amp; !selectedExam.equals(&quot;Any&quot;)) {</span>
+<span class="fc" id="L482">            filteredStats = filteredStats.filtered(</span>
+<span class="fc" id="L483">                stats -&gt; stats.getExamName().equals(selectedExam)</span>
             );
         }
         
         // Apply student filter
-<span class="nc bnc" id="L488" title="All 4 branches missed.">        if (selectedStudent != null &amp;&amp; !selectedStudent.equals(&quot;Any&quot;)) {</span>
-<span class="nc" id="L489">            filteredStats = filteredStats.filtered(</span>
-<span class="nc" id="L490">                stats -&gt; stats.getStudentName().equals(selectedStudent)</span>
+<span class="pc bpc" id="L488" title="2 of 4 branches missed.">        if (selectedStudent != null &amp;&amp; !selectedStudent.equals(&quot;Any&quot;)) {</span>
+<span class="fc" id="L489">            filteredStats = filteredStats.filtered(</span>
+<span class="fc" id="L490">                stats -&gt; stats.getStudentName().equals(selectedStudent)</span>
             );
         }
         
         // Update table and charts
-<span class="nc" id="L495">        recordTable.setItems(filteredStats);</span>
-<span class="nc" id="L496">        setUpBarGraph();</span>
-<span class="nc" id="L497">        setUpLineGraph();</span>
-<span class="nc" id="L498">    }</span>
+<span class="fc" id="L495">        recordTable.setItems(filteredStats);</span>
+<span class="fc" id="L496">        setUpBarGraph();</span>
+<span class="fc" id="L497">        setUpLineGraph();</span>
+<span class="fc" id="L498">    }</span>
 
     /**
      * Exports the current filtered data to a CSV file
@@ -515,7 +515,7 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L515">            FileChooser fileChooser = new FileChooser();</span>
 <span class="nc" id="L516">            fileChooser.setTitle(&quot;Save Grade Statistics&quot;);</span>
 <span class="nc" id="L517">            fileChooser.getExtensionFilters().add(</span>
-<span class="nc" id="L518">                new FileChooser.ExtensionFilter(&quot;CSV Files&quot;, &quot;*.csv&quot;)</span>
+                new FileChooser.ExtensionFilter(&quot;CSV Files&quot;, &quot;*.csv&quot;)
             );
             
             // Generate default filename with timestamp
@@ -542,7 +542,7 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L542">                                stat.getMaxScore(),</span>
 <span class="nc" id="L543">                                percentage,</span>
 <span class="nc" id="L544">                                stat.getTimeSpent()));</span>
-                    }
+<span class="nc" id="L545">                    }</span>
                     
 <span class="nc" id="L547">                    MsgSender.showMsg(&quot;Data exported successfully to &quot; + file.getName());</span>
                 }
@@ -550,7 +550,7 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L550">        } catch (IOException e) {</span>
 <span class="nc" id="L551">            e.printStackTrace();</span>
 <span class="nc" id="L552">            MsgSender.showMsg(&quot;Error exporting data: &quot; + e.getMessage());</span>
-        }
+<span class="nc" id="L553">        }</span>
 <span class="nc" id="L554">    }</span>
 
     /**
@@ -570,7 +570,7 @@ public class TeacherGradeStatisticController implements Initializable {
 <span class="nc" id="L570">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L571">        } catch (Exception e) {</span>
 <span class="nc" id="L572">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L573">        }</span>
 <span class="nc" id="L574">    }</span>
 
     /**

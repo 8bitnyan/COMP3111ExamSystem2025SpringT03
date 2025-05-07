@@ -18,14 +18,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * The controller for student main page.
+ * The controller for the student main page. Handles UI logic for taking exams, checking results, viewing statistics, logging out, and exiting the application.
  */
 public class StudentMainController implements Initializable {
+    public boolean confirmExit;
     @FXML private ComboBox<String> TakeExamComboBox;
     @FXML private ComboBox<String> CheckResultComboBox;
     @FXML private Button startExamButton;
@@ -36,9 +36,36 @@ public class StudentMainController implements Initializable {
     
     private Student student;
 
+    // Dependency-injected databases
+    private Database<Exam> examDB;
+    private Database<Course> courseDB;
+    private Database<comp3111.examsystem.entity.Record> recordDB;
+
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+    AlertShower showAlert = null;
+
+    // Dependency injection constructor
+    public StudentMainController(Database<Exam> examDB, Database<Course> courseDB, Database<comp3111.examsystem.entity.Record> recordDB) {
+        this.examDB = examDB;
+        this.courseDB = courseDB;
+        this.recordDB = recordDB;
+    }
+
+    // Default constructor for production
+    public StudentMainController() {
+        this(new comp3111.examsystem.tools.Database<>(Exam.class),
+             new comp3111.examsystem.tools.Database<>(Course.class),
+             new comp3111.examsystem.tools.Database<>(comp3111.examsystem.entity.Record.class));
+    }
+
     /**
-     * Initializes the student main page UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the student main page UI. Sets up event handlers and disables buttons until selections are made.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,7 +88,8 @@ public class StudentMainController implements Initializable {
     }
 
     /**
-     * Sets the student object and initializes the UI.
+     * Sets the student object and initializes the UI with available quizzes and results.
+     *
      * @param student The student that is operating the page.
      */
     public void preSetController(Student student) {
@@ -73,9 +101,8 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Loads available quizzes for the student.
-     * This is a placeholder implementation - in a real application, 
-     * this would fetch quizzes from a database.
+     * Loads available quizzes for the student. Only quizzes from the student's department that have not been attempted are shown.
+     * This is a placeholder implementation; in a real application, this would fetch quizzes from a database.
      */
     private void loadAvailableQuizzes() {
         // Get the student's department
@@ -83,9 +110,7 @@ public class StudentMainController implements Initializable {
             return;
         }
         String studentDepartment = student.getDepartment().toString();
-        Database<Exam> examDB = new Database<>(Exam.class);
-        Database<Course> courseDB = new Database<>(Course.class);
-        Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
+        // Use injected DBs
         List<Exam> allExams = examDB.getAllEnabled();
         List<String> availableQuizzes = new ArrayList<>();
         // Get all records for this student
@@ -119,57 +144,35 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Loads available quiz results for the student.
-     * This is a placeholder implementation - in a real application,
-     * this would fetch quiz results from a database.
+     * Loads available quiz results for the student. Only completed quizzes from the student's department are shown.
+     * This is a placeholder implementation; in a real application, this would fetch quiz results from a database.
      */
     private void loadAvailableResults() {
         // Get the student's department
         if (student == null || student.getDepartment() == null) {
             return;
         }
-        
-        // Create database connections
-        Database<Exam> examDB = new Database<>(Exam.class);
-        Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
-        Database<Course> courseDB = new Database<>(Course.class);
-        
-        // Get all exams
+        // Use injected DBs
         List<Exam> allExams = examDB.getAllEnabled();
-        
-        // Get all records for this student
         List<comp3111.examsystem.entity.Record> studentRecords = recordDB.queryByField("studentID", student.getId().toString());
-        
-        // Create a set of exam IDs that the student has completed
         List<String> completedExamNames = new ArrayList<>();
-        
-        // For each exam that has a record for this student
         for (Exam exam : allExams) {
-            // Skip unpublished exams
             if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {
                 continue;
             }
-            
-            // Check if exam belongs to student's department
             String courseCode = exam.getCourseCode();
             if (courseCode == null || courseCode.isEmpty()) {
                 continue;
             }
-            
-            // Find the course in the database
             List<Course> courses = courseDB.queryByField("courseCode", courseCode);
             if (courses.isEmpty()) {
                 continue;
             }
-            
-            // Check if the course is from the student's department
             Course course = courses.get(0);
             if (course.getDepartment() == null || 
                 !course.getDepartment().toString().equals(student.getDepartment().toString())) {
                 continue;
             }
-            
-            // Check if student has a record for this exam
             boolean hasRecord = false;
             for (comp3111.examsystem.entity.Record record : studentRecords) {
                 if (record.getExamID() != null && record.getExamID().equals(exam.getId())) {
@@ -177,35 +180,31 @@ public class StudentMainController implements Initializable {
                     break;
                 }
             }
-            
-            // If student has completed this exam, add it to the list
             if (hasRecord) {
                 completedExamNames.add(exam.getName());
             }
         }
-        
-        // Update the combo box with the available results
         CheckResultComboBox.getItems().clear();
         CheckResultComboBox.getItems().addAll(completedExamNames);
-        
-        // If no results available, show message
         if (completedExamNames.isEmpty()) {
             System.out.println("No completed exams found for student: " + student.getName());
         }
     }
     
     /**
-     * Handles the start exam button click.
+     * Handles the start exam button click. Loads the selected exam and navigates to the quiz UI if possible.
+     *
      * @param event The action event.
      */
-    private void handleStartExam(ActionEvent event) {
+    @FXML
+    public void handleStartExam(ActionEvent event) {
         String selectedQuizName = TakeExamComboBox.getValue();
         if (selectedQuizName == null || selectedQuizName.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "No Quiz Selected", "Please select a quiz before starting.");
             return;
         }
         try {
-            Database<Exam> examDB = new Database<>(Exam.class);
+            // Use injected DB
             List<Exam> exams = examDB.getAllEnabled();
             Exam selectedExam = null;
             for (Exam exam : exams) {
@@ -219,7 +218,6 @@ public class StudentMainController implements Initializable {
                 return;
             }
             // Double-check: has the student already attempted this exam?
-            Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
             List<comp3111.examsystem.entity.Record> studentRecords = recordDB.queryByField("studentID", student.getId().toString());
             boolean alreadyAttempted = false;
             for (comp3111.examsystem.entity.Record record : studentRecords) {
@@ -238,7 +236,7 @@ public class StudentMainController implements Initializable {
                 showAlert(Alert.AlertType.WARNING, "No Questions", "This exam does not have any questions.");
                 return;
             }
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentQuizUI.fxml"));
+            FXMLLoader loader = createFXMLLoader("/comp3111/examsystem/StudentQuizUI.fxml");
             Parent root = loader.load();
             StudentQuizController controller = loader.getController();
             controller.preSetController(student, selectedQuizName, quizQuestions, selectedExam.getDuration());
@@ -254,6 +252,7 @@ public class StudentMainController implements Initializable {
     
     /**
      * Loads the questions for an exam from the database.
+     *
      * @param exam The exam to load questions for.
      * @return A list of quiz questions.
      */
@@ -316,53 +315,39 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Handles the check result button click.
+     * Handles the check result button click. Loads the selected exam's results and navigates to the result UI if possible.
+     *
      * @param event The action event.
      */
-    private void handleCheckResult(ActionEvent event) {
+    void handleCheckResult(ActionEvent event) {
         String selectedQuizName = CheckResultComboBox.getValue();
         if (selectedQuizName == null || selectedQuizName.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "No Result Selected", "Please select a quiz result to check.");
             return;
         }
-        
         try {
-            // Find the exam in the database by name
-            Database<Exam> examDB = new Database<>(Exam.class);
+            // Use injected DB
             List<Exam> exams = examDB.getAllEnabled();
             Exam selectedExam = null;
-            
-            // Find the exam with the matching name
             for (Exam exam : exams) {
                 if (selectedQuizName.equals(exam.getName())) {
                     selectedExam = exam;
                     break;
                 }
             }
-            
             if (selectedExam == null) {
                 showAlert(Alert.AlertType.ERROR, "Exam Not Found", "Could not find the selected exam in the database.");
                 return;
             }
-            
-            // Load the quiz results
             List<StudentQuizResultController.QuizResult> results = loadQuizResults(selectedExam);
-            
             if (results.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "No Results", "No results found for this exam.");
                 return;
             }
-            
-            // Load the quiz result screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentQuizResultUI.fxml"));
+            FXMLLoader loader = createFXMLLoader("/comp3111/examsystem/StudentQuizResultUI.fxml");
             Parent root = loader.load();
-            
             StudentQuizResultController controller = loader.getController();
-            
-            // Initialize the controller
             controller.preSetController(student, selectedQuizName, results);
-            
-            // Show the quiz result screen
             Stage stage = (Stage) checkResultButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -375,6 +360,7 @@ public class StudentMainController implements Initializable {
     
     /**
      * Loads quiz results for an exam from the database.
+     *
      * @param exam The exam to load results for.
      * @return A list of quiz results.
      */
@@ -467,7 +453,8 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Generates feedback based on score.
+     * Generates feedback based on the student's score for a question.
+     *
      * @param score The student's score.
      * @param maxScore The maximum possible score.
      * @return Feedback message.
@@ -483,16 +470,16 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Handles the view statistics button click.
+     * Handles the view statistics button click. Navigates to the grade statistics UI.
+     *
      * @param event The action event.
      */
     @FXML
     public void handleViewStatistics(ActionEvent event) {
         try {
             // Load the grade statistics screen
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentGradeStatisticsUI.fxml"));
+            FXMLLoader loader = createFXMLLoader("/comp3111/examsystem/StudentGradeStatisticsUI.fxml");
             Parent root = loader.load();
-            
             StudentGradeStatisticsController controller = loader.getController();
             
             // Initialize the controller
@@ -510,14 +497,15 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Handles the logout button click.
+     * Handles the logout button click. Navigates back to the login UI.
+     *
      * @param event The action event.
      */
     @FXML
     public void handleLogout(ActionEvent event) {
         try {
             // Load the login screen (assuming there is a LoginUI.fxml)
-            Parent root = FXMLLoader.load(getClass().getResource("/comp3111/examsystem/LoginUI.fxml"));
+            Parent root = createFXMLLoader("/comp3111/examsystem/LoginUI.fxml").load();
             
             // Show the login screen
             Stage stage = (Stage) logoutButton.getScene().getWindow();
@@ -531,7 +519,8 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Handles the exit button click.
+     * Handles the exit button click. Prompts the user to confirm before closing the application.
+     *
      * @param event The action event.
      */
     @FXML
@@ -551,16 +540,32 @@ public class StudentMainController implements Initializable {
     }
     
     /**
-     * Shows an alert dialog.
-     * @param type The type of the alert.
-     * @param title The title of the alert.
+     * Shows an alert dialog with the specified type, title, and content.
+     *
+     * @param type    The type of the alert.
+     * @param title   The title of the alert.
      * @param content The content of the alert.
      */
-    private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    void showAlert(Alert.AlertType type, String title, String content) {
+        if (showAlert != null) {
+            showAlert.show(type, title, content);
+        } else {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * For testability: create an FXMLLoader for the given resource path (can be overridden in tests).
+     *
+     * @param resource The resource path to the FXML file.
+     * @return The FXMLLoader for the resource.
+     * @throws IOException If the resource cannot be loaded.
+     */
+    protected FXMLLoader createFXMLLoader(String resource) throws IOException {
+        return new FXMLLoader(getClass().getResource(resource));
     }
 }

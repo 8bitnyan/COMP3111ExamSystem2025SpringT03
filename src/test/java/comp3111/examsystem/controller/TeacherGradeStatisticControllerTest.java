@@ -17,7 +17,7 @@ import comp3111.examsystem.data.Gender;
 import comp3111.examsystem.data.Department;
 
 public class TeacherGradeStatisticControllerTest {
-    private TeacherGradeStatisticController controller;
+    public TeacherGradeStatisticController controller;
     private InMemoryDB<comp3111.examsystem.entity.Record> recordDB;
     private InMemoryDB<Student> studentDB;
     private InMemoryDB<Exam> examDB;

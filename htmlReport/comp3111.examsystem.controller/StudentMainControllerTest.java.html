@@ -1,20 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentMainControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentMainControllerTest.java</span></div><h1>StudentMainControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentMainControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentMainControllerTest.java</span></div><h1>StudentMainControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.Student;
 import comp3111.examsystem.data.Department;
 import comp3111.examsystem.data.Gender;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Alert;
 import org.junit.jupiter.api.*;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import comp3111.examsystem.entity.Exam;
+import comp3111.examsystem.entity.Course;
+import comp3111.examsystem.tools.Database;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-<span class="fc" id="L17">class StudentMainControllerTest {</span>
+import java.io.IOException;
+import java.util.Collections;
+
+<span class="fc" id="L24">class StudentMainControllerTest {</span>
     StudentMainController controller;
     ComboBox&lt;String&gt; takeExamComboBox;
     ComboBox&lt;String&gt; checkResultComboBox;
@@ -23,133 +30,729 @@ import static org.junit.jupiter.api.Assertions.*;
     Button viewStatisticsButton;
     Button logoutButton;
     Button exitButton;
-<span class="fc" id="L26">    private static boolean javafxInitialized = false;</span>
+<span class="fc" id="L33">    private static boolean javafxInitialized = false;</span>
 
     @BeforeAll
     static void initJfx() throws Exception {
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (!javafxInitialized) {</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (!javafxInitialized) {</span>
             try {
-<span class="fc" id="L32">                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
-<span class="nc" id="L33">                Platform.startup(latch::countDown);</span>
-<span class="nc" id="L34">                latch.await();</span>
-<span class="pc" id="L35">            } catch (IllegalStateException e) {</span>
+<span class="fc" id="L39">                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L40">                Platform.startup(latch::countDown);</span>
+<span class="nc" id="L41">                latch.await();</span>
+<span class="fc" id="L42">            } catch (IllegalStateException e) {</span>
                 // Toolkit already initialized, ignore
-            }
-<span class="fc" id="L38">            Platform.setImplicitExit(false);</span>
-<span class="fc" id="L39">            javafxInitialized = true;</span>
+<span class="nc" id="L44">            }</span>
+<span class="fc" id="L45">            Platform.setImplicitExit(false);</span>
+<span class="fc" id="L46">            javafxInitialized = true;</span>
         }
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L48">    }</span>
 
     @BeforeEach
     void setup() {
-<span class="fc" id="L45">        controller = new StudentMainController();</span>
-<span class="fc" id="L46">        takeExamComboBox = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L47">        checkResultComboBox = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L48">        startExamButton = new Button();</span>
-<span class="fc" id="L49">        checkResultButton = new Button();</span>
-<span class="fc" id="L50">        viewStatisticsButton = new Button();</span>
-<span class="fc" id="L51">        logoutButton = new Button();</span>
-<span class="fc" id="L52">        exitButton = new Button();</span>
+        // Clear all relevant databases for test isolation
+<span class="fc" id="L53">        new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class).getAll().forEach(e -&gt; new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class).delByKey(e.getId().toString()));</span>
+<span class="fc" id="L54">        new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class).getAll().forEach(e -&gt; new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class).delByKey(e.getId().toString()));</span>
+<span class="fc" id="L55">        new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Record.class).getAll().forEach(e -&gt; new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Record.class).delByKey(e.getId().toString()));</span>
+<span class="fc" id="L56">        controller = new StudentMainController();</span>
+<span class="fc" id="L57">        takeExamComboBox = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L58">        checkResultComboBox = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L59">        startExamButton = new Button();</span>
+<span class="fc" id="L60">        checkResultButton = new Button();</span>
+<span class="fc" id="L61">        viewStatisticsButton = new Button();</span>
+<span class="fc" id="L62">        logoutButton = new Button();</span>
+<span class="fc" id="L63">        exitButton = new Button();</span>
 
-<span class="fc" id="L54">        inject(controller, &quot;TakeExamComboBox&quot;, takeExamComboBox);</span>
-<span class="fc" id="L55">        inject(controller, &quot;CheckResultComboBox&quot;, checkResultComboBox);</span>
-<span class="fc" id="L56">        inject(controller, &quot;startExamButton&quot;, startExamButton);</span>
-<span class="fc" id="L57">        inject(controller, &quot;checkResultButton&quot;, checkResultButton);</span>
-<span class="fc" id="L58">        inject(controller, &quot;viewStatisticsButton&quot;, viewStatisticsButton);</span>
-<span class="fc" id="L59">        inject(controller, &quot;logoutButton&quot;, logoutButton);</span>
-<span class="fc" id="L60">        inject(controller, &quot;exitButton&quot;, exitButton);</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L65">        inject(controller, &quot;TakeExamComboBox&quot;, takeExamComboBox);</span>
+<span class="fc" id="L66">        inject(controller, &quot;CheckResultComboBox&quot;, checkResultComboBox);</span>
+<span class="fc" id="L67">        inject(controller, &quot;startExamButton&quot;, startExamButton);</span>
+<span class="fc" id="L68">        inject(controller, &quot;checkResultButton&quot;, checkResultButton);</span>
+<span class="fc" id="L69">        inject(controller, &quot;viewStatisticsButton&quot;, viewStatisticsButton);</span>
+<span class="fc" id="L70">        inject(controller, &quot;logoutButton&quot;, logoutButton);</span>
+<span class="fc" id="L71">        inject(controller, &quot;exitButton&quot;, exitButton);</span>
+<span class="fc" id="L72">    }</span>
 
     private void inject(Object target, String field, Object value) {
-        try {
-<span class="fc" id="L65">            var f = target.getClass().getDeclaredField(field);</span>
-<span class="fc" id="L66">            f.setAccessible(true);</span>
-<span class="fc" id="L67">            f.set(target, value);</span>
-<span class="pc" id="L68">        } catch (Exception e) {</span>
-<span class="nc" id="L69">            throw new RuntimeException(e);</span>
+<span class="fc" id="L75">        Class&lt;?&gt; clazz = target.getClass();</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        while (clazz != null) {</span>
+            try {
+<span class="fc" id="L78">                var f = clazz.getDeclaredField(field);</span>
+<span class="fc" id="L79">                f.setAccessible(true);</span>
+<span class="fc" id="L80">                f.set(target, value);</span>
+<span class="fc" id="L81">                return;</span>
+<span class="nc" id="L82">            } catch (NoSuchFieldException e) {</span>
+<span class="nc" id="L83">                clazz = clazz.getSuperclass();</span>
+<span class="nc" id="L84">            } catch (Exception e) {</span>
+<span class="nc" id="L85">                throw new RuntimeException(e);</span>
+<span class="nc" id="L86">            }</span>
         }
-<span class="fc" id="L71">    }</span>
+<span class="nc" id="L88">        throw new RuntimeException(&quot;Field not found: &quot; + field);</span>
+    }
 
     @Test
     void testInitializeDisablesButtons() {
-<span class="fc" id="L75">        controller.initialize(null, null);</span>
-<span class="fc" id="L76">        assertTrue(startExamButton.isDisabled());</span>
-<span class="fc" id="L77">        assertTrue(checkResultButton.isDisabled());</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L93">        controller.initialize(null, null);</span>
+<span class="fc" id="L94">        assertTrue(startExamButton.isDisabled());</span>
+<span class="fc" id="L95">        assertTrue(checkResultButton.isDisabled());</span>
+<span class="fc" id="L96">    }</span>
 
     @Test
     void testPreSetControllerPopulatesComboBoxes() {
-<span class="fc" id="L82">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
-<span class="fc" id="L83">        controller.preSetController(student);</span>
-<span class="fc" id="L84">        assertNotNull(takeExamComboBox.getItems());</span>
-<span class="fc" id="L85">        assertNotNull(checkResultComboBox.getItems());</span>
-<span class="fc" id="L86">    }</span>
-
-    @Test
-    @Disabled(&quot;JavaFX event loop may not process runLater in headless/test environments; see CI logs.&quot;)
-    void testHandleExitCallsPlatformExit() throws Exception {
-<span class="nc" id="L91">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
-        try {
-<span class="nc" id="L93">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
-<span class="nc" id="L94">            Platform.runLater(() -&gt; {</span>
-                try {
-<span class="nc" id="L96">                    controller.handleExit(new ActionEvent());</span>
-<span class="nc" id="L97">                    platformMock.verify(Platform::exit);</span>
-<span class="nc" id="L98">                } catch (Throwable t) {</span>
-<span class="nc" id="L99">                    t.printStackTrace();</span>
-                } finally {
-<span class="nc" id="L101">                    latch.countDown();</span>
-                }
-<span class="nc" id="L103">            });</span>
-<span class="nc" id="L104">            boolean completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS);</span>
-<span class="nc" id="L105">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
-<span class="nc" id="L106">        } finally {</span>
-<span class="nc" id="L107">            platformMock.close();</span>
-        }
-<span class="nc" id="L109">    }</span>
-
-    @Test
-    @Disabled(&quot;JavaFX event loop may not process runLater in headless/test environments; see CI logs.&quot;)
-    void testHandleLogoutLoadsLoginScreen() throws Exception {
-<span class="nc" id="L114">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
-<span class="nc" id="L115">        Platform.runLater(() -&gt; {</span>
-            try {
-<span class="nc" id="L117">                controller.handleLogout(new ActionEvent());</span>
-                // Would check for scene change or alert, but skip in headless
-<span class="nc" id="L119">            } finally {</span>
-<span class="nc" id="L120">                latch.countDown();</span>
-            }
-<span class="nc" id="L122">        });</span>
-<span class="nc" id="L123">        boolean completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS);</span>
-<span class="nc" id="L124">        assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
-<span class="nc" id="L125">    }</span>
-
-    @Test
-    @Disabled(&quot;JavaFX event loop may not process runLater in headless/test environments; see CI logs.&quot;)
-    void testHandleViewStatisticsLoadsStatisticsScreen() throws Exception {
-<span class="nc" id="L130">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
-<span class="nc" id="L131">        Platform.runLater(() -&gt; {</span>
-            try {
-<span class="nc" id="L133">                controller.handleViewStatistics(new ActionEvent());</span>
-                // Would check for scene change or alert, but skip in headless
-<span class="nc" id="L135">            } finally {</span>
-<span class="nc" id="L136">                latch.countDown();</span>
-            }
-<span class="nc" id="L138">        });</span>
-<span class="nc" id="L139">        boolean completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS);</span>
-<span class="nc" id="L140">        assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
-<span class="nc" id="L141">    }</span>
+<span class="fc" id="L100">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L101">        controller.preSetController(student);</span>
+<span class="fc" id="L102">        assertNotNull(takeExamComboBox.getItems());</span>
+<span class="fc" id="L103">        assertNotNull(checkResultComboBox.getItems());</span>
+<span class="fc" id="L104">    }</span>
 
     @Test
     void testPreSetControllerWithNullStudent() {
-<span class="fc" id="L145">        assertDoesNotThrow(() -&gt; controller.preSetController(null));</span>
+<span class="fc" id="L108">        assertDoesNotThrow(() -&gt; controller.preSetController(null));</span>
         // Should not throw, should not populate combo boxes
-<span class="fc" id="L147">        assertNotNull(takeExamComboBox.getItems());</span>
-<span class="fc" id="L148">        assertNotNull(checkResultComboBox.getItems());</span>
-<span class="fc" id="L149">        assertEquals(0, takeExamComboBox.getItems().size());</span>
-<span class="fc" id="L150">        assertEquals(0, checkResultComboBox.getItems().size());</span>
-<span class="fc" id="L151">    }</span>
+<span class="fc" id="L110">        assertNotNull(takeExamComboBox.getItems());</span>
+<span class="fc" id="L111">        assertNotNull(checkResultComboBox.getItems());</span>
+<span class="fc" id="L112">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L113">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L114">    }</span>
 
-    // TODO: Add tests for handleLogout, handleViewStatistics, and edge cases
-} 
+    @Test
+    void testHandleStartExam_NoQuizSelected_ShowsAlert() throws Exception {
+<span class="fc" id="L118">        controller.initialize(null, null);</span>
+<span class="fc" id="L119">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L120">        takeExamComboBox.getSelectionModel().clearSelection();</span>
+        // Patch showAlert via reflection
+<span class="fc" id="L122">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L123">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L124">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L125">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L126">            alertShown[0] = true;</span>
+<span class="fc" id="L127">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="fc" id="L128">            assertTrue(content.contains(&quot;select a quiz&quot;));</span>
+<span class="fc" id="L129">        });</span>
+        // Call handleStartExam via reflection
+<span class="fc" id="L131">        var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="fc" id="L132">        method.setAccessible(true);</span>
+<span class="fc" id="L133">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L134">        assertTrue(alertShown[0], &quot;Alert should be shown for no quiz selected&quot;);</span>
+<span class="fc" id="L135">    }</span>
+
+    @Test
+    void testHandleCheckResult_NoResultSelected_ShowsAlert() throws Exception {
+<span class="fc" id="L139">        controller.initialize(null, null);</span>
+<span class="fc" id="L140">        checkResultComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L141">        checkResultComboBox.getSelectionModel().clearSelection();</span>
+        // Patch showAlert via reflection
+<span class="fc" id="L143">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L144">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L145">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L146">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L147">            alertShown[0] = true;</span>
+<span class="fc" id="L148">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="fc" id="L149">            assertTrue(content.contains(&quot;select a quiz result&quot;));</span>
+<span class="fc" id="L150">        });</span>
+        // Call handleCheckResult via reflection
+<span class="fc" id="L152">        var method = controller.getClass().getDeclaredMethod(&quot;handleCheckResult&quot;, ActionEvent.class);</span>
+<span class="fc" id="L153">        method.setAccessible(true);</span>
+<span class="fc" id="L154">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L155">        assertTrue(alertShown[0], &quot;Alert should be shown for no result selected&quot;);</span>
+<span class="fc" id="L156">    }</span>
+
+    @Test
+    void testHandleStartExam_ExamNotFound_ShowsAlert() throws Exception {
+<span class="fc" id="L160">        controller.initialize(null, null);</span>
+<span class="fc" id="L161">        takeExamComboBox.getItems().add(&quot;Nonexistent Quiz&quot;);</span>
+<span class="fc" id="L162">        takeExamComboBox.getSelectionModel().select(&quot;Nonexistent Quiz&quot;);</span>
+        // Patch showAlert via reflection
+<span class="fc" id="L164">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L165">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L166">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L167">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L168">            alertShown[0] = true;</span>
+<span class="fc" id="L169">            assertEquals(Alert.AlertType.ERROR, type);</span>
+<span class="fc" id="L170">            assertTrue(content.contains(&quot;not find the selected exam&quot;));</span>
+<span class="fc" id="L171">        });</span>
+        // Call handleStartExam via reflection
+<span class="fc" id="L173">        var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="fc" id="L174">        method.setAccessible(true);</span>
+<span class="fc" id="L175">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L176">        assertTrue(alertShown[0], &quot;Alert should be shown for exam not found&quot;);</span>
+<span class="fc" id="L177">    }</span>
+
+    @Test
+    void testHandleCheckResult_ExamNotFound_ShowsAlert() throws Exception {
+<span class="fc" id="L181">        controller.initialize(null, null);</span>
+<span class="fc" id="L182">        checkResultComboBox.getItems().add(&quot;Nonexistent Quiz&quot;);</span>
+<span class="fc" id="L183">        checkResultComboBox.getSelectionModel().select(&quot;Nonexistent Quiz&quot;);</span>
+        // Patch showAlert via reflection
+<span class="fc" id="L185">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L186">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L187">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L188">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L189">            alertShown[0] = true;</span>
+<span class="fc" id="L190">            assertEquals(Alert.AlertType.ERROR, type);</span>
+<span class="fc" id="L191">            assertTrue(content.contains(&quot;not find the selected exam&quot;));</span>
+<span class="fc" id="L192">        });</span>
+        // Call handleCheckResult via reflection
+<span class="fc" id="L194">        var method = controller.getClass().getDeclaredMethod(&quot;handleCheckResult&quot;, ActionEvent.class);</span>
+<span class="fc" id="L195">        method.setAccessible(true);</span>
+<span class="fc" id="L196">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L197">        assertTrue(alertShown[0], &quot;Alert should be shown for exam not found&quot;);</span>
+<span class="fc" id="L198">    }</span>
+
+    @Test
+    void testPreSetController_StudentNoDepartment() {
+<span class="fc" id="L202">        Student student = new Student();</span>
+<span class="fc" id="L203">        student.setDepartment((Department) null);</span>
+<span class="fc" id="L204">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L205">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L206">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L207">    }</span>
+
+    @Test
+    void testPreSetController_NoExamsInDatabase() {
+        // Clear exams DB
+<span class="fc" id="L212">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L213">        examDB.getAll().forEach(e -&gt; examDB.delByKey(e.getId().toString()));</span>
+<span class="fc" id="L214">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L215">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L216">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L217">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L218">    }</span>
+
+    @Test
+    void testPreSetController_ExamWithNullOrEmptyCourseCode() {
+<span class="fc" id="L222">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L223">        exam.setId(100L);</span>
+<span class="fc" id="L224">        exam.setName(&quot;NullCourseExam&quot;);</span>
+<span class="fc" id="L225">        exam.setCourseCode(null);</span>
+<span class="fc" id="L226">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L227">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L228">        examDB.add(exam);</span>
+<span class="fc" id="L229">        Student student = new Student(2L, &quot;user2&quot;, &quot;pass2&quot;, &quot;Name2&quot;, Gender.FEMALE, 21, Department.CSE);</span>
+<span class="fc" id="L230">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L231">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L232">    }</span>
+
+    @Test
+    void testPreSetController_CourseNotFound() {
+<span class="fc" id="L236">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L237">        exam.setId(101L);</span>
+<span class="fc" id="L238">        exam.setName(&quot;NoCourseExam&quot;);</span>
+<span class="fc" id="L239">        exam.setCourseCode(&quot;FAKECODE&quot;);</span>
+<span class="fc" id="L240">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L241">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L242">        examDB.add(exam);</span>
+<span class="fc" id="L243">        Student student = new Student(3L, &quot;user3&quot;, &quot;pass3&quot;, &quot;Name3&quot;, Gender.FEMALE, 22, Department.CSE);</span>
+<span class="fc" id="L244">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L245">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L246">    }</span>
+
+    @Test
+    void testPreSetController_CourseWithNullDepartment() {
+<span class="fc" id="L250">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L251">        course.setCourseCode(&quot;NULLDEPT&quot;);</span>
+<span class="fc" id="L252">        course.setDepartment((Department) null);</span>
+<span class="fc" id="L253">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L254">        courseDB.add(course);</span>
+<span class="fc" id="L255">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L256">        exam.setId(102L);</span>
+<span class="fc" id="L257">        exam.setName(&quot;NullDeptExam&quot;);</span>
+<span class="fc" id="L258">        exam.setCourseCode(&quot;NULLDEPT&quot;);</span>
+<span class="fc" id="L259">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L260">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L261">        examDB.add(exam);</span>
+<span class="fc" id="L262">        Student student = new Student(4L, &quot;user4&quot;, &quot;pass4&quot;, &quot;Name4&quot;, Gender.FEMALE, 23, Department.CSE);</span>
+<span class="fc" id="L263">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L264">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L265">    }</span>
+
+    @Test
+    void testPreSetController_AllExamsAttempted() {
+        // Add an exam and a record for the student
+<span class="fc" id="L270">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L271">        exam.setId(103L);</span>
+<span class="fc" id="L272">        exam.setName(&quot;AttemptedExam&quot;);</span>
+<span class="fc" id="L273">        exam.setCourseCode(&quot;CSE101&quot;);</span>
+<span class="fc" id="L274">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L275">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L276">        examDB.add(exam);</span>
+<span class="fc" id="L277">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L278">        course.setCourseCode(&quot;CSE101&quot;);</span>
+<span class="fc" id="L279">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L280">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L281">        courseDB.add(course);</span>
+<span class="fc" id="L282">        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</span>
+<span class="fc" id="L283">        record.setStudent(5L);</span>
+<span class="fc" id="L284">        record.setExamID(103L);</span>
+<span class="fc" id="L285">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="fc" id="L286">        recordDB.add(record);</span>
+<span class="fc" id="L287">        Student student = new Student(5L, &quot;user5&quot;, &quot;pass5&quot;, &quot;Name5&quot;, Gender.MALE, 24, Department.CSE);</span>
+<span class="fc" id="L288">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L289">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L290">    }</span>
+
+    @Test
+    void testPreSetController_NoCompletedExams() {
+        // Add an exam but no record for the student
+<span class="fc" id="L295">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L296">        exam.setId(104L);</span>
+<span class="fc" id="L297">        exam.setName(&quot;UnattemptedExam&quot;);</span>
+<span class="fc" id="L298">        exam.setCourseCode(&quot;CSE102&quot;);</span>
+<span class="fc" id="L299">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L300">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L301">        examDB.add(exam);</span>
+<span class="fc" id="L302">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L303">        course.setCourseCode(&quot;CSE102&quot;);</span>
+<span class="fc" id="L304">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L305">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L306">        courseDB.add(course);</span>
+<span class="fc" id="L307">        Student student = new Student(6L, &quot;user6&quot;, &quot;pass6&quot;, &quot;Name6&quot;, Gender.FEMALE, 25, Department.CSE);</span>
+<span class="fc" id="L308">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L309">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L310">    }</span>
+
+    @Test
+    void testPreSetController_ExamNotPublished() {
+<span class="fc" id="L314">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L315">        exam.setId(105L);</span>
+<span class="fc" id="L316">        exam.setName(&quot;UnpublishedExam&quot;);</span>
+<span class="fc" id="L317">        exam.setCourseCode(&quot;CSE103&quot;);</span>
+<span class="fc" id="L318">        exam.setIsPublishedInt(0);</span>
+<span class="fc" id="L319">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L320">        examDB.add(exam);</span>
+<span class="fc" id="L321">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L322">        course.setCourseCode(&quot;CSE103&quot;);</span>
+<span class="fc" id="L323">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L324">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L325">        courseDB.add(course);</span>
+<span class="fc" id="L326">        Student student = new Student(7L, &quot;user7&quot;, &quot;pass7&quot;, &quot;Name7&quot;, Gender.MALE, 26, Department.CSE);</span>
+<span class="fc" id="L327">        assertDoesNotThrow(() -&gt; controller.preSetController(student));</span>
+<span class="fc" id="L328">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L329">    }</span>
+
+    @Test
+    void testHandleStartExam_AlreadyAttempted_ShowsAlert() throws Exception {
+        // Add exam, course, and record for already attempted
+<span class="fc" id="L334">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L335">        exam.setId(106L);</span>
+<span class="fc" id="L336">        exam.setName(&quot;AlreadyAttemptedExam&quot;);</span>
+<span class="fc" id="L337">        exam.setCourseCode(&quot;CSE104&quot;);</span>
+<span class="fc" id="L338">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L339">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L340">        examDB.add(exam);</span>
+<span class="fc" id="L341">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L342">        course.setCourseCode(&quot;CSE104&quot;);</span>
+<span class="fc" id="L343">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L344">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L345">        courseDB.add(course);</span>
+<span class="fc" id="L346">        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</span>
+<span class="fc" id="L347">        record.setStudent(8L);</span>
+<span class="fc" id="L348">        record.setExamID(106L);</span>
+<span class="fc" id="L349">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="fc" id="L350">        recordDB.add(record);</span>
+<span class="fc" id="L351">        Student student = new Student(8L, &quot;user8&quot;, &quot;pass8&quot;, &quot;Name8&quot;, Gender.FEMALE, 27, Department.CSE);</span>
+<span class="fc" id="L352">        controller.preSetController(student);</span>
+<span class="fc" id="L353">        takeExamComboBox.getItems().add(&quot;AlreadyAttemptedExam&quot;);</span>
+<span class="fc" id="L354">        takeExamComboBox.getSelectionModel().select(&quot;AlreadyAttemptedExam&quot;);</span>
+        // Patch showAlert
+<span class="fc" id="L356">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L357">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L358">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L359">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L360">            alertShown[0] = true;</span>
+<span class="fc" id="L361">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="fc" id="L362">            assertTrue(content.contains(&quot;already attempted&quot;));</span>
+<span class="fc" id="L363">        });</span>
+<span class="fc" id="L364">        var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="fc" id="L365">        method.setAccessible(true);</span>
+<span class="fc" id="L366">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L367">        assertTrue(alertShown[0], &quot;Alert should be shown for already attempted&quot;);</span>
+<span class="fc" id="L368">    }</span>
+
+    @Test
+    void testHandleStartExam_NoQuestions_ShowsAlert() throws Exception {
+        // Add exam, course, but no questions
+<span class="fc" id="L373">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L374">        exam.setId(107L);</span>
+<span class="fc" id="L375">        exam.setName(&quot;NoQuestionsExam&quot;);</span>
+<span class="fc" id="L376">        exam.setCourseCode(&quot;CSE105&quot;);</span>
+<span class="fc" id="L377">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L378">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L379">        examDB.add(exam);</span>
+<span class="fc" id="L380">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L381">        course.setCourseCode(&quot;CSE105&quot;);</span>
+<span class="fc" id="L382">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L383">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L384">        courseDB.add(course);</span>
+<span class="fc" id="L385">        Student student = new Student(9L, &quot;user9&quot;, &quot;pass9&quot;, &quot;Name9&quot;, Gender.MALE, 28, Department.CSE);</span>
+<span class="fc" id="L386">        controller.preSetController(student);</span>
+<span class="fc" id="L387">        takeExamComboBox.getItems().add(&quot;NoQuestionsExam&quot;);</span>
+<span class="fc" id="L388">        takeExamComboBox.getSelectionModel().select(&quot;NoQuestionsExam&quot;);</span>
+        // Patch showAlert
+<span class="fc" id="L390">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L391">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L392">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L393">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L394">            alertShown[0] = true;</span>
+<span class="fc" id="L395">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="fc" id="L396">            assertTrue(content.contains(&quot;does not have any questions&quot;));</span>
+<span class="fc" id="L397">        });</span>
+<span class="fc" id="L398">        var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="fc" id="L399">        method.setAccessible(true);</span>
+<span class="fc" id="L400">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L401">        assertTrue(alertShown[0], &quot;Alert should be shown for no questions&quot;);</span>
+<span class="fc" id="L402">    }</span>
+
+    @Test
+    void testHandleCheckResult_NoResults_ShowsAlert() throws Exception {
+        // Add exam, course, but no results for student
+<span class="fc" id="L407">        comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();</span>
+<span class="fc" id="L408">        exam.setId(108L);</span>
+<span class="fc" id="L409">        exam.setName(&quot;NoResultsExam&quot;);</span>
+<span class="fc" id="L410">        exam.setCourseCode(&quot;CSE106&quot;);</span>
+<span class="fc" id="L411">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L412">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Exam&gt; examDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
+<span class="fc" id="L413">        examDB.add(exam);</span>
+<span class="fc" id="L414">        comp3111.examsystem.entity.Course course = new comp3111.examsystem.entity.Course();</span>
+<span class="fc" id="L415">        course.setCourseCode(&quot;CSE106&quot;);</span>
+<span class="fc" id="L416">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L417">        comp3111.examsystem.tools.Database&lt;comp3111.examsystem.entity.Course&gt; courseDB = new comp3111.examsystem.tools.Database&lt;&gt;(comp3111.examsystem.entity.Course.class);</span>
+<span class="fc" id="L418">        courseDB.add(course);</span>
+<span class="fc" id="L419">        Student student = new Student(10L, &quot;user10&quot;, &quot;pass10&quot;, &quot;Name10&quot;, Gender.FEMALE, 29, Department.CSE);</span>
+<span class="fc" id="L420">        controller.preSetController(student);</span>
+<span class="fc" id="L421">        checkResultComboBox.getItems().add(&quot;NoResultsExam&quot;);</span>
+<span class="fc" id="L422">        checkResultComboBox.getSelectionModel().select(&quot;NoResultsExam&quot;);</span>
+        // Patch showAlert
+<span class="fc" id="L424">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L425">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L426">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L427">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L428">            alertShown[0] = true;</span>
+<span class="fc" id="L429">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="fc" id="L430">            assertTrue(content.contains(&quot;No results found&quot;));</span>
+<span class="fc" id="L431">        });</span>
+<span class="fc" id="L432">        var method = controller.getClass().getDeclaredMethod(&quot;handleCheckResult&quot;, ActionEvent.class);</span>
+<span class="fc" id="L433">        method.setAccessible(true);</span>
+<span class="fc" id="L434">        assertDoesNotThrow(() -&gt; method.invoke(controller, new ActionEvent()));</span>
+<span class="fc" id="L435">        assertTrue(alertShown[0], &quot;Alert should be shown for no results&quot;);</span>
+<span class="fc" id="L436">    }</span>
+
+    // Testable subclass for simulating FXML loading errors
+<span class="nc" id="L439">    static class TestableStudentMainController extends StudentMainController {</span>
+        @Override
+        protected javafx.fxml.FXMLLoader createFXMLLoader(String resource) throws IOException {
+<span class="nc bnc" id="L442" title="All 2 branches missed.">            if (&quot;/comp3111/examsystem/StudentQuizResultUI.fxml&quot;.equals(resource)) {</span>
+<span class="nc" id="L443">                throw new RuntimeException(new java.io.IOException(&quot;Simulated IO error&quot;));</span>
+            }
+<span class="nc" id="L445">            return super.createFXMLLoader(resource);</span>
+        }
+    }
+
+    @Test
+    void testInitializeCalledTwice_Idempotent() {
+<span class="fc" id="L451">        controller.initialize(null, null);</span>
+<span class="fc" id="L452">        assertDoesNotThrow(() -&gt; controller.initialize(null, null));</span>
+<span class="fc" id="L453">        assertTrue(startExamButton.isDisabled());</span>
+<span class="fc" id="L454">        assertTrue(checkResultButton.isDisabled());</span>
+<span class="fc" id="L455">    }</span>
+
+    @Test
+    void testComboBoxSelectionChangeEnablesButtons() {
+<span class="fc" id="L459">        controller.initialize(null, null);</span>
+<span class="fc" id="L460">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L461">        takeExamComboBox.getSelectionModel().select(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L462">        checkResultComboBox.getItems().add(&quot;Quiz2&quot;);</span>
+<span class="fc" id="L463">        checkResultComboBox.getSelectionModel().select(&quot;Quiz2&quot;);</span>
+        // Simulate selection change
+<span class="fc" id="L465">        takeExamComboBox.getSelectionModel().select(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L466">        checkResultComboBox.getSelectionModel().select(&quot;Quiz2&quot;);</span>
+        // Buttons should be enabled if selection is not null
+<span class="fc" id="L468">        assertFalse(startExamButton.isDisabled());</span>
+<span class="fc" id="L469">        assertFalse(checkResultButton.isDisabled());</span>
+<span class="fc" id="L470">    }</span>
+
+
+    @Test
+    void testTakeExamComboBox_NullSelection() {
+<span class="fc" id="L475">        controller.initialize(null, null);</span>
+<span class="fc" id="L476">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L477">        takeExamComboBox.getSelectionModel().select(null);</span>
+<span class="fc" id="L478">        assertTrue(startExamButton.isDisabled());</span>
+<span class="fc" id="L479">    }</span>
+
+    @Test
+    void testCheckResultComboBox_NullSelection() {
+<span class="fc" id="L483">        controller.initialize(null, null);</span>
+<span class="fc" id="L484">        checkResultComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L485">        checkResultComboBox.getSelectionModel().select(null);</span>
+<span class="fc" id="L486">        assertTrue(checkResultButton.isDisabled());</span>
+<span class="fc" id="L487">    }</span>
+
+
+    @Test
+    void testHandleViewStatistics() throws Exception {
+<span class="fc" id="L492">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L493">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L495">                Stage stage = new Stage();</span>
+<span class="fc" id="L496">                Scene scene = new Scene(viewStatisticsButton);</span>
+<span class="fc" id="L497">                stage.setScene(scene);</span>
+<span class="fc" id="L498">                stage.show();</span>
+<span class="fc" id="L499">                assertDoesNotThrow(() -&gt; controller.handleViewStatistics(new ActionEvent()));</span>
+<span class="fc" id="L500">                stage.close();</span>
+            } finally {
+<span class="fc" id="L502">                latch.countDown();</span>
+            }
+<span class="fc" id="L504">        });</span>
+<span class="fc" id="L505">        latch.await();</span>
+<span class="fc" id="L506">    }</span>
+
+    @Test
+    void testHandleLogout() throws Exception {
+<span class="fc" id="L510">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L511">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L513">                Stage stage = new Stage();</span>
+<span class="fc" id="L514">                Scene scene = new Scene(logoutButton);</span>
+<span class="fc" id="L515">                stage.setScene(scene);</span>
+<span class="fc" id="L516">                stage.show();</span>
+<span class="fc" id="L517">                assertDoesNotThrow(() -&gt; controller.handleLogout(new ActionEvent()));</span>
+<span class="fc" id="L518">                stage.close();</span>
+            } finally {
+<span class="fc" id="L520">                latch.countDown();</span>
+            }
+<span class="fc" id="L522">        });</span>
+<span class="fc" id="L523">        latch.await();</span>
+<span class="fc" id="L524">    }</span>
+
+    @Test
+    void testHandleExit() throws Exception {
+<span class="fc" id="L528">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L529">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L531">                Stage stage = new Stage();</span>
+<span class="fc" id="L532">                Scene scene = new Scene(exitButton);</span>
+<span class="fc" id="L533">                stage.setScene(scene);</span>
+<span class="fc" id="L534">                stage.show();</span>
+<span class="fc" id="L535">                assertDoesNotThrow(() -&gt; controller.handleExit(new ActionEvent()));</span>
+<span class="nc" id="L536">                stage.close();</span>
+            } finally {
+<span class="fc" id="L538">                latch.countDown();</span>
+            }
+<span class="nc" id="L540">        });</span>
+<span class="fc" id="L541">        latch.await();</span>
+<span class="fc" id="L542">    }</span>
+
+    @Test
+    void testHandleStartExam_NoSelection() throws Exception {
+<span class="fc" id="L546">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L547">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L549">                controller.handleStartExam(new ActionEvent());</span>
+            } finally {
+<span class="fc" id="L551">                latch.countDown();</span>
+            }
+<span class="fc" id="L553">        });</span>
+<span class="fc" id="L554">        latch.await();</span>
+<span class="fc" id="L555">    }</span>
+    @Test
+    void testHandleStartExam_ExamNotPublished_ShowsAlert() throws Exception {
+        // Setup: Add an exam that is not published
+<span class="fc" id="L559">        Exam exam = new Exam();</span>
+<span class="fc" id="L560">        exam.setId(200L);</span>
+<span class="fc" id="L561">        exam.setName(&quot;Unpublished&quot;);</span>
+<span class="fc" id="L562">        exam.setCourseCode(&quot;CSE200&quot;);</span>
+<span class="fc" id="L563">        exam.setIsPublishedInt(0); // Not published</span>
+<span class="fc" id="L564">        new Database&lt;&gt;(Exam.class).add(exam);</span>
+<span class="fc" id="L565">        Course course = new Course();</span>
+<span class="fc" id="L566">        course.setCourseCode(&quot;CSE200&quot;);</span>
+<span class="fc" id="L567">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L568">        new Database&lt;&gt;(Course.class).add(course);</span>
+<span class="fc" id="L569">        Student student = new Student(20L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L570">        controller.preSetController(student);</span>
+<span class="fc" id="L571">        takeExamComboBox.getItems().add(&quot;Unpublished&quot;);</span>
+<span class="fc" id="L572">        takeExamComboBox.getSelectionModel().select(&quot;Unpublished&quot;);</span>
+        // Patch showAlert
+<span class="fc" id="L574">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L575">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L576">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L577">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L578">            alertShown[0] = true;</span>
+<span class="fc" id="L579">            assertEquals(Alert.AlertType.WARNING, type);</span>
+<span class="nc" id="L580">            assertTrue(content.contains(&quot;not published&quot;));</span>
+<span class="nc" id="L581">        });</span>
+<span class="fc" id="L582">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L583">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="nc" id="L585">                controller.handleStartExam(new ActionEvent());</span>
+            } finally {
+<span class="fc" id="L587">                latch.countDown();</span>
+            }
+<span class="nc" id="L589">        });</span>
+<span class="fc" id="L590">        latch.await();</span>
+<span class="fc" id="L591">        assertTrue(alertShown[0], &quot;Alert should be shown for unpublished exam&quot;);</span>
+<span class="fc" id="L592">    }</span>
+
+    @Test
+    void testHandleStartExam_HappyPath() throws Exception {
+        // Setup: Add exam, course, and question
+<span class="fc" id="L597">        Exam exam = new Exam();</span>
+<span class="fc" id="L598">        exam.setId(300L);</span>
+<span class="fc" id="L599">        exam.setName(&quot;HappyExam&quot;);</span>
+<span class="fc" id="L600">        exam.setCourseCode(&quot;CSE300&quot;);</span>
+<span class="fc" id="L601">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L602">        exam.setQuestions(&quot;1&quot;);</span>
+<span class="fc" id="L603">        new Database&lt;&gt;(Exam.class).add(exam);</span>
+
+<span class="fc" id="L605">        Course course = new Course();</span>
+<span class="fc" id="L606">        course.setCourseCode(&quot;CSE300&quot;);</span>
+<span class="fc" id="L607">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L608">        new Database&lt;&gt;(Course.class).add(course);</span>
+
+<span class="fc" id="L610">        comp3111.examsystem.entity.Question question = new comp3111.examsystem.entity.Question();</span>
+<span class="fc" id="L611">        question.setId(1L);</span>
+<span class="fc" id="L612">        question.setQuestionText(&quot;What is 2+2?&quot;);</span>
+<span class="fc" id="L613">        question.setType(&quot;MCQ&quot;);</span>
+<span class="fc" id="L614">        question.setOptions(Collections.singletonList(&quot;4,3,2,1&quot;));</span>
+<span class="fc" id="L615">        question.setAnswer(&quot;4&quot;);</span>
+<span class="fc" id="L616">        question.setScore(1);</span>
+<span class="fc" id="L617">        new Database&lt;&gt;(comp3111.examsystem.entity.Question.class).add(question);</span>
+
+<span class="fc" id="L619">        Student student = new Student(30L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L620">        controller.preSetController(student);</span>
+<span class="fc" id="L621">        takeExamComboBox.getItems().add(&quot;HappyExam&quot;);</span>
+<span class="fc" id="L622">        takeExamComboBox.getSelectionModel().select(&quot;HappyExam&quot;);</span>
+
+        // Patch showAlert to fail if called (should not be called in happy path)
+<span class="fc" id="L625">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L626">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L627">        showAlertField.set(controller, (StudentMainController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="nc" id="L628">            fail(&quot;showAlert should not be called in happy path&quot;);</span>
+<span class="nc" id="L629">        });</span>
+
+<span class="fc" id="L631">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L632">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="nc" id="L634">                controller.handleStartExam(new ActionEvent());</span>
+            } finally {
+<span class="fc" id="L636">                latch.countDown();</span>
+            }
+<span class="nc" id="L638">        });</span>
+<span class="fc" id="L639">        latch.await();</span>
+<span class="fc" id="L640">    }</span>
+
+    @Test
+    void testHandleStartExam_HappyPath_StageShow() throws Exception {
+<span class="fc" id="L644">        Exam exam = new Exam();</span>
+<span class="fc" id="L645">        exam.setId(400L);</span>
+<span class="fc" id="L646">        exam.setName(&quot;HappyExamStage&quot;);</span>
+<span class="fc" id="L647">        exam.setCourseCode(&quot;CSE400&quot;);</span>
+<span class="fc" id="L648">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L649">        exam.setQuestions(&quot;1&quot;);</span>
+<span class="fc" id="L650">        new Database&lt;&gt;(Exam.class).add(exam);</span>
+
+<span class="fc" id="L652">        Course course = new Course();</span>
+<span class="fc" id="L653">        course.setCourseCode(&quot;CSE400&quot;);</span>
+<span class="fc" id="L654">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L655">        new Database&lt;&gt;(Course.class).add(course);</span>
+
+<span class="fc" id="L657">        comp3111.examsystem.entity.Question question = new comp3111.examsystem.entity.Question();</span>
+<span class="fc" id="L658">        question.setId(1L);</span>
+<span class="fc" id="L659">        question.setQuestionText(&quot;What is 3+3?&quot;);</span>
+<span class="fc" id="L660">        question.setType(&quot;MCQ&quot;);</span>
+<span class="fc" id="L661">        question.setOptions(Collections.singletonList(&quot;6,5,4,3&quot;));</span>
+<span class="fc" id="L662">        question.setAnswer(&quot;6&quot;);</span>
+<span class="fc" id="L663">        question.setScore(1);</span>
+<span class="fc" id="L664">        new Database&lt;&gt;(comp3111.examsystem.entity.Question.class).add(question);</span>
+
+<span class="fc" id="L666">        Student student = new Student(40L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L667">        controller.preSetController(student);</span>
+<span class="fc" id="L668">        takeExamComboBox.getItems().add(&quot;HappyExamStage&quot;);</span>
+<span class="fc" id="L669">        takeExamComboBox.getSelectionModel().select(&quot;HappyExamStage&quot;);</span>
+
+        // Attach startExamButton to a scene and stage
+<span class="fc" id="L672">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L673">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L675">                Stage stage = new Stage();</span>
+<span class="fc" id="L676">                Scene scene = new Scene(startExamButton);</span>
+<span class="fc" id="L677">                stage.setScene(scene);</span>
+<span class="fc" id="L678">                stage.show();</span>
+<span class="nc" id="L679">                assertDoesNotThrow(() -&gt; controller.handleStartExam(new ActionEvent()));</span>
+<span class="nc" id="L680">                stage.close();</span>
+            } finally {
+<span class="fc" id="L682">                latch.countDown();</span>
+            }
+<span class="nc" id="L684">        });</span>
+<span class="fc" id="L685">        latch.await();</span>
+<span class="fc" id="L686">    }</span>
+
+    @Test
+    void testHandleCheckResult_HappyPath_StageShow() throws Exception {
+        // Setup: Add exam, course, question, and record
+<span class="fc" id="L691">        Exam exam = new Exam();</span>
+<span class="fc" id="L692">        exam.setId(401L);</span>
+<span class="fc" id="L693">        exam.setName(&quot;ResultExamStage&quot;);</span>
+<span class="fc" id="L694">        exam.setCourseCode(&quot;CSE401&quot;);</span>
+<span class="fc" id="L695">        exam.setIsPublishedInt(1);</span>
+<span class="fc" id="L696">        exam.setQuestions(&quot;2&quot;);</span>
+<span class="fc" id="L697">        new Database&lt;&gt;(Exam.class).add(exam);</span>
+
+<span class="fc" id="L699">        Course course = new Course();</span>
+<span class="fc" id="L700">        course.setCourseCode(&quot;CSE401&quot;);</span>
+<span class="fc" id="L701">        course.setDepartment(Department.CSE);</span>
+<span class="fc" id="L702">        new Database&lt;&gt;(Course.class).add(course);</span>
+
+<span class="fc" id="L704">        comp3111.examsystem.entity.Question question = new comp3111.examsystem.entity.Question();</span>
+<span class="fc" id="L705">        question.setId(2L);</span>
+<span class="fc" id="L706">        question.setQuestionText(&quot;What is 5+5?&quot;);</span>
+<span class="fc" id="L707">        question.setType(&quot;MCQ&quot;);</span>
+<span class="fc" id="L708">        question.setOptions(Collections.singletonList(&quot;10,9,8,7&quot;));</span>
+<span class="fc" id="L709">        question.setAnswer(&quot;10&quot;);</span>
+<span class="fc" id="L710">        question.setScore(1);</span>
+<span class="fc" id="L711">        new Database&lt;&gt;(comp3111.examsystem.entity.Question.class).add(question);</span>
+
+<span class="fc" id="L713">        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</span>
+<span class="fc" id="L714">        record.setStudent(41L);</span>
+<span class="fc" id="L715">        record.setExamID(401L);</span>
+<span class="fc" id="L716">        record.setQuestionID(2L);</span>
+<span class="fc" id="L717">        record.setScore(1);</span>
+<span class="fc" id="L718">        record.setResponse(&quot;10&quot;);</span>
+<span class="fc" id="L719">        new Database&lt;&gt;(comp3111.examsystem.entity.Record.class).add(record);</span>
+
+<span class="fc" id="L721">        Student student = new Student(41L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L722">        controller.preSetController(student);</span>
+<span class="fc" id="L723">        checkResultComboBox.getItems().add(&quot;ResultExamStage&quot;);</span>
+<span class="fc" id="L724">        checkResultComboBox.getSelectionModel().select(&quot;ResultExamStage&quot;);</span>
+
+        // Attach checkResultButton to a scene and stage
+<span class="fc" id="L727">        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="fc" id="L728">        Platform.runLater(() -&gt; {</span>
+            try {
+<span class="fc" id="L730">                Stage stage = new Stage();</span>
+<span class="fc" id="L731">                Scene scene = new Scene(checkResultButton);</span>
+<span class="fc" id="L732">                stage.setScene(scene);</span>
+<span class="fc" id="L733">                stage.show();</span>
+<span class="fc" id="L734">                assertDoesNotThrow(() -&gt; controller.handleCheckResult(new ActionEvent()));</span>
+<span class="fc" id="L735">                stage.close();</span>
+            } finally {
+<span class="fc" id="L737">                latch.countDown();</span>
+            }
+<span class="fc" id="L739">        });</span>
+<span class="fc" id="L740">        latch.await();</span>
+<span class="fc" id="L741">    }</span>
+
+    @Test
+    void testGenerateFeedbackBranches() throws Exception {
+<span class="fc" id="L745">        var method = controller.getClass().getDeclaredMethod(&quot;generateFeedback&quot;, double.class, double.class);</span>
+<span class="fc" id="L746">        method.setAccessible(true);</span>
+        // score == 0
+<span class="fc" id="L748">        String feedback0 = (String) method.invoke(controller, 0.0, 2.0);</span>
+<span class="fc" id="L749">        assertTrue(feedback0.contains(&quot;Incorrect answer&quot;));</span>
+        // score &lt; maxScore
+<span class="fc" id="L751">        String feedbackPartial = (String) method.invoke(controller, 1.0, 2.0);</span>
+<span class="fc" id="L752">        assertTrue(feedbackPartial.contains(&quot;Partially correct&quot;));</span>
+        // score == maxScore
+<span class="fc" id="L754">        String feedbackFull = (String) method.invoke(controller, 2.0, 2.0);</span>
+<span class="fc" id="L755">        assertTrue(feedbackFull.contains(&quot;Excellent&quot;));</span>
+<span class="fc" id="L756">    }</span>
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

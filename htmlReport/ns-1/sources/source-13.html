@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeacherRegisterController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TeacherRegisterController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeacherRegisterController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;
+&nbsp;import comp3111.examsystem.data.*;
+&nbsp;import comp3111.examsystem.Main;
+&nbsp;import comp3111.examsystem.entity.Teacher;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import comp3111.examsystem.tools.MsgSender;
+&nbsp;import comp3111.examsystem.tools.UIhelper;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.fxml.Initializable;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.stage.Stage;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URL;
+&nbsp;import java.util.List;
+&nbsp;import java.util.ResourceBundle;
+&nbsp;
+&nbsp;/**
+&nbsp; * The controller for teacher registration page.
+&nbsp; */
+<b class="nc">&nbsp;public class TeacherRegisterController implements Initializable {</b>
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private TextField ageTxt, usernameTxt, nameTxt;
+&nbsp;    @FXML
+&nbsp;    private ComboBox&lt;Gender&gt; genderCmb;
+&nbsp;    @FXML
+&nbsp;    private ComboBox&lt;Department&gt; departmentCmb;
+&nbsp;    @FXML
+&nbsp;    private ComboBox&lt;Position&gt; positionCmb;
+&nbsp;    @FXML
+&nbsp;    private PasswordField passwordConfirmTxt, passwordTxt;
+&nbsp;
+<b class="nc">&nbsp;    private final Database&lt;Teacher&gt; teacherDatabase = new Database&lt;&gt;(Teacher.class);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates the registration information.
+&nbsp;     * @return An error message if the registration information is invalid, empty string otherwise.
+&nbsp;     */
+&nbsp;    private StringBuilder validateTeacherRegistration() {
+<b class="nc">&nbsp;        StringBuilder stringBuilder = new StringBuilder();</b>
+<b class="nc">&nbsp;        if (usernameTxt.getText().isEmpty() || nameTxt.getText().isEmpty() ||</b>
+<b class="nc">&nbsp;                ageTxt.getText().isEmpty() || passwordTxt.getText().isEmpty() || passwordConfirmTxt.getText().isEmpty()) {</b>
+<b class="nc">&nbsp;            stringBuilder.append(&quot;Please fill in all fields!\n&quot;);</b>
+<b class="nc">&nbsp;            return stringBuilder;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            stringBuilder.append(Teacher.validateWithMessage(usernameTxt.getText(), passwordTxt.getText(),</b>
+<b class="nc">&nbsp;                    nameTxt.getText(), ageTxt.getText(), departmentCmb.getValue()));</b>
+<b class="nc">&nbsp;            List&lt;Teacher&gt; teachers = teacherDatabase.getAllEnabled();</b>
+<b class="nc">&nbsp;            for (Teacher teacher : teachers) if (teacher.getUsername().equals(usernameTxt.getText())) stringBuilder.append(&quot;Username has been used!\n&quot;);</b>
+<b class="nc">&nbsp;            if (!passwordTxt.getText().equals(passwordConfirmTxt.getText())) stringBuilder.append(&quot;Password and Confirm Password do not match!\n&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return stringBuilder;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Saves the registration information to the database.
+&nbsp;     * @return A teacher object with the registered values.
+&nbsp;     */
+&nbsp;    private Teacher saveRegistration() {
+<b class="nc">&nbsp;        String username = usernameTxt.getText();</b>
+<b class="nc">&nbsp;        String password = passwordTxt.getText();</b>
+<b class="nc">&nbsp;        String name = nameTxt.getText();</b>
+<b class="nc">&nbsp;        Gender gender = genderCmb.getValue();</b>
+<b class="nc">&nbsp;        int age = Integer.parseInt(ageTxt.getText());</b>
+<b class="nc">&nbsp;        Department department = departmentCmb.getValue();</b>
+<b class="nc">&nbsp;        Position position = positionCmb.getValue();</b>
+&nbsp;
+<b class="nc">&nbsp;        Teacher teacher = new Teacher(null, username, password, name, gender, age, department, position);</b>
+&nbsp;
+<b class="nc">&nbsp;        teacherDatabase.add(teacher);</b>
+&nbsp;
+<b class="nc">&nbsp;        return teacher;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initializes the Teacher Registration UI.
+&nbsp;     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+&nbsp;     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+&nbsp;     */
+&nbsp;    public void initialize(URL location, ResourceBundle resources) {
+<b class="nc">&nbsp;        genderCmb.getItems().setAll(Gender.values());</b>
+<b class="nc">&nbsp;        genderCmb.setValue(Gender.MALE);</b>
+<b class="nc">&nbsp;        positionCmb.getItems().setAll(Position.values());</b>
+<b class="nc">&nbsp;        positionCmb.setValue(Position.AP);</b>
+<b class="nc">&nbsp;        departmentCmb.getItems().setAll(Department.values());</b>
+<b class="nc">&nbsp;        departmentCmb.setValue(Department.ANY);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the cancel button click event.
+&nbsp;     * @param e The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void cancel(ActionEvent e) {
+<b class="nc">&nbsp;        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherLoginUI.fxml&quot;));</b>
+<b class="nc">&nbsp;        Stage stage = new Stage();</b>
+<b class="nc">&nbsp;        stage.setTitle(&quot;Student Login&quot;);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+&nbsp;        } catch (IOException e1) {
+<b class="nc">&nbsp;            e1.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;        stage.show();</b>
+<b class="nc">&nbsp;        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles the register button click event.
+&nbsp;     * @param e The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void register(ActionEvent e) {
+<b class="nc">&nbsp;        StringBuilder msg = validateTeacherRegistration();</b>
+<b class="nc">&nbsp;        if (!msg.isEmpty()) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(msg.toString());</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Teacher teacher = saveRegistration();</b>
+<b class="nc">&nbsp;        MsgSender.showMsg(&quot;Successful Register&quot;);</b>
+<b class="nc">&nbsp;        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</b>
+<b class="nc">&nbsp;        Stage stage = new Stage();</b>
+<b class="nc">&nbsp;        stage.setTitle(&quot;Hi &quot; + usernameTxt.getText() + &quot;, Welcome to HKUST Examination System&quot;);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+<b class="nc">&nbsp;            TeacherMainController controller = fxmlLoader.getController();</b>
+<b class="nc">&nbsp;            controller.presetController(teacher);</b>
+&nbsp;        } catch (IOException e1) {
+<b class="nc">&nbsp;            e1.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;        stage.show();</b>
+<b class="nc">&nbsp;        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

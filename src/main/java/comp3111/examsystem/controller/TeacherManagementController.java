@@ -104,7 +104,7 @@ public class TeacherManagementController {
     /**
      * Applies filtering logic on teacher list based on filter inputs.
      */
-    private List<Teacher> applyTeachersFilter(String username, String name, String department) {
+    public List<Teacher> applyTeachersFilter(String username, String name, String department) {
         List<Teacher> filtered = teacherDatabase.getAllEnabled();
         if (username != null) {
             filtered = teacherDatabase.queryFuzzyByField("username", username);
@@ -124,7 +124,7 @@ public class TeacherManagementController {
      * Handles filtering when user clicks the "Filter" button.
      */
     @FXML
-    private void filterTeachers() {
+    public void filterTeachers() {
         String username = filterUsername.getText().trim();
         String name = filterName.getText().trim();
         String department = filterDepartment.getValue();
@@ -139,7 +139,7 @@ public class TeacherManagementController {
      * Resets all filters and reloads the full course list.
      */
     @FXML
-    private void reset() {
+    public void reset() {
         filterUsername.clear();
         filterName.clear();
         filterDepartment.getSelectionModel().select("ANY");
@@ -205,7 +205,7 @@ public class TeacherManagementController {
      * Updates an existing teacher selected in the table using form values.
      */
     @FXML
-    private void updateTeacher() {
+    public void updateTeacher() {
         Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();
         if (selectedTeacher == null) {
             MsgSender.showMsg("Please select a Teacher to update.");

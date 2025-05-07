@@ -5,6 +5,7 @@ module comp3111.examsystem {
     requires javafx.graphics;
     requires java.desktop;
     requires jdk.jshell;
+    requires javafx.swing;
 
     opens comp3111.examsystem to javafx.fxml, javafx.base, javafx.graphics, javafx.controls, org.junit.jupiter.api, org.apiguardian.api;
     exports comp3111.examsystem;

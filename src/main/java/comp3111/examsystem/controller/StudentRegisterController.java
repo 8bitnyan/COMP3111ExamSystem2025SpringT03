@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * The controller for student register page.
+ * The controller for the student register page. Handles student registration logic and navigation for the registration UI.
  */
 public class StudentRegisterController implements Initializable {
     @FXML
@@ -47,7 +47,8 @@ public class StudentRegisterController implements Initializable {
     Database<Student> studentDatabase = new Database<>(Student.class);
 
     /**
-     * Validates the registration information.
+     * Validates the registration information entered by the user.
+     *
      * @return An error message if the registration information is invalid, empty string otherwise.
      */
     private StringBuilder ValidateRegister() {
@@ -67,7 +68,8 @@ public class StudentRegisterController implements Initializable {
     }
 
     /**
-     * Saves the registration information to the database.
+     * Saves the registration information to the database and returns the registered student object.
+     *
      * @return A student object with the registered values.
      */
     Student saveRegistration() {
@@ -86,8 +88,9 @@ public class StudentRegisterController implements Initializable {
     }
 
     /**
-     * Initializes the Student Registration UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the Student Registration UI. Sets up combo boxes for gender and department.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,7 +101,8 @@ public class StudentRegisterController implements Initializable {
     }
 
     /**
-     * Handles the register button click event.
+     * Handles the register button click event. Validates input, saves registration, and navigates to the main UI if successful.
+     *
      * @param e The action event.
      */
     @FXML
@@ -126,7 +130,8 @@ public class StudentRegisterController implements Initializable {
     }
 
     /**
-     * Handles the cancel button click event.
+     * Handles the cancel button click event. Navigates back to the student login UI.
+     *
      * @param e The action event.
      */
     @FXML

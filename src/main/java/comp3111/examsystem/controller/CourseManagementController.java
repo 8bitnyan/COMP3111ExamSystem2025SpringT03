@@ -36,8 +36,8 @@ public class CourseManagementController {
     }
 
     // Database instance for handling Course objects
-    private final Database<Course> courseDatabase = new Database<>(Course.class);
-    private ObservableList<Course> allCourses;
+    public final Database<Course> courseDatabase = new Database<>(Course.class);
+    public ObservableList<Course> allCourses;
 
     // Table columns for displaying course data
     @FXML private TableView<Course> courseTable;
@@ -88,7 +88,7 @@ public class CourseManagementController {
     /**
      * Applies filtering logic on course list based on filter inputs.
      */
-    private List<Course> applyCoursesFilter(String courseCode, String courseName, String department) {
+    public List<Course> applyCoursesFilter(String courseCode, String courseName, String department) {
         return allCourses.stream()
                 .filter(s -> courseCode == null || s.getCourseCode().toLowerCase().contains(courseCode.toLowerCase()))
                 .filter(s -> courseName == null || s.getCourseName().toLowerCase().contains(courseName.toLowerCase()))
@@ -101,7 +101,7 @@ public class CourseManagementController {
      * Handles filtering when user clicks the "Filter" button.
      */
     @FXML
-    private void filterCourses() {
+    public void filterCourses() {
         String courseCode = filterCourseCode.getText().trim();
         String courseName = filterCourseName.getText().trim();
         String department = filterDepartment.getValue();
@@ -118,7 +118,7 @@ public class CourseManagementController {
      * Resets all filters and reloads the full course list.
      */
     @FXML
-    private void reset() {
+    public void reset() {
         filterCourseCode.clear();
         filterCourseName.clear();
         filterDepartment.getSelectionModel().select("ANY");
@@ -129,7 +129,7 @@ public class CourseManagementController {
     /**
      * Clears the input form on the right side.
      */
-    private void clearForm() {
+    public void clearForm() {
         tfCourseCode.clear();
         tfCourseName.clear();
         cbDepartment.getSelectionModel().clearSelection();
@@ -140,7 +140,7 @@ public class CourseManagementController {
      * Using functions provided in the database class
      */
     @FXML
-    private void addCourse() {
+    public void addCourse() {
         String courseCode = tfCourseCode.getText().trim();
         String courseName = tfCourseName.getText().trim();
         Department department = cbDepartment.getValue();
@@ -165,7 +165,7 @@ public class CourseManagementController {
      * Updates an existing course selected in the table using form values.
      */
     @FXML
-    private void updateCourse() {
+    public void updateCourse() {
         Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();
         if (selectedCourse == null) {
             MsgSender.showMsg("Please select a Course to update.");
@@ -191,6 +191,11 @@ public class CourseManagementController {
         }
     }
 
+    // Add this factory method for testability
+    protected Database<Exam> createExamDatabase() {
+        return new Database<>(Exam.class);
+    }
+
     /**
      * Deletes the selected course from the database and removes all associated exams as well.
      */
@@ -207,7 +212,7 @@ public class CourseManagementController {
                 () -> {
                     try {
                         courseDatabase.delByKey(String.valueOf(selectedCourse.getId()));
-                        Database<Exam> examDatabase = new Database<>(comp3111.examsystem.entity.Exam.class);
+                        Database<Exam> examDatabase = createExamDatabase();
                         List<Exam> allExams = examDatabase.getAllEnabled();
                         for (comp3111.examsystem.entity.Exam exam : allExams) {
                             if (selectedCourse.getCourseCode().equals(exam.getCourseCode()) && exam.getId() != null) {

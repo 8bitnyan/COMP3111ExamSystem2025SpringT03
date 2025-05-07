@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherQuestionBankMgmtController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherQuestionBankMgmtController.java</span></div><h1>TeacherQuestionBankMgmtController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherQuestionBankMgmtController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherQuestionBankMgmtController.java</span></div><h1>TeacherQuestionBankMgmtController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Main;
 import comp3111.examsystem.entity.*;
@@ -101,7 +101,7 @@ import java.util.stream.Collectors;
             }
 <span class="nc" id="L102">        } catch (Exception e) {</span>
 <span class="nc" id="L103">            System.err.println(&quot;Error initializing button states: &quot; + e.getMessage());</span>
-        }
+<span class="nc" id="L104">        }</span>
 
 <span class="nc" id="L106">        colQuestion.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;questionText&quot;));</span>
 <span class="nc" id="L107">        colType.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;type&quot;));</span>
@@ -120,7 +120,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L120">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L121" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L122">            }</span>
-<span class="nc" id="L123">        });</span>
+        });
         
 <span class="nc" id="L125">        colType.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -128,7 +128,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L128">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L129" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L130">            }</span>
-<span class="nc" id="L131">        });</span>
+        });
         
 <span class="nc" id="L133">        colScore.setCellFactory(column -&gt; new TableCell&lt;Question, Integer&gt;() {</span>
             @Override
@@ -136,7 +136,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L136">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L137" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item.toString());</span>
 <span class="nc" id="L138">            }</span>
-<span class="nc" id="L139">        });</span>
+        });
         
 <span class="nc" id="L141">        colOptionA.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -144,7 +144,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L144">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L145" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L146">            }</span>
-<span class="nc" id="L147">        });</span>
+        });
         
 <span class="nc" id="L149">        colOptionB.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -152,7 +152,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L152">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L153" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L154">            }</span>
-<span class="nc" id="L155">        });</span>
+        });
         
 <span class="nc" id="L157">        colOptionC.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -160,7 +160,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L160">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L161" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L162">            }</span>
-<span class="nc" id="L163">        });</span>
+        });
         
 <span class="nc" id="L165">        colOptionD.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -168,7 +168,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L168">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L169" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L170">            }</span>
-<span class="nc" id="L171">        });</span>
+        });
         
 <span class="nc" id="L173">        colOptionE.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -176,7 +176,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L176">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L177" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L178">            }</span>
-<span class="nc" id="L179">        });</span>
+        });
         
 <span class="nc" id="L181">        colAnswer.setCellFactory(column -&gt; new TableCell&lt;Question, String&gt;() {</span>
             @Override
@@ -184,7 +184,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L184">                super.updateItem(item, empty);</span>
 <span class="nc bnc" id="L185" title="All 4 branches missed.">                setText(empty || item == null ? &quot;&quot; : item);</span>
 <span class="nc" id="L186">            }</span>
-<span class="nc" id="L187">        });</span>
+        });
 
 <span class="nc" id="L189">        updateOptionFieldsVisibility(typeCmb.getValue());</span>
 
@@ -238,7 +238,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L238">                refreshButton = (Button) node;</span>
 <span class="nc" id="L239">                break;</span>
             }
-        }
+<span class="nc" id="L241">        }</span>
         
 <span class="nc bnc" id="L243" title="All 2 branches missed.">        if (refreshButton != null) {</span>
 <span class="nc" id="L244">            refreshButton.setContextMenu(contextMenu);</span>
@@ -311,7 +311,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L311">                                });</span>
 <span class="nc" id="L312">                            }</span>
                         }, 
-<span class="nc" id="L314">                        1500 // Reset after 1.5 seconds</span>
+                        1500 // Reset after 1.5 seconds
                     );
                 }
 <span class="nc" id="L317">            });</span>
@@ -498,7 +498,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L498">            System.err.println(&quot;Error filling form: &quot; + e.getMessage());</span>
 <span class="nc" id="L499">            e.printStackTrace();</span>
 <span class="nc" id="L500">            clearFormFields(); // Fallback to clearing the form</span>
-        }
+<span class="nc" id="L501">        }</span>
 <span class="nc" id="L502">    }</span>
 
     @FXML
@@ -523,7 +523,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L523">            } catch (NumberFormatException e) {</span>
 <span class="nc" id="L524">                MsgSender.showMsg(&quot;Score filter should be an integer or left blank.&quot;);</span>
 <span class="nc" id="L525">                filterScoreTxt.clear();</span>
-            }
+<span class="nc" id="L526">            }</span>
         }
 <span class="nc" id="L528">        final int finalScoreFilter = scoreFilter;</span>
 <span class="nc" id="L529">        List&lt;Question&gt; filteredList = questionDB.stream()</span>
@@ -548,9 +548,9 @@ import java.util.stream.Collectors;
 
         // Show confirmation dialog using the correct method
 <span class="nc" id="L550">        MsgSender.showConfirm(</span>
-<span class="nc" id="L551">            &quot;Delete Question&quot;, </span>
-<span class="nc" id="L552">            &quot;Are you sure you want to delete this question?\nThis action cannot be undone.&quot;,</span>
-<span class="nc" id="L553">            () -&gt; {</span>
+            &quot;Delete Question&quot;, 
+            &quot;Are you sure you want to delete this question?\nThis action cannot be undone.&quot;,
+            () -&gt; {
 <span class="nc" id="L554">                Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
 <span class="nc" id="L555">                Object idObj = selectedQuestion.getId();</span>
 <span class="nc bnc" id="L556" title="All 2 branches missed.">                if (idObj == null) {</span>
@@ -626,7 +626,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L626">            } catch (Exception e) {</span>
 <span class="nc" id="L627">                System.err.println(&quot;Failed to return to login screen: &quot; + e.getMessage());</span>
 <span class="nc" id="L628">                e.printStackTrace();</span>
-            }
+<span class="nc" id="L629">            }</span>
 <span class="nc" id="L630">            return;</span>
         }
         
@@ -692,7 +692,7 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L692" title="All 2 branches missed.">                    if (selected != null) {</span>
 <span class="nc" id="L693">                        selectedQuestion = selected;</span>
 <span class="nc" id="L694">                        fillFieldsFromSelectedQuestion(selected);</span>
-<span class="nc" id="L695">                    } else {</span>
+                    } else {
                         // If selection is invalid, clear the form
 <span class="nc" id="L697">                        clearFormFields();</span>
                     }
@@ -708,7 +708,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L708">            System.err.println(&quot;Error refreshing questions: &quot; + e.getMessage());</span>
 <span class="nc" id="L709">            e.printStackTrace();</span>
 <span class="nc" id="L710">            MsgSender.showMsg(&quot;Error refreshing questions: &quot; + e.getMessage());</span>
-        }
+<span class="nc" id="L711">        }</span>
 <span class="nc" id="L712">    }</span>
 
     @FXML
@@ -730,7 +730,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L730">            } catch (Exception e) {</span>
 <span class="nc" id="L731">                System.err.println(&quot;Failed to return to login screen: &quot; + e.getMessage());</span>
 <span class="nc" id="L732">                e.printStackTrace();</span>
-            }
+<span class="nc" id="L733">            }</span>
 <span class="nc" id="L734">            return;</span>
         }
 
@@ -796,7 +796,7 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L796" title="All 2 branches missed.">                    if (selected != null) {</span>
 <span class="nc" id="L797">                        selectedQuestion = selected;</span>
 <span class="nc" id="L798">                        fillFieldsFromSelectedQuestion(selected);</span>
-<span class="nc" id="L799">                    } else {</span>
+                    } else {
                         // If selection is invalid, clear the form
 <span class="nc" id="L801">                        clearFormFields();</span>
                     }
@@ -810,7 +810,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L810">            System.err.println(&quot;Error refreshing questions: &quot; + e.getMessage());</span>
 <span class="nc" id="L811">            e.printStackTrace();</span>
 <span class="nc" id="L812">            MsgSender.showMsg(&quot;Error refreshing questions: &quot; + e.getMessage());</span>
-        }
+<span class="nc" id="L813">        }</span>
 <span class="nc" id="L814">    }</span>
 
     @FXML
@@ -872,7 +872,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L872">                    return;</span>
                 }
 <span class="nc" id="L874">                optionValues.add(value);</span>
-            }
+<span class="nc" id="L875">            }</span>
             
             // Validate that answer matches one of the options
 <span class="nc" id="L878">            boolean validAnswer = false;</span>
@@ -900,7 +900,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L900">        } catch (NumberFormatException e) {</span>
 <span class="nc" id="L901">            MsgSender.showMsg(&quot;Score should be an integer.&quot;);</span>
 <span class="nc" id="L902">            return;</span>
-        }
+<span class="nc" id="L903">        }</span>
         
         // Determine if we're adding a new question or updating an existing one
 <span class="nc bnc" id="L906" title="All 4 branches missed.">        boolean isAdding = !editMode &amp;&amp; selectedQuestion == null;</span>
@@ -908,7 +908,7 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L908" title="All 2 branches missed.">        if (isAdding) {</span>
             // Adding a new question
 <span class="nc" id="L910">            addNewQuestion(questionText, type, score, answer, optionValues);</span>
-<span class="nc" id="L911">        } else {</span>
+        } else {
             // Updating an existing question - validate edit mode
 <span class="nc bnc" id="L913" title="All 2 branches missed.">            if (!editMode) {</span>
 <span class="nc" id="L914">                MsgSender.showMsg(&quot;Please click Edit first to modify a question.&quot;);</span>
@@ -949,7 +949,7 @@ import java.util.stream.Collectors;
             // For MCQ, set the options
 <span class="nc bnc" id="L950" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
 <span class="nc" id="L951">                questionToUpdate.setOptions(optionValues);</span>
-<span class="nc" id="L952">            } else {</span>
+            } else {
                 // Clear options for non-MCQ questions
 <span class="nc" id="L954">                questionToUpdate.setOptions(new ArrayList&lt;&gt;());</span>
             }
@@ -995,7 +995,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L995">                                    Thread.sleep(100);</span>
 <span class="nc" id="L996">                                } catch (InterruptedException e) {</span>
                                     // Ignore
-                                }
+<span class="nc" id="L998">                                }</span>
                                 
                                 // Select the updated question
 <span class="nc" id="L1001">                                questionsTable.getSelectionModel().select(selectedIndex);</span>
@@ -1009,12 +1009,12 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L1009" title="All 2 branches missed.">                                if (editBtn != null) {</span>
 <span class="nc" id="L1010">                                    editBtn.setDisable(false);</span>
                                 }
-<span class="nc" id="L1012">                            } else {</span>
+                            } else {
                                 // If index is out of bounds, do a full refresh
 <span class="nc" id="L1014">                                handleHardRefresh();</span>
 <span class="nc" id="L1015">                                MsgSender.showMsg(&quot;Question updated successfully!&quot;);</span>
                             }
-<span class="nc" id="L1017">                        } else {</span>
+                        } else {
                             // If question not found, refresh the entire table
 <span class="nc" id="L1019">                            handleHardRefresh();</span>
 <span class="nc" id="L1020">                            MsgSender.showMsg(&quot;Question updated - refresh completed.&quot;);</span>
@@ -1034,7 +1034,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1034">                    setFormFieldsEditable(false);</span>
                     
 <span class="nc" id="L1036">                    handleHardRefresh();</span>
-                }
+<span class="nc" id="L1037">                }</span>
 <span class="nc" id="L1038">            });</span>
         }
 <span class="nc" id="L1040">    }</span>
@@ -1092,7 +1092,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1092">                e.printStackTrace();</span>
                 // Try a hard refresh as fallback
 <span class="nc" id="L1094">                handleHardRefresh();</span>
-            }
+<span class="nc" id="L1095">            }</span>
 <span class="nc" id="L1096">        });</span>
 <span class="nc" id="L1097">    }</span>
 
@@ -1113,7 +1113,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1113">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L1114">        } catch (Exception e) {</span>
 <span class="nc" id="L1115">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L1116">        }</span>
 <span class="nc" id="L1117">    }</span>
 
     @FXML
@@ -1185,7 +1185,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1185">        } catch (Exception e) {</span>
 <span class="nc" id="L1186">            System.err.println(&quot;Error clearing form fields: &quot; + e.getMessage());</span>
 <span class="nc" id="L1187">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L1188">        }</span>
 <span class="nc" id="L1189">    }</span>
 
     /**
@@ -1202,7 +1202,7 @@ import java.util.stream.Collectors;
             
 <span class="nc bnc" id="L1203" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(questionType)) {</span>
 <span class="nc" id="L1204">                answerLabel.setText(&quot;Answer (enter option letter A, B, C, etc.):&quot;);</span>
-<span class="nc" id="L1205">            } else {</span>
+            } else {
 <span class="nc" id="L1206">                answerLabel.setText(&quot;Answer:&quot;);</span>
             }
         }
@@ -1291,7 +1291,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1291">        } catch (Exception e) {</span>
 <span class="nc" id="L1292">            System.err.println(&quot;Error displaying question: &quot; + e.getMessage());</span>
 <span class="nc" id="L1293">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L1294">        }</span>
 <span class="nc" id="L1295">    }</span>
     
     /**
@@ -1328,7 +1328,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1328">            field.setEditable(editable);</span>
 <span class="nc bnc" id="L1329" title="All 2 branches missed.">            field.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);</span>
 <span class="nc" id="L1330">            field.setStyle(style);</span>
-        }
+<span class="nc" id="L1331">        }</span>
         
         // Update the delete buttons on option fields
 <span class="nc bnc" id="L1334" title="All 2 branches missed.">        for (Node node : optionsContainer.getChildren()) {</span>
@@ -1338,9 +1338,9 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L1338" title="All 2 branches missed.">                    if (child instanceof Button) {</span>
 <span class="nc bnc" id="L1339" title="All 2 branches missed.">                        child.setDisable(!editable);</span>
                     }
-                }
+<span class="nc" id="L1341">                }</span>
             }
-        }
+<span class="nc" id="L1343">        }</span>
         
         // Update button states based on current mode
 <span class="nc bnc" id="L1346" title="All 2 branches missed.">        if (editable) {</span>
@@ -1349,7 +1349,7 @@ import java.util.stream.Collectors;
 <span class="nc bnc" id="L1349" title="All 2 branches missed.">            if (updateBtn != null) updateBtn.setDisable(false);</span>
 <span class="nc bnc" id="L1350" title="All 2 branches missed.">            if (editBtn != null) editBtn.setDisable(true);</span>
 <span class="nc bnc" id="L1351" title="All 2 branches missed.">            if (cancelEditBtn != null) cancelEditBtn.setDisable(false);</span>
-<span class="nc" id="L1352">        } else {</span>
+        } else {
             // In viewing mode
 <span class="nc bnc" id="L1354" title="All 2 branches missed.">            if (addBtn != null) addBtn.setDisable(false);</span>
             
@@ -1381,19 +1381,19 @@ import java.util.stream.Collectors;
                                 // In edit mode, show normal header
 <span class="nc" id="L1382">                                headerLabel.setText(&quot;Question Details&quot;);</span>
 <span class="nc" id="L1383">                                headerLabel.setStyle(&quot;-fx-font-size: 16px;&quot;);</span>
-<span class="nc" id="L1384">                            } else {</span>
+                            } else {
                                 // In read-only mode, show prompt
 <span class="nc" id="L1386">                                headerLabel.setText(&quot;Question Details (Click 'Add New' to create)&quot;);</span>
 <span class="nc" id="L1387">                                headerLabel.setStyle(&quot;-fx-font-size: 16px; -fx-text-fill: #1976D2;&quot;);</span>
                             }
 <span class="nc" id="L1389">                            break;</span>
                         }
-                    }
+<span class="nc" id="L1391">                    }</span>
                 }
             }
 <span class="nc" id="L1394">        } catch (Exception e) {</span>
 <span class="nc" id="L1395">            System.err.println(&quot;Error updating form header: &quot; + e.getMessage());</span>
-        }
+<span class="nc" id="L1396">        }</span>
 <span class="nc" id="L1397">    }</span>
 
     /**
@@ -1472,7 +1472,7 @@ import java.util.stream.Collectors;
             }
             
 <span class="nc" id="L1474">            MsgSender.showMsg(&quot;Edit cancelled. No changes were saved.&quot;);</span>
-<span class="nc" id="L1475">        } else {</span>
+        } else {
             // If question not found, clear the form
 <span class="nc" id="L1477">            clearFormFields();</span>
 <span class="nc" id="L1478">            MsgSender.showMsg(&quot;Question could not be found. Edit cancelled.&quot;);</span>
@@ -1505,7 +1505,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L1505">                                });</span>
 <span class="nc" id="L1506">                            }</span>
                         }, 
-<span class="nc" id="L1508">                        1500 // Reset after 1.5 seconds</span>
+                        1500 // Reset after 1.5 seconds
                     );
                 }
             }

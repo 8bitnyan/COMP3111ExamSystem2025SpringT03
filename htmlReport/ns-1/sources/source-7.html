@@ -1,0 +1,731 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StudentMainController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentMainController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentMainController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76%
+  </span>
+  <span class="absValue">
+    (114/150)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.5%
+  </span>
+  <span class="absValue">
+    (197/220)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StudentMainController$AlertShower</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76%
+  </span>
+  <span class="absValue">
+    (114/150)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.5%
+  </span>
+  <span class="absValue">
+    (197/220)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;
+&nbsp;import comp3111.examsystem.entity.*;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.fxml.Initializable;
+&nbsp;import javafx.scene.Parent;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.Alert;
+&nbsp;import javafx.scene.control.Button;
+&nbsp;import javafx.scene.control.ButtonType;
+&nbsp;import javafx.scene.control.ComboBox;
+&nbsp;import javafx.stage.Stage;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URL;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.ResourceBundle;
+&nbsp;
+&nbsp;/**
+&nbsp; * The controller for the student main page. Handles UI logic for taking exams, checking results, viewing statistics, logging out, and exiting the application.
+&nbsp; */
+<b class="fc">&nbsp;public class StudentMainController implements Initializable {</b>
+&nbsp;    public boolean confirmExit;
+&nbsp;    @FXML private ComboBox&lt;String&gt; TakeExamComboBox;
+&nbsp;    @FXML private ComboBox&lt;String&gt; CheckResultComboBox;
+&nbsp;    @FXML private Button startExamButton;
+&nbsp;    @FXML private Button checkResultButton;
+&nbsp;    @FXML private Button viewStatisticsButton;
+&nbsp;    @FXML private Button logoutButton;
+&nbsp;    @FXML private Button exitButton;
+&nbsp;    
+&nbsp;    private Student student;
+&nbsp;
+&nbsp;    // For testability: allow patching alert logic
+&nbsp;    @FunctionalInterface
+&nbsp;    interface AlertShower {
+&nbsp;        void show(Alert.AlertType type, String title, String content);
+&nbsp;    }
+<b class="fc">&nbsp;    AlertShower showAlert = null;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initializes the student main page UI. Sets up event handlers and disables buttons until selections are made.
+&nbsp;     *
+&nbsp;     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
+&nbsp;     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+&nbsp;     */
+&nbsp;    public void initialize(URL location, ResourceBundle resources) {
+&nbsp;        // Add event handlers for buttons
+<b class="fc">&nbsp;        startExamButton.setOnAction(this::handleStartExam);</b>
+<b class="fc">&nbsp;        checkResultButton.setOnAction(this::handleCheckResult);</b>
+&nbsp;        
+&nbsp;        // Disable buttons initially until quizzes are selected
+<b class="fc">&nbsp;        startExamButton.setDisable(true);</b>
+<b class="fc">&nbsp;        checkResultButton.setDisable(true);</b>
+&nbsp;        
+&nbsp;        // Add listeners to combo boxes
+<b class="fc">&nbsp;        TakeExamComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</b>
+<b class="pc">&nbsp;            startExamButton.setDisable(newVal == null);</b>
+&nbsp;        });
+&nbsp;        
+<b class="fc">&nbsp;        CheckResultComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</b>
+<b class="pc">&nbsp;            checkResultButton.setDisable(newVal == null);</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the student object and initializes the UI with available quizzes and results.
+&nbsp;     *
+&nbsp;     * @param student The student that is operating the page.
+&nbsp;     */
+&nbsp;    public void preSetController(Student student) {
+<b class="fc">&nbsp;        this.student = student;</b>
+&nbsp;        
+&nbsp;        // Load available quizzes (in a real application, this would be from a database)
+<b class="fc">&nbsp;        loadAvailableQuizzes();</b>
+<b class="fc">&nbsp;        loadAvailableResults();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Loads available quizzes for the student. Only quizzes from the student&#39;s department that have not been attempted are shown.
+&nbsp;     * This is a placeholder implementation; in a real application, this would fetch quizzes from a database.
+&nbsp;     */
+&nbsp;    private void loadAvailableQuizzes() {
+&nbsp;        // Get the student&#39;s department
+<b class="fc">&nbsp;        if (student == null || student.getDepartment() == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        String studentDepartment = student.getDepartment().toString();</b>
+<b class="fc">&nbsp;        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="fc">&nbsp;        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</b>
+<b class="fc">&nbsp;        Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</b>
+<b class="fc">&nbsp;        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</b>
+<b class="fc">&nbsp;        List&lt;String&gt; availableQuizzes = new ArrayList&lt;&gt;();</b>
+&nbsp;        // Get all records for this student
+<b class="fc">&nbsp;        List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</b>
+&nbsp;        // Build a set of attempted exam IDs
+<b class="fc">&nbsp;        List&lt;Long&gt; attemptedExamIds = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (comp3111.examsystem.entity.Record record : studentRecords) {</b>
+<b class="pc">&nbsp;            if (record.getExamID() != null) {</b>
+<b class="fc">&nbsp;                attemptedExamIds.add(record.getExamID());</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        for (Exam exam : allExams) {</b>
+<b class="pc">&nbsp;            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) continue;</b>
+<b class="fc">&nbsp;            String courseCode = exam.getCourseCode();</b>
+<b class="pc">&nbsp;            if (courseCode == null || courseCode.isEmpty()) continue;</b>
+<b class="fc">&nbsp;            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</b>
+<b class="fc">&nbsp;            if (courses.isEmpty()) continue;</b>
+<b class="fc">&nbsp;            Course course = courses.get(0);</b>
+<b class="pc">&nbsp;            if (course.getDepartment() != null &amp;&amp; course.getDepartment().toString().equals(studentDepartment)) {</b>
+&nbsp;                // Only add if student has NOT attempted this exam
+<b class="fc">&nbsp;                if (!attemptedExamIds.contains(exam.getId())) {</b>
+<b class="fc">&nbsp;                    availableQuizzes.add(exam.getName());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        TakeExamComboBox.getItems().clear();</b>
+<b class="fc">&nbsp;        TakeExamComboBox.getItems().addAll(availableQuizzes);</b>
+<b class="fc">&nbsp;        if (availableQuizzes.isEmpty()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;No exams available for department: &quot; + studentDepartment);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Loads available quiz results for the student. Only completed quizzes from the student&#39;s department are shown.
+&nbsp;     * This is a placeholder implementation; in a real application, this would fetch quiz results from a database.
+&nbsp;     */
+&nbsp;    private void loadAvailableResults() {
+&nbsp;        // Get the student&#39;s department
+<b class="fc">&nbsp;        if (student == null || student.getDepartment() == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Create database connections
+<b class="fc">&nbsp;        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="fc">&nbsp;        Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</b>
+<b class="fc">&nbsp;        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</b>
+&nbsp;        
+&nbsp;        // Get all exams
+<b class="fc">&nbsp;        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</b>
+&nbsp;        
+&nbsp;        // Get all records for this student
+<b class="fc">&nbsp;        List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</b>
+&nbsp;        
+&nbsp;        // Create a set of exam IDs that the student has completed
+<b class="fc">&nbsp;        List&lt;String&gt; completedExamNames = new ArrayList&lt;&gt;();</b>
+&nbsp;        
+&nbsp;        // For each exam that has a record for this student
+<b class="fc">&nbsp;        for (Exam exam : allExams) {</b>
+&nbsp;            // Skip unpublished exams
+<b class="pc">&nbsp;            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Check if exam belongs to student&#39;s department
+<b class="fc">&nbsp;            String courseCode = exam.getCourseCode();</b>
+<b class="pc">&nbsp;            if (courseCode == null || courseCode.isEmpty()) {</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Find the course in the database
+<b class="fc">&nbsp;            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</b>
+<b class="fc">&nbsp;            if (courses.isEmpty()) {</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Check if the course is from the student&#39;s department
+<b class="fc">&nbsp;            Course course = courses.get(0);</b>
+<b class="fc">&nbsp;            if (course.getDepartment() == null || </b>
+<b class="pc">&nbsp;                !course.getDepartment().toString().equals(student.getDepartment().toString())) {</b>
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Check if student has a record for this exam
+<b class="fc">&nbsp;            boolean hasRecord = false;</b>
+<b class="fc">&nbsp;            for (comp3111.examsystem.entity.Record record : studentRecords) {</b>
+<b class="pc">&nbsp;                if (record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</b>
+<b class="fc">&nbsp;                    hasRecord = true;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;            
+&nbsp;            // If student has completed this exam, add it to the list
+<b class="fc">&nbsp;            if (hasRecord) {</b>
+<b class="fc">&nbsp;                completedExamNames.add(exam.getName());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+&nbsp;        // Update the combo box with the available results
+<b class="fc">&nbsp;        CheckResultComboBox.getItems().clear();</b>
+<b class="fc">&nbsp;        CheckResultComboBox.getItems().addAll(completedExamNames);</b>
+&nbsp;        
+&nbsp;        // If no results available, show message
+<b class="fc">&nbsp;        if (completedExamNames.isEmpty()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;No completed exams found for student: &quot; + student.getName());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the start exam button click. Loads the selected exam and navigates to the quiz UI if possible.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleStartExam(ActionEvent event) {
+<b class="fc">&nbsp;        String selectedQuizName = TakeExamComboBox.getValue();</b>
+<b class="pc">&nbsp;        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</b>
+<b class="fc">&nbsp;            showAlert(Alert.AlertType.WARNING, &quot;No Quiz Selected&quot;, &quot;Please select a quiz before starting.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        try {
+<b class="fc">&nbsp;            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="fc">&nbsp;            List&lt;Exam&gt; exams = examDB.getAllEnabled();</b>
+<b class="fc">&nbsp;            Exam selectedExam = null;</b>
+<b class="fc">&nbsp;            for (Exam exam : exams) {</b>
+<b class="pc">&nbsp;                if (selectedQuizName.equals(exam.getName())) {</b>
+<b class="fc">&nbsp;                    selectedExam = exam;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (selectedExam == null) {</b>
+<b class="fc">&nbsp;                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            // Double-check: has the student already attempted this exam?
+<b class="fc">&nbsp;            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</b>
+<b class="fc">&nbsp;            List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</b>
+<b class="fc">&nbsp;            boolean alreadyAttempted = false;</b>
+<b class="fc">&nbsp;            for (comp3111.examsystem.entity.Record record : studentRecords) {</b>
+<b class="pc">&nbsp;                if (record.getExamID() != null &amp;&amp; record.getExamID().equals(selectedExam.getId())) {</b>
+<b class="fc">&nbsp;                    alreadyAttempted = true;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (alreadyAttempted) {</b>
+<b class="fc">&nbsp;                showAlert(Alert.AlertType.WARNING, &quot;Already Attempted&quot;, &quot;You have already attempted this exam. Only one attempt is allowed.&quot;);</b>
+<b class="fc">&nbsp;                loadAvailableQuizzes(); // Refresh the list</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="fc">&nbsp;            List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = loadQuestionsForExam(selectedExam);</b>
+<b class="fc">&nbsp;            if (quizQuestions.isEmpty()) {</b>
+<b class="fc">&nbsp;                showAlert(Alert.AlertType.WARNING, &quot;No Questions&quot;, &quot;This exam does not have any questions.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="fc">&nbsp;            FXMLLoader loader = createFXMLLoader(&quot;/comp3111/examsystem/StudentQuizUI.fxml&quot;);</b>
+<b class="fc">&nbsp;            Parent root = loader.load();</b>
+<b class="fc">&nbsp;            StudentQuizController controller = loader.getController();</b>
+<b class="fc">&nbsp;            controller.preSetController(student, selectedQuizName, quizQuestions, selectedExam.getDuration());</b>
+<b class="nc">&nbsp;            Stage stage = (Stage) startExamButton.getScene().getWindow();</b>
+<b class="nc">&nbsp;            Scene scene = new Scene(root);</b>
+<b class="nc">&nbsp;            stage.setScene(scene);</b>
+<b class="nc">&nbsp;            stage.show();</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz screen: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Loads the questions for an exam from the database.
+&nbsp;     *
+&nbsp;     * @param exam The exam to load questions for.
+&nbsp;     * @return A list of quiz questions.
+&nbsp;     */
+&nbsp;    private List&lt;StudentQuizController.QuizQuestion&gt; loadQuestionsForExam(Exam exam) {
+<b class="fc">&nbsp;        List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</b>
+&nbsp;        
+&nbsp;        try {
+&nbsp;            // Get the questions directly from the database using the exam&#39;s question string
+<b class="fc">&nbsp;            String questionsStr = exam.getQuestions();</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (questionsStr == null || questionsStr.isEmpty()) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</b>
+<b class="fc">&nbsp;                return quizQuestions;</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Split the question IDs string
+<b class="fc">&nbsp;            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</b>
+&nbsp;            
+&nbsp;            // Process each question ID
+<b class="fc">&nbsp;            for (String questionIdStr : questionIdArr) {</b>
+&nbsp;                try {
+&nbsp;                    // Trim any whitespace
+<b class="fc">&nbsp;                    questionIdStr = questionIdStr.trim();</b>
+<b class="pc">&nbsp;                    if (questionIdStr.isEmpty()) continue;</b>
+&nbsp;                    
+&nbsp;                    // Use the questionIdStr directly with queryByKey
+<b class="fc">&nbsp;                    Question dbQuestion = questionDB.queryByKey(questionIdStr);</b>
+&nbsp;                    
+<b class="pc">&nbsp;                    if (dbQuestion == null) {</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</b>
+&nbsp;                        continue;
+&nbsp;                    }
+<b class="pc">&nbsp;                    int maxScore = dbQuestion.getScore() != null ? dbQuestion.getScore() : 1;</b>
+<b class="pc">&nbsp;                    if (&quot;MCQ&quot;.equalsIgnoreCase(dbQuestion.getType())) {</b>
+&nbsp;                        // Multiple choice question
+<b class="fc">&nbsp;                        quizQuestions.add(new StudentQuizController.QuizQuestion(</b>
+<b class="fc">&nbsp;                            dbQuestion.getQuestionText(),</b>
+<b class="fc">&nbsp;                            dbQuestion.getOptions(),</b>
+&nbsp;                            maxScore,
+<b class="fc">&nbsp;                            dbQuestion.getAnswer()</b>
+&nbsp;                        ));
+&nbsp;                    } else {
+&nbsp;                        // Short answer question
+<b class="nc">&nbsp;                        quizQuestions.add(new StudentQuizController.QuizQuestion(</b>
+<b class="nc">&nbsp;                            dbQuestion.getQuestionText(),</b>
+&nbsp;                            maxScore
+&nbsp;                        ));
+&nbsp;                    }
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    System.err.println(&quot;Error processing question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Error loading questions for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        return quizQuestions;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the check result button click. Loads the selected exam&#39;s results and navigates to the result UI if possible.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    void handleCheckResult(ActionEvent event) {
+<b class="fc">&nbsp;        String selectedQuizName = CheckResultComboBox.getValue();</b>
+<b class="pc">&nbsp;        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</b>
+<b class="fc">&nbsp;            showAlert(Alert.AlertType.WARNING, &quot;No Result Selected&quot;, &quot;Please select a quiz result to check.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+&nbsp;        try {
+&nbsp;            // Find the exam in the database by name
+<b class="fc">&nbsp;            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="fc">&nbsp;            List&lt;Exam&gt; exams = examDB.getAllEnabled();</b>
+<b class="fc">&nbsp;            Exam selectedExam = null;</b>
+&nbsp;            
+&nbsp;            // Find the exam with the matching name
+<b class="fc">&nbsp;            for (Exam exam : exams) {</b>
+<b class="pc">&nbsp;                if (selectedQuizName.equals(exam.getName())) {</b>
+<b class="fc">&nbsp;                    selectedExam = exam;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            if (selectedExam == null) {</b>
+<b class="fc">&nbsp;                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Load the quiz results
+<b class="fc">&nbsp;            List&lt;StudentQuizResultController.QuizResult&gt; results = loadQuizResults(selectedExam);</b>
+&nbsp;            
+<b class="fc">&nbsp;            if (results.isEmpty()) {</b>
+<b class="fc">&nbsp;                showAlert(Alert.AlertType.WARNING, &quot;No Results&quot;, &quot;No results found for this exam.&quot;);</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Load the quiz result screen
+<b class="fc">&nbsp;            FXMLLoader loader = createFXMLLoader(&quot;/comp3111/examsystem/StudentQuizResultUI.fxml&quot;);</b>
+<b class="fc">&nbsp;            Parent root = loader.load();</b>
+&nbsp;            
+<b class="fc">&nbsp;            StudentQuizResultController controller = loader.getController();</b>
+&nbsp;            
+&nbsp;            // Initialize the controller
+<b class="fc">&nbsp;            controller.preSetController(student, selectedQuizName, results);</b>
+&nbsp;            
+&nbsp;            // Show the quiz result screen
+<b class="fc">&nbsp;            Stage stage = (Stage) checkResultButton.getScene().getWindow();</b>
+<b class="fc">&nbsp;            Scene scene = new Scene(root);</b>
+<b class="fc">&nbsp;            stage.setScene(scene);</b>
+<b class="fc">&nbsp;            stage.show();</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz result screen: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Loads quiz results for an exam from the database.
+&nbsp;     *
+&nbsp;     * @param exam The exam to load results for.
+&nbsp;     * @return A list of quiz results.
+&nbsp;     */
+&nbsp;    private List&lt;StudentQuizResultController.QuizResult&gt; loadQuizResults(Exam exam) {
+<b class="fc">&nbsp;        List&lt;StudentQuizResultController.QuizResult&gt; results = new ArrayList&lt;&gt;();</b>
+&nbsp;        
+&nbsp;        try {
+&nbsp;            // Get the database connections
+<b class="fc">&nbsp;            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</b>
+<b class="fc">&nbsp;            Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</b>
+&nbsp;            
+&nbsp;            // Get questions string from the exam
+<b class="fc">&nbsp;            String questionsStr = exam.getQuestions();</b>
+&nbsp;            
+<b class="pc">&nbsp;            if (questionsStr == null || questionsStr.isEmpty()) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</b>
+<b class="fc">&nbsp;                return results;</b>
+&nbsp;            }
+&nbsp;            
+&nbsp;            // Split the question IDs string
+<b class="fc">&nbsp;            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</b>
+&nbsp;            
+&nbsp;            // Process each question ID
+<b class="fc">&nbsp;            for (String questionIdStr : questionIdArr) {</b>
+&nbsp;                try {
+&nbsp;                    // Trim any whitespace
+<b class="fc">&nbsp;                    questionIdStr = questionIdStr.trim();</b>
+<b class="pc">&nbsp;                    if (questionIdStr.isEmpty()) continue;</b>
+&nbsp;                    
+&nbsp;                    // Query the database with the question ID string directly
+<b class="fc">&nbsp;                    Question question = questionDB.queryByKey(questionIdStr);</b>
+&nbsp;                    
+<b class="pc">&nbsp;                    if (question == null) {</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;                    
+&nbsp;                    // Get the student&#39;s record for this question and exam
+<b class="fc">&nbsp;                    List&lt;comp3111.examsystem.entity.Record&gt; records = recordDB.getAll();</b>
+<b class="fc">&nbsp;                    comp3111.examsystem.entity.Record studentRecord = null;</b>
+&nbsp;                    
+&nbsp;                    // Get the question ID as Long for comparison with record IDs
+<b class="fc">&nbsp;                    Long questionId = null;</b>
+&nbsp;                    try {
+<b class="fc">&nbsp;                        questionId = Long.parseLong(questionIdStr);</b>
+&nbsp;                    } catch (NumberFormatException e) {
+<b class="nc">&nbsp;                        System.out.println(&quot;Could not parse question ID to Long: &quot; + questionIdStr);</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;                    
+<b class="pc">&nbsp;                    for (comp3111.examsystem.entity.Record record : records) {</b>
+<b class="fc">&nbsp;                        if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</b>
+<b class="pc">&nbsp;                            record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId()) &amp;&amp;</b>
+<b class="pc">&nbsp;                            record.getQuestionID() != null &amp;&amp; record.getQuestionID().equals(questionId)) {</b>
+<b class="fc">&nbsp;                            studentRecord = record;</b>
+&nbsp;                            break;
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                    
+&nbsp;                    // If no record found, skip this question
+<b class="pc">&nbsp;                    if (studentRecord == null) {</b>
+&nbsp;                        continue;
+&nbsp;                    }
+&nbsp;                    
+&nbsp;                    // Create a quiz result for this question
+<b class="pc">&nbsp;                    double score = studentRecord.getScore() != null ? studentRecord.getScore() : 0;</b>
+<b class="pc">&nbsp;                    double maxScore = question.getScore() != null ? question.getScore() : 1;</b>
+&nbsp;                    
+<b class="pc">&nbsp;                    String studentAnswer = studentRecord.getResponse() != null ? studentRecord.getResponse() : &quot;No answer provided&quot;;</b>
+<b class="pc">&nbsp;                    String correctAnswer = question.getAnswer() != null ? question.getAnswer() : &quot;Answer not available&quot;;</b>
+&nbsp;                    
+<b class="fc">&nbsp;                    results.add(new StudentQuizResultController.QuizResult(</b>
+<b class="fc">&nbsp;                        question.getQuestionText(),</b>
+&nbsp;                        studentAnswer,
+&nbsp;                        correctAnswer,
+&nbsp;                        score, // actual assigned score
+&nbsp;                        maxScore, // actual max score
+<b class="fc">&nbsp;                        generateFeedback(score, maxScore)</b>
+&nbsp;                    ));
+&nbsp;                } catch (Exception e) {
+<b class="nc">&nbsp;                    System.err.println(&quot;Error processing result for question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Error loading results for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        return results;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Generates feedback based on the student&#39;s score for a question.
+&nbsp;     *
+&nbsp;     * @param score The student&#39;s score.
+&nbsp;     * @param maxScore The maximum possible score.
+&nbsp;     * @return Feedback message.
+&nbsp;     */
+&nbsp;    private String generateFeedback(double score, double maxScore) {
+<b class="fc">&nbsp;        if (score == 0) {</b>
+<b class="fc">&nbsp;            return &quot;Incorrect answer. Please review this question.&quot;;</b>
+<b class="fc">&nbsp;        } else if (score &lt; maxScore) {</b>
+<b class="fc">&nbsp;            return &quot;Partially correct. You received &quot; + score + &quot; out of &quot; + maxScore + &quot; points.&quot;;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return &quot;Excellent! Your answer is correct.&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the view statistics button click. Navigates to the grade statistics UI.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleViewStatistics(ActionEvent event) {
+&nbsp;        try {
+&nbsp;            // Load the grade statistics screen
+<b class="fc">&nbsp;            FXMLLoader loader = createFXMLLoader(&quot;/comp3111/examsystem/StudentGradeStatisticsUI.fxml&quot;);</b>
+<b class="fc">&nbsp;            Parent root = loader.load();</b>
+<b class="fc">&nbsp;            StudentGradeStatisticsController controller = loader.getController();</b>
+&nbsp;            
+&nbsp;            // Initialize the controller
+<b class="fc">&nbsp;            controller.preSetController(student);</b>
+&nbsp;            
+&nbsp;            // Show the grade statistics screen
+<b class="fc">&nbsp;            Stage stage = (Stage) viewStatisticsButton.getScene().getWindow();</b>
+<b class="fc">&nbsp;            Scene scene = new Scene(root);</b>
+<b class="fc">&nbsp;            stage.setScene(scene);</b>
+<b class="fc">&nbsp;            stage.show();</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load grade statistics screen: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the logout button click. Navigates back to the login UI.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleLogout(ActionEvent event) {
+&nbsp;        try {
+&nbsp;            // Load the login screen (assuming there is a LoginUI.fxml)
+<b class="fc">&nbsp;            Parent root = createFXMLLoader(&quot;/comp3111/examsystem/LoginUI.fxml&quot;).load();</b>
+&nbsp;            
+&nbsp;            // Show the login screen
+<b class="fc">&nbsp;            Stage stage = (Stage) logoutButton.getScene().getWindow();</b>
+<b class="fc">&nbsp;            Scene scene = new Scene(root);</b>
+<b class="fc">&nbsp;            stage.setScene(scene);</b>
+<b class="fc">&nbsp;            stage.show();</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to login page: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the exit button click. Prompts the user to confirm before closing the application.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleExit(ActionEvent event) {
+&nbsp;        // Confirm before closing the application
+<b class="fc">&nbsp;        Alert confirmExit = new Alert(Alert.AlertType.CONFIRMATION);</b>
+<b class="fc">&nbsp;        confirmExit.setTitle(&quot;Exit Application&quot;);</b>
+<b class="fc">&nbsp;        confirmExit.setHeaderText(&quot;Exit Application&quot;);</b>
+<b class="fc">&nbsp;        confirmExit.setContentText(&quot;Are you sure you want to exit the application?&quot;);</b>
+&nbsp;        
+<b class="fc">&nbsp;        confirmExit.showAndWait().ifPresent(response -&gt; {</b>
+<b class="pc">&nbsp;            if (response == ButtonType.OK) {</b>
+&nbsp;                // Close the application
+<b class="fc">&nbsp;                Platform.exit();</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Shows an alert dialog with the specified type, title, and content.
+&nbsp;     *
+&nbsp;     * @param type    The type of the alert.
+&nbsp;     * @param title   The title of the alert.
+&nbsp;     * @param content The content of the alert.
+&nbsp;     */
+&nbsp;    void showAlert(Alert.AlertType type, String title, String content) {
+<b class="fc">&nbsp;        if (showAlert != null) {</b>
+<b class="fc">&nbsp;            showAlert.show(type, title, content);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            Alert alert = new Alert(type);</b>
+<b class="fc">&nbsp;            alert.setTitle(title);</b>
+<b class="fc">&nbsp;            alert.setHeaderText(null);</b>
+<b class="fc">&nbsp;            alert.setContentText(content);</b>
+<b class="fc">&nbsp;            alert.showAndWait();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * For testability: create an FXMLLoader for the given resource path (can be overridden in tests).
+&nbsp;     *
+&nbsp;     * @param resource The resource path to the FXML file.
+&nbsp;     * @return The FXMLLoader for the resource.
+&nbsp;     * @throws IOException If the resource cannot be loaded.
+&nbsp;     */
+&nbsp;    protected FXMLLoader createFXMLLoader(String resource) throws IOException {
+<b class="fc">&nbsp;        return new FXMLLoader(getClass().getResource(resource));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

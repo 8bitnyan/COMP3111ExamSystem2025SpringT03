@@ -1,0 +1,574 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Database</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.tools</a>
+</div>
+
+<h1>Coverage Summary for Class: Database (comp3111.examsystem.tools)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Database</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85%
+  </span>
+  <span class="absValue">
+    (17/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (84/126)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    74.1%
+  </span>
+  <span class="absValue">
+    (126/170)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.tools;
+&nbsp;
+&nbsp;import comp3111.examsystem.data.*;
+&nbsp;import comp3111.examsystem.entity.Entity;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.lang.reflect.Field;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * The Database class represents a database of some type of entity.
+&nbsp; * It is used for managing the logical and file representation of the database.
+&nbsp; * It supports database add, update, delete, and queries.
+&nbsp; * Note: For data recovery purposes, lazy delete is implemented instead.
+&nbsp; * Whether an entity is deleted depends on its &quot;isAble&quot; field.
+&nbsp; */
+&nbsp;public class Database&lt;T&gt; {
+&nbsp;    Class&lt;T&gt; entitySample;
+&nbsp;    String tableName;
+&nbsp;    String jsonFile;
+&nbsp;    public static final String NameValueSeparator = &quot;%&amp;:&quot;;
+&nbsp;    public static final String PropertySeparator = &quot;!@#&quot;;
+&nbsp;    public static final String ListItemSeparator = &quot;-~,&quot;;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The constructor for Database.
+&nbsp;     * @param entity An instance of the entity that the database represents. Only used to get field names and find the corresponding file.
+&nbsp;     */
+<b class="fc">&nbsp;    public Database(Class&lt;T&gt; entity) {</b>
+<b class="fc">&nbsp;        entitySample = entity;</b>
+<b class="fc">&nbsp;        tableName = entitySample.getSimpleName().toLowerCase();</b>
+<b class="fc">&nbsp;        jsonFile = Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, tableName + &quot;.txt&quot;).toString();</b>
+<b class="fc">&nbsp;        File file = new File(jsonFile);</b>
+<b class="pc">&nbsp;        if (!file.exists()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                file.createNewFile();</b>
+&nbsp;            } catch (IOException e) {
+<b class="nc">&nbsp;                e.printStackTrace();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all disabled entities from a list of entities.
+&nbsp;     * @param list The list of entities to be processed.
+&nbsp;     * @return A list containing only the active entities.
+&nbsp;     */
+&nbsp;    private List&lt;T&gt; filterDisable(List&lt;T&gt; list) {
+<b class="fc">&nbsp;        List&lt;T&gt; filteredList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (T item : list) {</b>
+<b class="fc">&nbsp;            Object isAbleValue = getValue(item, &quot;isAble&quot;);</b>
+<b class="pc">&nbsp;            if (isAbleValue instanceof Boolean &amp;&amp; (Boolean) isAbleValue) {</b>
+<b class="fc">&nbsp;                filteredList.add(item);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return filteredList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database based on entity id.
+&nbsp;     * @param key The entity id of the queried entity.
+&nbsp;     * @return An (enabled) entity object that has the queried entity id. Returns null if no entities satisfy the query.
+&nbsp;     */
+&nbsp;    public T queryByKey(String key) {
+<b class="fc">&nbsp;        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</b>
+&nbsp;
+<b class="fc">&nbsp;        T res = null;</b>
+<b class="pc">&nbsp;        for (String s : slist) {</b>
+<b class="fc">&nbsp;            T t = txtToEntity(s);</b>
+<b class="fc">&nbsp;            Object tvalue = getValue(t, &quot;id&quot;);</b>
+<b class="fc">&nbsp;            Object isAbleValue = getValue(t, &quot;isAble&quot;);</b>
+<b class="pc">&nbsp;            if (tvalue.toString().equals(key) &amp;&amp; (Boolean) isAbleValue) {</b>
+<b class="fc">&nbsp;                res = t;</b>
+&nbsp;                break;
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return res;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database based on entity ids.
+&nbsp;     * @param keys The list of entity ids of the queried entities.
+&nbsp;     * @return A list of (enabled) entity objects that have the queried entity ids. Returns empty list if no entities satisfy the query.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; queryByKeys(List&lt;String&gt; keys) {
+<b class="nc">&nbsp;        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;T&gt; res = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (String s : slist) {</b>
+<b class="nc">&nbsp;            T t = txtToEntity(s);</b>
+<b class="nc">&nbsp;            Object tvalue = getValue(t, &quot;id&quot;);</b>
+<b class="nc">&nbsp;            for (String key : keys) {</b>
+<b class="nc">&nbsp;                if (tvalue.toString().equals(key)) {</b>
+<b class="nc">&nbsp;                    res.add(t);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return filterDisable(res);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database based on field name and field values. Performs exact search.
+&nbsp;     * @param fieldName The field name of the field in the entity class.
+&nbsp;     * @param fieldValue The queried field value of the field in the entity class, in string format.
+&nbsp;     * @return A list of (enabled) entity objects that has the corresponding field values in the queried field. Returns empty list if no entities satisfy the query.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; queryByField(String fieldName, String fieldValue) {
+<b class="fc">&nbsp;        List&lt;T&gt; list = getAllEnabled();</b>
+<b class="fc">&nbsp;        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (T e : list) {</b>
+<b class="fc">&nbsp;            Object value = getValue(e, fieldName);</b>
+<b class="pc">&nbsp;            if ((value == null &amp;&amp; fieldValue != null) || (value != null &amp;&amp; fieldValue == null) || !value.toString().equals(fieldValue)) {</b>
+&nbsp;                continue;
+&nbsp;            }
+<b class="fc">&nbsp;            resList.add(e);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        list.clear();</b>
+<b class="fc">&nbsp;        list.addAll(resList);</b>
+<b class="fc">&nbsp;        return filterDisable(list);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database fuzzily based on field name and field values. Performs substring matching.
+&nbsp;     * @param fieldName The field name of the field in the entity class.
+&nbsp;     * @param fieldValue The queried field value of the field in the entity class, in string format.
+&nbsp;     * @return A list of (enabled) entity objects that has matching substrings in the corresponding field values in the queried field. Returns empty list if no entities satisfy the query.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; queryFuzzyByField(String fieldName, String fieldValue) {
+<b class="fc">&nbsp;        List&lt;T&gt; list = getAllEnabled();</b>
+<b class="fc">&nbsp;        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (T e : list) {</b>
+<b class="fc">&nbsp;            Object value = getValue(e, fieldName);</b>
+<b class="pc">&nbsp;            if (fieldValue == null || value.toString().contains(fieldValue)) {</b>
+<b class="nc">&nbsp;                resList.add(e);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        list.clear();</b>
+<b class="fc">&nbsp;        list.addAll(resList);</b>
+<b class="fc">&nbsp;        return filterDisable(list);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database on all enabled entities.
+&nbsp;     * @return A list of all enabled entities objects in the database. Returns empty list if no entities satisfy the query.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; getAllEnabled() {
+<b class="fc">&nbsp;        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</b>
+<b class="fc">&nbsp;        List&lt;T&gt; tlist = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (String s : slist) {</b>
+<b class="fc">&nbsp;            tlist.add(txtToEntity(s));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return filterDisable(tlist);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Queries the database on all entities, both enabled and disabled. For uses inside Database class only!
+&nbsp;     * @return A list of all entities objects in the database. Returns empty list if no entities are in the database.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; getAll() {
+<b class="fc">&nbsp;        List&lt;String&gt; slist = FileUtil.readFileByLines(jsonFile);</b>
+<b class="fc">&nbsp;        List&lt;T&gt; tlist = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (String s : slist) {</b>
+<b class="fc">&nbsp;            tlist.add(txtToEntity(s));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return tlist;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds the intersection of two lists of entities by entity id.
+&nbsp;     * @param list1 The first list of entities.
+&nbsp;     * @param list2 The second list of entities.
+&nbsp;     * @return A list of entity objects in which their entity ids are in both list1 and list2.
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; join(List&lt;T&gt; list1, List&lt;T&gt; list2) {
+<b class="fc">&nbsp;        List&lt;T&gt; resList = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        for (T t : list1) {</b>
+<b class="nc">&nbsp;            for (T value : list2) {</b>
+<b class="nc">&nbsp;                Long id1 = (Long) getValue(t, &quot;id&quot;);</b>
+<b class="nc">&nbsp;                Long id2 = (Long) getValue(value, &quot;id&quot;);</b>
+<b class="nc">&nbsp;                if (id1.toString().equals(id2.toString())) {</b>
+<b class="nc">&nbsp;                    resList.add(t);</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return resList;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes an entity by entity id from the database logically by setting &quot;isAble&quot; to false.
+&nbsp;     * @param key The entity id of the entity to be deleted.
+&nbsp;     */
+&nbsp;    public void delByKey(String key) {
+<b class="fc">&nbsp;        List&lt;T&gt; tlist = getAll();</b>
+<b class="fc">&nbsp;        for (T t : tlist) {</b>
+<b class="fc">&nbsp;            Object value = getValue(t, &quot;id&quot;);</b>
+<b class="fc">&nbsp;            if (value.toString().equals(key) &amp;&amp; (Boolean) getValue(t, &quot;isAble&quot;)) {</b>
+<b class="fc">&nbsp;                setValue(t, &quot;isAble&quot;, false);</b>
+&nbsp;                break;
+&nbsp;            }
+&nbsp;        }
+&nbsp;        try {
+<b class="fc">&nbsp;            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes all entities that has the exact field values in the field with the exact field name. Deletion is logical by setting &quot;isAble&quot; to false.
+&nbsp;     * @param fieldName The field name of the field in the entity class.
+&nbsp;     * @param fieldValue The desired field value of the field in the entity class, in string format.
+&nbsp;     */
+&nbsp;    public void delByField(String fieldName, String fieldValue) {
+<b class="nc">&nbsp;        List&lt;T&gt; tlist = getAll();</b>
+<b class="nc">&nbsp;        for (T t : tlist) {</b>
+<b class="nc">&nbsp;            Object value = getValue(t, fieldName);</b>
+<b class="nc">&nbsp;            if (value.toString().equals(fieldValue)) {</b>
+&nbsp;                // If database records are all valid, should work fine
+<b class="nc">&nbsp;                setValue(t, &quot;isAble&quot;, false);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an entity in the database by entity id.
+&nbsp;     * @param entity The updated entity that has the same entity id as the entity that needs to be updated.
+&nbsp;     */
+&nbsp;    public void update(T entity) {
+<b class="nc">&nbsp;        Long key1 = (Long) getValue(entity, &quot;id&quot;);</b>
+<b class="nc">&nbsp;        List&lt;T&gt; tlist = getAll();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; tlist.size(); i++) {</b>
+<b class="nc">&nbsp;            Long key = (Long) getValue(tlist.get(i), &quot;id&quot;);</b>
+<b class="nc">&nbsp;            if (key.toString().equals(key1.toString()) &amp;&amp; (Boolean) getValue(tlist.get(i), &quot;isAble&quot;)) {</b>
+&nbsp;                // Only update enabled records
+<b class="nc">&nbsp;                tlist.set(i, entity);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds an entity into the database.
+&nbsp;     * @param entity The entity to be added. If it has null entity id, then a new entity id is assigned to it (system time in milliseconds).
+&nbsp;     */
+&nbsp;    public void add(T entity) {
+<b class="fc">&nbsp;        setValue(entity, &quot;id&quot;, System.currentTimeMillis());</b>
+<b class="fc">&nbsp;        List&lt;T&gt; tlist = getAll();</b>
+<b class="fc">&nbsp;        tlist.add(entity);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            FileUtil.writeTxtFile(listToStr(tlist), new File(jsonFile));</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to get the field value of a field of an entity by field name.
+&nbsp;     * @param entity The entity that provides its field value.
+&nbsp;     * @param fieldName The field name to look for.
+&nbsp;     * @return The field value in Object type, if any.
+&nbsp;     * @throws RuntimeException if the field name is not found or there is no way to access the desired field value.
+&nbsp;     */
+&nbsp;    private Object getValue(Object entity, String fieldName) {
+&nbsp;        Object value;
+<b class="fc">&nbsp;        Class&lt;?&gt; clazz = entity.getClass();</b>
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                Field field = clazz.getDeclaredField(fieldName);</b>
+<b class="fc">&nbsp;                field.setAccessible(true);</b>
+<b class="fc">&nbsp;                value = field.get(entity);</b>
+&nbsp;                break;
+&nbsp;            }
+&nbsp;            catch (NoSuchFieldException e) {
+<b class="pc">&nbsp;                if (clazz.equals(Object.class))</b>
+<b class="nc">&nbsp;                    throw new RuntimeException(e);</b>
+&nbsp;            }
+&nbsp;            catch (IllegalAccessException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            clazz = clazz.getSuperclass();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return value;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to convert the value obtained from getValue() from Object type to fieldType.
+&nbsp;     * @param fieldType The desired type to convert to.
+&nbsp;     * @param fieldValue The value to be converted.
+&nbsp;     * @return Supported types are: Long, Integer, Boolean, List of Integer, List of String, and Gender, Department, Position Enums. Returns fieldValue in Object type if parsing is unsuccessful.
+&nbsp;     */
+&nbsp;    private Object convertValue(Class&lt;?&gt; fieldType, Object fieldValue) {
+<b class="pc">&nbsp;        if (fieldType == Long.class || fieldType == long.class) {</b>
+<b class="fc">&nbsp;            return Long.parseLong(fieldValue.toString());</b>
+<b class="fc">&nbsp;        } else if (fieldType == Integer.class || fieldType == int.class) {</b>
+<b class="fc">&nbsp;            return Integer.parseInt(fieldValue.toString());</b>
+<b class="fc">&nbsp;        } else if (fieldType == Boolean.class || fieldType == boolean.class) {</b>
+<b class="fc">&nbsp;            return Boolean.parseBoolean(fieldValue.toString());</b>
+<b class="fc">&nbsp;        } else if (fieldType == List.class) {</b>
+<b class="fc">&nbsp;            if (fieldValue.toString().equals(&quot;[]&quot;)) {</b>
+<b class="fc">&nbsp;                return new ArrayList&lt;&gt;();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            String[] items = fieldValue.toString().substring(1, fieldValue.toString().length() - 1).split(ListItemSeparator, -1);</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                String clazzName = items[0];</b>
+<b class="pc">&nbsp;                if (!clazzName.equals(&quot;Integer&quot;)) throw new NumberFormatException();</b>
+<b class="nc">&nbsp;                List&lt;Integer&gt; values = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                for (int i = 1; i &lt; items.length; ++i) values.add(Integer.parseInt(items[i]));</b>
+<b class="nc">&nbsp;                return values;</b>
+&nbsp;            } catch (NumberFormatException e) {
+<b class="fc">&nbsp;                return new ArrayList&lt;&gt;(Arrays.asList(items).subList(1, items.length));</b>
+&nbsp;            }
+<b class="fc">&nbsp;        } else if (fieldType == Gender.class) {</b>
+<b class="fc">&nbsp;            return Gender.fromString(fieldValue.toString());</b>
+<b class="fc">&nbsp;        } else if (fieldType == Department.class) {</b>
+<b class="fc">&nbsp;            return Department.fromString(fieldValue.toString());</b>
+<b class="pc">&nbsp;        } else if (fieldType == Position.class) {</b>
+<b class="nc">&nbsp;            return Position.fromString(fieldValue.toString());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return fieldValue;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to set fieldValue to fieldName for an entity.
+&nbsp;     * @param entity The entity that is going to have its field with name fieldName set to fieldValue.
+&nbsp;     * @param fieldName The field name of the field to be set.
+&nbsp;     * @param fieldValue The value to be set.
+&nbsp;     * @throws RuntimeException if the field does not exist or there is no way to access the field.
+&nbsp;     */
+&nbsp;    private void setValue(Object entity, String fieldName, Object fieldValue) {
+<b class="fc">&nbsp;        Class&lt;?&gt; clazz = entity.getClass();</b>
+&nbsp;        while (true) {
+&nbsp;            try {
+<b class="fc">&nbsp;                Field field = clazz.getDeclaredField(fieldName);</b>
+<b class="fc">&nbsp;                field.setAccessible(true);</b>
+<b class="fc">&nbsp;                if (!field.getName().equals(&quot;id&quot;) || field.get(entity) == null) field.set(entity, convertValue(field.getType(), fieldValue));</b>
+&nbsp;                break;
+&nbsp;            } catch (NoSuchFieldException e) {
+<b class="pc">&nbsp;                if (clazz.equals(Object.class))</b>
+<b class="nc">&nbsp;                    throw new RuntimeException(e);</b>
+&nbsp;            } catch (IllegalAccessException e) {
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            clazz = clazz.getSuperclass();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to convert a list of entities to a string to be written in the database files.
+&nbsp;     * @param tlist The list of entities to be converted.
+&nbsp;     * @return A string representing the list of entities.
+&nbsp;     */
+&nbsp;    private String listToStr(List&lt;T&gt; tlist) {
+<b class="fc">&nbsp;        StringBuilder sbf = new StringBuilder();</b>
+<b class="fc">&nbsp;        for (T t : tlist) {</b>
+<b class="fc">&nbsp;            sbf.append(entityToTxt(t)).append(&quot;\r\n&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return sbf.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to convert one line of database record to an entity.
+&nbsp;     * @param txt The line of string to be converted.
+&nbsp;     * @return An entity represented by this line.
+&nbsp;     * @throws RuntimeException if there is a problem with instantiation, field access, or method calls in entity class.
+&nbsp;     */
+&nbsp;    private T txtToEntity(String txt) {
+&nbsp;        T t;
+&nbsp;        try {
+<b class="fc">&nbsp;            t = entitySample.getConstructor().newInstance();</b>
+<b class="fc">&nbsp;            String[] pros = txt.split(PropertySeparator);</b>
+<b class="fc">&nbsp;            for (String pro : pros) {</b>
+<b class="fc">&nbsp;                String[] keyValue = pro.split(NameValueSeparator);</b>
+<b class="fc">&nbsp;                setValue(t, keyValue[0], keyValue[1]);</b>
+&nbsp;            }
+&nbsp;        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return t;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to convert a list of unknown type into a string representation.
+&nbsp;     * @param obj The list with unknown type.
+&nbsp;     * @return A string representation of the list.
+&nbsp;     */
+&nbsp;    private String myToString(List&lt;?&gt; obj) {
+<b class="fc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="fc">&nbsp;        for (Object item : obj) {</b>
+<b class="pc">&nbsp;            if (item == null) {</b>
+<b class="nc">&nbsp;                sb.append(ListItemSeparator);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                sb.append(item).append(ListItemSeparator);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+<b class="pc">&nbsp;        if (!sb.isEmpty()) {</b>
+<b class="fc">&nbsp;            sb.setLength(sb.length() - ListItemSeparator.length()); // Remove the trailing comma and space</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return sb.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An internal function to convert an entity to one line of database record.
+&nbsp;     * @param t The entity to be converted.
+&nbsp;     * @return A string representation of the entity.
+&nbsp;     */
+&nbsp;    private String entityToTxt(T t) {
+<b class="fc">&nbsp;        StringBuilder sbf = new StringBuilder();</b>
+<b class="fc">&nbsp;        Class&lt;?&gt; clazz = entitySample;</b>
+&nbsp;        while (true) {
+<b class="fc">&nbsp;            for (Field field : clazz.getDeclaredFields()) {</b>
+<b class="pc">&nbsp;                if (!field.getName().equals(&quot;dbutil&quot;)) {</b>
+<b class="fc">&nbsp;                    Object obj = getValue(t, field.getName());</b>
+<b class="fc">&nbsp;                    if (obj != null &amp;&amp; !obj.toString().isEmpty()) {</b>
+<b class="fc">&nbsp;                        if (obj instanceof List&lt;?&gt; list) {</b>
+<b class="fc">&nbsp;                            if (list.isEmpty()) sbf.append(field.getName()).append(NameValueSeparator).append(&quot;[]&quot;).append(PropertySeparator);</b>
+&nbsp;                            else {
+<b class="fc">&nbsp;                                Class&lt;?&gt; listContentClass = list.getFirst().getClass();</b>
+<b class="fc">&nbsp;                                sbf.append(field.getName()).append(NameValueSeparator + &quot;[&quot;).append(listContentClass.getSimpleName()).append(ListItemSeparator).append(myToString(list)).append(&quot;]&quot; + PropertySeparator);</b>
+&nbsp;                            }
+&nbsp;                        }
+&nbsp;                        // Possible attribute of integer or boolean
+<b class="fc">&nbsp;                        else if (obj instanceof Integer || obj instanceof Boolean) {</b>
+<b class="fc">&nbsp;                            sbf.append(field.getName()).append(NameValueSeparator).append(obj).append(PropertySeparator);</b>
+&nbsp;                        }
+&nbsp;                        // String
+&nbsp;                        else {
+<b class="fc">&nbsp;                            sbf.append(field.getName()).append(NameValueSeparator).append(obj).append(PropertySeparator);</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (clazz.equals(Entity.class)) {</b>
+&nbsp;                break;
+&nbsp;            } else {
+<b class="fc">&nbsp;                clazz = clazz.getSuperclass();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return sbf.toString();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

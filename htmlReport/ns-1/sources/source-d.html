@@ -1,0 +1,711 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeacherGradeExamController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TeacherGradeExamController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeacherGradeExamController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/29)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/218)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/257)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;import comp3111.examsystem.Main;
+&nbsp;import comp3111.examsystem.entity.Teacher;
+&nbsp;import comp3111.examsystem.entity.Record;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import comp3111.examsystem.tools.MsgSender;
+&nbsp;import comp3111.examsystem.tools.UIhelper;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.beans.property.SimpleStringProperty;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.fxml.Initializable;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+&nbsp;import javafx.stage.Stage;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URL;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for the Teacher Grade Exam page.
+&nbsp; * This controller allows a logged-in teacher to:
+&nbsp; * - Filter exams by course and student.
+&nbsp; * - View and select questions from a specific exam.
+&nbsp; * - Display and grade student responses to each question.
+&nbsp; * - Update scores and view correct answers and maximum scores.
+&nbsp; * It uses a `Database&lt;Record&gt;` to retrieve and update student answers,
+&nbsp; * and parses structured text files to read exams, questions, and student information.
+&nbsp; */
+&nbsp;public class TeacherGradeExamController implements Initializable {
+&nbsp;    private Teacher teacher;
+&nbsp;    private Long currentExamID;
+&nbsp;    @FXML private ListView&lt;String&gt; questionList;
+&nbsp;    @FXML private ComboBox&lt;String&gt; courseFilter;
+&nbsp;    @FXML private ComboBox&lt;String&gt; examFilter;
+&nbsp;    @FXML private ComboBox&lt;String&gt; studentFilter;
+<b class="nc">&nbsp;    private final Map&lt;String, String&gt; examLineMap = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;    private final Map&lt;String, List&lt;String&gt;&gt; courseToExamsMap = new HashMap&lt;&gt;();</b>
+&nbsp;    @FXML private TableView&lt;Record&gt; answerTable;
+&nbsp;    @FXML private TableColumn&lt;Record, String&gt; colStudentName;
+&nbsp;    @FXML private TableColumn&lt;Record, String&gt; colStudentAnswer;
+&nbsp;    @FXML private TableColumn&lt;Record, Integer&gt; colScore;
+&nbsp;    @FXML private Label correctAnswerLabel;
+&nbsp;    @FXML private Label maxScoreLabel;
+<b class="nc">&nbsp;    private final Map&lt;String, String&gt; questionTextToId = new HashMap&lt;&gt;();</b>
+&nbsp;    private final Database&lt;Record&gt; recordDatabase;
+&nbsp;    private Record selectedRecord;
+&nbsp;    @FXML private TextField manualScoreField;
+&nbsp;    @FXML private Label studentAnswerLabel;
+&nbsp;    @FXML private Label studentNameLabel;
+&nbsp;    private Path examFilePath;
+&nbsp;    private Path questionFilePath;
+&nbsp;    private Path studentFilePath;
+&nbsp;    @FXML private Button updateButton;
+&nbsp;
+&nbsp;    // Default constructor for production
+&nbsp;    public TeacherGradeExamController() {
+<b class="nc">&nbsp;        this(</b>
+<b class="nc">&nbsp;            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;exam.txt&quot;),</b>
+<b class="nc">&nbsp;            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;question.txt&quot;),</b>
+<b class="nc">&nbsp;            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;student.txt&quot;),</b>
+<b class="nc">&nbsp;            new Database&lt;&gt;(Record.class)</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    // Constructor for tests (3-arg, uses default DB)
+&nbsp;    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath) {
+<b class="nc">&nbsp;        this(examFilePath, questionFilePath, studentFilePath, new Database&lt;&gt;(Record.class));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Constructor for tests (4-arg, custom DB)
+<b class="nc">&nbsp;    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath, Database&lt;Record&gt; recordDatabase) {</b>
+<b class="nc">&nbsp;        this.examFilePath = examFilePath;</b>
+<b class="nc">&nbsp;        this.questionFilePath = questionFilePath;</b>
+<b class="nc">&nbsp;        this.studentFilePath = studentFilePath;</b>
+<b class="nc">&nbsp;        this.recordDatabase = recordDatabase;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void initialize(URL location, ResourceBundle resources) {
+<b class="nc">&nbsp;        courseFilter.setOnAction(e -&gt; {</b>
+<b class="nc">&nbsp;            String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;            examFilter.getItems().clear();</b>
+<b class="nc">&nbsp;            if (selectedCourse != null &amp;&amp; courseToExamsMap.containsKey(selectedCourse)) {</b>
+<b class="nc">&nbsp;                examFilter.getItems().addAll(courseToExamsMap.get(selectedCourse));</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;        // Retrieve student&#39;s response to a particular question
+<b class="nc">&nbsp;        colStudentName.setCellValueFactory(cellData -&gt; {</b>
+<b class="nc">&nbsp;            Long id = cellData.getValue().getStudentID();</b>
+<b class="nc">&nbsp;            return new SimpleStringProperty(getStudentNameById(String.valueOf(id)));</b>
+&nbsp;        });
+<b class="nc">&nbsp;        colStudentAnswer.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;response&quot;));</b>
+<b class="nc">&nbsp;        colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</b>
+&nbsp;
+&nbsp;        // Handle question selection
+<b class="nc">&nbsp;        questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</b>
+<b class="nc">&nbsp;            if (newVal != null &amp;&amp; questionTextToId.containsKey(newVal)) {</b>
+<b class="nc">&nbsp;                String qid = questionTextToId.get(newVal);</b>
+<b class="nc">&nbsp;                displayQuestionDetails(qid);</b>
+<b class="nc">&nbsp;                refreshCurrentQuestionData();</b>
+&nbsp;                // After refreshing, update the detail panel to show the first student answer (if any)
+<b class="nc">&nbsp;                if (!answerTable.getItems().isEmpty()) {</b>
+<b class="nc">&nbsp;                    answerTable.getSelectionModel().select(0);</b>
+<b class="nc">&nbsp;                    Record firstRecord = answerTable.getItems().get(0);</b>
+<b class="nc">&nbsp;                    updateDetailPanel(firstRecord, qid);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    updateDetailPanel(null, qid);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        answerTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</b>
+<b class="nc">&nbsp;            if (newVal != null) {</b>
+<b class="nc">&nbsp;                selectedRecord = newVal;</b>
+<b class="nc">&nbsp;                manualScoreField.setText(String.valueOf(newVal.getScore()));</b>
+<b class="nc">&nbsp;                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;                if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</b>
+<b class="nc">&nbsp;                    String qid = questionTextToId.get(selectedQuestion);</b>
+<b class="nc">&nbsp;                    updateDetailPanel(newVal, qid);</b>
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                // If no student is selected, clear the detail panel for the current question
+<b class="nc">&nbsp;                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;                if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</b>
+<b class="nc">&nbsp;                    String qid = questionTextToId.get(selectedQuestion);</b>
+<b class="nc">&nbsp;                    updateDetailPanel(null, qid);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        });
+<b class="nc">&nbsp;        studentFilter.setOnAction(e -&gt; {</b>
+<b class="nc">&nbsp;            String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;            if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</b>
+<b class="nc">&nbsp;                String qid = questionTextToId.get(selectedQuestion);</b>
+<b class="nc">&nbsp;                displayStudentResponsesForQuestion(qid);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    public void presetController(Teacher teacher) {
+<b class="nc">&nbsp;        this.teacher = teacher;</b>
+<b class="nc">&nbsp;        loadExamOptions();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads all enabled exams from the database file and populates filter options.
+&nbsp;     * Organizes exams by course in a map for later filtering.
+&nbsp;     */
+&nbsp;    private void loadExamOptions() {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; lines = Files.readAllLines(examFilePath);</b>
+<b class="nc">&nbsp;            courseFilter.getItems().clear();</b>
+<b class="nc">&nbsp;            examFilter.getItems().clear();</b>
+<b class="nc">&nbsp;            examLineMap.clear();</b>
+<b class="nc">&nbsp;            courseToExamsMap.clear();</b>
+<b class="nc">&nbsp;            String teacherIdStr = teacher != null &amp;&amp; teacher.getId() != null ? teacher.getId().toString() : null;</b>
+<b class="nc">&nbsp;            System.out.println(&quot;[DEBUG] Logged-in teacherId: &quot; + teacherIdStr);</b>
+<b class="nc">&nbsp;            for (String line : lines) {</b>
+<b class="nc">&nbsp;                if (!line.contains(&quot;isAble%&amp;:true&quot;)) continue;</b>
+<b class="nc">&nbsp;                String courseCode = extractField(line, &quot;courseCode&quot;);</b>
+<b class="nc">&nbsp;                String examName = extractField(line, &quot;examName&quot;);</b>
+<b class="nc">&nbsp;                String examTeacherId = extractField(line, &quot;teacherId&quot;);</b>
+<b class="nc">&nbsp;                System.out.println(&quot;[DEBUG] Exam: courseCode=&quot; + courseCode + &quot;, examName=&quot; + examName + &quot;, teacherId=&quot; + examTeacherId);</b>
+<b class="nc">&nbsp;                if (courseCode != null &amp;&amp; examName != null &amp;&amp; teacherIdStr != null &amp;&amp; examTeacherId != null &amp;&amp; examTeacherId.equals(teacherIdStr)) {</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;[DEBUG] -&gt; MATCHED and added to visible exams&quot;);</b>
+<b class="nc">&nbsp;                    examLineMap.put(courseCode + &quot;|&quot; + examName, line);</b>
+<b class="nc">&nbsp;                    courseToExamsMap.putIfAbsent(courseCode, new ArrayList&lt;&gt;());</b>
+<b class="nc">&nbsp;                    courseToExamsMap.get(courseCode).add(examName);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    System.out.println(&quot;[DEBUG] -&gt; NOT MATCHED&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            courseFilter.getItems().addAll(courseToExamsMap.keySet());</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to load exams.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays all questions from the selected exam.
+&nbsp;     * - Reads question IDs from the exam.
+&nbsp;     * - Looks up question text from the question file.
+&nbsp;     * - Populates the question list and question ID mappings.
+&nbsp;     * @param examLine The serialized exam data line.
+&nbsp;     */
+&nbsp;    private void displayQuestionsFromExamLine(String examLine) {
+<b class="nc">&nbsp;        questionList.getItems().clear();</b>
+<b class="nc">&nbsp;        questionTextToId.clear();</b>
+<b class="nc">&nbsp;        String questionSection = extractField(examLine, &quot;questions&quot;);</b>
+<b class="nc">&nbsp;        if (questionSection == null || questionSection.isBlank()) return;</b>
+&nbsp;
+&nbsp;        // Parse question IDs from the comma-separated string
+<b class="nc">&nbsp;        List&lt;String&gt; questionIds = Arrays.stream(questionSection.split(&quot;,&quot;))</b>
+<b class="nc">&nbsp;                .map(String::trim)</b>
+<b class="nc">&nbsp;                .filter(id -&gt; !id.isEmpty())</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+&nbsp;        List&lt;String&gt; questionLines;
+&nbsp;        try {
+<b class="nc">&nbsp;            questionLines = Files.readAllLines(questionFilePath);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to read question database.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        //Extract the question from the question list
+<b class="nc">&nbsp;        for (String qid : questionIds) {</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                String id = extractField(line, &quot;id&quot;);</b>
+<b class="nc">&nbsp;                String isAble = extractField(line, &quot;isAble&quot;);</b>
+<b class="nc">&nbsp;                if (id != null &amp;&amp; id.equals(qid) &amp;&amp; &quot;true&quot;.equalsIgnoreCase(isAble)) {</b>
+<b class="nc">&nbsp;                    String questionText = extractField(line, &quot;questionText&quot;);</b>
+<b class="nc">&nbsp;                    if (questionText != null) {</b>
+<b class="nc">&nbsp;                        questionList.getItems().add(questionText);</b>
+<b class="nc">&nbsp;                        questionTextToId.put(questionText, qid);</b>
+&nbsp;                    }
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Get the students record
+<b class="nc">&nbsp;        Set&lt;String&gt; uniqueStudentNames = new HashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</b>
+<b class="nc">&nbsp;        for (Record r : allRecords) {</b>
+<b class="nc">&nbsp;            if (r.getExamID() != null &amp;&amp; r.getExamID().equals(currentExamID)) {</b>
+<b class="nc">&nbsp;                String studentName = getStudentNameById(String.valueOf(r.getStudentID()));</b>
+<b class="nc">&nbsp;                uniqueStudentNames.add(studentName);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        studentFilter.getItems().clear();</b>
+<b class="nc">&nbsp;        studentFilter.getItems().add(&quot;ALL&quot;);</b>
+<b class="nc">&nbsp;        studentFilter.getItems().addAll(uniqueStudentNames);</b>
+<b class="nc">&nbsp;        studentFilter.getSelectionModel().select(&quot;ALL&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the value of a specific field from a serialized data line.
+&nbsp;     * @param line The line of text.
+&nbsp;     * @param fieldName The field name to extract.
+&nbsp;     * @return The value of the field, or null if not found.
+&nbsp;     */
+&nbsp;    private String extractField(String line, String fieldName) {
+<b class="nc">&nbsp;        String[] fields = line.split(&quot;!@#&quot;);</b>
+<b class="nc">&nbsp;        for (String field : fields) {</b>
+<b class="nc">&nbsp;            if (field.startsWith(fieldName + &quot;%&amp;:&quot;)) {</b>
+<b class="nc">&nbsp;                return field.split(&quot;%&amp;:&quot;)[1];</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Filters and loads an exam based on selected course and exam name.
+&nbsp;     * Triggers display of related questions.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void filterExam() {
+<b class="nc">&nbsp;        String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        String selectedExam = examFilter.getSelectionModel().getSelectedItem();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (selectedCourse != null &amp;&amp; selectedExam != null) {</b>
+<b class="nc">&nbsp;            String key = selectedCourse + &quot;|&quot; + selectedExam;</b>
+<b class="nc">&nbsp;            if (examLineMap.containsKey(key)) {</b>
+<b class="nc">&nbsp;                String examLine = examLineMap.get(key);</b>
+<b class="nc">&nbsp;                currentExamID = extractExamIdFromLine(examLine); // new function</b>
+<b class="nc">&nbsp;                displayQuestionsFromExamLine(examLine);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;No exam found for the selected course and exam.&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select both a course and an exam.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Extracts the exam ID from a serialized exam line.
+&nbsp;     * @param examLine The serialized exam data line.
+&nbsp;     * @return The exam ID as a Long.
+&nbsp;     */
+&nbsp;    private Long extractExamIdFromLine(String examLine) {
+<b class="nc">&nbsp;        String[] fields = examLine.split(&quot;!@#&quot;);</b>
+<b class="nc">&nbsp;        for (String field : fields) {</b>
+<b class="nc">&nbsp;            if (field.startsWith(&quot;id%&amp;:&quot;)) {</b>
+<b class="nc">&nbsp;                return Long.parseLong(field.split(&quot;%&amp;:&quot;)[1]);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resets the filter input.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void resetFilter() {
+<b class="nc">&nbsp;        courseFilter.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        examFilter.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        examFilter.getItems().clear();</b>
+<b class="nc">&nbsp;        questionList.getItems().clear();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays all student responses to the selected question.
+&nbsp;     * Optionally filters by student if selected in the student dropdown.
+&nbsp;     * @param questionId The ID of the selected question.
+&nbsp;     */
+&nbsp;    private void displayStudentResponsesForQuestion(String questionId) {
+<b class="nc">&nbsp;        String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</b>
+<b class="nc">&nbsp;        List&lt;Record&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        Long qidLong = null;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            qidLong = Long.parseLong(questionId);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(&quot;Could not parse questionId to Long: &quot; + questionId);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        System.out.println(&quot;Selected questionId: &quot; + questionId);</b>
+<b class="nc">&nbsp;        for (Record r : allRecords) {</b>
+<b class="nc">&nbsp;            if (r.getQuestionID() != null &amp;&amp; r.getExamID() != null &amp;&amp;</b>
+<b class="nc">&nbsp;                qidLong != null &amp;&amp; r.getQuestionID().equals(qidLong) &amp;&amp;</b>
+<b class="nc">&nbsp;                r.getExamID().equals(currentExamID)) {</b>
+<b class="nc">&nbsp;                String name = getStudentNameById(String.valueOf(r.getStudentID()));</b>
+<b class="nc">&nbsp;                if (selectedStudentName == null || selectedStudentName.equals(&quot;ALL&quot;) || name.equals(selectedStudentName)) {</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;Record: QID=&quot; + r.getQuestionID() + &quot;, EID=&quot; + r.getExamID());</b>
+<b class="nc">&nbsp;                    result.add(r);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        answerTable.setItems(FXCollections.observableArrayList(result));</b>
+<b class="nc">&nbsp;        answerTable.refresh();</b>
+&nbsp;        // Always clear and select the first row, update detail panel
+<b class="nc">&nbsp;        answerTable.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        if (!result.isEmpty()) {</b>
+<b class="nc">&nbsp;            answerTable.getSelectionModel().select(0);</b>
+<b class="nc">&nbsp;            Record firstRecord = result.get(0);</b>
+<b class="nc">&nbsp;            updateDetailPanel(firstRecord, questionId);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            updateDetailPanel(null, questionId);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Looks up and returns a student&#39;s name by ID.
+&nbsp;     * Reads from the student database file.
+&nbsp;     * @param studentId The student ID.
+&nbsp;     * @return The student&#39;s name, or &quot;Unknown&quot; if not found.
+&nbsp;     */
+&nbsp;    private String getStudentNameById(String studentId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            for (String line : Files.readAllLines(studentFilePath)) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + studentId + &quot;!@#&quot;)) {</b>
+<b class="nc">&nbsp;                    return extractField(line, &quot;name&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;Unknown&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays the correct answer and maximum score for the selected question.
+&nbsp;     * @param questionId The question&#39;s unique ID.
+&nbsp;     */
+&nbsp;    private void displayQuestionDetails(String questionId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</b>
+<b class="nc">&nbsp;                    String answer = extractField(line, &quot;answer&quot;);</b>
+<b class="nc">&nbsp;                    String score = extractField(line, &quot;score&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                    correctAnswerLabel.setText(answer != null ? answer : &quot;N/A&quot;);</b>
+<b class="nc">&nbsp;                    maxScoreLabel.setText(score != null ? score : &quot;N/A&quot;);</b>
+&nbsp;                    return;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to load question details.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        correctAnswerLabel.setText(&quot;N/A&quot;);</b>
+<b class="nc">&nbsp;        maxScoreLabel.setText(&quot;N/A&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the score of the selected student answer.
+&nbsp;     * Validates against the maximum possible score and applies the change to the database.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void updateScore() {
+<b class="nc">&nbsp;        if (selectedRecord == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a student answer first.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        String newScoreText = manualScoreField.getText().trim();</b>
+<b class="nc">&nbsp;        if (newScoreText.isEmpty()) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Score cannot be empty.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        try {
+<b class="nc">&nbsp;            int newScore = Integer.parseInt(newScoreText);</b>
+&nbsp;            //Validation
+<b class="nc">&nbsp;            String maxScoreText = maxScoreLabel.getText().trim();</b>
+<b class="nc">&nbsp;            if (!maxScoreText.equals(&quot;N/A&quot;)) {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    int maxScore = Integer.parseInt(maxScoreText);</b>
+<b class="nc">&nbsp;                    if (newScore &lt; 0 || newScore &gt; maxScore) {</b>
+<b class="nc">&nbsp;                        MsgSender.showMsg(&quot;Score must be between 0 and &quot; + maxScore);</b>
+&nbsp;                        return;
+&nbsp;                    }
+&nbsp;                } catch (NumberFormatException ignored) {
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            selectedRecord.setScore(newScore);</b>
+<b class="nc">&nbsp;            recordDatabase.update(selectedRecord);</b>
+<b class="nc">&nbsp;            answerTable.refresh();  // Refresh table view</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Score updated successfully.&quot;);</b>
+&nbsp;        } catch (NumberFormatException e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please enter a valid numeric score.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Navigates back to the Teacher main screen.
+&nbsp;     * @param e The triggered action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void back(ActionEvent e) {
+&nbsp;        try {
+<b class="nc">&nbsp;            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</b>
+<b class="nc">&nbsp;            Stage stage = new Stage();</b>
+<b class="nc">&nbsp;            stage.setTitle(&quot;Back&quot;);</b>
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+<b class="nc">&nbsp;            TeacherMainController controller = fxmlLoader.getController();</b>
+<b class="nc">&nbsp;            controller.presetController(teacher);</b>
+<b class="nc">&nbsp;            UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;            stage.show();</b>
+<b class="nc">&nbsp;            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</b>
+&nbsp;        } catch (IOException ex) {
+<b class="nc">&nbsp;            ex.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Closes the application with a confirmation dialog.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void closeApplication() {
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;                &quot;Exit Confirmation&quot;,</b>
+<b class="nc">&nbsp;                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</b>
+<b class="nc">&nbsp;                Platform::exit</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper: Get option text by letter for MCQ
+&nbsp;    private String getOptionTextByLetter(String letter, List&lt;String&gt; options) {
+<b class="nc">&nbsp;        if (letter == null || letter.length() != 1) return &quot;&quot;;</b>
+<b class="nc">&nbsp;        int idx = letter.charAt(0) - &#39;A&#39;;</b>
+<b class="nc">&nbsp;        if (idx &gt;= 0 &amp;&amp; idx &lt; options.size()) {</b>
+<b class="nc">&nbsp;            return options.get(idx);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper: Get options for a question by ID
+&nbsp;    private List&lt;String&gt; getOptionsForQuestion(String questionId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</b>
+<b class="nc">&nbsp;                    List&lt;String&gt; options = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                    for (String opt : new String[]{&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;}) {</b>
+<b class="nc">&nbsp;                        String val = extractField(line, &quot;option&quot; + opt);</b>
+<b class="nc">&nbsp;                        if (val != null &amp;&amp; !val.isEmpty()) options.add(val);</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    return options;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+&nbsp;            // ignore
+&nbsp;        }
+<b class="nc">&nbsp;        return new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper: Get question type by ID
+&nbsp;    private String getQuestionType(String questionId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</b>
+<b class="nc">&nbsp;                    return extractField(line, &quot;type&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+&nbsp;            // ignore
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper: Get correct answer for a question by ID
+&nbsp;    private String getCorrectAnswer(String questionId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</b>
+<b class="nc">&nbsp;                    return extractField(line, &quot;answer&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+&nbsp;            // ignore
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Helper: Get max score for a question by ID
+&nbsp;    private String getMaxScore(String questionId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</b>
+<b class="nc">&nbsp;            for (String line : questionLines) {</b>
+<b class="nc">&nbsp;                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</b>
+<b class="nc">&nbsp;                    return extractField(line, &quot;score&quot;);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+&nbsp;            // ignore
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Patch: When a row is selected in the answer table, update the detail panel
+&nbsp;    private void updateDetailPanel(Record record, String questionId) {
+<b class="nc">&nbsp;        if (record == null || questionId == null) {</b>
+<b class="nc">&nbsp;            if (studentNameLabel != null) studentNameLabel.setText(&quot;&quot;);</b>
+<b class="nc">&nbsp;            if (studentAnswerLabel != null) studentAnswerLabel.setText(&quot;&quot;);</b>
+<b class="nc">&nbsp;            if (correctAnswerLabel != null) correctAnswerLabel.setText(&quot;N/A&quot;);</b>
+<b class="nc">&nbsp;            if (maxScoreLabel != null) maxScoreLabel.setText(&quot;N/A&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // Student name
+<b class="nc">&nbsp;        String studentName = getStudentNameById(String.valueOf(record.getStudentID()));</b>
+&nbsp;        // Question type
+<b class="nc">&nbsp;        String type = getQuestionType(questionId);</b>
+&nbsp;        // Options (for MCQ)
+<b class="nc">&nbsp;        List&lt;String&gt; options = getOptionsForQuestion(questionId);</b>
+&nbsp;        // Student answer
+<b class="nc">&nbsp;        String studentLetter = record.getResponse();</b>
+<b class="nc">&nbsp;        String studentText = (&quot;MCQ&quot;.equalsIgnoreCase(type)) ? getOptionTextByLetter(studentLetter, options) : record.getResponse();</b>
+&nbsp;        // Correct answer
+<b class="nc">&nbsp;        String correctLetter = getCorrectAnswer(questionId);</b>
+<b class="nc">&nbsp;        String correctText = (&quot;MCQ&quot;.equalsIgnoreCase(type)) ? getOptionTextByLetter(correctLetter, options) : correctLetter;</b>
+&nbsp;        // Max score
+<b class="nc">&nbsp;        String maxScore = getMaxScore(questionId);</b>
+&nbsp;        // Update UI labels
+<b class="nc">&nbsp;        if (studentNameLabel != null) {</b>
+<b class="nc">&nbsp;            studentNameLabel.setText(studentName != null ? studentName : &quot;&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (studentAnswerLabel != null) {</b>
+<b class="nc">&nbsp;            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</b>
+<b class="nc">&nbsp;                studentAnswerLabel.setText((studentLetter != null ? studentLetter : &quot;&quot;) + (studentText != null &amp;&amp; !studentText.isEmpty() ? &quot;. &quot; + studentText : &quot;&quot;));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                studentAnswerLabel.setText(studentText != null ? studentText : &quot;&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (correctAnswerLabel != null) {</b>
+<b class="nc">&nbsp;            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</b>
+<b class="nc">&nbsp;                correctAnswerLabel.setText((correctLetter != null ? correctLetter : &quot;&quot;) + (correctText != null &amp;&amp; !correctText.isEmpty() ? &quot;. &quot; + correctText : &quot;&quot;));</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                correctAnswerLabel.setText(correctText != null ? correctText : &quot;N/A&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (maxScoreLabel != null) {</b>
+<b class="nc">&nbsp;            maxScoreLabel.setText(maxScore != null ? maxScore : &quot;N/A&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Refresh the answer table and detail panel from the database for the current question
+&nbsp;    private void refreshCurrentQuestionData() {
+<b class="nc">&nbsp;        manualScoreField.setDisable(true);</b>
+<b class="nc">&nbsp;        if (updateButton != null) updateButton.setDisable(true);</b>
+<b class="nc">&nbsp;        String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</b>
+<b class="nc">&nbsp;            String qid = questionTextToId.get(selectedQuestion);</b>
+<b class="nc">&nbsp;            displayStudentResponsesForQuestion(qid); // This will refresh the table and detail panel</b>
+&nbsp;        }
+<b class="nc">&nbsp;        manualScoreField.setDisable(false);</b>
+<b class="nc">&nbsp;        if (updateButton != null) updateButton.setDisable(false);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

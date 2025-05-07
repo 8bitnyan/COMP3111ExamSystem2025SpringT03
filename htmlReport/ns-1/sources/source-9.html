@@ -1,0 +1,749 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StudentQuizController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentQuizController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentQuizController</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (20/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (89/156)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.9%
+  </span>
+  <span class="absValue">
+    (179/224)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StudentQuizController$AlertShower</td>
+  </tr>
+  <tr>
+    <td class="name">StudentQuizController$ConfirmDialogShower</td>
+  </tr>
+  <tr>
+    <td class="name">StudentQuizController$QuizQuestion</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    87.1%
+  </span>
+  <span class="absValue">
+    (27/31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (89/156)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.3%
+  </span>
+  <span class="absValue">
+    (196/241)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;
+&nbsp;import comp3111.examsystem.entity.*;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import javafx.animation.KeyFrame;
+&nbsp;import javafx.animation.Timeline;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.fxml.Initializable;
+&nbsp;import javafx.scene.Parent;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.layout.VBox;
+&nbsp;import javafx.scene.text.Text;
+&nbsp;import javafx.stage.Stage;
+&nbsp;import javafx.stage.WindowEvent;
+&nbsp;import javafx.util.Duration;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URL;
+&nbsp;import java.util.*;
+&nbsp;import java.util.ResourceBundle;
+&nbsp;
+&nbsp;/**
+&nbsp; * The controller for the student quiz page. Handles quiz navigation, answering, timing, and submission logic for students.
+&nbsp; */
+<b class="fc">&nbsp;public class StudentQuizController implements Initializable {</b>
+&nbsp;    // UI Components
+&nbsp;    @FXML private Text quizNameText;
+&nbsp;    @FXML private Text totalQuestionsText;
+&nbsp;    @FXML private Text timerText;
+&nbsp;    @FXML private VBox questionListContainer;
+&nbsp;    @FXML private Text questionText;
+&nbsp;    @FXML private VBox multipleChoiceContainer;
+&nbsp;    @FXML private VBox shortAnswerContainer;
+&nbsp;    @FXML private RadioButton option1;
+&nbsp;    @FXML private RadioButton option2;
+&nbsp;    @FXML private RadioButton option3;
+&nbsp;    @FXML private RadioButton option4;
+&nbsp;    @FXML private RadioButton option5;
+&nbsp;    @FXML private TextArea shortAnswerField;
+&nbsp;    @FXML private Button previousButton;
+&nbsp;    @FXML private Button nextButton;
+&nbsp;    @FXML private Button submitButton;
+&nbsp;    @FXML private ToggleGroup answerGroup;
+&nbsp;    @FXML private Text maxScoreText;
+&nbsp;    
+&nbsp;    // Data
+&nbsp;    private Student student;
+&nbsp;    private String quizName;
+&nbsp;    private List&lt;QuizQuestion&gt; questions;
+&nbsp;    private List&lt;String&gt; studentAnswers;
+<b class="fc">&nbsp;    private int currentQuestionIndex = 0;</b>
+<b class="fc">&nbsp;    private int totalQuestions = 0;</b>
+<b class="fc">&nbsp;    private int hours = 0;</b>
+<b class="fc">&nbsp;    private int minutes = 0;</b>
+<b class="fc">&nbsp;    private int seconds = 0;</b>
+&nbsp;    private Timeline timeline;
+<b class="fc">&nbsp;    private boolean isSubmitting = false;</b>
+&nbsp;    
+&nbsp;    // For testability: allow patching alert logic
+&nbsp;    @FunctionalInterface
+&nbsp;    interface AlertShower {
+&nbsp;        void show(Alert.AlertType type, String title, String content);
+&nbsp;    }
+<b class="fc">&nbsp;    AlertShower showAlert = null;</b>
+&nbsp;    
+&nbsp;    @FunctionalInterface
+&nbsp;    public interface ConfirmDialogShower {
+&nbsp;        boolean show(String title, String header, String content);
+&nbsp;    }
+<b class="fc">&nbsp;    private ConfirmDialogShower confirmDialogShower = null;</b>
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Initializes the student quiz page UI. Sets up listeners for MCQ and short answer fields.
+&nbsp;     *
+&nbsp;     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
+&nbsp;     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void initialize(URL location, ResourceBundle resources) {
+&nbsp;        // Setup MCQ listeners
+<b class="fc">&nbsp;        option1.setToggleGroup(answerGroup);</b>
+<b class="fc">&nbsp;        option2.setToggleGroup(answerGroup);</b>
+<b class="fc">&nbsp;        option3.setToggleGroup(answerGroup);</b>
+<b class="fc">&nbsp;        option4.setToggleGroup(answerGroup);</b>
+<b class="fc">&nbsp;        option5.setToggleGroup(answerGroup);</b>
+<b class="fc">&nbsp;        RadioButton[] btns = {option1, option2, option3, option4, option5};</b>
+<b class="fc">&nbsp;        answerGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -&gt; {</b>
+<b class="nc">&nbsp;            if (newToggle != null &amp;&amp; isCurrentQuestionMCQ()) {</b>
+<b class="nc">&nbsp;                for (int i = 0; i &lt; btns.length; i++) {</b>
+<b class="nc">&nbsp;                    if (btns[i] == newToggle) {</b>
+<b class="nc">&nbsp;                        studentAnswers.set(currentQuestionIndex, String.valueOf((char)(&#39;A&#39; + i)));</b>
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                updateSidebarStyles();</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;        // Short answer listener
+<b class="fc">&nbsp;        shortAnswerField.textProperty().addListener((obs, oldText, newText) -&gt; {</b>
+<b class="nc">&nbsp;            if (!isCurrentQuestionMCQ()) {</b>
+<b class="nc">&nbsp;                studentAnswers.set(currentQuestionIndex, newText);</b>
+<b class="nc">&nbsp;                updateSidebarStyles();</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets up the quiz controller with the required data for the student and quiz.
+&nbsp;     *
+&nbsp;     * @param student   The student taking the quiz.
+&nbsp;     * @param quizName  The name of the quiz.
+&nbsp;     * @param questions The list of quiz questions.
+&nbsp;     * @param timeLimit The time limit for the quiz in minutes.
+&nbsp;     */
+&nbsp;    public void preSetController(Student student, String quizName, List&lt;QuizQuestion&gt; questions, int timeLimit) {
+<b class="fc">&nbsp;        this.student = student;</b>
+<b class="fc">&nbsp;        this.quizName = quizName;</b>
+<b class="fc">&nbsp;        this.questions = questions;</b>
+<b class="fc">&nbsp;        this.totalQuestions = questions.size();</b>
+<b class="fc">&nbsp;        this.studentAnswers = new ArrayList&lt;&gt;(Collections.nCopies(totalQuestions, &quot;&quot;));</b>
+<b class="fc">&nbsp;        quizNameText.setText(quizName);</b>
+<b class="fc">&nbsp;        totalQuestionsText.setText(String.valueOf(totalQuestions));</b>
+&nbsp;        // Timer
+<b class="fc">&nbsp;        this.hours = timeLimit / 60;</b>
+<b class="fc">&nbsp;        this.minutes = timeLimit % 60;</b>
+<b class="fc">&nbsp;        this.seconds = 0;</b>
+<b class="fc">&nbsp;        setupTimer();</b>
+&nbsp;        // Sidebar
+<b class="fc">&nbsp;        setupSidebar();</b>
+&nbsp;        // Load first question
+<b class="fc">&nbsp;        loadQuestion(0);</b>
+&nbsp;        // Window close handler
+<b class="fc">&nbsp;        Platform.runLater(() -&gt; {</b>
+<b class="fc">&nbsp;            Stage stage = (Stage) quizNameText.getScene().getWindow();</b>
+<b class="nc">&nbsp;            if (stage != null) {</b>
+<b class="nc">&nbsp;                stage.setOnCloseRequest(this::handleWindowClose);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets up the question list for navigation in the sidebar.
+&nbsp;     */
+&nbsp;    private void setupSidebar() {
+<b class="fc">&nbsp;        questionListContainer.getChildren().clear();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; questions.size(); i++) {</b>
+<b class="fc">&nbsp;            final int idx = i;</b>
+<b class="fc">&nbsp;            Button btn = new Button(&quot;Question &quot; + (i + 1));</b>
+<b class="fc">&nbsp;            btn.setPrefWidth(180);</b>
+<b class="fc">&nbsp;            btn.setOnAction(e -&gt; loadQuestion(idx));</b>
+<b class="fc">&nbsp;            btn.getStyleClass().add(&quot;question-button&quot;);</b>
+<b class="fc">&nbsp;            questionListContainer.getChildren().add(btn);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        updateSidebarStyles();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Updates the question navigation buttons to indicate which questions have been answered and which is current.
+&nbsp;     */
+&nbsp;    private void updateSidebarStyles() {
+<b class="fc">&nbsp;        for (int i = 0; i &lt; questionListContainer.getChildren().size(); i++) {</b>
+<b class="fc">&nbsp;            Button btn = (Button) questionListContainer.getChildren().get(i);</b>
+<b class="fc">&nbsp;            boolean answered = !studentAnswers.get(i).isEmpty();</b>
+<b class="fc">&nbsp;            if (answered) {</b>
+<b class="fc">&nbsp;                if (!btn.getStyleClass().contains(&quot;answered-question&quot;)) btn.getStyleClass().add(&quot;answered-question&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                btn.getStyleClass().remove(&quot;answered-question&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (i == currentQuestionIndex) {</b>
+<b class="fc">&nbsp;                if (!btn.getStyleClass().contains(&quot;current-question&quot;)) btn.getStyleClass().add(&quot;current-question&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                btn.getStyleClass().remove(&quot;current-question&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Loads a question at the specified index and updates the UI.
+&nbsp;     *
+&nbsp;     * @param index The index of the question to load.
+&nbsp;     */
+&nbsp;    private void loadQuestion(int index) {
+<b class="fc">&nbsp;        if (index &lt; 0 || index &gt;= questions.size()) return;</b>
+<b class="fc">&nbsp;        saveCurrentAnswer();</b>
+<b class="fc">&nbsp;        currentQuestionIndex = index;</b>
+<b class="fc">&nbsp;        QuizQuestion q = questions.get(currentQuestionIndex);</b>
+<b class="fc">&nbsp;        questionText.setText(&quot;Question &quot; + (currentQuestionIndex + 1) + &quot;: &quot; + q.getQuestionText());</b>
+<b class="fc">&nbsp;        maxScoreText.setText(&quot;Max Score: &quot; + q.getMaxScore());</b>
+<b class="fc">&nbsp;        if (q.isMultipleChoice()) {</b>
+<b class="fc">&nbsp;            multipleChoiceContainer.setVisible(true);</b>
+<b class="fc">&nbsp;            shortAnswerContainer.setVisible(false);</b>
+<b class="fc">&nbsp;            List&lt;String&gt; opts = q.getOptions();</b>
+<b class="fc">&nbsp;            RadioButton[] btns = {option1, option2, option3, option4, option5};</b>
+<b class="fc">&nbsp;            answerGroup.selectToggle(null);</b>
+<b class="fc">&nbsp;            for (int i = 0; i &lt; btns.length; i++) {</b>
+<b class="fc">&nbsp;                if (i &lt; opts.size()) {</b>
+<b class="fc">&nbsp;                    btns[i].setText(opts.get(i));</b>
+<b class="fc">&nbsp;                    btns[i].setVisible(true);</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    btns[i].setText(&quot;&quot;);</b>
+<b class="fc">&nbsp;                    btns[i].setVisible(false);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;            // Restore selection by letter
+<b class="fc">&nbsp;            String saved = studentAnswers.get(currentQuestionIndex);</b>
+<b class="pc">&nbsp;            if (saved != null &amp;&amp; saved.length() == 1) {</b>
+<b class="nc">&nbsp;                int idx = saved.charAt(0) - &#39;A&#39;;</b>
+<b class="nc">&nbsp;                if (idx &gt;= 0 &amp;&amp; idx &lt; btns.length &amp;&amp; btns[idx].isVisible()) {</b>
+<b class="nc">&nbsp;                    btns[idx].setSelected(true);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } else {
+<b class="fc">&nbsp;            multipleChoiceContainer.setVisible(false);</b>
+<b class="fc">&nbsp;            shortAnswerContainer.setVisible(true);</b>
+<b class="fc">&nbsp;            shortAnswerField.setText(studentAnswers.get(currentQuestionIndex));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        previousButton.setDisable(currentQuestionIndex == 0);</b>
+<b class="fc">&nbsp;        nextButton.setDisable(currentQuestionIndex == questions.size() - 1);</b>
+<b class="fc">&nbsp;        previousButton.setVisible(currentQuestionIndex != 0);</b>
+<b class="fc">&nbsp;        nextButton.setVisible(currentQuestionIndex != questions.size() - 1);</b>
+<b class="fc">&nbsp;        updateSidebarStyles();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Saves the current answer before moving to another question.
+&nbsp;     */
+&nbsp;    private void saveCurrentAnswer() {
+<b class="pc">&nbsp;        if (currentQuestionIndex &lt; 0 || currentQuestionIndex &gt;= questions.size()) return;</b>
+<b class="fc">&nbsp;        QuizQuestion q = questions.get(currentQuestionIndex);</b>
+<b class="fc">&nbsp;        if (q.isMultipleChoice()) {</b>
+<b class="fc">&nbsp;            RadioButton selected = (RadioButton) answerGroup.getSelectedToggle();</b>
+<b class="fc">&nbsp;            RadioButton[] btns = {option1, option2, option3, option4, option5};</b>
+<b class="fc">&nbsp;            String letter = &quot;&quot;;</b>
+<b class="fc">&nbsp;            for (int i = 0; i &lt; btns.length; i++) {</b>
+<b class="pc">&nbsp;                if (btns[i] == selected) {</b>
+<b class="nc">&nbsp;                    letter = String.valueOf((char)(&#39;A&#39; + i));</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            studentAnswers.set(currentQuestionIndex, letter);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            studentAnswers.set(currentQuestionIndex, shortAnswerField.getText());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Checks if the current question is a multiple choice question.
+&nbsp;     *
+&nbsp;     * @return True if the current question is multiple choice, false otherwise.
+&nbsp;     */
+&nbsp;    private boolean isCurrentQuestionMCQ() {
+<b class="nc">&nbsp;        return questions != null &amp;&amp; currentQuestionIndex &gt;= 0 &amp;&amp; currentQuestionIndex &lt; questions.size() &amp;&amp; questions.get(currentQuestionIndex).isMultipleChoice();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets up the timer for the quiz and starts countdown.
+&nbsp;     */
+&nbsp;    private void setupTimer() {
+<b class="fc">&nbsp;        updateTimerDisplay();</b>
+<b class="fc">&nbsp;        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -&gt; {</b>
+<b class="fc">&nbsp;            if (seconds &gt; 0) {</b>
+<b class="fc">&nbsp;                seconds--;</b>
+<b class="fc">&nbsp;            } else if (minutes &gt; 0) {</b>
+<b class="fc">&nbsp;                minutes--;</b>
+<b class="fc">&nbsp;                seconds = 59;</b>
+<b class="pc">&nbsp;            } else if (hours &gt; 0) {</b>
+<b class="nc">&nbsp;                hours--;</b>
+<b class="nc">&nbsp;                minutes = 59;</b>
+<b class="nc">&nbsp;                seconds = 59;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                timeline.stop();</b>
+<b class="fc">&nbsp;                handleSubmit(null);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            updateTimerDisplay();</b>
+&nbsp;        }));
+<b class="fc">&nbsp;        timeline.setCycleCount(Timeline.INDEFINITE);</b>
+<b class="fc">&nbsp;        timeline.play();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Updates the timer display in the UI.
+&nbsp;     */
+&nbsp;    private void updateTimerDisplay() {
+<b class="fc">&nbsp;        timerText.setText(String.format(&quot;%02d:%02d:%02d&quot;, hours, minutes, seconds));</b>
+<b class="fc">&nbsp;        if (hours == 0 &amp;&amp; minutes &lt; 5) timerText.setStyle(&quot;-fx-fill: red;&quot;);</b>
+<b class="fc">&nbsp;        else timerText.setStyle(&quot;-fx-fill: black;&quot;);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the submit button action. Prompts for confirmation and submits the quiz if confirmed.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleSubmit(ActionEvent event) {
+<b class="fc">&nbsp;        saveCurrentAnswer();</b>
+<b class="pc">&nbsp;        if (isSubmitting) return;</b>
+<b class="fc">&nbsp;        isSubmitting = true;</b>
+<b class="pc">&nbsp;        if (timeline != null) timeline.stop();</b>
+<b class="fc">&nbsp;        if (showAlert != null) {</b>
+<b class="fc">&nbsp;            showAlert.show(Alert.AlertType.CONFIRMATION, &quot;Submit Quiz&quot;, &quot;Are you sure you want to submit this quiz?&quot;);</b>
+&nbsp;            // In tests, the handler should call submitQuiz() or reset isSubmitting as needed
+&nbsp;        } else {
+<b class="fc">&nbsp;            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);</b>
+<b class="fc">&nbsp;            confirm.setTitle(&quot;Submit Quiz&quot;);</b>
+<b class="fc">&nbsp;            confirm.setHeaderText(&quot;Submit Quiz&quot;);</b>
+<b class="fc">&nbsp;            confirm.setContentText(&quot;Are you sure you want to submit this quiz?&quot;);</b>
+<b class="fc">&nbsp;            Optional&lt;ButtonType&gt; result = confirm.showAndWait();</b>
+<b class="pc">&nbsp;            if (result.isPresent() &amp;&amp; result.get() == ButtonType.OK) {</b>
+<b class="fc">&nbsp;                submitQuiz();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                isSubmitting = false;</b>
+<b class="nc">&nbsp;                if (timeline != null) timeline.play();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the window close event. Prompts for confirmation and submits the quiz if confirmed.
+&nbsp;     *
+&nbsp;     * @param event The window event.
+&nbsp;     */
+&nbsp;    private void handleWindowClose(WindowEvent event) {
+<b class="nc">&nbsp;        saveCurrentAnswer();</b>
+<b class="nc">&nbsp;        if (isSubmitting) return;</b>
+<b class="nc">&nbsp;        if (timeline != null) timeline.stop();</b>
+&nbsp;        boolean confirmed;
+<b class="nc">&nbsp;        if (confirmDialogShower != null) {</b>
+<b class="nc">&nbsp;            confirmed = confirmDialogShower.show(</b>
+<b class="nc">&nbsp;                &quot;Submit Quiz&quot;,</b>
+<b class="nc">&nbsp;                &quot;Submit Quiz&quot;,</b>
+<b class="nc">&nbsp;                &quot;Closing the window will submit your quiz. Are you sure you want to continue?&quot;</b>
+&nbsp;            );
+&nbsp;        } else {
+<b class="nc">&nbsp;            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);</b>
+<b class="nc">&nbsp;            confirm.setTitle(&quot;Submit Quiz&quot;);</b>
+<b class="nc">&nbsp;            confirm.setHeaderText(&quot;Submit Quiz&quot;);</b>
+<b class="nc">&nbsp;            confirm.setContentText(&quot;Closing the window will submit your quiz. Are you sure you want to continue?&quot;);</b>
+<b class="nc">&nbsp;            Optional&lt;ButtonType&gt; result = confirm.showAndWait();</b>
+<b class="nc">&nbsp;            confirmed = result.isPresent() &amp;&amp; result.get() == ButtonType.OK;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (confirmed) {</b>
+<b class="nc">&nbsp;            submitQuiz();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            if (timeline != null) timeline.play();</b>
+<b class="nc">&nbsp;            event.consume();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Submits the quiz, saves results, and shows the completion message.
+&nbsp;     */
+&nbsp;    private void submitQuiz() {
+<b class="fc">&nbsp;        saveCurrentAnswer();</b>
+<b class="fc">&nbsp;        saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);</b>
+<b class="fc">&nbsp;        if (showAlert != null) {</b>
+<b class="fc">&nbsp;            showAlert.show(Alert.AlertType.INFORMATION, &quot;Quiz Completed&quot;, &quot;You have completed the quiz: &quot; + quizName);</b>
+&nbsp;            // In tests, the handler can simulate the dialog flow
+&nbsp;        } else {
+<b class="fc">&nbsp;            Alert completion = new Alert(Alert.AlertType.INFORMATION);</b>
+<b class="fc">&nbsp;            completion.setTitle(&quot;Quiz Completed&quot;);</b>
+<b class="fc">&nbsp;            completion.setHeaderText(&quot;Quiz Submitted Successfully&quot;);</b>
+<b class="fc">&nbsp;            completion.setContentText(&quot;You have completed the quiz: &quot; + quizName);</b>
+<b class="fc">&nbsp;            completion.showAndWait().ifPresent(btn -&gt; {</b>
+<b class="fc">&nbsp;                Alert results = new Alert(Alert.AlertType.INFORMATION);</b>
+<b class="fc">&nbsp;                results.setTitle(&quot;Quiz Results&quot;);</b>
+<b class="fc">&nbsp;                results.setHeaderText(&quot;Results Available After Grading&quot;);</b>
+<b class="fc">&nbsp;                results.setContentText(&quot;You will be able to see your quiz results after your teacher grades this quiz.&quot;);</b>
+<b class="fc">&nbsp;                results.showAndWait().ifPresent(finalBtn -&gt; returnToMainPage());</b>
+&nbsp;            });
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns to the student main page after quiz submission.
+&nbsp;     */
+&nbsp;    private void returnToMainPage() {
+&nbsp;        try {
+<b class="fc">&nbsp;            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</b>
+<b class="fc">&nbsp;            Parent root = loader.load();</b>
+<b class="fc">&nbsp;            StudentMainController controller = loader.getController();</b>
+<b class="fc">&nbsp;            controller.preSetController(student);</b>
+<b class="fc">&nbsp;            Scene currentScene = quizNameText.getScene();</b>
+<b class="pc">&nbsp;            if (currentScene != null &amp;&amp; currentScene.getWindow() != null) {</b>
+<b class="nc">&nbsp;                Stage stage = (Stage) currentScene.getWindow();</b>
+<b class="nc">&nbsp;                Scene scene = new Scene(root);</b>
+<b class="nc">&nbsp;                stage.setScene(scene);</b>
+<b class="nc">&nbsp;                stage.show();</b>
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Saves the quiz results to a database or persistent storage. This is a placeholder method.
+&nbsp;     *
+&nbsp;     * @param student        The student who took the quiz.
+&nbsp;     * @param quizName       The name of the quiz.
+&nbsp;     * @param questions      The list of questions in the quiz.
+&nbsp;     * @param studentAnswers The list of answers provided by the student.
+&nbsp;     */
+&nbsp;    private void saveQuizResultsToDatabase(Student student, String quizName, List&lt;QuizQuestion&gt; questions, List&lt;String&gt; studentAnswers) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</b>
+<b class="fc">&nbsp;            List&lt;Exam&gt; exams = examDB.getAllEnabled();</b>
+<b class="fc">&nbsp;            Exam exam = null;</b>
+<b class="fc">&nbsp;            for (Exam e : exams) {</b>
+<b class="fc">&nbsp;                if (quizName.equals(e.getName())) {</b>
+<b class="fc">&nbsp;                    exam = e;</b>
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (exam == null) return;</b>
+<b class="fc">&nbsp;            String questionsStr = exam.getQuestions();</b>
+<b class="pc">&nbsp;            if (questionsStr == null || questionsStr.isEmpty()) return;</b>
+<b class="fc">&nbsp;            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</b>
+<b class="fc">&nbsp;            if (questionIdArr.length != questions.size()) return;</b>
+<b class="fc">&nbsp;            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</b>
+&nbsp;            // Delete any existing records for this student and exam (enforces one attempt)
+<b class="fc">&nbsp;            List&lt;comp3111.examsystem.entity.Record&gt; existingRecords = recordDB.getAll();</b>
+<b class="fc">&nbsp;            for (comp3111.examsystem.entity.Record record : existingRecords) {</b>
+<b class="fc">&nbsp;                if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</b>
+<b class="pc">&nbsp;                    record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</b>
+<b class="fc">&nbsp;                    recordDB.delByKey(record.getId().toString());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;            // Create new records for this attempt
+<b class="pc">&nbsp;            for (int i = 0; i &lt; questions.size() &amp;&amp; i &lt; questionIdArr.length &amp;&amp; i &lt; studentAnswers.size(); i++) {</b>
+&nbsp;                try {
+<b class="fc">&nbsp;                    String questionIdStr = questionIdArr[i].trim();</b>
+<b class="pc">&nbsp;                    if (questionIdStr.isEmpty()) continue;</b>
+<b class="fc">&nbsp;                    Long questionId = Long.parseLong(questionIdStr);</b>
+<b class="fc">&nbsp;                    QuizQuestion quizQ = questions.get(i);</b>
+<b class="fc">&nbsp;                    comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();</b>
+<b class="fc">&nbsp;                    record.setStudent(student.getId());</b>
+<b class="fc">&nbsp;                    record.setExamID(exam.getId());</b>
+<b class="fc">&nbsp;                    record.setQuestionID(questionId);</b>
+<b class="fc">&nbsp;                    record.setResponse(studentAnswers.get(i)); // now a letter for MCQ</b>
+&nbsp;                    // Auto-grade MCQ
+<b class="fc">&nbsp;                    int score = 0;</b>
+<b class="pc">&nbsp;                    if (quizQ.isMultipleChoice()) {</b>
+<b class="fc">&nbsp;                        String studentAns = studentAnswers.get(i);</b>
+<b class="fc">&nbsp;                        String correctAns = quizQ.getCorrectAnswer();</b>
+<b class="pc">&nbsp;                        if (studentAns != null &amp;&amp; correctAns != null &amp;&amp; studentAns.trim().equalsIgnoreCase(correctAns.trim())) {</b>
+<b class="nc">&nbsp;                            score = quizQ.getMaxScore();</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                    record.setScore(score); // Short answer: 0 by default</b>
+<b class="fc">&nbsp;                    recordDB.add(record);</b>
+&nbsp;                } catch (NumberFormatException e) {
+&nbsp;                    // skip
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the next button action. Loads the next question.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handleNext(ActionEvent event) {
+<b class="fc">&nbsp;        loadQuestion(currentQuestionIndex + 1);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Handles the previous button action. Loads the previous question.
+&nbsp;     *
+&nbsp;     * @param event The action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void handlePrevious(ActionEvent event) {
+<b class="fc">&nbsp;        loadQuestion(currentQuestionIndex - 1);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * QuizQuestion class to represent a question in the quiz.
+&nbsp;     */
+&nbsp;    public static class QuizQuestion {
+&nbsp;        private String questionText;
+&nbsp;        private boolean isMultipleChoice;
+&nbsp;        private List&lt;String&gt; options;
+&nbsp;        private int maxScore;
+&nbsp;        private String correctAnswer;
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Constructor for a multiple choice question.
+&nbsp;         *
+&nbsp;         * @param questionText  The text of the question.
+&nbsp;         * @param options       The list of options for the question.
+&nbsp;         * @param maxScore      The max score for the question.
+&nbsp;         * @param correctAnswer The correct answer for the question.
+&nbsp;         */
+<b class="fc">&nbsp;        public QuizQuestion(String questionText, List&lt;String&gt; options, int maxScore, String correctAnswer) {</b>
+<b class="fc">&nbsp;            this.questionText = questionText;</b>
+<b class="fc">&nbsp;            this.isMultipleChoice = true;</b>
+<b class="fc">&nbsp;            this.options = options;</b>
+<b class="fc">&nbsp;            this.maxScore = maxScore;</b>
+<b class="fc">&nbsp;            this.correctAnswer = correctAnswer;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Constructor for a short answer question.
+&nbsp;         *
+&nbsp;         * @param questionText The text of the question.
+&nbsp;         * @param maxScore     The max score for the question.
+&nbsp;         */
+<b class="fc">&nbsp;        public QuizQuestion(String questionText, int maxScore) {</b>
+<b class="fc">&nbsp;            this.questionText = questionText;</b>
+<b class="fc">&nbsp;            this.isMultipleChoice = false;</b>
+<b class="fc">&nbsp;            this.options = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            this.maxScore = maxScore;</b>
+<b class="fc">&nbsp;            this.correctAnswer = null;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Gets the question text.
+&nbsp;         *
+&nbsp;         * @return The question text.
+&nbsp;         */
+&nbsp;        public String getQuestionText() {
+<b class="fc">&nbsp;            return questionText;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Checks if the question is a multiple choice question.
+&nbsp;         *
+&nbsp;         * @return True if the question is multiple choice, false otherwise.
+&nbsp;         */
+&nbsp;        public boolean isMultipleChoice() {
+<b class="fc">&nbsp;            return isMultipleChoice;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Gets the options for the question.
+&nbsp;         *
+&nbsp;         * @return The list of options.
+&nbsp;         */
+&nbsp;        public List&lt;String&gt; getOptions() {
+<b class="fc">&nbsp;            return options;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Gets the max score for the question.
+&nbsp;         *
+&nbsp;         * @return The max score for the question.
+&nbsp;         */
+&nbsp;        public int getMaxScore() {
+<b class="fc">&nbsp;            return maxScore;</b>
+&nbsp;        }
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Gets the correct answer for the question.
+&nbsp;         *
+&nbsp;         * @return The correct answer for the question.
+&nbsp;         */
+&nbsp;        public String getCorrectAnswer() {
+<b class="fc">&nbsp;            return correctAnswer;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the max score for the current question.
+&nbsp;     *
+&nbsp;     * @return The max score for the current question, or 0 if not available.
+&nbsp;     */
+&nbsp;    public int getCurrentQuestionMaxScore() {
+<b class="pc">&nbsp;        if (currentQuestionIndex &gt;= 0 &amp;&amp; currentQuestionIndex &lt; questions.size()) {</b>
+<b class="fc">&nbsp;            return questions.get(currentQuestionIndex).getMaxScore();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return 0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the correct answer for the current question (for MCQ).
+&nbsp;     *
+&nbsp;     * @return The correct answer for the current question, or null if not available.
+&nbsp;     */
+&nbsp;    public String getCurrentQuestionCorrectAnswer() {
+<b class="pc">&nbsp;        if (currentQuestionIndex &gt;= 0 &amp;&amp; currentQuestionIndex &lt; questions.size()) {</b>
+<b class="fc">&nbsp;            return questions.get(currentQuestionIndex).getCorrectAnswer();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

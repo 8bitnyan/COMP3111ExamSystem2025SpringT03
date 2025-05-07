@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherQuestionBankMgmtControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherQuestionBankMgmtControllerTest.java</span></div><h1>TeacherQuestionBankMgmtControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherQuestionBankMgmtControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherQuestionBankMgmtControllerTest.java</span></div><h1>TeacherQuestionBankMgmtControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 <span class="nc" id="L29">            Platform.startup(() -&gt; {});</span>
 <span class="nc" id="L30">        } catch (IllegalStateException e) {</span>
             // JavaFX already started
-        }
+<span class="nc" id="L32">        }</span>
 <span class="nc" id="L33">    }</span>
 
     @BeforeAll
@@ -343,7 +343,7 @@ import java.util.concurrent.TimeUnit;
 <span class="nc" id="L343">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
 <span class="nc" id="L344">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
 <span class="nc" id="L345">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
-<span class="nc" id="L346">            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;))));</span>
+            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;))));
 <span class="nc" id="L347">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
 <span class="nc" id="L348">        setField(controller, &quot;addBtn&quot;, new Button());</span>
 <span class="nc" id="L349">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
@@ -387,7 +387,7 @@ import java.util.concurrent.TimeUnit;
         }
         // 6 options (should fail)
 <span class="nc" id="L389">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
-<span class="nc" id="L390">            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;), new TextField(&quot;A6&quot;))));</span>
+            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;), new TextField(&quot;A6&quot;))));
 <span class="nc" id="L391">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
 <span class="nc" id="L392">            controller.handleAdd(); // Should not add, but should not throw</span>
         }

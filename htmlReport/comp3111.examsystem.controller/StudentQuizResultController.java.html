@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentQuizResultController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentQuizResultController.java</span></div><h1>StudentQuizResultController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentQuizResultController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentQuizResultController.java</span></div><h1>StudentQuizResultController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import comp3111.examsystem.entity.*;
 import javafx.event.ActionEvent;
@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 /**
  * The controller for student quiz result page.
  */
-<span class="nc" id="L24">public class StudentQuizResultController implements Initializable {</span>
+<span class="fc" id="L24">public class StudentQuizResultController implements Initializable {</span>
     // UI Components
     @FXML private Text quizNameText;
     @FXML private Text totalQuestionsText;
@@ -41,9 +41,16 @@ import java.util.ResourceBundle;
     private Student student;
     private String quizName;
     private List&lt;QuizResult&gt; quizResults;
-<span class="nc" id="L44">    private int currentQuestionIndex = 0;</span>
-<span class="nc" id="L45">    private int totalQuestions = 0;</span>
-<span class="nc" id="L46">    private double totalScore = 0;</span>
+<span class="fc" id="L44">    private int currentQuestionIndex = 0;</span>
+<span class="fc" id="L45">    private int totalQuestions = 0;</span>
+<span class="fc" id="L46">    private double totalScore = 0;</span>
+    
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+<span class="fc" id="L53">    AlertShower showAlert = null;</span>
     
     /**
      * Initializes the student quiz result page UI.
@@ -53,7 +60,7 @@ import java.util.ResourceBundle;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize UI elements that don't require data
-<span class="nc" id="L56">    }</span>
+<span class="fc" id="L63">    }</span>
     
     /**
      * Sets up the controller with the required data.
@@ -62,85 +69,85 @@ import java.util.ResourceBundle;
      * @param quizResults The list of quiz question results.
      */
     public void preSetController(Student student, String quizName, List&lt;QuizResult&gt; quizResults) {
-<span class="nc" id="L65">        this.student = student;</span>
-<span class="nc" id="L66">        this.quizName = quizName;</span>
-<span class="nc" id="L67">        this.quizResults = quizResults;</span>
-<span class="nc" id="L68">        this.totalQuestions = quizResults.size();</span>
+<span class="fc" id="L72">        this.student = student;</span>
+<span class="fc" id="L73">        this.quizName = quizName;</span>
+<span class="fc" id="L74">        this.quizResults = quizResults;</span>
+<span class="fc" id="L75">        this.totalQuestions = quizResults.size();</span>
         // Calculate total score and max score
-<span class="nc" id="L70">        calculateTotalScore();</span>
-<span class="nc" id="L71">        double totalMaxScore = 0;</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">        for (QuizResult result : quizResults) {</span>
-<span class="nc" id="L73">            totalMaxScore += result.getMaxScore();</span>
-        }
+<span class="fc" id="L77">        calculateTotalScore();</span>
+<span class="fc" id="L78">        double totalMaxScore = 0;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (QuizResult result : quizResults) {</span>
+<span class="fc" id="L80">            totalMaxScore += result.getMaxScore();</span>
+<span class="fc" id="L81">        }</span>
         // Set quiz name, total questions, and score
-<span class="nc" id="L76">        quizNameText.setText(quizName);</span>
-<span class="nc" id="L77">        totalQuestionsText.setText(String.valueOf(totalQuestions));</span>
-<span class="nc bnc" id="L78" title="All 2 branches missed.">        double percent = (totalMaxScore &gt; 0) ? (totalScore / totalMaxScore) * 100.0 : 0.0;</span>
-<span class="nc" id="L79">        scoreText.setText(String.format(&quot;%.1f%%&quot;, percent));</span>
+<span class="fc" id="L83">        quizNameText.setText(quizName);</span>
+<span class="fc" id="L84">        totalQuestionsText.setText(String.valueOf(totalQuestions));</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        double percent = (totalMaxScore &gt; 0) ? (totalScore / totalMaxScore) * 100.0 : 0.0;</span>
+<span class="fc" id="L86">        scoreText.setText(String.format(&quot;%.1f%%&quot;, percent));</span>
         // Create question navigation buttons
-<span class="nc" id="L81">        setupQuestionList();</span>
+<span class="fc" id="L88">        setupQuestionList();</span>
         // Load the first question result
-<span class="nc" id="L83">        loadQuestionResult(0);</span>
-<span class="nc" id="L84">    }</span>
+<span class="fc" id="L90">        loadQuestionResult(0);</span>
+<span class="fc" id="L91">    }</span>
     
     /**
      * Calculates the total score for the quiz.
      */
     private void calculateTotalScore() {
-<span class="nc" id="L90">        totalScore = 0;</span>
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        for (QuizResult result : quizResults) {</span>
-<span class="nc" id="L92">            totalScore += result.getScore();</span>
-        }
-<span class="nc" id="L94">    }</span>
+<span class="fc" id="L97">        totalScore = 0;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (QuizResult result : quizResults) {</span>
+<span class="fc" id="L99">            totalScore += result.getScore();</span>
+<span class="fc" id="L100">        }</span>
+<span class="fc" id="L101">    }</span>
     
     /**
      * Sets up the question list for navigation.
      */
     private void setupQuestionList() {
-<span class="nc" id="L100">        questionListContainer.getChildren().clear();</span>
-<span class="nc bnc" id="L101" title="All 2 branches missed.">        for (int i = 0; i &lt; quizResults.size(); i++) {</span>
-<span class="nc" id="L102">            final int questionIndex = i;</span>
-<span class="nc" id="L103">            Button questionButton = new Button(&quot;Question &quot; + (i + 1));</span>
-<span class="nc" id="L104">            questionButton.setPrefWidth(180);</span>
-<span class="nc" id="L105">            questionButton.setOnAction(e -&gt; loadQuestionResult(questionIndex));</span>
-<span class="nc" id="L106">            questionListContainer.getChildren().add(questionButton);</span>
+<span class="fc" id="L107">        questionListContainer.getChildren().clear();</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = 0; i &lt; quizResults.size(); i++) {</span>
+<span class="fc" id="L109">            final int questionIndex = i;</span>
+<span class="fc" id="L110">            Button questionButton = new Button(&quot;Question &quot; + (i + 1));</span>
+<span class="fc" id="L111">            questionButton.setPrefWidth(180);</span>
+<span class="pc" id="L112">            questionButton.setOnAction(e -&gt; loadQuestionResult(questionIndex));</span>
+<span class="fc" id="L113">            questionListContainer.getChildren().add(questionButton);</span>
         }
-<span class="nc" id="L108">    }</span>
+<span class="fc" id="L115">    }</span>
     
     /**
      * Loads a question result at the specified index.
      * @param index The index of the question result to load.
      */
     private void loadQuestionResult(int index) {
-<span class="nc bnc" id="L115" title="All 4 branches missed.">        if (index &lt; 0 || index &gt;= quizResults.size()) {</span>
-<span class="nc" id="L116">            return;</span>
+<span class="fc bfc" id="L122" title="All 4 branches covered.">        if (index &lt; 0 || index &gt;= quizResults.size()) {</span>
+<span class="fc" id="L123">            return;</span>
         }
         
         // Update current question index
-<span class="nc" id="L120">        currentQuestionIndex = index;</span>
+<span class="fc" id="L127">        currentQuestionIndex = index;</span>
         
         // Get the current question result
-<span class="nc" id="L123">        QuizResult result = quizResults.get(currentQuestionIndex);</span>
+<span class="fc" id="L130">        QuizResult result = quizResults.get(currentQuestionIndex);</span>
         
         // Update UI with result details
-<span class="nc" id="L126">        questionNumberLabel.setText(String.valueOf(currentQuestionIndex + 1));</span>
-<span class="nc" id="L127">        questionLabel.setText(result.getQuestionText());</span>
-<span class="nc" id="L128">        studentAnswerLabel.setText(result.getStudentAnswer());</span>
-<span class="nc" id="L129">        correctAnswerLabel.setText(result.getCorrectAnswer());</span>
-<span class="nc" id="L130">        questionScoreLabel.setText(result.getScore() + &quot;/&quot; + result.getMaxScore());</span>
-<span class="nc" id="L131">        feedbackTextArea.setText(result.getFeedback());</span>
+<span class="fc" id="L133">        questionNumberLabel.setText(String.valueOf(currentQuestionIndex + 1));</span>
+<span class="fc" id="L134">        questionLabel.setText(result.getQuestionText());</span>
+<span class="fc" id="L135">        studentAnswerLabel.setText(result.getStudentAnswer());</span>
+<span class="fc" id="L136">        correctAnswerLabel.setText(result.getCorrectAnswer());</span>
+<span class="fc" id="L137">        questionScoreLabel.setText(result.getScore() + &quot;/&quot; + result.getMaxScore());</span>
+<span class="fc" id="L138">        feedbackTextArea.setText(result.getFeedback());</span>
         
         // Update navigation buttons
-<span class="nc" id="L134">        updateNavigationButtons();</span>
-<span class="nc" id="L135">    }</span>
+<span class="fc" id="L141">        updateNavigationButtons();</span>
+<span class="fc" id="L142">    }</span>
     
     /**
      * Updates the navigation buttons based on the current question index.
      */
     private void updateNavigationButtons() {
-<span class="nc bnc" id="L141" title="All 2 branches missed.">        previousButton.setDisable(currentQuestionIndex == 0);</span>
-<span class="nc bnc" id="L142" title="All 2 branches missed.">        nextButton.setDisable(currentQuestionIndex == quizResults.size() - 1);</span>
-<span class="nc" id="L143">    }</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        previousButton.setDisable(currentQuestionIndex == 0);</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        nextButton.setDisable(currentQuestionIndex == quizResults.size() - 1);</span>
+<span class="fc" id="L150">    }</span>
     
     /**
      * Handles the next button action.
@@ -148,10 +155,10 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handleNext(ActionEvent event) {
-<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (currentQuestionIndex &lt; quizResults.size() - 1) {</span>
-<span class="nc" id="L152">            loadQuestionResult(currentQuestionIndex + 1);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (currentQuestionIndex &lt; quizResults.size() - 1) {</span>
+<span class="fc" id="L159">            loadQuestionResult(currentQuestionIndex + 1);</span>
         }
-<span class="nc" id="L154">    }</span>
+<span class="fc" id="L161">    }</span>
     
     /**
      * Handles the previous button action.
@@ -159,10 +166,10 @@ import java.util.ResourceBundle;
      */
     @FXML
     public void handlePrevious(ActionEvent event) {
-<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (currentQuestionIndex &gt; 0) {</span>
-<span class="nc" id="L163">            loadQuestionResult(currentQuestionIndex - 1);</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (currentQuestionIndex &gt; 0) {</span>
+<span class="fc" id="L170">            loadQuestionResult(currentQuestionIndex - 1);</span>
         }
-<span class="nc" id="L165">    }</span>
+<span class="fc" id="L172">    }</span>
     
     /**
      * Handles the back button action.
@@ -171,23 +178,24 @@ import java.util.ResourceBundle;
     @FXML
     public void handleBack(ActionEvent event) {
         try {
-            // Load the student main page
-<span class="nc" id="L175">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
-<span class="nc" id="L176">            Parent root = loader.load();</span>
-            
-<span class="nc" id="L178">            StudentMainController controller = loader.getController();</span>
-<span class="nc" id="L179">            controller.preSetController(student);</span>
-            
+<span class="fc" id="L181">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentMainUI.fxml&quot;));</span>
+<span class="fc" id="L182">            Parent root = loader.load();</span>
+<span class="fc" id="L183">            StudentMainController controller = loader.getController();</span>
+<span class="fc" id="L184">            controller.preSetController(student);</span>
             // Show the student main page
-<span class="nc" id="L182">            Stage stage = (Stage) backButton.getScene().getWindow();</span>
-<span class="nc" id="L183">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L184">            stage.setScene(scene);</span>
-<span class="nc" id="L185">            stage.show();</span>
-<span class="nc" id="L186">        } catch (IOException e) {</span>
-<span class="nc" id="L187">            e.printStackTrace();</span>
-<span class="nc" id="L188">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to main page: &quot; + e.getMessage());</span>
-        }
-<span class="nc" id="L190">    }</span>
+<span class="pc bpc" id="L186" title="3 of 4 branches missed.">            if (backButton.getScene() == null || backButton.getScene().getWindow() == null) {</span>
+<span class="fc" id="L187">                showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Cannot return to main page: No window attached.&quot;);</span>
+<span class="fc" id="L188">                return;</span>
+            }
+<span class="nc" id="L190">            Stage stage = (Stage) backButton.getScene().getWindow();</span>
+<span class="nc" id="L191">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L192">            stage.setScene(scene);</span>
+<span class="nc" id="L193">            stage.show();</span>
+<span class="nc" id="L194">        } catch (IOException e) {</span>
+<span class="nc" id="L195">            e.printStackTrace();</span>
+<span class="nc" id="L196">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to main page: &quot; + e.getMessage());</span>
+<span class="nc" id="L197">        }</span>
+<span class="nc" id="L198">    }</span>
     
     /**
      * Shows an alert dialog.
@@ -196,12 +204,16 @@ import java.util.ResourceBundle;
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
-<span class="nc" id="L199">        Alert alert = new Alert(type);</span>
-<span class="nc" id="L200">        alert.setTitle(title);</span>
-<span class="nc" id="L201">        alert.setHeaderText(null);</span>
-<span class="nc" id="L202">        alert.setContentText(content);</span>
-<span class="nc" id="L203">        alert.showAndWait();</span>
-<span class="nc" id="L204">    }</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (showAlert != null) {</span>
+<span class="fc" id="L208">            showAlert.show(type, title, content);</span>
+        } else {
+<span class="nc" id="L210">            Alert alert = new Alert(type);</span>
+<span class="nc" id="L211">            alert.setTitle(title);</span>
+<span class="nc" id="L212">            alert.setHeaderText(null);</span>
+<span class="nc" id="L213">            alert.setContentText(content);</span>
+<span class="nc" id="L214">            alert.showAndWait();</span>
+        }
+<span class="fc" id="L216">    }</span>
     
     /**
      * QuizResult class to represent a result for a quiz question.
@@ -223,22 +235,22 @@ import java.util.ResourceBundle;
          * @param maxScore The maximum possible score for the question.
          * @param feedback The teacher's feedback for the answer.
          */
-<span class="nc" id="L226">        public QuizResult(String questionText, String studentAnswer, String correctAnswer, </span>
-                         double score, double maxScore, String feedback) {
-<span class="nc" id="L228">            this.questionText = questionText;</span>
-<span class="nc" id="L229">            this.studentAnswer = studentAnswer;</span>
-<span class="nc" id="L230">            this.correctAnswer = correctAnswer;</span>
-<span class="nc" id="L231">            this.score = score;</span>
-<span class="nc" id="L232">            this.maxScore = maxScore;</span>
-<span class="nc" id="L233">            this.feedback = feedback;</span>
-<span class="nc" id="L234">        }</span>
+        public QuizResult(String questionText, String studentAnswer, String correctAnswer, 
+<span class="fc" id="L239">                         double score, double maxScore, String feedback) {</span>
+<span class="fc" id="L240">            this.questionText = questionText;</span>
+<span class="fc" id="L241">            this.studentAnswer = studentAnswer;</span>
+<span class="fc" id="L242">            this.correctAnswer = correctAnswer;</span>
+<span class="fc" id="L243">            this.score = score;</span>
+<span class="fc" id="L244">            this.maxScore = maxScore;</span>
+<span class="fc" id="L245">            this.feedback = feedback;</span>
+<span class="fc" id="L246">        }</span>
         
         /**
          * Gets the question text.
          * @return The question text.
          */
         public String getQuestionText() {
-<span class="nc" id="L241">            return questionText;</span>
+<span class="fc" id="L253">            return questionText;</span>
         }
         
         /**
@@ -246,7 +258,7 @@ import java.util.ResourceBundle;
          * @return The student's answer.
          */
         public String getStudentAnswer() {
-<span class="nc" id="L249">            return studentAnswer;</span>
+<span class="fc" id="L261">            return studentAnswer;</span>
         }
         
         /**
@@ -254,7 +266,7 @@ import java.util.ResourceBundle;
          * @return The correct answer.
          */
         public String getCorrectAnswer() {
-<span class="nc" id="L257">            return correctAnswer;</span>
+<span class="fc" id="L269">            return correctAnswer;</span>
         }
         
         /**
@@ -262,7 +274,7 @@ import java.util.ResourceBundle;
          * @return The score.
          */
         public double getScore() {
-<span class="nc" id="L265">            return score;</span>
+<span class="fc" id="L277">            return score;</span>
         }
         
         /**
@@ -270,7 +282,7 @@ import java.util.ResourceBundle;
          * @return The maximum possible score.
          */
         public double getMaxScore() {
-<span class="nc" id="L273">            return maxScore;</span>
+<span class="fc" id="L285">            return maxScore;</span>
         }
         
         /**
@@ -278,7 +290,7 @@ import java.util.ResourceBundle;
          * @return The feedback.
          */
         public String getFeedback() {
-<span class="nc" id="L281">            return feedback;</span>
+<span class="fc" id="L293">            return feedback;</span>
         }
     }
 } 

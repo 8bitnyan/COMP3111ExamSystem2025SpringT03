@@ -1,161 +1,414 @@
 package comp3111.examsystem.controller;
 
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.data.Position;
+import comp3111.examsystem.entity.Teacher;
+import comp3111.examsystem.tools.Database;
+import comp3111.examsystem.tools.MsgSender;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.scene.control.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import javafx.scene.control.*;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
-import java.lang.reflect.Field;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import comp3111.examsystem.tools.MsgSender;
-import javafx.event.ActionEvent;
-import javafx.embed.swing.JFXPanel;
-import org.junit.jupiter.api.BeforeAll;
-import javafx.application.Platform;
-import java.util.concurrent.CountDownLatch;
+
+import java.lang.reflect.Field;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TeacherManagementControllerTest {
-    private TeacherManagementController controller;
+
+    public TeacherManagementController controller;
+    public Database<Teacher> teacherDatabase;
+    public TableView<Teacher> mockTableView;
+    public TextField tfUsername, tfName, tfPassword, tfAge, filterUsername, filterName;
+    public ComboBox<Department> cbDepartment;
+    public ComboBox<Gender> cbGender;
+    public ComboBox<Position> cbPosition;
+    public ComboBox<String> filterDepartment;
+
+    // --- Add a simple fake database for testing ---
+    public static class FakeTeacherDatabase extends Database<Teacher> {
+        public List<Teacher> teachers = new java.util.ArrayList<>();
+        public FakeTeacherDatabase() { super(Teacher.class); }
+        @Override public List<Teacher> getAllEnabled() { return new java.util.ArrayList<>(teachers); }
+        @Override public List<Teacher> queryByField(String fieldName, String fieldValue) {
+            if ("department".equals(fieldName)) {
+                List<Teacher> res = new java.util.ArrayList<>();
+                for (Teacher t : teachers) if (t.getDepartment().toString().equals(fieldValue)) res.add(t);
+                return res;
+            }
+            return new java.util.ArrayList<>();
+        }
+        @Override public List<Teacher> queryFuzzyByField(String fieldName, String fieldValue) {
+            List<Teacher> res = new java.util.ArrayList<>();
+            for (Teacher t : teachers) {
+                if ("username".equals(fieldName) && t.getUsername().contains(fieldValue)) res.add(t);
+                if ("name".equals(fieldName) && t.getName().contains(fieldValue)) res.add(t);
+            }
+            return res;
+        }
+        @Override public void add(Teacher t) { teachers.add(t); }
+        @Override public void update(Teacher t) {
+            for (int i = 0; i < teachers.size(); ++i) if (teachers.get(i).getId().equals(t.getId())) teachers.set(i, t);
+        }
+        @Override public void delByKey(String key) {
+            teachers.removeIf(t -> t.getId().toString().equals(key));
+        }
+    }
 
     @BeforeAll
-    static void initJfx() {
-        new JFXPanel();
+    public static void initJavaFX() {
+        try {
+            Platform.startup(() -> {});
+        } catch (IllegalStateException ignored) {}
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setup() throws Exception {
         controller = new TeacherManagementController();
-        setField(controller, "teacherTable", new TableView<>());
-        setField(controller, "tfUsername", new TextField());
-        setField(controller, "tfName", new TextField());
-        setField(controller, "tfPassword", new TextField());
+        teacherDatabase = new FakeTeacherDatabase();
+        mockTableView = new TableView<>();
+
+        tfUsername = new TextField();
+        tfName = new TextField();
+        tfPassword = new TextField();
+        tfAge = new TextField();
+        filterUsername = new TextField();
+        filterName = new TextField();
+        cbDepartment = new ComboBox<>();
+        cbGender = new ComboBox<>();
+        cbPosition = new ComboBox<>();
+        filterDepartment = new ComboBox<>();
+
+        var fields = TeacherManagementController.class.getDeclaredFields();
+        for (var field : fields) {
+            field.setAccessible(true);
+            switch (field.getName()) {
+                case "teacherDatabase" -> field.set(controller, teacherDatabase);
+                case "teacherTable" -> field.set(controller, mockTableView);
+                case "tfUsername" -> field.set(controller, tfUsername);
+                case "tfName" -> field.set(controller, tfName);
+                case "tfPassword" -> field.set(controller, tfPassword);
+                case "tfAge" -> field.set(controller, tfAge);
+                case "cbDepartment" -> field.set(controller, cbDepartment);
+                case "cbGender" -> field.set(controller, cbGender);
+                case "cbPosition" -> field.set(controller, cbPosition);
+                case "filterUsername" -> field.set(controller, filterUsername);
+                case "filterName" -> field.set(controller, filterName);
+                case "filterDepartment" -> field.set(controller, filterDepartment);
+            }
+        }
+    }
+
+    public void setField(Object target, String fieldName, Object value) {
+        try {
+            Field field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to inject field: " + fieldName, e);
+        }
+    }
+
+    //Initialize() Testing
+    @Test
+    void testInitialize_printComboBoxContentsForManualCheck() throws Exception {
+        // Setup real JavaFX components
+        ComboBox<Department> cbDepartment = new ComboBox<>();
+        ComboBox<String> filterDepartment = new ComboBox<>();
+        ComboBox<Gender> cbGender = new ComboBox<>();
+        ComboBox<Position> cbPosition = new ComboBox<>();
+        TableView<Teacher> teacherTable = new TableView<>();
+
+        // Set fields on controller
+        setField(controller, "cbDepartment", cbDepartment);
+        setField(controller, "filterDepartment", filterDepartment);
+        setField(controller, "cbGender", cbGender);
+        setField(controller, "cbPosition", cbPosition);
+        setField(controller, "teacherTable", teacherTable);
+
+        setField(controller, "colUsername", new TableColumn<>());
+        setField(controller, "colName", new TableColumn<>());
+        setField(controller, "colAge", new TableColumn<>());
+        setField(controller, "colGender", new TableColumn<>());
+        setField(controller, "colPosition", new TableColumn<>());
+        setField(controller, "colDepartment", new TableColumn<>());
+        setField(controller, "colPassword", new TableColumn<>());
+
+        // Provide fake data
+        List<Teacher> fakeTeachers = List.of(
+                new Teacher(1L, "teacher1", "pass", "Alice", Gender.FEMALE, 30, Department.CSE, Position.L)
+        );
+        ((FakeTeacherDatabase)teacherDatabase).teachers.addAll(fakeTeachers);
+
+        // Call initialize
+        controller.initialize();
+        // Manual inspection (e.g., debugging or logging)
+        System.out.println("cbDepartment items: " + cbDepartment.getItems());
+        System.out.println("cbGender items: " + cbGender.getItems());
+        System.out.println("cbPosition items: " + cbPosition.getItems());
+        System.out.println("Selected filterDepartment: " + filterDepartment.getSelectionModel().getSelectedItem());
+        System.out.println("Selected cbDepartment: " + cbDepartment.getSelectionModel().getSelectedItem());
+        System.out.println("Teacher table row count: " + teacherTable.getItems().size());
+    }
+
+    @Test
+    void testTeacherSelection_populatesFormFields() throws Exception {
+        TableView<Teacher> teacherTable = new TableView<>();
+        TextField tfUsername = new TextField();
+        TextField tfName = new TextField();
+        TextField tfPassword = new TextField();
+        TextField tfAge = new TextField();
+        ComboBox<Department> cbDepartment = new ComboBox<>();
+        ComboBox<Gender> cbGender = new ComboBox<>();
+        ComboBox<Position> cbPosition = new ComboBox<>();
+
+        // Inject fields
+        setField(controller, "teacherTable", teacherTable);
+        setField(controller, "tfUsername", tfUsername);
+        setField(controller, "tfName", tfName);
+        setField(controller, "tfPassword", tfPassword);
+        setField(controller, "tfAge", tfAge);
+        setField(controller, "cbDepartment", cbDepartment);
+        setField(controller, "cbGender", cbGender);
+        setField(controller, "cbPosition", cbPosition);
+
+        // Initialize ComboBox values
+        cbDepartment.getItems().addAll(Department.values());
+        cbGender.getItems().addAll(Gender.values());
+        cbPosition.getItems().addAll(Position.values());
+
+        // Also inject all TableColumn fields used in initialize
+        setField(controller, "colUsername", new TableColumn<>());
+        setField(controller, "colName", new TableColumn<>());
+        setField(controller, "colAge", new TableColumn<>());
+        setField(controller, "colGender", new TableColumn<>());
+        setField(controller, "colPosition", new TableColumn<>());
+        setField(controller, "colDepartment", new TableColumn<>());
+        setField(controller, "colPassword", new TableColumn<>());
+        setField(controller, "filterDepartment", new ComboBox<>());
         setField(controller, "cbDepartment", new ComboBox<>());
-        setField(controller, "tfAge", new TextField());
         setField(controller, "cbGender", new ComboBox<>());
         setField(controller, "cbPosition", new ComboBox<>());
-        setField(controller, "filterUsername", new TextField());
-        setField(controller, "filterName", new TextField());
-        setField(controller, "filterDepartment", new ComboBox<>());
+
+        controller.initialize();
+
+        // Simulate a selection in the table
+        Teacher testTeacher = new Teacher(1L, "user1", "pass123", "Alice", Gender.FEMALE, 29, Department.CSE, Position.AP);
+        teacherTable.getItems().add(testTeacher);
+        teacherTable.getSelectionModel().select(testTeacher);
     }
 
-    private void setField(Object obj, String fieldName, Object value) throws Exception {
-        Field field = obj.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(obj, value);
+
+
+
+    //Testing Filters
+    @Test
+    public void testFilterTeachers_allEmptyInputs_shouldReturnAll() {
+        filterUsername.setText("");
+        filterName.setText("");
+        filterDepartment.setValue("ANY");
+        ((FakeTeacherDatabase)teacherDatabase).teachers.clear();
+        controller.filterTeachers();
+        assertEquals(FXCollections.observableArrayList(List.of()), mockTableView.getItems());
     }
 
     @Test
-    void testAddUpdateDeleteTeacherCRUD() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
-                setField(controller, "tfUsername", new TextField("teacher1"));
-                setField(controller, "tfName", new TextField("Bob"));
-                // ... set other required fields ...
-                try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-                    // Call addTeacher, updateTeacher, deleteTeacher via reflection if private
-                    // Add
-                    try {
-                        var add = controller.getClass().getDeclaredMethod("addTeacher");
-                        add.setAccessible(true);
-                        add.invoke(controller);
-                    } catch (NoSuchMethodException ignored) {}
-                    // Update
-                    try {
-                        var update = controller.getClass().getDeclaredMethod("updateTeacher");
-                        update.setAccessible(true);
-                        update.invoke(controller);
-                    } catch (NoSuchMethodException ignored) {}
-                    // Delete
-                    try {
-                        var delete = controller.getClass().getDeclaredMethod("deleteTeacher");
-                        delete.setAccessible(true);
-                        delete.invoke(controller);
-                    } catch (NoSuchMethodException ignored) {}
-                }
-            } catch (Exception ignored) {}
-            latch.countDown();
-        });
-        latch.await();
+    public void testFilterTeachers_withOnlyUsername() {
+        filterUsername.setText("user");
+        filterName.setText("");
+        filterDepartment.setValue("ANY");
+        controller.filterTeachers();
     }
 
     @Test
-    void testUniqueUsernameConstraint() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
-                setField(controller, "tfUsername", new TextField("teacher1"));
-                setField(controller, "tfName", new TextField("Bob"));
-                try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-                    try {
-                        var add = controller.getClass().getDeclaredMethod("addTeacher");
-                        add.setAccessible(true);
-                        add.invoke(controller);
-                        // Try to add again with same username
-                        add.invoke(controller);
-                    } catch (NoSuchMethodException ignored) {}
-                }
-            } catch (Exception ignored) {}
-            latch.countDown();
-        });
-        latch.await();
-        assertTrue(true); // Placeholder for actual assertion
+    public void testFilterTeachers_withOnlyName() {
+        filterUsername.setText("");
+        filterName.setText("Alice");
+        filterDepartment.setValue("ANY");
+        controller.filterTeachers();
     }
 
     @Test
-    void testDeletePreservesTeacherRemovesExams() throws Exception {
-        // Simulate deleting a teacher and check related exams are removed
-        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-            try {
-                var delete = controller.getClass().getDeclaredMethod("deleteTeacher");
-                delete.setAccessible(true);
-                delete.invoke(controller);
-            } catch (NoSuchMethodException ignored) {}
-        }
-        assertTrue(true); // Placeholder
+    public void testFilterTeachers_withOnlyDepartment() {
+        filterUsername.setText("");
+        filterName.setText("");
+        filterDepartment.setValue("CSE");
+        controller.filterTeachers();
     }
 
     @Test
-    void testBackAndCloseButtons() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-                // Back
-                try {
-                    var back = controller.getClass().getDeclaredMethod("back", ActionEvent.class);
-                    back.setAccessible(true);
-                    back.invoke(controller, new ActionEvent());
-                } catch (NoSuchMethodException ignored) {}
-                // Close
-                try {
-                    var close = controller.getClass().getDeclaredMethod("closeApplication");
-                    close.setAccessible(true);
-                    close.invoke(controller);
-                } catch (NoSuchMethodException ignored) {}
-            } catch (Exception ignored) {}
-            latch.countDown();
-        });
-        latch.await();
-        assertTrue(true);
+    public void testFilterTeachers_withUsernameAndDepartment() {
+        filterUsername.setText("user");
+        filterName.setText("");
+        filterDepartment.setValue("CSE");
+        controller.filterTeachers();
     }
 
+
+
+    //Test add Teacher error
     @Test
-    void testFilterAndResetLogic() throws Exception {
-        try (MockedStatic<MsgSender> msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {
-            // Filter
-            try {
-                var filter = controller.getClass().getDeclaredMethod("filterTeachers");
-                filter.setAccessible(true);
-                filter.invoke(controller);
-            } catch (NoSuchMethodException ignored) {}
-            // Reset
-            try {
-                var reset = controller.getClass().getDeclaredMethod("reset");
-                reset.setAccessible(true);
-                reset.invoke(controller);
-            } catch (NoSuchMethodException ignored) {}
-            assertTrue(true);
+    public void testAddTeacher_missingGender_shouldShowError() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            tfUsername.setText("user");
+            tfName.setText("Teacher");
+            tfPassword.setText("password1");
+            cbDepartment.setValue(Department.CSE);
+            tfAge.setText("30");
+            cbGender.setValue(null);
+            cbPosition.setValue(Position.AP);
+
+            controller.getClass().getDeclaredMethod("addTeacher").setAccessible(true);
+            controller.getClass().getDeclaredMethod("addTeacher").invoke(controller);
+
+            mockMsgSender.verify(() -> MsgSender.showMsg("Please select a gender."));
+            verify(teacherDatabase, never()).add(any());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-} 
+
+    @Test
+    public void testAddTeacher_missingPosition_shouldShowError() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            tfUsername.setText("user");
+            tfName.setText("Teacher");
+            tfPassword.setText("password1");
+            cbDepartment.setValue(Department.CSE);
+            tfAge.setText("30");
+            cbGender.setValue(Gender.MALE);
+            cbPosition.setValue(null);
+
+            controller.getClass().getDeclaredMethod("addTeacher").setAccessible(true);
+            controller.getClass().getDeclaredMethod("addTeacher").invoke(controller);
+
+            mockMsgSender.verify(() -> MsgSender.showMsg("Please select a position."));
+            verify(teacherDatabase, never()).add(any());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Update Teacher Error Checking
+    @Test
+    public void testUpdateTeacher_nullSelectedTeacher_shouldShowError() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            // Use real TableView and selection model
+            mockTableView.getItems().clear();
+            mockTableView.getSelectionModel().clearSelection();
+            controller.updateTeacher();
+            assertTrue(((FakeTeacherDatabase)teacherDatabase).teachers.isEmpty());
+            mockMsgSender.verify(() -> MsgSender.showMsg("Please select a Teacher to update."));
+        }
+    }
+
+    @Test
+    public void testUpdateTeacher_invalidInput_shouldShowValidationMsg() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            // Add a Teacher to the table and select it
+            Teacher teacher = new Teacher(1L, "u", "p", "n", Gender.MALE, 20, Department.CSE, Position.AP);
+            mockTableView.getItems().add(teacher);
+            mockTableView.getSelectionModel().select(teacher);
+
+            // Inject invalid form values
+            tfUsername.setText(""); // Invalid username
+            tfName.setText("Name");
+            tfPassword.setText("pass");
+            cbDepartment.setValue(Department.CSE);
+            cbGender.setValue(Gender.MALE);
+            tfAge.setText("21");
+            cbPosition.setValue(Position.P);
+
+            controller.updateTeacher();
+            assertTrue(((FakeTeacherDatabase)teacherDatabase).teachers.isEmpty());
+            mockMsgSender.verify(() -> MsgSender.showMsg(contains("username")), atLeastOnce());
+        }
+    }
+
+    @Test
+    public void testUpdateTeacher_missingGender_shouldShowMsg() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            Teacher teacher = new Teacher(1L, "user", "pass1234", "Test Name", Gender.MALE, 20, Department.CSE, Position.DH);
+            ((FakeTeacherDatabase)teacherDatabase).teachers.add(teacher);
+            mockTableView.getItems().add(teacher);
+            mockTableView.getSelectionModel().select(teacher);
+
+            // VALID inputs for all fields EXCEPT gender
+            tfUsername.setText("user");
+            tfName.setText("Test Name");
+            tfPassword.setText("pass1234");
+            cbDepartment.setValue(Department.CSE);
+            cbGender.setValue(null); // Simulate missing gender
+            tfAge.setText("20");
+            cbPosition.setValue(Position.P);
+            controller.updateTeacher();
+            assertEquals(1, ((FakeTeacherDatabase)teacherDatabase).teachers.size());
+            mockMsgSender.verify(() -> MsgSender.showMsg("Please select a gender."), atLeastOnce());
+        }
+    }
+
+    @Test
+    public void testUpdateTeacher_missingPosition_shouldShowMsg() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            Teacher teacher = new Teacher(1L, "user", "pass1234", "Test Name", Gender.MALE, 20, Department.CSE, Position.DH);
+            ((FakeTeacherDatabase)teacherDatabase).teachers.add(teacher);
+            mockTableView.getItems().add(teacher);
+            mockTableView.getSelectionModel().select(teacher);
+            tfUsername.setText("user");
+            tfName.setText("Test Name");
+            tfPassword.setText("pass1234");
+            cbDepartment.setValue(Department.CSE);
+            cbGender.setValue(Gender.FEMALE);
+            tfAge.setText("20");
+            cbPosition.setValue(null); // Simulate missing position
+            controller.updateTeacher();
+            assertEquals(1, ((FakeTeacherDatabase)teacherDatabase).teachers.size());
+            mockMsgSender.verify(() -> MsgSender.showMsg("Please select a position."), atLeastOnce());
+        }
+    }
+
+    //Delete Teacher Error checking
+    @Test
+    public void testDeleteTeacher_nullSelection_shouldShowError() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            mockTableView.getItems().clear();
+            mockTableView.getSelectionModel().clearSelection();
+
+            try {
+                controller.getClass().getDeclaredMethod("deleteTeacher").setAccessible(true);
+                controller.getClass().getDeclaredMethod("deleteTeacher").invoke(controller);
+            } catch (NoSuchMethodException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+                fail("Reflection error: " + e.getMessage());
+            }
+
+            mockMsgSender.verify(() -> MsgSender.showMsg(contains("select a teacher")), atLeastOnce());
+            assertTrue(((FakeTeacherDatabase)teacherDatabase).teachers.isEmpty());
+        }
+    }
+
+    @Test
+    public void testDeleteStudent_valid_shouldConfirmAndDelete() {
+        try (MockedStatic<MsgSender> mockMsgSender = mockStatic(MsgSender.class)) {
+            // Prepare mock teacher and select in real TableView
+            Teacher teacher = new Teacher(1L, "u", "p", "n", Gender.MALE, 20, Department.CSE, Position.DH);
+            ((FakeTeacherDatabase)teacherDatabase).teachers.add(teacher);
+            mockTableView.getItems().add(teacher);
+            mockTableView.getSelectionModel().select(teacher);
+            mockMsgSender.when(() -> MsgSender.showConfirm(anyString(), anyString(), any()))
+                    .thenAnswer(invocation -> {
+                        Runnable onConfirm = invocation.getArgument(2);
+                        onConfirm.run(); // Simulate clicking "OK"
+                        return null;
+                    });
+            controller.deleteTeacher();
+            assertTrue(((FakeTeacherDatabase)teacherDatabase).teachers.isEmpty());
+            mockMsgSender.verify(() -> MsgSender.showMsg("Teacher deleted successfully."));
+        }
+    }
+}

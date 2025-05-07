@@ -22,12 +22,15 @@ import java.util.*;
 
 /**
  * Controller class for managing Students in the Exam System.
+ * <p>
  * This controller handles:
- * - Displaying all enabled students in a table view.
- * - Filtering students based on username, name, and department.
- * - Adding, updating, and deleting student records.
- * - Binding form fields to selected student data for editing.
- * It uses a generic `Database<Student>` instance for persistence,
+ * <ul>
+ *   <li>Displaying all enabled students in a table view.</li>
+ *   <li>Filtering students based on username, name, and department.</li>
+ *   <li>Adding, updating, and deleting student records.</li>
+ *   <li>Binding form fields to selected student data for editing.</li>
+ * </ul>
+ * It uses a generic {@code Database<Student>} instance for persistence.
  */
 public class StudentManagementController {
     private Manager manager;
@@ -101,7 +104,16 @@ public class StudentManagementController {
     }
 
     /**
-     * Applies filtering logic on student list based on filter inputs.
+     * Initializes the student management UI, including table columns, filter fields, and form bindings.
+     * Populates the table with all enabled students.
+     */
+    /**
+     * Applies filtering logic on the student list based on filter inputs.
+     *
+     * @param username   The username to filter by (fuzzy match), or null for no filter.
+     * @param name       The name to filter by (fuzzy match), or null for no filter.
+     * @param department The department to filter by, or null for no filter.
+     * @return A list of students matching the filter criteria.
      */
     private List<Student> applyStudentsFilter(String username, String name, String department) {
         List<Student> filtered = studentDatabase.getAllEnabled();
@@ -120,7 +132,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Handles filtering when user clicks the "Filter" button.
+     * Handles filtering when the user clicks the "Filter" button. Updates the table with filtered students.
      */
     @FXML
     public void filterStudents() {
@@ -135,7 +147,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Resets all filters and reloads the full course list.
+     * Resets all filters and reloads the full student list.
      */
     @FXML
     private void reset() {
@@ -158,8 +170,8 @@ public class StudentManagementController {
     }
 
     /**
-     * Adds a new Student using input form values.
-     * Using functions provided in the database class
+     * Adds a new Student using input form values. Validates input and updates the table if successful.
+     * Uses functions provided in the database class.
      */
     @FXML
     public void addStudent() {
@@ -192,7 +204,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Updates an existing student selected in the table using form values.
+     * Updates an existing student selected in the table using form values. Validates input and updates the table if successful.
      */
     @FXML
     public void updateStudent() {
@@ -234,7 +246,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Updates the changed values in the database
+     * Updates the changed values in the database for all enabled students.
      */
     private void saveAllStudentsToFile() {
         try {
@@ -248,7 +260,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Deletes the selected student from the database.
+     * Deletes the selected student from the database after confirmation. Updates the table if successful.
      */
     @FXML
     public void deleteStudent() {
@@ -277,6 +289,7 @@ public class StudentManagementController {
 
     /**
      * Navigates back to the Manager main screen.
+     *
      * @param e The triggered action event.
      */
     @FXML
@@ -295,7 +308,7 @@ public class StudentManagementController {
     }
 
     /**
-     * Closes the application with a confirmation.
+     * Closes the application with a confirmation dialog.
      */
     @FXML
     void closeApplication() {

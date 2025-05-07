@@ -27,7 +27,7 @@ import comp3111.examsystem.TestUtils;
     // Controllers
     // comp3111.examsystem.controller.TeacherLoginControllerTest.class,
     // comp3111.examsystem.controller.ManagerLoginControllerTest.class,
-    comp3111.examsystem.controller.StudentQuizControllerTest.class,
+    // comp3111.examsystem.controller.StudentQuizControllerTest.class,
     
     // Entities
     // comp3111.examsystem.entity.StudentTest.class,

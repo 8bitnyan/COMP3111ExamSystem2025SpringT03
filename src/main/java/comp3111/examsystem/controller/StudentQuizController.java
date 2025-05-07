@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.ResourceBundle;
 
 /**
- * The controller for student quiz page.
+ * The controller for the student quiz page. Handles quiz navigation, answering, timing, and submission logic for students.
  */
 public class StudentQuizController implements Initializable {
     // UI Components
@@ -60,9 +60,23 @@ public class StudentQuizController implements Initializable {
     private Timeline timeline;
     private boolean isSubmitting = false;
     
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+    AlertShower showAlert = null;
+    
+    @FunctionalInterface
+    public interface ConfirmDialogShower {
+        boolean show(String title, String header, String content);
+    }
+    private ConfirmDialogShower confirmDialogShower = null;
+    
     /**
-     * Initializes the student quiz page UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the student quiz page UI. Sets up listeners for MCQ and short answer fields.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     @Override
@@ -95,9 +109,10 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Sets up the quiz controller with the required data.
-     * @param student The student taking the quiz.
-     * @param quizName The name of the quiz.
+     * Sets up the quiz controller with the required data for the student and quiz.
+     *
+     * @param student   The student taking the quiz.
+     * @param quizName  The name of the quiz.
      * @param questions The list of quiz questions.
      * @param timeLimit The time limit for the quiz in minutes.
      */
@@ -128,7 +143,7 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Sets up the question list for navigation.
+     * Sets up the question list for navigation in the sidebar.
      */
     private void setupSidebar() {
         questionListContainer.getChildren().clear();
@@ -144,7 +159,7 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Updates the question navigation buttons to indicate which questions have been answered.
+     * Updates the question navigation buttons to indicate which questions have been answered and which is current.
      */
     private void updateSidebarStyles() {
         for (int i = 0; i < questionListContainer.getChildren().size(); i++) {
@@ -164,7 +179,8 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Loads a question at the specified index.
+     * Loads a question at the specified index and updates the UI.
+     *
      * @param index The index of the question to load.
      */
     private void loadQuestion(int index) {
@@ -233,6 +249,7 @@ public class StudentQuizController implements Initializable {
     
     /**
      * Checks if the current question is a multiple choice question.
+     *
      * @return True if the current question is multiple choice, false otherwise.
      */
     private boolean isCurrentQuestionMCQ() {
@@ -240,7 +257,7 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Sets up the timer for the quiz.
+     * Sets up the timer for the quiz and starts countdown.
      */
     private void setupTimer() {
         updateTimerDisplay();
@@ -265,7 +282,7 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Updates the timer display.
+     * Updates the timer display in the UI.
      */
     private void updateTimerDisplay() {
         timerText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
@@ -274,7 +291,8 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Handles the submit button action.
+     * Handles the submit button action. Prompts for confirmation and submits the quiz if confirmed.
+     *
      * @param event The action event.
      */
     @FXML
@@ -283,33 +301,49 @@ public class StudentQuizController implements Initializable {
         if (isSubmitting) return;
         isSubmitting = true;
         if (timeline != null) timeline.stop();
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Submit Quiz");
-        confirm.setHeaderText("Submit Quiz");
-        confirm.setContentText("Are you sure you want to submit this quiz?");
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            submitQuiz();
+        if (showAlert != null) {
+            showAlert.show(Alert.AlertType.CONFIRMATION, "Submit Quiz", "Are you sure you want to submit this quiz?");
+            // In tests, the handler should call submitQuiz() or reset isSubmitting as needed
         } else {
-            isSubmitting = false;
-            if (timeline != null) timeline.play();
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Submit Quiz");
+            confirm.setHeaderText("Submit Quiz");
+            confirm.setContentText("Are you sure you want to submit this quiz?");
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                submitQuiz();
+            } else {
+                isSubmitting = false;
+                if (timeline != null) timeline.play();
+            }
         }
     }
     
     /**
-     * Handles the window close event.
+     * Handles the window close event. Prompts for confirmation and submits the quiz if confirmed.
+     *
      * @param event The window event.
      */
     private void handleWindowClose(WindowEvent event) {
         saveCurrentAnswer();
         if (isSubmitting) return;
         if (timeline != null) timeline.stop();
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Submit Quiz");
-        confirm.setHeaderText("Submit Quiz");
-        confirm.setContentText("Closing the window will submit your quiz. Are you sure you want to continue?");
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        boolean confirmed;
+        if (confirmDialogShower != null) {
+            confirmed = confirmDialogShower.show(
+                "Submit Quiz",
+                "Submit Quiz",
+                "Closing the window will submit your quiz. Are you sure you want to continue?"
+            );
+        } else {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Submit Quiz");
+            confirm.setHeaderText("Submit Quiz");
+            confirm.setContentText("Closing the window will submit your quiz. Are you sure you want to continue?");
+            Optional<ButtonType> result = confirm.showAndWait();
+            confirmed = result.isPresent() && result.get() == ButtonType.OK;
+        }
+        if (confirmed) {
             submitQuiz();
         } else {
             if (timeline != null) timeline.play();
@@ -318,26 +352,31 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Submits the quiz and shows the completion message.
+     * Submits the quiz, saves results, and shows the completion message.
      */
     private void submitQuiz() {
         saveCurrentAnswer();
         saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);
-        Alert completion = new Alert(Alert.AlertType.INFORMATION);
-        completion.setTitle("Quiz Completed");
-        completion.setHeaderText("Quiz Submitted Successfully");
-        completion.setContentText("You have completed the quiz: " + quizName);
-        completion.showAndWait().ifPresent(btn -> {
-            Alert results = new Alert(Alert.AlertType.INFORMATION);
-            results.setTitle("Quiz Results");
-            results.setHeaderText("Results Available After Grading");
-            results.setContentText("You will be able to see your quiz results after your teacher grades this quiz.");
-            results.showAndWait().ifPresent(finalBtn -> returnToMainPage());
-        });
+        if (showAlert != null) {
+            showAlert.show(Alert.AlertType.INFORMATION, "Quiz Completed", "You have completed the quiz: " + quizName);
+            // In tests, the handler can simulate the dialog flow
+        } else {
+            Alert completion = new Alert(Alert.AlertType.INFORMATION);
+            completion.setTitle("Quiz Completed");
+            completion.setHeaderText("Quiz Submitted Successfully");
+            completion.setContentText("You have completed the quiz: " + quizName);
+            completion.showAndWait().ifPresent(btn -> {
+                Alert results = new Alert(Alert.AlertType.INFORMATION);
+                results.setTitle("Quiz Results");
+                results.setHeaderText("Results Available After Grading");
+                results.setContentText("You will be able to see your quiz results after your teacher grades this quiz.");
+                results.showAndWait().ifPresent(finalBtn -> returnToMainPage());
+            });
+        }
     }
     
     /**
-     * Returns to the student main page.
+     * Returns to the student main page after quiz submission.
      */
     private void returnToMainPage() {
         try {
@@ -358,13 +397,12 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Saves the quiz results to a database or persistent storage.
-     * This is a placeholder method that would be implemented in a real application.
-     * 
-     * @param student The student who took the quiz
-     * @param quizName The name of the quiz
-     * @param questions The list of questions in the quiz
-     * @param studentAnswers The list of answers provided by the student
+     * Saves the quiz results to a database or persistent storage. This is a placeholder method.
+     *
+     * @param student        The student who took the quiz.
+     * @param quizName       The name of the quiz.
+     * @param questions      The list of questions in the quiz.
+     * @param studentAnswers The list of answers provided by the student.
      */
     private void saveQuizResultsToDatabase(Student student, String quizName, List<QuizQuestion> questions, List<String> studentAnswers) {
         try {
@@ -424,7 +462,8 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Handles the next button action.
+     * Handles the next button action. Loads the next question.
+     *
      * @param event The action event.
      */
     @FXML
@@ -433,7 +472,8 @@ public class StudentQuizController implements Initializable {
     }
     
     /**
-     * Handles the previous button action.
+     * Handles the previous button action. Loads the previous question.
+     *
      * @param event The action event.
      */
     @FXML
@@ -453,9 +493,10 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Constructor for a multiple choice question.
-         * @param questionText The text of the question.
-         * @param options The list of options for the question.
-         * @param maxScore The max score for the question.
+         *
+         * @param questionText  The text of the question.
+         * @param options       The list of options for the question.
+         * @param maxScore      The max score for the question.
          * @param correctAnswer The correct answer for the question.
          */
         public QuizQuestion(String questionText, List<String> options, int maxScore, String correctAnswer) {
@@ -468,8 +509,9 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Constructor for a short answer question.
+         *
          * @param questionText The text of the question.
-         * @param maxScore The max score for the question.
+         * @param maxScore     The max score for the question.
          */
         public QuizQuestion(String questionText, int maxScore) {
             this.questionText = questionText;
@@ -481,6 +523,7 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Gets the question text.
+         *
          * @return The question text.
          */
         public String getQuestionText() {
@@ -489,6 +532,7 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Checks if the question is a multiple choice question.
+         *
          * @return True if the question is multiple choice, false otherwise.
          */
         public boolean isMultipleChoice() {
@@ -497,6 +541,7 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Gets the options for the question.
+         *
          * @return The list of options.
          */
         public List<String> getOptions() {
@@ -505,6 +550,7 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Gets the max score for the question.
+         *
          * @return The max score for the question.
          */
         public int getMaxScore() {
@@ -513,6 +559,7 @@ public class StudentQuizController implements Initializable {
         
         /**
          * Gets the correct answer for the question.
+         *
          * @return The correct answer for the question.
          */
         public String getCorrectAnswer() {
@@ -520,7 +567,11 @@ public class StudentQuizController implements Initializable {
         }
     }
 
-    // Add method to get max score for current question
+    /**
+     * Gets the max score for the current question.
+     *
+     * @return The max score for the current question, or 0 if not available.
+     */
     public int getCurrentQuestionMaxScore() {
         if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.size()) {
             return questions.get(currentQuestionIndex).getMaxScore();
@@ -528,7 +579,11 @@ public class StudentQuizController implements Initializable {
         return 0;
     }
 
-    // Add method to get correct answer for current question (for MCQ)
+    /**
+     * Gets the correct answer for the current question (for MCQ).
+     *
+     * @return The correct answer for the current question, or null if not available.
+     */
     public String getCurrentQuestionCorrectAnswer() {
         if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.size()) {
             return questions.get(currentQuestionIndex).getCorrectAnswer();

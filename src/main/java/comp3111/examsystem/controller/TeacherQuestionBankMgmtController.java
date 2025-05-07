@@ -37,33 +37,33 @@ import java.util.stream.Collectors;
 
 public class TeacherQuestionBankMgmtController implements Initializable {
 
-    private Teacher teacher;
-    private Question selectedQuestion;
-    private boolean editMode = false; // Track if we're in edit mode
+    public Teacher teacher;
+    public Question selectedQuestion;
+    public boolean editMode = false; // Track if we're in edit mode
 
-    @FXML private VBox mainbox;
+    @FXML public VBox mainbox;
 
-    @FXML private TextField filterQuestionTxt;
+    @FXML public TextField filterQuestionTxt;
     @FXML private ComboBox<String> filterTypeCmb;
     @FXML private TextField filterScoreTxt;
 
-    @FXML private TableView<Question> questionsTable;
-    @FXML private TableColumn<Question, String> colQuestion, colOptionA, colOptionB, colOptionC, colOptionD, colOptionE, colType, colAnswer;
-    @FXML private TableColumn<Question, Integer> colScore;
+    @FXML public TableView<Question> questionsTable;
+    @FXML public TableColumn<Question, String> colQuestion, colOptionA, colOptionB, colOptionC, colOptionD, colOptionE, colType, colAnswer;
+    @FXML public TableColumn<Question, Integer> colScore;
 
-    @FXML private ComboBox<String> typeCmb;
-    @FXML private VBox options;
-    @FXML private VBox optionsContainer;
-    @FXML private Button addOptionBtn;
-    @FXML private TextArea questionTxt;
-    @FXML private TextField scoreTxt, answerTxt;
+    @FXML public ComboBox<String> typeCmb;
+    @FXML public VBox options;
+    @FXML public VBox optionsContainer;
+    @FXML public Button addOptionBtn;
+    @FXML public TextArea questionTxt;
+    @FXML public TextField scoreTxt, answerTxt;
     
     // List to keep track of dynamic option text fields
-    private List<TextField> optionFields = new ArrayList<>();
+    public List<TextField> optionFields = new ArrayList<>();
     private static final int MIN_OPTIONS = 2;
     private static final int MAX_OPTIONS = 5; // Maximum of 5 options (A through E)
 
-    @FXML private Button addBtn, updateBtn, editBtn, cancelEditBtn; // Add cancelEditBtn declaration
+    @FXML public Button addBtn, updateBtn, editBtn, cancelEditBtn; // Add cancelEditBtn declaration
 
     /**
      * Sets the teacher object and initializes the UI.
@@ -255,7 +255,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * Initializes the options container with the specified number of options.
      * @param count The number of options to create.
      */
-    private void initializeOptions(int count) {
+    public void initializeOptions(int count) {
         optionsContainer.getChildren().clear();
         optionFields.clear();
         
@@ -270,7 +270,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * @param index The index of the option (0-based).
      * @param value The value for the option.
      */
-    private void addOptionFieldToUI(int index, String value) {
+    public void addOptionFieldToUI(int index, String value) {
         HBox optionBox = new HBox(10);
         optionBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         optionBox.setMinWidth(250);
@@ -1122,7 +1122,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         System.exit(0);
     }
 
-    private void clearFormFields() {
+    public void clearFormFields() {
         try {
             // First clear the selection to avoid selection events
             if (questionsTable != null) {
@@ -1192,7 +1192,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * Updates the hint/label for the answer field based on question type
      * @param questionType The type of question
      */
-    private void updateAnswerHint(String questionType) {
+    public void updateAnswerHint(String questionType) {
         // Find the answer label (which is right before the answer text field)
         VBox form = (VBox) answerTxt.getParent();
         int answerLabelIndex = form.getChildren().indexOf(answerTxt) - 1;
@@ -1212,7 +1212,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * Displays a question in read-only mode (for viewing only)
      * @param question The question to display
      */
-    private void displaySelectedQuestionReadOnly(Question question) {
+    public void displaySelectedQuestionReadOnly(Question question) {
         // If null question, clear fields and return
         if (question == null) {
             clearFormFields();
@@ -1298,7 +1298,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * Sets whether form fields are editable or read-only
      * @param editable True to make editable, false for read-only
      */
-    private void setFormFieldsEditable(boolean editable) {
+    public void setFormFieldsEditable(boolean editable) {
         // Set field editability
         questionTxt.setEditable(editable);
         scoreTxt.setEditable(editable);
@@ -1323,8 +1323,8 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         scoreTxt.setStyle(style);
         answerTxt.setStyle(style);
         
-        // Make option fields read-only/editable
-        for (TextField field : optionFields) {
+        // Make option fields read-only/editable (iterate over a copy to avoid ConcurrentModificationException)
+        for (TextField field : new ArrayList<>(optionFields)) {
             field.setEditable(editable);
             field.setTooltip(tooltip != null ? new Tooltip(tooltip) : null);
             field.setStyle(style);
@@ -1366,7 +1366,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
      * Updates the form header to show a prompt when in read-only mode
      * @param editable Whether the form is currently editable
      */
-    private void updateFormHeaderPrompt(boolean editable) {
+    public void updateFormHeaderPrompt(boolean editable) {
         try {
             // Find the form header label
             VBox form = (VBox) questionTxt.getParent();
@@ -1482,7 +1482,7 @@ public class TeacherQuestionBankMgmtController implements Initializable {
     /**
      * Adds click handlers to all form fields to guide users when fields are read-only
      */
-    private void addClickHandlersToFormFields() {
+    public void addClickHandlersToFormFields() {
         // Create handler for each form field
         javafx.event.EventHandler<javafx.scene.input.MouseEvent> clickHandler = event -> {
             if (!editMode && selectedQuestion == null) {
@@ -1515,5 +1515,10 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         questionTxt.setOnMouseClicked(clickHandler);
         scoreTxt.setOnMouseClicked(clickHandler);
         answerTxt.setOnMouseClicked(clickHandler);
+    }
+
+    // for testing
+    protected FXMLLoader createLoaderForBackNavigation() {
+        return new FXMLLoader(Main.class.getResource("TeacherMainUI.fxml"));
     }
 }

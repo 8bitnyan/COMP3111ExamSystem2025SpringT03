@@ -152,7 +152,7 @@ public class TeacherGradeExamController implements Initializable {
      * Loads all enabled exams from the database file and populates filter options.
      * Organizes exams by course in a map for later filtering.
      */
-    private void loadExamOptions() {
+    public void loadExamOptions() {
         try {
             List<String> lines = Files.readAllLines(examFilePath);
             courseFilter.getItems().clear();
@@ -246,7 +246,7 @@ public class TeacherGradeExamController implements Initializable {
      * @param fieldName The field name to extract.
      * @return The value of the field, or null if not found.
      */
-    private String extractField(String line, String fieldName) {
+    public String extractField(String line, String fieldName) {
         String[] fields = line.split("!@#");
         for (String field : fields) {
             if (field.startsWith(fieldName + "%&:")) {
@@ -261,7 +261,7 @@ public class TeacherGradeExamController implements Initializable {
      * Triggers display of related questions.
      */
     @FXML
-    private void filterExam() {
+    public void filterExam() {
         String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();
         String selectedExam = examFilter.getSelectionModel().getSelectedItem();
 
@@ -284,7 +284,7 @@ public class TeacherGradeExamController implements Initializable {
      * @param examLine The serialized exam data line.
      * @return The exam ID as a Long.
      */
-    private Long extractExamIdFromLine(String examLine) {
+    public Long extractExamIdFromLine(String examLine) {
         String[] fields = examLine.split("!@#");
         for (String field : fields) {
             if (field.startsWith("id%&:")) {
@@ -298,7 +298,7 @@ public class TeacherGradeExamController implements Initializable {
      * Resets the filter input.
      */
     @FXML
-    private void resetFilter() {
+    public void resetFilter() {
         courseFilter.getSelectionModel().clearSelection();
         examFilter.getSelectionModel().clearSelection();
         examFilter.getItems().clear();
@@ -310,7 +310,7 @@ public class TeacherGradeExamController implements Initializable {
      * Optionally filters by student if selected in the student dropdown.
      * @param questionId The ID of the selected question.
      */
-    private void displayStudentResponsesForQuestion(String questionId) {
+    public void displayStudentResponsesForQuestion(String questionId) {
         String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();
         List<Record> allRecords = recordDatabase.getAllEnabled();
         List<Record> result = new ArrayList<>();
@@ -351,7 +351,7 @@ public class TeacherGradeExamController implements Initializable {
      * @param studentId The student ID.
      * @return The student's name, or "Unknown" if not found.
      */
-    private String getStudentNameById(String studentId) {
+    public String getStudentNameById(String studentId) {
         try {
             for (String line : Files.readAllLines(studentFilePath)) {
                 if (line.contains("id%&:" + studentId + "!@#")) {
@@ -368,7 +368,7 @@ public class TeacherGradeExamController implements Initializable {
      * Displays the correct answer and maximum score for the selected question.
      * @param questionId The question's unique ID.
      */
-    private void displayQuestionDetails(String questionId) {
+    public void displayQuestionDetails(String questionId) {
         try {
             List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
@@ -460,7 +460,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Helper: Get option text by letter for MCQ
-    private String getOptionTextByLetter(String letter, List<String> options) {
+    public String getOptionTextByLetter(String letter, List<String> options) {
         if (letter == null || letter.length() != 1) return "";
         int idx = letter.charAt(0) - 'A';
         if (idx >= 0 && idx < options.size()) {
@@ -470,7 +470,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Helper: Get options for a question by ID
-    private List<String> getOptionsForQuestion(String questionId) {
+    public List<String> getOptionsForQuestion(String questionId) {
         try {
             List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
@@ -490,7 +490,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Helper: Get question type by ID
-    private String getQuestionType(String questionId) {
+    public String getQuestionType(String questionId) {
         try {
             List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
@@ -505,7 +505,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Helper: Get correct answer for a question by ID
-    private String getCorrectAnswer(String questionId) {
+    public String getCorrectAnswer(String questionId) {
         try {
             List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
@@ -520,7 +520,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Helper: Get max score for a question by ID
-    private String getMaxScore(String questionId) {
+    public String getMaxScore(String questionId) {
         try {
             List<String> questionLines = Files.readAllLines(questionFilePath);
             for (String line : questionLines) {
@@ -535,7 +535,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Patch: When a row is selected in the answer table, update the detail panel
-    private void updateDetailPanel(Record record, String questionId) {
+    public void updateDetailPanel(Record record, String questionId) {
         if (record == null || questionId == null) {
             if (studentNameLabel != null) studentNameLabel.setText("");
             if (studentAnswerLabel != null) studentAnswerLabel.setText("");
@@ -581,7 +581,7 @@ public class TeacherGradeExamController implements Initializable {
     }
 
     // Refresh the answer table and detail panel from the database for the current question
-    private void refreshCurrentQuestionData() {
+    public void refreshCurrentQuestionData() {
         manualScoreField.setDisable(true);
         if (updateButton != null) updateButton.setDisable(true);
         String selectedQuestion = questionList.getSelectionModel().getSelectedItem();

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherExamMgmtController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherExamMgmtController.java</span></div><h1>TeacherExamMgmtController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherExamMgmtController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherExamMgmtController.java</span></div><h1>TeacherExamMgmtController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
 import comp3111.examsystem.Main;
 import comp3111.examsystem.entity.*;
@@ -240,7 +240,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L240">            addExamBtn.setDisable(true);</span>
 <span class="nc" id="L241">            editExamBtn.setDisable(true);</span>
 <span class="nc" id="L242">            updateExamBtn.setDisable(false);</span>
-<span class="nc" id="L243">        } else {</span>
+        } else {
 <span class="nc" id="L244">            addExamBtn.setDisable(false);</span>
             
             // Enable Edit button only for unpublished exams
@@ -302,10 +302,10 @@ import java.util.stream.Collectors;
                 // MsgSender.showMsg(q.getId().getClass().getName());
 <span class="nc bnc" id="L303" title="All 2 branches missed.">                if (selectedQuestionIds.contains(Long.toString(q.getId()))) {</span>
 <span class="nc" id="L304">                    selected.add(q); // Add to selected exam questions</span>
-<span class="nc" id="L305">                } else {</span>
+                } else {
 <span class="nc" id="L306">                    remainingQuestions.add(q); // Add to available questions</span>
                 }
-            }
+<span class="nc" id="L308">            }</span>
 
             // Update the lists and tables
 <span class="nc" id="L311">            availableQuestions.setAll(remainingQuestions);</span>
@@ -393,7 +393,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L393">            } catch (NumberFormatException e) {</span>
 <span class="nc" id="L394">                MsgSender.showMsg(&quot;Score filter should be an integer or left blank.&quot;);</span>
 <span class="nc" id="L395">                filterScoreTxt.clear();</span>
-            }
+<span class="nc" id="L396">            }</span>
         }
 <span class="nc" id="L398">        final int finalScoreFilter = scoreFilter;</span>
 <span class="nc" id="L399">        List&lt;Question&gt; filteredQuestions = allQuestions.stream()</span>
@@ -498,9 +498,9 @@ import java.util.stream.Collectors;
         }
         
 <span class="nc" id="L500">        MsgSender.showConfirm(</span>
-<span class="nc" id="L501">            &quot;Clear Selected Questions&quot;, </span>
-<span class="nc" id="L502">            &quot;Are you sure you want to remove all questions from this exam?&quot;, </span>
-<span class="nc" id="L503">            () -&gt; {</span>
+            &quot;Clear Selected Questions&quot;, 
+            &quot;Are you sure you want to remove all questions from this exam?&quot;, 
+            () -&gt; {
 <span class="nc" id="L504">                selectedQuestions.clear();</span>
 <span class="nc" id="L505">                loadAllQuestions();</span>
 <span class="nc" id="L506">                updateTotalScore();</span>
@@ -637,7 +637,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L637">        } catch (Exception e) {</span>
 <span class="nc" id="L638">            MsgSender.showMsg(&quot;Error: &quot; + e.getMessage());</span>
 <span class="nc" id="L639">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L640">        }</span>
 <span class="nc" id="L641">    }</span>
 
     /**
@@ -656,9 +656,9 @@ import java.util.stream.Collectors;
         }
         
 <span class="nc" id="L658">        MsgSender.showConfirm(</span>
-<span class="nc" id="L659">            &quot;Delete Exam&quot;, </span>
-<span class="nc" id="L660">            &quot;Are you sure you want to delete this exam? This action cannot be undone.&quot;, </span>
-<span class="nc" id="L661">            () -&gt; {</span>
+            &quot;Delete Exam&quot;, 
+            &quot;Are you sure you want to delete this exam? This action cannot be undone.&quot;, 
+            () -&gt; {
 <span class="nc" id="L662">                examDB.delByKey(selectedExam.getId().toString());</span>
                 
                 // Clear selection and form
@@ -697,7 +697,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L697">                    examsTable.scrollTo(exam);</span>
 <span class="nc" id="L698">                    break;</span>
                 }
-            }
+<span class="nc" id="L700">            }</span>
         }
         
         // Reset edit mode
@@ -725,7 +725,7 @@ import java.util.stream.Collectors;
 <span class="nc" id="L725">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L726">        } catch (Exception e) {</span>
 <span class="nc" id="L727">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L728">        }</span>
 <span class="nc" id="L729">    }</span>
 
     /**

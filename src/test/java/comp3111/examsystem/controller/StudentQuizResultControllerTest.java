@@ -15,6 +15,23 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StudentQuizResultControllerTest {
+    private static boolean javafxInitialized = false;
+
+    @BeforeAll
+    static void initJfx() throws Exception {
+        if (!javafxInitialized) {
+            try {
+                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+                javafx.application.Platform.startup(latch::countDown);
+                latch.await();
+            } catch (IllegalStateException e) {
+                // Toolkit already initialized, ignore
+            }
+            javafx.application.Platform.setImplicitExit(false);
+            javafxInitialized = true;
+        }
+    }
+
     StudentQuizResultController controller;
     Text quizNameText;
     Text totalQuestionsText;
@@ -30,13 +47,8 @@ public class StudentQuizResultControllerTest {
     Button nextButton;
     Button backButton;
 
-    @BeforeAll
-    public static void initJfx() {
-        new javafx.embed.swing.JFXPanel(); // Initializes JavaFX environment
-    }
-
     @BeforeEach
-    void setup() {
+    void setUp() {
         controller = new StudentQuizResultController();
         quizNameText = new Text();
         totalQuestionsText = new Text();

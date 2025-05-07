@@ -1,9 +1,204 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentQuizResultControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentQuizResultControllerTest.java</span></div><h1>StudentQuizResultControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentQuizResultControllerTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentQuizResultControllerTest.java</span></div><h1>StudentQuizResultControllerTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 
+import comp3111.examsystem.entity.Student;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-<span class="nc" id="L6">public class StudentQuizResultControllerTest {</span>
-    // TODO: Add tests for StudentQuizResultController
+<span class="fc" id="L17">public class StudentQuizResultControllerTest {</span>
+<span class="fc" id="L18">    private static boolean javafxInitialized = false;</span>
+
+    @BeforeAll
+    static void initJfx() throws Exception {
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (!javafxInitialized) {</span>
+            try {
+<span class="fc" id="L24">                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L25">                javafx.application.Platform.startup(latch::countDown);</span>
+<span class="nc" id="L26">                latch.await();</span>
+<span class="fc" id="L27">            } catch (IllegalStateException e) {</span>
+                // Toolkit already initialized, ignore
+<span class="nc" id="L29">            }</span>
+<span class="fc" id="L30">            javafx.application.Platform.setImplicitExit(false);</span>
+<span class="fc" id="L31">            javafxInitialized = true;</span>
+        }
+<span class="fc" id="L33">    }</span>
+
+    StudentQuizResultController controller;
+    Text quizNameText;
+    Text totalQuestionsText;
+    Text scoreText;
+    VBox questionListContainer;
+    Label questionNumberLabel;
+    Label questionLabel;
+    Label studentAnswerLabel;
+    Label correctAnswerLabel;
+    Label questionScoreLabel;
+    TextArea feedbackTextArea;
+    Button previousButton;
+    Button nextButton;
+    Button backButton;
+
+    @BeforeEach
+    void setUp() {
+<span class="fc" id="L52">        controller = new StudentQuizResultController();</span>
+<span class="fc" id="L53">        quizNameText = new Text();</span>
+<span class="fc" id="L54">        totalQuestionsText = new Text();</span>
+<span class="fc" id="L55">        scoreText = new Text();</span>
+<span class="fc" id="L56">        questionListContainer = new VBox();</span>
+<span class="fc" id="L57">        questionNumberLabel = new Label();</span>
+<span class="fc" id="L58">        questionLabel = new Label();</span>
+<span class="fc" id="L59">        studentAnswerLabel = new Label();</span>
+<span class="fc" id="L60">        correctAnswerLabel = new Label();</span>
+<span class="fc" id="L61">        questionScoreLabel = new Label();</span>
+<span class="fc" id="L62">        feedbackTextArea = new TextArea();</span>
+<span class="fc" id="L63">        previousButton = new Button();</span>
+<span class="fc" id="L64">        nextButton = new Button();</span>
+<span class="fc" id="L65">        backButton = new Button();</span>
+<span class="fc" id="L66">        inject(controller, &quot;quizNameText&quot;, quizNameText);</span>
+<span class="fc" id="L67">        inject(controller, &quot;totalQuestionsText&quot;, totalQuestionsText);</span>
+<span class="fc" id="L68">        inject(controller, &quot;scoreText&quot;, scoreText);</span>
+<span class="fc" id="L69">        inject(controller, &quot;questionListContainer&quot;, questionListContainer);</span>
+<span class="fc" id="L70">        inject(controller, &quot;questionNumberLabel&quot;, questionNumberLabel);</span>
+<span class="fc" id="L71">        inject(controller, &quot;questionLabel&quot;, questionLabel);</span>
+<span class="fc" id="L72">        inject(controller, &quot;studentAnswerLabel&quot;, studentAnswerLabel);</span>
+<span class="fc" id="L73">        inject(controller, &quot;correctAnswerLabel&quot;, correctAnswerLabel);</span>
+<span class="fc" id="L74">        inject(controller, &quot;questionScoreLabel&quot;, questionScoreLabel);</span>
+<span class="fc" id="L75">        inject(controller, &quot;feedbackTextArea&quot;, feedbackTextArea);</span>
+<span class="fc" id="L76">        inject(controller, &quot;previousButton&quot;, previousButton);</span>
+<span class="fc" id="L77">        inject(controller, &quot;nextButton&quot;, nextButton);</span>
+<span class="fc" id="L78">        inject(controller, &quot;backButton&quot;, backButton);</span>
+<span class="fc" id="L79">    }</span>
+
+    private void inject(Object target, String field, Object value) {
+        try {
+<span class="fc" id="L83">            var f = target.getClass().getDeclaredField(field);</span>
+<span class="fc" id="L84">            f.setAccessible(true);</span>
+<span class="fc" id="L85">            f.set(target, value);</span>
+<span class="nc" id="L86">        } catch (Exception e) {</span>
+<span class="nc" id="L87">            throw new RuntimeException(e);</span>
+<span class="fc" id="L88">        }</span>
+<span class="fc" id="L89">    }</span>
+
+    private List&lt;StudentQuizResultController.QuizResult&gt; sampleResults() {
+<span class="fc" id="L92">        List&lt;StudentQuizResultController.QuizResult&gt; results = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L93">        results.add(new StudentQuizResultController.QuizResult(&quot;Q1&quot;, &quot;A&quot;, &quot;A&quot;, 1, 1, &quot;Good&quot;));</span>
+<span class="fc" id="L94">        results.add(new StudentQuizResultController.QuizResult(&quot;Q2&quot;, &quot;B&quot;, &quot;C&quot;, 0, 1, &quot;Bad&quot;));</span>
+<span class="fc" id="L95">        return results;</span>
+    }
+
+    @Test
+    void testPreSetControllerAndInitialState() {
+<span class="fc" id="L100">        Student student = new Student();</span>
+<span class="fc" id="L101">        List&lt;StudentQuizResultController.QuizResult&gt; results = sampleResults();</span>
+<span class="fc" id="L102">        controller.preSetController(student, &quot;QuizName&quot;, results);</span>
+<span class="fc" id="L103">        assertEquals(&quot;QuizName&quot;, quizNameText.getText());</span>
+<span class="fc" id="L104">        assertEquals(&quot;2&quot;, totalQuestionsText.getText());</span>
+<span class="fc" id="L105">        assertTrue(scoreText.getText().contains(&quot;%&quot;));</span>
+<span class="fc" id="L106">        assertEquals(2, questionListContainer.getChildren().size());</span>
+        // First question loaded
+<span class="fc" id="L108">        assertEquals(&quot;1&quot;, questionNumberLabel.getText());</span>
+<span class="fc" id="L109">        assertEquals(&quot;Q1&quot;, questionLabel.getText());</span>
+<span class="fc" id="L110">        assertEquals(&quot;A&quot;, studentAnswerLabel.getText());</span>
+<span class="fc" id="L111">        assertEquals(&quot;A&quot;, correctAnswerLabel.getText());</span>
+<span class="fc" id="L112">        assertEquals(&quot;1.0/1.0&quot;, questionScoreLabel.getText());</span>
+<span class="fc" id="L113">        assertEquals(&quot;Good&quot;, feedbackTextArea.getText());</span>
+        // Navigation buttons
+<span class="fc" id="L115">        assertTrue(previousButton.isDisabled());</span>
+<span class="fc" id="L116">        assertFalse(nextButton.isDisabled());</span>
+<span class="fc" id="L117">    }</span>
+
+    @Test
+    void testNavigationNextAndPrevious() {
+<span class="fc" id="L121">        Student student = new Student();</span>
+<span class="fc" id="L122">        List&lt;StudentQuizResultController.QuizResult&gt; results = sampleResults();</span>
+<span class="fc" id="L123">        controller.preSetController(student, &quot;QuizName&quot;, results);</span>
+        // Go to next
+<span class="fc" id="L125">        controller.handleNext(null);</span>
+<span class="fc" id="L126">        assertEquals(&quot;2&quot;, questionNumberLabel.getText());</span>
+<span class="fc" id="L127">        assertEquals(&quot;Q2&quot;, questionLabel.getText());</span>
+<span class="fc" id="L128">        assertEquals(&quot;B&quot;, studentAnswerLabel.getText());</span>
+<span class="fc" id="L129">        assertEquals(&quot;C&quot;, correctAnswerLabel.getText());</span>
+<span class="fc" id="L130">        assertEquals(&quot;0.0/1.0&quot;, questionScoreLabel.getText());</span>
+<span class="fc" id="L131">        assertEquals(&quot;Bad&quot;, feedbackTextArea.getText());</span>
+<span class="fc" id="L132">        assertFalse(previousButton.isDisabled());</span>
+<span class="fc" id="L133">        assertTrue(nextButton.isDisabled());</span>
+        // Go back to previous
+<span class="fc" id="L135">        controller.handlePrevious(null);</span>
+<span class="fc" id="L136">        assertEquals(&quot;1&quot;, questionNumberLabel.getText());</span>
+<span class="fc" id="L137">        assertTrue(previousButton.isDisabled());</span>
+<span class="fc" id="L138">        assertFalse(nextButton.isDisabled());</span>
+<span class="fc" id="L139">    }</span>
+
+    @Test
+    void testLoadQuestionResultOutOfBounds() {
+<span class="fc" id="L143">        Student student = new Student();</span>
+<span class="fc" id="L144">        List&lt;StudentQuizResultController.QuizResult&gt; results = sampleResults();</span>
+<span class="fc" id="L145">        controller.preSetController(student, &quot;QuizName&quot;, results);</span>
+        // Try to load invalid index
+<span class="fc" id="L147">        var method = getPrivateMethod(controller, &quot;loadQuestionResult&quot;, int.class);</span>
+<span class="fc" id="L148">        assertDoesNotThrow(() -&gt; method.invoke(controller, -1));</span>
+<span class="fc" id="L149">        assertDoesNotThrow(() -&gt; method.invoke(controller, 99));</span>
+        // Should not change currentQuestionIndex
+<span class="fc" id="L151">        assertEquals(&quot;1&quot;, questionNumberLabel.getText());</span>
+<span class="fc" id="L152">    }</span>
+
+    @Test
+    void testUpdateNavigationButtons() throws Exception {
+<span class="fc" id="L156">        Student student = new Student();</span>
+<span class="fc" id="L157">        List&lt;StudentQuizResultController.QuizResult&gt; results = sampleResults();</span>
+<span class="fc" id="L158">        controller.preSetController(student, &quot;QuizName&quot;, results);</span>
+        // Use reflection to call updateNavigationButtons directly
+<span class="fc" id="L160">        var method = getPrivateMethod(controller, &quot;updateNavigationButtons&quot;);</span>
+        // On first question
+<span class="fc" id="L162">        method.invoke(controller);</span>
+<span class="fc" id="L163">        assertTrue(previousButton.isDisabled());</span>
+        // Go to last question
+<span class="fc" id="L165">        controller.handleNext(null);</span>
+<span class="fc" id="L166">        method.invoke(controller);</span>
+<span class="fc" id="L167">        assertTrue(nextButton.isDisabled());</span>
+<span class="fc" id="L168">    }</span>
+
+    @Test
+    void testHandleBackCatchesIOException() throws Exception {
+        // Patch backButton to have a null scene/window to force null safety branch
+<span class="fc" id="L173">        backButton = new Button();</span>
+<span class="fc" id="L174">        inject(controller, &quot;backButton&quot;, backButton);</span>
+        // Patch student
+<span class="fc" id="L176">        Student student = new Student();</span>
+<span class="fc" id="L177">        List&lt;StudentQuizResultController.QuizResult&gt; results = sampleResults();</span>
+<span class="fc" id="L178">        controller.preSetController(student, &quot;QuizName&quot;, results);</span>
+        // Patch showAlert to record alert invocations using reflection
+<span class="fc" id="L180">        final boolean[] alertShown = {false};</span>
+<span class="fc" id="L181">        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField(&quot;showAlert&quot;);</span>
+<span class="fc" id="L182">        showAlertField.setAccessible(true);</span>
+<span class="fc" id="L183">        showAlertField.set(controller, (StudentQuizResultController.AlertShower) (type, title, content) -&gt; {</span>
+<span class="fc" id="L184">            alertShown[0] = true;</span>
+<span class="fc" id="L185">            assertEquals(Alert.AlertType.ERROR, type);</span>
+<span class="fc" id="L186">            assertTrue(content.contains(&quot;No window attached&quot;));</span>
+<span class="fc" id="L187">        });</span>
+        // Should not throw, should show alert
+<span class="fc" id="L189">        assertDoesNotThrow(() -&gt; controller.handleBack(null));</span>
+<span class="fc" id="L190">        assertTrue(alertShown[0], &quot;Alert should be shown when no window attached&quot;);</span>
+<span class="fc" id="L191">    }</span>
+
+    // Helper to get private method via reflection
+    private java.lang.reflect.Method getPrivateMethod(Object obj, String name, Class&lt;?&gt;... params) {
+        try {
+<span class="fc" id="L196">            var m = obj.getClass().getDeclaredMethod(name, params);</span>
+<span class="fc" id="L197">            m.setAccessible(true);</span>
+<span class="fc" id="L198">            return m;</span>
+<span class="nc" id="L199">        } catch (Exception e) {</span>
+<span class="nc" id="L200">            throw new RuntimeException(e);</span>
+        }
+    }
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

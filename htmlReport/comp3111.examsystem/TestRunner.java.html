@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TestRunner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem</a> &gt; <span class="el_source">TestRunner.java</span></div><h1>TestRunner.java</h1><pre class="source lang-java linenums">package comp3111.examsystem;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TestRunner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem</a> &gt; <span class="el_source">TestRunner.java</span></div><h1>TestRunner.java</h1><pre class="source lang-java linenums">package comp3111.examsystem;
 
 import org.junit.BeforeClass;
 import org.junit.runner.JUnitCore;
@@ -27,7 +27,7 @@ import comp3111.examsystem.TestUtils;
     // Controllers
     // comp3111.examsystem.controller.TeacherLoginControllerTest.class,
     // comp3111.examsystem.controller.ManagerLoginControllerTest.class,
-    comp3111.examsystem.controller.StudentQuizControllerTest.class,
+    // comp3111.examsystem.controller.StudentQuizControllerTest.class,
     
     // Entities
     // comp3111.examsystem.entity.StudentTest.class,
@@ -68,7 +68,7 @@ import comp3111.examsystem.TestUtils;
 <span class="nc" id="L68">            System.out.println(&quot;    &lt;version&gt;jdk-12.0.1+2&lt;/version&gt;&quot;);</span>
 <span class="nc" id="L69">            System.out.println(&quot;    &lt;scope&gt;test&lt;/scope&gt;&quot;);</span>
 <span class="nc" id="L70">            System.out.println(&quot;&lt;/dependency&gt;&quot;);</span>
-        }
+<span class="nc" id="L71">        }</span>
         
         // Initialize JavaFX toolkit
 <span class="nc" id="L74">        TestUtils.setupJavaFX();</span>
@@ -91,7 +91,7 @@ import comp3111.examsystem.TestUtils;
 <span class="nc" id="L91">            System.out.println(&quot;\nFailed tests:&quot;);</span>
 <span class="nc bnc" id="L92" title="All 2 branches missed.">            for (Failure failure : result.getFailures()) {</span>
 <span class="nc" id="L93">                System.out.println(&quot;- &quot; + failure.toString());</span>
-            }
+<span class="nc" id="L94">            }</span>
         }
         
 <span class="nc bnc" id="L97" title="All 2 branches missed.">        System.out.println(&quot;\nTest &quot; + (result.wasSuccessful() ? &quot;SUCCESSFUL&quot; : &quot;FAILED&quot;));</span>

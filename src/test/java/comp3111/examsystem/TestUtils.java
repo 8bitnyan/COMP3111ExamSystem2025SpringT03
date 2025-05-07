@@ -9,4 +9,19 @@ public class TestUtils {
         new JFXPanel();
         Platform.setImplicitExit(false);
     }
+
+    // JavaFX Initializer utility for tests
+    public static class JavaFxInitializer {
+        private static boolean started = false;
+        public static synchronized void init() {
+            if (!started) {
+                try {
+                    Platform.startup(() -> {});
+                } catch (IllegalStateException e) {
+                    // Already started, ignore
+                }
+                started = true;
+            }
+        }
+    }
 } 

@@ -1,0 +1,375 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CourseManagementController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: CourseManagementController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CourseManagementController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/102)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;import comp3111.examsystem.Main;
+&nbsp;import comp3111.examsystem.data.Department;
+&nbsp;import comp3111.examsystem.entity.Course;
+&nbsp;import comp3111.examsystem.entity.Exam;
+&nbsp;import comp3111.examsystem.entity.Manager;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import comp3111.examsystem.tools.MsgSender;
+&nbsp;import comp3111.examsystem.tools.UIhelper;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+&nbsp;import javafx.stage.Stage;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for managing Courses in the Exam System.
+&nbsp; * This class handles displaying, filtering, adding, updating, and deleting courses.
+&nbsp; * It also links to associated entities such as Department and Exam.
+&nbsp; */
+<b class="nc">&nbsp;public class CourseManagementController {</b>
+&nbsp;    private Manager manager;
+&nbsp;    /**
+&nbsp;     * Sets the manager context for this controller.
+&nbsp;     * @param manager The currently logged-in manager.
+&nbsp;     */
+&nbsp;    public void presetController(Manager manager) {
+<b class="nc">&nbsp;        this.manager = manager;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Database instance for handling Course objects
+<b class="nc">&nbsp;    private final Database&lt;Course&gt; courseDatabase = new Database&lt;&gt;(Course.class);</b>
+&nbsp;    private ObservableList&lt;Course&gt; allCourses;
+&nbsp;
+&nbsp;    // Table columns for displaying course data
+&nbsp;    @FXML private TableView&lt;Course&gt; courseTable;
+&nbsp;    @FXML private TableColumn&lt;Course, String&gt; colCourseCode;
+&nbsp;    @FXML private TableColumn&lt;Course, String&gt; colCourseName;
+&nbsp;    @FXML private TableColumn&lt;Course, String&gt; colDepartment;
+&nbsp;    // Filter UI fields
+&nbsp;    @FXML private TextField filterCourseCode;
+&nbsp;    @FXML private TextField filterCourseName;
+&nbsp;    @FXML private ComboBox&lt;String&gt; filterDepartment;
+&nbsp;    // Course input form fields
+&nbsp;    @FXML private TextField tfCourseCode;
+&nbsp;    @FXML private TextField tfCourseName;
+&nbsp;    @FXML private ComboBox&lt;Department&gt; cbDepartment;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initializes the UI components including table columns, combo boxes, and selection listeners.
+&nbsp;     * This method is automatically called by JavaFX after the FXML has been loaded.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    public void initialize() {
+&nbsp;        // Set up table columns
+<b class="nc">&nbsp;        colCourseCode.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseCode&quot;));</b>
+<b class="nc">&nbsp;        colCourseName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;courseName&quot;));</b>
+<b class="nc">&nbsp;        colDepartment.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;department&quot;));</b>
+&nbsp;
+&nbsp;        // Display courses in table and filters
+<b class="nc">&nbsp;        ObservableList&lt;Course&gt; courses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</b>
+<b class="nc">&nbsp;        courseTable.setItems(courses);</b>
+<b class="nc">&nbsp;        allCourses = courses;</b>
+<b class="nc">&nbsp;        for (Department dept : Department.values()) {</b>
+<b class="nc">&nbsp;            filterDepartment.getItems().add(dept.toString());</b>
+<b class="nc">&nbsp;            cbDepartment.getItems().add(dept);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</b>
+<b class="nc">&nbsp;        cbDepartment.getSelectionModel().select(Department.valueOf(&quot;ANY&quot;));</b>
+&nbsp;
+&nbsp;        // Listen to table row selection to display in the form
+<b class="nc">&nbsp;        courseTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedCourse) -&gt; {</b>
+<b class="nc">&nbsp;            if (selectedCourse != null) {</b>
+<b class="nc">&nbsp;                tfCourseCode.setText(selectedCourse.getCourseCode());</b>
+<b class="nc">&nbsp;                tfCourseName.setText(selectedCourse.getCourseName());</b>
+<b class="nc">&nbsp;                cbDepartment.getSelectionModel().select(selectedCourse.getDepartment());</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies filtering logic on course list based on filter inputs.
+&nbsp;     */
+&nbsp;    private List&lt;Course&gt; applyCoursesFilter(String courseCode, String courseName, String department) {
+<b class="nc">&nbsp;        return allCourses.stream()</b>
+<b class="nc">&nbsp;                .filter(s -&gt; courseCode == null || s.getCourseCode().toLowerCase().contains(courseCode.toLowerCase()))</b>
+<b class="nc">&nbsp;                .filter(s -&gt; courseName == null || s.getCourseName().toLowerCase().contains(courseName.toLowerCase()))</b>
+<b class="nc">&nbsp;                .filter(s -&gt; department == null || department.equalsIgnoreCase(&quot;ANY&quot;) ||</b>
+<b class="nc">&nbsp;                        s.getDepartment().toString().equalsIgnoreCase(department))</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles filtering when user clicks the &quot;Filter&quot; button.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void filterCourses() {
+<b class="nc">&nbsp;        String courseCode = filterCourseCode.getText().trim();</b>
+<b class="nc">&nbsp;        String courseName = filterCourseName.getText().trim();</b>
+<b class="nc">&nbsp;        String department = filterDepartment.getValue();</b>
+<b class="nc">&nbsp;        if (courseCode.isEmpty()) courseCode = null;</b>
+<b class="nc">&nbsp;        if (courseName.isEmpty()) courseName = null;</b>
+<b class="nc">&nbsp;        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase(&quot;ANY&quot;)) department = null;</b>
+&nbsp;
+<b class="nc">&nbsp;        allCourses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</b>
+<b class="nc">&nbsp;        List&lt;Course&gt; filtered = applyCoursesFilter(courseCode, courseName, department);</b>
+<b class="nc">&nbsp;        courseTable.setItems(FXCollections.observableArrayList(filtered));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resets all filters and reloads the full course list.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void reset() {
+<b class="nc">&nbsp;        filterCourseCode.clear();</b>
+<b class="nc">&nbsp;        filterCourseName.clear();</b>
+<b class="nc">&nbsp;        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</b>
+<b class="nc">&nbsp;        List&lt;Course&gt; resetFiltered = applyCoursesFilter(null, null, &quot;ANY&quot;);</b>
+<b class="nc">&nbsp;        courseTable.setItems(FXCollections.observableArrayList(resetFiltered));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the input form on the right side.
+&nbsp;     */
+&nbsp;    private void clearForm() {
+<b class="nc">&nbsp;        tfCourseCode.clear();</b>
+<b class="nc">&nbsp;        tfCourseName.clear();</b>
+<b class="nc">&nbsp;        cbDepartment.getSelectionModel().clearSelection();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a new course using input form values.
+&nbsp;     * Using functions provided in the database class
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void addCourse() {
+<b class="nc">&nbsp;        String courseCode = tfCourseCode.getText().trim();</b>
+<b class="nc">&nbsp;        String courseName = tfCourseName.getText().trim();</b>
+<b class="nc">&nbsp;        Department department = cbDepartment.getValue();</b>
+<b class="nc">&nbsp;        if (courseCode.isEmpty() || courseName.isEmpty() || department == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;All fields must be filled correctly.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        long id = System.currentTimeMillis();</b>
+<b class="nc">&nbsp;        Course course = new Course(id, courseCode, courseName, department);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            courseDatabase.add(course);</b>
+<b class="nc">&nbsp;            allCourses.add(course);</b>
+<b class="nc">&nbsp;            courseTable.setItems(FXCollections.observableArrayList(allCourses));</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Course added successfully!&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to add course.&quot;);</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing course selected in the table using form values.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void updateCourse() {
+<b class="nc">&nbsp;        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selectedCourse == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a Course to update.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        String courseCode = tfCourseCode.getText().trim();</b>
+<b class="nc">&nbsp;        String courseName = tfCourseName.getText().trim();</b>
+<b class="nc">&nbsp;        Department department = cbDepartment.getValue();</b>
+<b class="nc">&nbsp;        if (courseCode.isEmpty() || courseName.isEmpty() || department == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;All fields must be filled correctly.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        selectedCourse.setCourseCode(courseCode);</b>
+<b class="nc">&nbsp;        selectedCourse.setCourseName(courseName);</b>
+<b class="nc">&nbsp;        selectedCourse.setDepartment(department);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            courseDatabase.update(selectedCourse);</b>
+<b class="nc">&nbsp;            courseTable.refresh();</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Course updated successfully!&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to update course.&quot;);</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes the selected course from the database and removes all associated exams as well.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void deleteCourse() {
+<b class="nc">&nbsp;        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selectedCourse == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a course to delete.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;                &quot;Delete Confirmation&quot;,</b>
+<b class="nc">&nbsp;                &quot;Are you sure you want to delete this course?\nThis will also delete all associated exams.&quot;,</b>
+<b class="nc">&nbsp;                () -&gt; {</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        courseDatabase.delByKey(String.valueOf(selectedCourse.getId()));</b>
+<b class="nc">&nbsp;                        Database&lt;Exam&gt; examDatabase = new Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</b>
+<b class="nc">&nbsp;                        List&lt;Exam&gt; allExams = examDatabase.getAllEnabled();</b>
+<b class="nc">&nbsp;                        for (comp3111.examsystem.entity.Exam exam : allExams) {</b>
+<b class="nc">&nbsp;                            if (selectedCourse.getCourseCode().equals(exam.getCourseCode()) &amp;&amp; exam.getId() != null) {</b>
+<b class="nc">&nbsp;                                examDatabase.delByKey(String.valueOf(exam.getId()));</b>
+&nbsp;                            }
+&nbsp;                        }
+<b class="nc">&nbsp;                        allCourses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</b>
+<b class="nc">&nbsp;                        courseTable.setItems(allCourses);</b>
+<b class="nc">&nbsp;                        clearForm();</b>
+<b class="nc">&nbsp;                        MsgSender.showMsg(&quot;Course and associated exams deleted successfully!&quot;);</b>
+&nbsp;                    } catch (Exception e) {
+<b class="nc">&nbsp;                        MsgSender.showMsg(&quot;Failed to delete course.&quot;);</b>
+<b class="nc">&nbsp;                        e.printStackTrace();</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Navigates back to the Manager main screen.
+&nbsp;     * @param e The triggered action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void back(ActionEvent e) {
+<b class="nc">&nbsp;        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;ManagerMainUI.fxml&quot;));</b>
+<b class="nc">&nbsp;        Stage stage = new Stage();</b>
+<b class="nc">&nbsp;        stage.setTitle(&quot;Back&quot;);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+&nbsp;        } catch (IOException e1) {
+<b class="nc">&nbsp;            e1.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;        stage.show();</b>
+<b class="nc">&nbsp;        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Closes the application with a confirmation.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void closeApplication() {
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;                &quot;Exit Confirmation&quot;,</b>
+<b class="nc">&nbsp;                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</b>
+<b class="nc">&nbsp;                Platform::exit</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

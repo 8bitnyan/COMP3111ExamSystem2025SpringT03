@@ -16,8 +16,26 @@ import comp3111.examsystem.tools.Database;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.scene.control.Alert;
 
 public class StudentQuizControllerTest {
+    private static boolean javafxInitialized = false;
+
+    @BeforeAll
+    static void initJfx() throws Exception {
+        if (!javafxInitialized) {
+            try {
+                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+                Platform.startup(latch::countDown);
+                latch.await();
+            } catch (IllegalStateException e) {
+                // Toolkit already initialized, ignore
+            }
+            Platform.setImplicitExit(false);
+            javafxInitialized = true;
+        }
+    }
+
     StudentQuizController controller;
     MockedStatic<comp3111.examsystem.tools.MsgSender> msgSenderMocked;
 
@@ -197,16 +215,21 @@ public class StudentQuizControllerTest {
     void testWindowCloseHandler() throws Exception {
         Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
+                new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
         );
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
             try {
+                // Patch confirmDialogShower to simulate user clicking OK
+                try {
+                    setField(controller, "confirmDialogShower", (StudentQuizController.ConfirmDialogShower) (title, header, content) -> true);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 controller.preSetController(student, "Sample Quiz", questions, 5);
                 Stage stage = (Stage) getFieldValue(controller, "questionText", Text.class).getScene().getWindow();
                 WindowEvent closeEvent = new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST);
                 stage.fireEvent(closeEvent);
-                // Ensure the window is closed so the test does not hang
                 stage.close();
             } finally {
                 latch.countDown();
@@ -216,29 +239,52 @@ public class StudentQuizControllerTest {
     }
 
     @Test
-    void testMCQOptionVisibilityAndSelection() {
-        Student student = new Student();
-        // 1 option
-        List<StudentQuizController.QuizQuestion> q1 = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
-        controller.preSetController(student, "Quiz1", q1, 5);
-        assertTrue(getFieldValue(controller, "option1", RadioButton.class).isVisible());
-        assertFalse(getFieldValue(controller, "option2", RadioButton.class).isVisible());
-        // 2 options
-        List<StudentQuizController.QuizQuestion> q2 = Arrays.asList(new StudentQuizController.QuizQuestion("Q2", Arrays.asList("A", "B"), 1, "A"));
-        controller.preSetController(student, "Quiz2", q2, 5);
-        assertTrue(getFieldValue(controller, "option2", RadioButton.class).isVisible());
-        // 3 options
-        List<StudentQuizController.QuizQuestion> q3 = Arrays.asList(new StudentQuizController.QuizQuestion("Q3", Arrays.asList("A", "B", "C"), 1, "A"));
-        controller.preSetController(student, "Quiz3", q3, 5);
-        assertTrue(getFieldValue(controller, "option3", RadioButton.class).isVisible());
-        // 4 options
-        List<StudentQuizController.QuizQuestion> q4 = Arrays.asList(new StudentQuizController.QuizQuestion("Q4", Arrays.asList("A", "B", "C", "D"), 1, "A"));
-        controller.preSetController(student, "Quiz4", q4, 5);
-        assertTrue(getFieldValue(controller, "option4", RadioButton.class).isVisible());
-        // 0 options
-        List<StudentQuizController.QuizQuestion> q0 = Arrays.asList(new StudentQuizController.QuizQuestion("Q0", new ArrayList<>(), 1, "A"));
-        controller.preSetController(student, "Quiz0", q0, 5);
-        assertFalse(getFieldValue(controller, "option1", RadioButton.class).isVisible());
+    void testMCQOptionVisibilityAndSelection() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            Stage stage = null;
+            try {
+                // Attach all option buttons to a scene and stage
+                VBox root = new VBox(
+                    getFieldValue(controller, "option1", RadioButton.class),
+                    getFieldValue(controller, "option2", RadioButton.class),
+                    getFieldValue(controller, "option3", RadioButton.class),
+                    getFieldValue(controller, "option4", RadioButton.class),
+                    getFieldValue(controller, "option5", RadioButton.class)
+                );
+                stage = new Stage();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+
+                Student student = new Student();
+                // 1 option
+                List<StudentQuizController.QuizQuestion> q1 = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
+                controller.preSetController(student, "Quiz1", q1, 5);
+                assertTrue(getFieldValue(controller, "option1", RadioButton.class).isVisible());
+                assertFalse(getFieldValue(controller, "option2", RadioButton.class).isVisible());
+                // 2 options
+                List<StudentQuizController.QuizQuestion> q2 = Arrays.asList(new StudentQuizController.QuizQuestion("Q2", Arrays.asList("A", "B"), 1, "A"));
+                controller.preSetController(student, "Quiz2", q2, 5);
+                assertTrue(getFieldValue(controller, "option2", RadioButton.class).isVisible());
+                // 3 options
+                List<StudentQuizController.QuizQuestion> q3 = Arrays.asList(new StudentQuizController.QuizQuestion("Q3", Arrays.asList("A", "B", "C"), 1, "A"));
+                controller.preSetController(student, "Quiz3", q3, 5);
+                assertTrue(getFieldValue(controller, "option3", RadioButton.class).isVisible());
+                // 4 options
+                List<StudentQuizController.QuizQuestion> q4 = Arrays.asList(new StudentQuizController.QuizQuestion("Q4", Arrays.asList("A", "B", "C", "D"), 1, "A"));
+                controller.preSetController(student, "Quiz4", q4, 5);
+                assertTrue(getFieldValue(controller, "option4", RadioButton.class).isVisible());
+                // 0 options
+                List<StudentQuizController.QuizQuestion> q0 = Arrays.asList(new StudentQuizController.QuizQuestion("Q0", new ArrayList<>(), 1, "A"));
+                controller.preSetController(student, "Quiz0", q0, 5);
+                assertFalse(getFieldValue(controller, "option1", RadioButton.class).isVisible());
+            } finally {
+                if (stage != null) stage.close();
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS));
     }
 
     @Test
@@ -478,6 +524,205 @@ public class StudentQuizControllerTest {
         // Without valid scene/window
         setField(controller, "quizNameText", new Text()); // no scene
         assertDoesNotThrow(() -> returnToMainPage.invoke(controller));
+    }
+
+    @Test
+    void testHandleSubmit_ConfirmationDialogBranch() throws Exception {
+        Student student = new Student();
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
+        );
+        controller.preSetController(student, "Sample Quiz", questions, 5);
+        // Patch showAlert to simulate user confirming submission
+        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField("showAlert");
+        showAlertField.setAccessible(true);
+        final boolean[] submitCalled = {false};
+        showAlertField.set(controller, (StudentQuizController.AlertShower) (type, title, content) -> {
+            if (type == Alert.AlertType.CONFIRMATION && content.contains("submit this quiz")) {
+                try {
+                    // Set showAlert to a no-op lambda to avoid recursion and dialog errors
+                    showAlertField.set(controller, (StudentQuizController.AlertShower) (t, ti, c) -> {});
+                    var submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
+                    submitQuiz.setAccessible(true);
+                    submitQuiz.invoke(controller);
+                    submitCalled[0] = true;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        controller.handleSubmit(null);
+        assertTrue(submitCalled[0], "submitQuiz should be called after confirmation");
+    }
+
+    @Test
+    void testSubmitQuiz_CompletionDialogBranch() throws Exception {
+        Student student = new Student();
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
+        );
+        controller.preSetController(student, "Sample Quiz", questions, 5);
+        // Patch showAlert to simulate completion dialog
+        java.lang.reflect.Field showAlertField = controller.getClass().getDeclaredField("showAlert");
+        showAlertField.setAccessible(true);
+        final boolean[] completionShown = {false};
+        showAlertField.set(controller, (StudentQuizController.AlertShower) (type, title, content) -> {
+            if (type == Alert.AlertType.INFORMATION && content.contains("completed the quiz")) {
+                completionShown[0] = true;
+            }
+        });
+        // Call submitQuiz via reflection
+        var submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
+        submitQuiz.setAccessible(true);
+        submitQuiz.invoke(controller);
+        assertTrue(completionShown[0], "Completion dialog should be shown");
+    }
+
+    @Test
+    void testMCQToggleSelectionUpdatesAnswerAndSidebar() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                // Setup MCQ question
+                Student student = new Student();
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
+                );
+                controller.preSetController(student, "QuizMCQ", questions, 5);
+
+                // Simulate selecting option 2 (B)
+                RadioButton option2 = getFieldValue(controller, "option2", RadioButton.class);
+                option2.setSelected(true);
+
+                // Simulate toggle event
+                ToggleGroup group = getFieldValue(controller, "answerGroup", ToggleGroup.class);
+                group.selectToggle(option2);
+
+                // Check that answer is updated
+                List<String> studentAnswers = (List<String>) getFieldValue(controller, "studentAnswers", List.class);
+                assertEquals("B", studentAnswers.get(0));
+            } finally {
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testShortAnswerTextChangeUpdatesAnswerAndSidebar() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Student student = new Student();
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", 1)
+                );
+                controller.preSetController(student, "QuizSA", questions, 5);
+
+                TextArea sa = getFieldValue(controller, "shortAnswerField", TextArea.class);
+                sa.setText("Test answer");
+                // Simulate text change event if needed (depends on controller code)
+                // For most JavaFX, setText triggers listeners
+
+                List<String> studentAnswers = (List<String>) getFieldValue(controller, "studentAnswers", List.class);
+                assertEquals("Test answer", studentAnswers.get(0));
+            } finally {
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testRestoreMCQSelectionFromSavedAnswer() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Student student = new Student();
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
+                );
+                controller.preSetController(student, "QuizMCQ", questions, 5);
+
+                // Simulate saving answer "C"
+                List<String> studentAnswers = (List<String>) getFieldValue(controller, "studentAnswers", List.class);
+                studentAnswers.set(0, "C");
+
+                // Reload question (simulate navigation)
+                var loadQuestion = controller.getClass().getDeclaredMethod("loadQuestion", int.class);
+                loadQuestion.setAccessible(true);
+                loadQuestion.invoke(controller, 0);
+
+                RadioButton option3 = getFieldValue(controller, "option3", RadioButton.class);
+                assertTrue(option3.isSelected());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS));
+    }
+
+    @Test
+    void testGetCurrentQuestionMaxScoreAndCorrectAnswer() throws Exception {
+        Student student = new Student();
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 5, "B")
+        );
+        controller.preSetController(student, "QuizMaxScore", questions, 5);
+
+        assertEquals(5, controller.getCurrentQuestionMaxScore());
+        assertEquals("B", controller.getCurrentQuestionCorrectAnswer());
+
+        // Set index out of bounds
+        setField(controller, "currentQuestionIndex", -1);
+        assertEquals(0, controller.getCurrentQuestionMaxScore());
+        assertNull(controller.getCurrentQuestionCorrectAnswer());
+    }
+
+    @Test
+    void testRecordDeletionOnSubmitQuiz() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Student student = new Student();
+                student.setId(123L);
+                List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B"), 1, "A")
+                );
+                controller.preSetController(student, "QuizRecord", questions, 5);
+
+                // Add a matching record to the DB
+                comp3111.examsystem.entity.Exam exam = new comp3111.examsystem.entity.Exam();
+                exam.setId(999L);
+                exam.setName("QuizRecord");
+                exam.setQuestions("1");
+                new comp3111.examsystem.tools.Database<>(comp3111.examsystem.entity.Exam.class).add(exam);
+
+                comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();
+                record.setId(888L);
+                record.setStudent(123L);
+                record.setExamID(999L);
+                new comp3111.examsystem.tools.Database<>(comp3111.examsystem.entity.Record.class).add(record);
+
+                // Submit the quiz
+                java.lang.reflect.Method submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
+                submitQuiz.setAccessible(true);
+                submitQuiz.invoke(controller);
+
+                // Check that the record is deleted
+                comp3111.examsystem.tools.Database<comp3111.examsystem.entity.Record> recordDB =
+                    new comp3111.examsystem.tools.Database<>(comp3111.examsystem.entity.Record.class);
+                boolean exists = recordDB.getAll().stream().anyMatch(r -> r.getId().equals(888L));
+                assertFalse(exists, "Record should be deleted after quiz submission");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS));
     }
 
     private int getPrivateInt(Object obj, String fieldName) {

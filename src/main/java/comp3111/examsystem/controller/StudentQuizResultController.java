@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * The controller for student quiz result page.
+ * The controller for the student quiz result page. Handles displaying quiz results, navigation between questions, and feedback for students.
  */
 public class StudentQuizResultController implements Initializable {
     // UI Components
@@ -53,8 +53,9 @@ public class StudentQuizResultController implements Initializable {
     AlertShower showAlert = null;
     
     /**
-     * Initializes the student quiz result page UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the student quiz result page UI. Sets up UI elements that do not require data.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     @Override
@@ -63,9 +64,10 @@ public class StudentQuizResultController implements Initializable {
     }
     
     /**
-     * Sets up the controller with the required data.
-     * @param student The student viewing the results.
-     * @param quizName The name of the quiz.
+     * Sets up the controller with the required data for the student and quiz results.
+     *
+     * @param student     The student viewing the results.
+     * @param quizName    The name of the quiz.
      * @param quizResults The list of quiz question results.
      */
     public void preSetController(Student student, String quizName, List<QuizResult> quizResults) {
@@ -91,7 +93,7 @@ public class StudentQuizResultController implements Initializable {
     }
     
     /**
-     * Calculates the total score for the quiz.
+     * Calculates the total score for the quiz by summing the scores of all questions.
      */
     private void calculateTotalScore() {
         totalScore = 0;
@@ -101,7 +103,7 @@ public class StudentQuizResultController implements Initializable {
     }
     
     /**
-     * Sets up the question list for navigation.
+     * Sets up the question list for navigation in the sidebar.
      */
     private void setupQuestionList() {
         questionListContainer.getChildren().clear();

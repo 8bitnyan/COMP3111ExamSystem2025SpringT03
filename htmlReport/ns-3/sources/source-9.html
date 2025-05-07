@@ -1,0 +1,263 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > User</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: User (comp3111.examsystem.entity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46.2%
+  </span>
+  <span class="absValue">
+    (6/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (8/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68%
+  </span>
+  <span class="absValue">
+    (17/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.entity;
+&nbsp;
+&nbsp;import comp3111.examsystem.data.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * The User class represents a user in the system.
+&nbsp; * A base class for Teacher and Student.
+&nbsp; */
+&nbsp;public class User extends Person {
+&nbsp;    private String name;
+&nbsp;    private Gender gender;
+&nbsp;    private Integer age;
+&nbsp;    private Department department;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for database utilities. Do NOT call this.
+&nbsp;     */
+&nbsp;    public User() {
+<b class="fc">&nbsp;        super();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The intended constructor for User.
+&nbsp;     * @param id The entity id of the user recorded in the database.
+&nbsp;     * @param username The username for login.
+&nbsp;     * @param password The password for login.
+&nbsp;     * @param name The name for display.
+&nbsp;     * @param gender The gender. Has Enum type Gender.
+&nbsp;     * @param age The age in integer.
+&nbsp;     * @param department The department user is in, has Enum type Department.
+&nbsp;     */
+&nbsp;    public User(Long id, String username, String password, String name, Gender gender, Integer age, Department department) {
+<b class="fc">&nbsp;        super(id, username, password);</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.gender = gender;</b>
+<b class="fc">&nbsp;        this.age = age;</b>
+<b class="fc">&nbsp;        this.department = department;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the name of the user.
+&nbsp;     * @return name string.
+&nbsp;     */
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the name of the user.
+&nbsp;     * @param name the new name.
+&nbsp;     */
+&nbsp;    public void setName(String name) {
+<b class="nc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the gender of the user.
+&nbsp;     * @return gender Enum.
+&nbsp;     */
+&nbsp;    public Gender getGender() {
+<b class="nc">&nbsp;        return gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gender of the user.
+&nbsp;     * @param gender the new gender.
+&nbsp;     */
+&nbsp;    public void setGender(Gender gender) {
+<b class="nc">&nbsp;        this.gender = gender;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gender of the user, for reading data from database only.
+&nbsp;     * @param genderString the gender string read from database.
+&nbsp;     */
+&nbsp;    public void setGender(String genderString) {
+<b class="nc">&nbsp;        this.gender = Gender.fromString(genderString);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the age of the user.
+&nbsp;     * @return age integer.
+&nbsp;     */
+&nbsp;    public Integer getAge() {
+<b class="nc">&nbsp;        return age;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the age of the user.
+&nbsp;     * @param age the new age.
+&nbsp;     */
+&nbsp;    public void setAge(Integer age) {
+<b class="nc">&nbsp;        this.age = age;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the department of the user.
+&nbsp;     * @return department Enum.
+&nbsp;     */
+&nbsp;    public Department getDepartment() {
+<b class="fc">&nbsp;        return department;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the department of the user.
+&nbsp;     * @param department the new department.
+&nbsp;     */
+&nbsp;    public void setDepartment(Department department) {
+<b class="fc">&nbsp;        this.department = department;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the department of the user, for reading data from database only.
+&nbsp;     * @param departmentString the department string read from database.
+&nbsp;     */
+&nbsp;    public void setDepartment(String departmentString) {
+<b class="nc">&nbsp;        this.department = Department.fromString(departmentString);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Utility functions
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Validates a user.
+&nbsp;     * Checks input format.
+&nbsp;     * Does not check repetition of usernames.
+&nbsp;     * @param username The username of the user.
+&nbsp;     * @param password The password of the user.
+&nbsp;     * @param name The name of the user.
+&nbsp;     * @param age The age of the user.
+&nbsp;     * @param department The department of the user.
+&nbsp;     * @return A StringBuilder object containing the error messages for invalid input. If it is empty, then the user is valid.
+&nbsp;     */
+&nbsp;    public static StringBuilder validateWithMessage(String username, String password, String name, String age, Department department) {
+<b class="fc">&nbsp;        StringBuilder msg = new StringBuilder();</b>
+<b class="fc">&nbsp;        if (!username.matches(&quot;^[a-zA-Z0-9]{4,20}$&quot;)) msg.append(&quot;Invalid username! (Required: 4-20 characters, alphanumeric only, no space characters)\n\n&quot;);</b>
+<b class="pc">&nbsp;        if (!password.matches(&quot;^[a-zA-Z0-9]{8,20}$&quot;)) msg.append(&quot;Invalid password! (Required: 8-20 characters, alphanumeric only, no space characters)\n\n&quot;);</b>
+<b class="fc">&nbsp;        if (!name.matches(&quot;^[A-Za-z]+( [A-Za-z]+)*$&quot;)) msg.append(&quot;Invalid name! (Required: English letters with 1 space character between each word, e.g. CHAN Tai Man)\n\n&quot;);</b>
+&nbsp;        try {
+<b class="pc">&nbsp;            if (Integer.parseInt(age) &lt; 1 || Integer.parseInt(age) &gt; 100)</b>
+<b class="nc">&nbsp;                msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</b>
+&nbsp;        } catch (NumberFormatException e) {
+<b class="fc">&nbsp;            msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (department == Department.ANY) msg.append(&quot;Invalid department! (Department cannot be \&quot;ANY\&quot;)\n\n&quot;);</b>
+<b class="fc">&nbsp;        return msg;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

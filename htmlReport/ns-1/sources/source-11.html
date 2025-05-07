@@ -1,0 +1,433 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeacherManagementController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TeacherManagementController (comp3111.examsystem.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeacherManagementController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/40)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/144)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.controller;
+&nbsp;import comp3111.examsystem.Main;
+&nbsp;import comp3111.examsystem.data.Department;
+&nbsp;import comp3111.examsystem.data.Gender;
+&nbsp;import comp3111.examsystem.data.Position;
+&nbsp;import comp3111.examsystem.entity.Manager;
+&nbsp;import comp3111.examsystem.entity.Student;
+&nbsp;import comp3111.examsystem.entity.Teacher;
+&nbsp;import comp3111.examsystem.tools.Database;
+&nbsp;import comp3111.examsystem.tools.UIhelper;
+&nbsp;import comp3111.examsystem.tools.MsgSender;
+&nbsp;import javafx.application.Platform;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;import javafx.event.ActionEvent;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.fxml.FXMLLoader;
+&nbsp;import javafx.scene.Scene;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+&nbsp;import javafx.stage.Stage;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller class for managing Teachers in the Exam System.
+&nbsp; * This class handles displaying, filtering, adding, updating, and deleting Teachers.
+&nbsp; */
+<b class="nc">&nbsp;public class TeacherManagementController {</b>
+&nbsp;    private Manager manager;
+&nbsp;    /**
+&nbsp;     * Sets the manager context for this controller.
+&nbsp;     * @param manager The currently logged-in manager.
+&nbsp;     */
+&nbsp;    public void presetController(Manager manager) {
+<b class="nc">&nbsp;        this.manager = manager;</b>
+&nbsp;    }
+&nbsp;    // Database instance for handling Course objects
+<b class="nc">&nbsp;    private final Database&lt;Teacher&gt; teacherDatabase = new Database&lt;&gt;(Teacher.class);</b>
+&nbsp;    private ObservableList&lt;Teacher&gt; allTeachers;
+&nbsp;    //Table columns for displaying course data
+&nbsp;    @FXML private TableView&lt;Teacher&gt; teacherTable;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colName;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colGender;
+&nbsp;    @FXML private TableColumn&lt;Teacher, Integer&gt; colAge;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colDepartment;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colUsername;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colPosition;
+&nbsp;    @FXML private TableColumn&lt;Teacher, String&gt; colPassword;
+&nbsp;    //Filter UI fields
+&nbsp;    @FXML private TextField filterUsername;
+&nbsp;    @FXML private TextField filterName;
+&nbsp;    @FXML private ComboBox&lt;String&gt; filterDepartment;
+&nbsp;    //Teacher input form fields
+&nbsp;    @FXML private TextField tfUsername;
+&nbsp;    @FXML private TextField tfName;
+&nbsp;    @FXML private TextField tfPassword;
+&nbsp;    @FXML private ComboBox&lt;Department&gt; cbDepartment;
+&nbsp;    @FXML private TextField tfAge;
+&nbsp;    @FXML private ComboBox&lt;Gender&gt; cbGender;
+&nbsp;    @FXML private ComboBox&lt;Position&gt; cbPosition;
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    public void initialize() {
+&nbsp;        //Table Initialization
+<b class="nc">&nbsp;        colUsername.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;username&quot;));</b>
+<b class="nc">&nbsp;        colName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;name&quot;));</b>
+<b class="nc">&nbsp;        colAge.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;age&quot;));</b>
+<b class="nc">&nbsp;        colGender.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;gender&quot;));</b>
+<b class="nc">&nbsp;        colPosition.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;position&quot;));</b>
+<b class="nc">&nbsp;        colDepartment.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;department&quot;));</b>
+<b class="nc">&nbsp;        colPassword.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;password&quot;));</b>
+&nbsp;
+&nbsp;        //Display courses in the table and filter
+<b class="nc">&nbsp;        ObservableList&lt;Teacher&gt; teachers = FXCollections.observableArrayList(teacherDatabase.getAllEnabled());</b>
+<b class="nc">&nbsp;        teacherTable.setItems(teachers);</b>
+<b class="nc">&nbsp;        allTeachers = teachers;</b>
+<b class="nc">&nbsp;        for (Department dept : Department.values()) {</b>
+<b class="nc">&nbsp;            filterDepartment.getItems().add(dept.toString());</b>
+<b class="nc">&nbsp;            cbDepartment.getItems().add(Department.valueOf(dept.toString()));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</b>
+<b class="nc">&nbsp;        cbDepartment.getSelectionModel().select(Department.valueOf(&quot;ANY&quot;));</b>
+<b class="nc">&nbsp;        cbGender.getItems().addAll(Gender.values());</b>
+<b class="nc">&nbsp;        cbGender.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        cbGender.setPromptText(&quot;Select Gender&quot;);</b>
+<b class="nc">&nbsp;        cbPosition.getItems().addAll(Position.values());</b>
+<b class="nc">&nbsp;        cbPosition.setPromptText((&quot;Select Position&quot;));</b>
+&nbsp;
+&nbsp;        //Select Teacher for Form editing
+<b class="nc">&nbsp;        teacherTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, selectedTeacher) -&gt; {</b>
+<b class="nc">&nbsp;            if (selectedTeacher != null) {</b>
+<b class="nc">&nbsp;                tfUsername.setText(selectedTeacher.getUsername());</b>
+<b class="nc">&nbsp;                tfName.setText(selectedTeacher.getName());</b>
+<b class="nc">&nbsp;                tfPassword.setText((selectedTeacher.getPassword()));</b>
+<b class="nc">&nbsp;                cbDepartment.getSelectionModel().select(selectedTeacher.getDepartment());</b>
+<b class="nc">&nbsp;                tfAge.setText(String.valueOf(selectedTeacher.getAge()));</b>
+<b class="nc">&nbsp;                cbGender.getSelectionModel().select(selectedTeacher.getGender());</b>
+<b class="nc">&nbsp;                cbPosition.getSelectionModel().select(selectedTeacher.getPosition());</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies filtering logic on teacher list based on filter inputs.
+&nbsp;     */
+&nbsp;    private List&lt;Teacher&gt; applyTeachersFilter(String username, String name, String department) {
+<b class="nc">&nbsp;        List&lt;Teacher&gt; filtered = teacherDatabase.getAllEnabled();</b>
+<b class="nc">&nbsp;        if (username != null) {</b>
+<b class="nc">&nbsp;            filtered = teacherDatabase.queryFuzzyByField(&quot;username&quot;, username);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (name != null) {</b>
+<b class="nc">&nbsp;            List&lt;Teacher&gt; nameFiltered = teacherDatabase.queryFuzzyByField(&quot;name&quot;, name);</b>
+<b class="nc">&nbsp;            filtered = teacherDatabase.join(filtered, nameFiltered);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (department != null &amp;&amp; !department.equalsIgnoreCase(&quot;ANY&quot;)) {</b>
+<b class="nc">&nbsp;            List&lt;Teacher&gt; deptFiltered = teacherDatabase.queryByField(&quot;department&quot;, department);</b>
+<b class="nc">&nbsp;            filtered = teacherDatabase.join(filtered, deptFiltered);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return filtered;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles filtering when user clicks the &quot;Filter&quot; button.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void filterTeachers() {
+<b class="nc">&nbsp;        String username = filterUsername.getText().trim();</b>
+<b class="nc">&nbsp;        String name = filterName.getText().trim();</b>
+<b class="nc">&nbsp;        String department = filterDepartment.getValue();</b>
+<b class="nc">&nbsp;        if (username.isEmpty()) {username = null;}</b>
+<b class="nc">&nbsp;        if (name.isEmpty()) {name = null;}</b>
+<b class="nc">&nbsp;        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase(&quot;any&quot;)) {department = null;}</b>
+<b class="nc">&nbsp;        List&lt;Teacher&gt; filtered = applyTeachersFilter(username, name, department);</b>
+<b class="nc">&nbsp;        teacherTable.setItems(FXCollections.observableArrayList(filtered));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resets all filters and reloads the full course list.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void reset() {
+<b class="nc">&nbsp;        filterUsername.clear();</b>
+<b class="nc">&nbsp;        filterName.clear();</b>
+<b class="nc">&nbsp;        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</b>
+<b class="nc">&nbsp;        teacherTable.setItems(FXCollections.observableArrayList(teacherDatabase.getAllEnabled()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the input form on the right side.
+&nbsp;     */
+&nbsp;    private void clearForm() {
+<b class="nc">&nbsp;        tfUsername.clear();</b>
+<b class="nc">&nbsp;        tfName.clear();</b>
+<b class="nc">&nbsp;        tfPassword.clear();</b>
+<b class="nc">&nbsp;        cbDepartment.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        cbDepartment.getSelectionModel().select(Department.valueOf(&quot;ANY&quot;));</b>
+<b class="nc">&nbsp;        tfAge.clear();</b>
+<b class="nc">&nbsp;        cbPosition.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        cbGender.getSelectionModel().clearSelection();</b>
+<b class="nc">&nbsp;        cbGender.setPromptText(&quot;Select Gender&quot;);</b>
+<b class="nc">&nbsp;        cbPosition.setPromptText(&quot;Select Position&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a new Teacher using input form values.
+&nbsp;     * Using functions provided in the database class
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void addTeacher() {
+&nbsp;        try {
+<b class="nc">&nbsp;            String username = tfUsername.getText().trim();</b>
+<b class="nc">&nbsp;            String name = tfName.getText().trim();</b>
+<b class="nc">&nbsp;            String password = tfPassword.getText().trim();</b>
+<b class="nc">&nbsp;            Department department = cbDepartment.getValue();</b>
+<b class="nc">&nbsp;            Gender gender = cbGender.getValue();</b>
+<b class="nc">&nbsp;            String ageStr = tfAge.getText().trim();</b>
+<b class="nc">&nbsp;            Position position = cbPosition.getValue();</b>
+&nbsp;            // Validation
+<b class="nc">&nbsp;            StringBuilder validationMsg = Teacher.validateWithMessage(null, username, password, name, ageStr, department);</b>
+<b class="nc">&nbsp;            if (validationMsg.length() &gt; 0) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(validationMsg.toString());</b>
+&nbsp;                return; }
+<b class="nc">&nbsp;            if (gender == null) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Please select a gender.&quot;);</b>
+&nbsp;                return; }
+<b class="nc">&nbsp;            if (position == null) {</b>
+<b class="nc">&nbsp;                MsgSender.showMsg(&quot;Please select a position.&quot;);</b>
+&nbsp;                return; }
+<b class="nc">&nbsp;            int age = Integer.parseInt(ageStr);</b>
+<b class="nc">&nbsp;            long id = System.currentTimeMillis();</b>
+<b class="nc">&nbsp;            Teacher teacher = new Teacher(id, username, password, name, gender, age, department, position);</b>
+<b class="nc">&nbsp;            teacherDatabase.add(teacher);</b>
+<b class="nc">&nbsp;            allTeachers.add(teacher);</b>
+<b class="nc">&nbsp;            teacherTable.setItems(FXCollections.observableArrayList(allTeachers));</b>
+<b class="nc">&nbsp;            clearForm();</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Teacher added successfully!&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to add teacher.&quot;);</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing teacher selected in the table using form values.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    private void updateTeacher() {
+<b class="nc">&nbsp;        Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selectedTeacher == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a Teacher to update.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // Get updated form values
+<b class="nc">&nbsp;        String username = tfUsername.getText().trim();</b>
+<b class="nc">&nbsp;        String name = tfName.getText().trim();</b>
+<b class="nc">&nbsp;        String password = tfPassword.getText().trim();</b>
+<b class="nc">&nbsp;        Department department = cbDepartment.getValue();</b>
+<b class="nc">&nbsp;        Gender gender = cbGender.getValue();</b>
+<b class="nc">&nbsp;        String ageStr = tfAge.getText().trim();</b>
+<b class="nc">&nbsp;        Position position = cbPosition.getValue();</b>
+&nbsp;
+&nbsp;        // Validation
+<b class="nc">&nbsp;        StringBuilder validationMsg = Student.validateWithMessage(null, username, password, name, ageStr, department);</b>
+<b class="nc">&nbsp;        if(validationMsg.length() &gt; 0) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(validationMsg.toString());</b>
+&nbsp;            return; }
+<b class="nc">&nbsp;        if (gender == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a gender.&quot;);</b>
+&nbsp;            return; }
+<b class="nc">&nbsp;        if (position == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a position.&quot;);</b>
+&nbsp;            return; }
+&nbsp;
+&nbsp;        // Update selected Teacher
+<b class="nc">&nbsp;        int age = Integer.parseInt(tfAge.getText().trim());</b>
+<b class="nc">&nbsp;        selectedTeacher.setUsername(username);</b>
+<b class="nc">&nbsp;        selectedTeacher.setName(name);</b>
+<b class="nc">&nbsp;        selectedTeacher.setPassword(password);</b>
+<b class="nc">&nbsp;        selectedTeacher.setDepartment(department);</b>
+<b class="nc">&nbsp;        selectedTeacher.setGender(gender);</b>
+<b class="nc">&nbsp;        selectedTeacher.setAge(age);</b>
+<b class="nc">&nbsp;        selectedTeacher.setPosition(position);</b>
+&nbsp;        // Rewrite file with all Teachers
+<b class="nc">&nbsp;        saveAllTeachersToFile();</b>
+<b class="nc">&nbsp;        teacherTable.refresh();</b>
+<b class="nc">&nbsp;        MsgSender.showMsg(&quot;Teacher updated successfully!&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the changed values to the database
+&nbsp;     */
+&nbsp;    private void saveAllTeachersToFile() {
+&nbsp;        try {
+<b class="nc">&nbsp;            for (Teacher t : allTeachers) {</b>
+<b class="nc">&nbsp;                teacherDatabase.update(t);</b>
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Failed to save teacher data.&quot;);</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes the selected teacher from the database.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void deleteTeacher() {
+<b class="nc">&nbsp;        Teacher selectedTeacher = teacherTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selectedTeacher == null) {</b>
+<b class="nc">&nbsp;            MsgSender.showMsg(&quot;Please select a teacher to delete.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;                &quot;Delete Confirmation&quot;,</b>
+<b class="nc">&nbsp;                &quot;Are you sure you want to delete this teacher?&quot;,</b>
+<b class="nc">&nbsp;                () -&gt; {</b>
+<b class="nc">&nbsp;                    teacherDatabase.delByKey(String.valueOf(selectedTeacher.getId()));</b>
+<b class="nc">&nbsp;                    allTeachers = FXCollections.observableArrayList(teacherDatabase.getAllEnabled());</b>
+<b class="nc">&nbsp;                    teacherTable.setItems(allTeachers);</b>
+<b class="nc">&nbsp;                    MsgSender.showMsg(&quot;Teacher deleted successfully.&quot;);</b>
+<b class="nc">&nbsp;                    clearForm();</b>
+&nbsp;                }
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Navigates back to the Manager main screen.
+&nbsp;     * @param e The triggered action event.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void back(ActionEvent e) {
+<b class="nc">&nbsp;        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;ManagerMainUI.fxml&quot;));</b>
+<b class="nc">&nbsp;        Stage stage = new Stage();</b>
+<b class="nc">&nbsp;        stage.setTitle(&quot;Back&quot;);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            stage.setScene(new Scene(fxmlLoader.load()));</b>
+&nbsp;        } catch (IOException e1) {
+<b class="nc">&nbsp;            e1.printStackTrace();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        UIhelper.expandToFullScreen(stage);</b>
+<b class="nc">&nbsp;        stage.show();</b>
+<b class="nc">&nbsp;        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Closes the application with a confirmation.
+&nbsp;     */
+&nbsp;    @FXML
+&nbsp;    void closeApplication() {
+<b class="nc">&nbsp;        MsgSender.showConfirm(</b>
+<b class="nc">&nbsp;                &quot;Exit Confirmation&quot;,</b>
+<b class="nc">&nbsp;                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</b>
+<b class="nc">&nbsp;                Platform::exit</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

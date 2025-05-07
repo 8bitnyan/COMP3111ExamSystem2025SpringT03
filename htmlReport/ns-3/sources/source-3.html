@@ -1,0 +1,390 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Exam</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">comp3111.examsystem.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Exam (comp3111.examsystem.entity)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Exam</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    34.3%
+  </span>
+  <span class="absValue">
+    (12/35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    19.2%
+  </span>
+  <span class="absValue">
+    (10/52)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    30.8%
+  </span>
+  <span class="absValue">
+    (28/91)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package comp3111.examsystem.entity;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class Exam extends Entity {
+&nbsp;    
+&nbsp;    private Long id;
+&nbsp;    private Long teacherId; // To isolate exams per teacher
+&nbsp;    private String name;
+&nbsp;    private String examName; // Added for database compatibility
+&nbsp;    private String courseCode; // Changed from courseId to courseCode
+&nbsp;    private Integer duration; // in minutes
+&nbsp;    private String examTime; // Added for database compatibility
+<b class="fc">&nbsp;    private String isPublished = &quot;0&quot;; // Changed from Integer to String</b>
+<b class="fc">&nbsp;    private Integer isPublishedInt = 0; // Added for API compatibility</b>
+<b class="fc">&nbsp;    private Boolean published = false; // Added for database compatibility</b>
+<b class="fc">&nbsp;    private Boolean enabled = true; // Added for compatibility with Entity.isAble</b>
+<b class="fc">&nbsp;    private List&lt;Long&gt; questionIds = new ArrayList&lt;&gt;(); // IDs of questions included in this exam</b>
+&nbsp;    private String questions; // Added for database compatibility
+&nbsp;    
+&nbsp;    // Default constructor required for Database.java reflection
+<b class="fc">&nbsp;    public Exam() {}</b>
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Full constructor for creating a new exam
+&nbsp;     */
+<b class="nc">&nbsp;    public Exam(Long teacherId, String name, String courseCode, Integer duration, Integer isPublished, List&lt;Long&gt; questionIds) {</b>
+<b class="nc">&nbsp;        this.teacherId = teacherId;</b>
+<b class="nc">&nbsp;        this.name = name;</b>
+<b class="nc">&nbsp;        this.examName = name; // Set examName to match name</b>
+<b class="nc">&nbsp;        this.courseCode = courseCode;</b>
+<b class="nc">&nbsp;        this.duration = duration;</b>
+<b class="nc">&nbsp;        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</b>
+<b class="nc">&nbsp;        this.isPublishedInt = isPublished;</b>
+<b class="nc">&nbsp;        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</b>
+<b class="nc">&nbsp;        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</b>
+<b class="nc">&nbsp;        this.enabled = true; // Default to enabled</b>
+&nbsp;        // Always copy input list to ensure mutability
+<b class="nc">&nbsp;        this.questionIds = questionIds != null ? new ArrayList&lt;&gt;(questionIds) : new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        updateQuestionsField(); // Initialize questions field</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Updates the questions field based on questionIds
+&nbsp;     */
+&nbsp;    private void updateQuestionsField() {
+<b class="nc">&nbsp;        if (questionIds != null &amp;&amp; !questionIds.isEmpty()) {</b>
+<b class="nc">&nbsp;            this.questions = String.join(&quot;,&quot;, questionIds.stream().map(Object::toString).toArray(String[]::new));</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            this.questions = &quot;&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Add a question to this exam
+&nbsp;     * @param questionId The ID of the question to add
+&nbsp;     * @return true if added, false if already exists
+&nbsp;     */
+&nbsp;    public boolean addQuestion(Long questionId) {
+<b class="nc">&nbsp;        if (!questionIds.contains(questionId)) {</b>
+<b class="nc">&nbsp;            questionIds.add(questionId);</b>
+<b class="nc">&nbsp;            updateQuestionsField();</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Remove a question from this exam
+&nbsp;     * @param questionId The ID of the question to remove
+&nbsp;     * @return true if removed, false if not found
+&nbsp;     */
+&nbsp;    public boolean removeQuestion(Long questionId) {
+<b class="nc">&nbsp;        boolean removed = questionIds.remove(questionId);</b>
+<b class="nc">&nbsp;        if (removed) {</b>
+<b class="nc">&nbsp;            updateQuestionsField();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return removed;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Get the number of questions in this exam
+&nbsp;     * @return The question count
+&nbsp;     */
+&nbsp;    public int getQuestionCount() {
+<b class="nc">&nbsp;        return questionIds.size();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    // Getters and Setters
+&nbsp;    
+&nbsp;    @Override
+&nbsp;    public Long getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Override
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public Long getTeacherId() {
+<b class="nc">&nbsp;        return teacherId;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setTeacherId(Long teacherId) {
+<b class="nc">&nbsp;        this.teacherId = teacherId;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.examName = name; // Keep examName in sync with name</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getExamName() {
+<b class="nc">&nbsp;        return examName;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setExamName(String examName) {
+<b class="nc">&nbsp;        this.examName = examName;</b>
+<b class="nc">&nbsp;        this.name = examName; // Keep name in sync with examName</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getCourseCode() {
+<b class="fc">&nbsp;        return courseCode;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setCourseCode(String courseCode) {
+<b class="fc">&nbsp;        this.courseCode = courseCode;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    // For backwards compatibility in case any code still uses the old method names
+&nbsp;    @Deprecated
+&nbsp;    public String getCourseId() {
+<b class="nc">&nbsp;        return courseCode;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Deprecated
+&nbsp;    public void setCourseId(String courseCode) {
+<b class="nc">&nbsp;        this.courseCode = courseCode;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public Integer getDuration() {
+<b class="fc">&nbsp;        return duration;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setDuration(Integer duration) {
+<b class="nc">&nbsp;        this.duration = duration;</b>
+<b class="nc">&nbsp;        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Update examTime when duration changes</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getExamTime() {
+<b class="nc">&nbsp;        return examTime;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setExamTime(String examTime) {
+<b class="nc">&nbsp;        this.examTime = examTime;</b>
+&nbsp;        // Try to parse duration from examTime if possible
+<b class="nc">&nbsp;        if (examTime != null &amp;&amp; examTime.contains(&quot; minutes&quot;)) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                String durationStr = examTime.replace(&quot; minutes&quot;, &quot;&quot;).trim();</b>
+<b class="nc">&nbsp;                this.duration = Integer.parseInt(durationStr);</b>
+&nbsp;            } catch (NumberFormatException e) {
+&nbsp;                // If parsing fails, keep the existing duration
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getIsPublished() {
+<b class="nc">&nbsp;        return isPublished;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setIsPublished(String isPublished) {
+<b class="nc">&nbsp;        this.isPublished = isPublished;</b>
+&nbsp;        // Try to update isPublishedInt
+&nbsp;        try {
+<b class="nc">&nbsp;            this.isPublishedInt = Integer.parseInt(isPublished);</b>
+&nbsp;        } catch (NumberFormatException e) {
+&nbsp;            // If parsing fails, default to 0
+<b class="nc">&nbsp;            this.isPublishedInt = 0;</b>
+&nbsp;        }
+&nbsp;        // Update published boolean
+<b class="nc">&nbsp;        this.published = this.isPublishedInt &gt; 0;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    // For API compatibility with existing code
+&nbsp;    public Integer getIsPublishedInt() {
+<b class="fc">&nbsp;        return isPublishedInt;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setIsPublishedInt(Integer isPublishedInt) {
+<b class="fc">&nbsp;        this.isPublishedInt = isPublishedInt;</b>
+<b class="pc">&nbsp;        this.isPublished = isPublishedInt != null ? isPublishedInt.toString() : &quot;0&quot;;</b>
+<b class="pc">&nbsp;        this.published = isPublishedInt != null &amp;&amp; isPublishedInt &gt; 0;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public Boolean getPublished() {
+<b class="nc">&nbsp;        return published;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setPublished(Boolean published) {
+<b class="nc">&nbsp;        this.published = published;</b>
+<b class="nc">&nbsp;        this.isPublishedInt = published != null &amp;&amp; published ? 1 : 0;</b>
+<b class="nc">&nbsp;        this.isPublished = this.isPublishedInt.toString();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Override
+&nbsp;    public Boolean getIsAble() {
+<b class="nc">&nbsp;        return enabled;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public Boolean getEnabled() {
+<b class="nc">&nbsp;        return enabled;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setEnabled(Boolean enabled) {
+<b class="nc">&nbsp;        this.enabled = enabled;</b>
+<b class="nc">&nbsp;        super.isAble = enabled; // Keep base class isAble in sync</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public List&lt;Long&gt; getQuestionIds() {
+<b class="nc">&nbsp;        return questionIds;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setQuestionIds(List&lt;?&gt; questionIds) {
+<b class="nc">&nbsp;        if (questionIds == null) {</b>
+<b class="nc">&nbsp;            this.questionIds = new ArrayList&lt;&gt;();</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            this.questionIds = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for (Object id : questionIds) {</b>
+<b class="nc">&nbsp;                if (id instanceof Long) {</b>
+<b class="nc">&nbsp;                    this.questionIds.add((Long) id);</b>
+<b class="nc">&nbsp;                } else if (id instanceof String) {</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        this.questionIds.add(Long.parseLong((String) id));</b>
+&nbsp;                    } catch (NumberFormatException e) {
+&nbsp;                        // Skip invalid string IDs
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        updateQuestionsField(); // Update questions field when questionIds changes</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public String getQuestions() {
+<b class="fc">&nbsp;        return questions;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    public void setQuestions(String questions) {
+<b class="fc">&nbsp;        this.questions = questions;</b>
+&nbsp;        // Try to parse and update questionIds from questions string
+<b class="pc">&nbsp;        if (questions != null &amp;&amp; !questions.isEmpty()) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                String[] idStrings = questions.split(&quot;,&quot;);</b>
+<b class="fc">&nbsp;                List&lt;Long&gt; ids = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;                for (String idStr : idStrings) {</b>
+<b class="pc">&nbsp;                    if (!idStr.trim().isEmpty()) {</b>
+<b class="fc">&nbsp;                        ids.add(Long.parseLong(idStr.trim()));</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                // Only update questionIds if we parsed at least one valid ID
+<b class="pc">&nbsp;                if (!ids.isEmpty()) {</b>
+<b class="fc">&nbsp;                    this.questionIds = ids;</b>
+&nbsp;                }
+&nbsp;            } catch (NumberFormatException e) {
+&nbsp;                // If parsing fails, keep the existing questionIds (does NOT clear the list)
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 20:38</div>
+</div>
+</body>
+</html>

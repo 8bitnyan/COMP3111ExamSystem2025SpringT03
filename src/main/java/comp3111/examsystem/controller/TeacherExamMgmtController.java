@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
  */
 public class TeacherExamMgmtController implements Initializable {
     private Teacher teacher;
-    private Exam selectedExam;
-    private boolean editMode = false;
+    public Exam selectedExam;
+    public boolean editMode = false;
     
     // ObservableList for the selected questions in the current exam
     private ObservableList<Question> selectedQuestions = FXCollections.observableArrayList();
@@ -45,39 +45,39 @@ public class TeacherExamMgmtController implements Initializable {
     @FXML private ComboBox<String> filterStatusCmb;
 
     // Tables
-    @FXML private TableView<Exam> examsTable;
-    @FXML private TableColumn<Exam, String> colExamName;
-    @FXML private TableColumn<Exam, String> colCourseId;
-    @FXML private TableColumn<Exam, Integer> colDuration;
-    @FXML private TableColumn<Exam, String> colPublished;
-    @FXML private TableColumn<Exam, Integer> colQuestionCount;
+    @FXML public TableView<Exam> examsTable;
+    @FXML public TableColumn<Exam, String> colExamName;
+    @FXML public TableColumn<Exam, String> colCourseId;
+    @FXML public TableColumn<Exam, Integer> colDuration;
+    @FXML public TableColumn<Exam, String> colPublished;
+    @FXML public TableColumn<Exam, Integer> colQuestionCount;
 
-    @FXML private TableView<Question> selectedQuestionsTable;
-    @FXML private TableColumn<Question, String> colSelectedQuestion;
-    @FXML private TableColumn<Question, String> colSelectedType;
-    @FXML private TableColumn<Question, Integer> colSelectedScore;
+    @FXML public TableView<Question> selectedQuestionsTable;
+    @FXML public TableColumn<Question, String> colSelectedQuestion;
+    @FXML public TableColumn<Question, String> colSelectedType;
+    @FXML public TableColumn<Question, Integer> colSelectedScore;
 
-    @FXML private TableView<Question> questionsTable;
-    @FXML private TableColumn<Question, String> colQuestion;
-    @FXML private TableColumn<Question, String> colType;
-    @FXML private TableColumn<Question, Integer> colScore;
+    @FXML public TableView<Question> questionsTable;
+    @FXML public TableColumn<Question, String> colQuestion;
+    @FXML public TableColumn<Question, String> colType;
+    @FXML public TableColumn<Question, Integer> colScore;
 
     // Form fields
-    @FXML private Label formHeaderLabel;
-    @FXML private TextField examNameTxt;
-    @FXML private TextField courseIdTxt;
-    @FXML private TextField durationTxt;
-    @FXML private CheckBox publishedChk;
-    @FXML private Label totalScoreLabel;
+    @FXML public Label formHeaderLabel;
+    @FXML public TextField examNameTxt;
+    @FXML public TextField courseIdTxt;
+    @FXML public TextField durationTxt;
+    @FXML public CheckBox publishedChk;
+    @FXML public Label totalScoreLabel;
 
     // Buttons
-    @FXML private Button addExamBtn;
-    @FXML private Button editExamBtn;
-    @FXML private Button updateExamBtn;
-    @FXML private Button deleteExamBtn;
-    @FXML private Button addToExamBtn;
-    @FXML private Button removeSelectedQuestionBtn;
-    @FXML private Button clearSelectedQuestionsBtn;
+    @FXML public Button addExamBtn;
+    @FXML public Button editExamBtn;
+    @FXML public Button updateExamBtn;
+    @FXML public Button deleteExamBtn;
+    @FXML public Button addToExamBtn;
+    @FXML public Button removeSelectedQuestionBtn;
+    @FXML public Button clearSelectedQuestionsBtn;
 
     // Main entity collections
     private ObservableList<Exam> allExams = FXCollections.observableArrayList();
@@ -201,7 +201,7 @@ public class TeacherExamMgmtController implements Initializable {
     /**
      * Updates the total score display based on selected questions
      */
-    private void updateTotalScore() {
+    public void updateTotalScore() {
         int total = selectedQuestions.stream()
                 .mapToInt(q -> q.getScore() != null ? q.getScore() : 0)
                 .sum();
@@ -212,7 +212,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Sets the form fields to be editable or read-only
      * @param editable True to make editable, false for read-only
      */
-    private void setFormEditable(boolean editable) {
+    public void setFormEditable(boolean editable) {
         examNameTxt.setEditable(editable);
         courseIdTxt.setEditable(editable);
         durationTxt.setEditable(editable);
@@ -259,7 +259,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Loads exam details into the form
      * @param exam The exam to load
      */
-    private void loadExamDetails(Exam exam) {
+    public void loadExamDetails(Exam exam) {
         if (exam == null) {
             clearForm();
             return;
@@ -282,7 +282,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Loads the questions for the given exam
      * @param exam The exam to load questions for
      */
-    private void loadExamQuestions(Exam exam) {
+    public void loadExamQuestions(Exam exam) {
         selectedQuestions.clear();
 
         // Fetch all questions from the database
@@ -323,7 +323,7 @@ public class TeacherExamMgmtController implements Initializable {
     /**
      * Clears the form fields
      */
-    private void clearForm() {
+    public void clearForm() {
         examNameTxt.clear();
         courseIdTxt.clear();
         durationTxt.clear();
@@ -339,7 +339,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles filtering exams
      */
     @FXML
-    private void handleFilterExams() {
+    public void handleFilterExams() {
         String nameFilter = filterExamNameTxt.getText().trim().toLowerCase();
         String courseIdFilter = filterCourseIdTxt.getText().trim().toLowerCase();
         String statusFilter = filterStatusCmb.getValue();
@@ -369,7 +369,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles resetting the exam filter
      */
     @FXML
-    private void handleResetExamFilter() {
+    public void handleResetExamFilter() {
         filterExamNameTxt.clear();
         filterCourseIdTxt.clear();
         filterStatusCmb.setValue("Any");
@@ -380,7 +380,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles filtering questions
      */
     @FXML
-    private void handleFilterQuestions() {
+    public void handleFilterQuestions() {
         String questionFilter = filterQuestionTxt.getText().trim().toLowerCase();
         String typeFilter = filterTypeCmb.getValue();
         String scoreText = filterScoreTxt.getText().trim();
@@ -409,7 +409,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles resetting the question filter
      */
     @FXML
-    private void handleResetQuestionFilter() {
+    public void handleResetQuestionFilter() {
         filterQuestionTxt.clear();
         filterTypeCmb.setValue("Any");
         filterScoreTxt.clear();
@@ -419,7 +419,7 @@ public class TeacherExamMgmtController implements Initializable {
     /**
      * Loads all exams for the current teacher
      */
-    private void loadAllExams() {
+    public void loadAllExams() {
         Database<Exam> examDB = new Database<>(Exam.class);
         List<Exam> exams = examDB.queryByField("teacherId", teacher.getId().toString());
         examsTable.getItems().clear();
@@ -429,7 +429,7 @@ public class TeacherExamMgmtController implements Initializable {
     /**
      * Loads all questions for the current teacher
      */
-    private void loadAllQuestions() {
+    public void loadAllQuestions() {
         Database<Question> questionDB = new Database<>(Question.class);
         List<Question> questions = questionDB.queryByField("teacherId", teacher.getId().toString());
         availableQuestions.clear();
@@ -492,7 +492,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles clearing all selected questions
      */
     @FXML
-    private void handleClearSelectedQuestions() {
+    public void handleClearSelectedQuestions() {
         if (selectedQuestions.isEmpty()) {
             return;
         }
@@ -512,7 +512,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles adding a new exam
      */
     @FXML
-    private void handleAddExam() {
+    public void handleAddExam() {
         // Clear form and set to edit mode
         clearForm();
         selectedExam = null;
@@ -529,7 +529,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles editing an existing exam
      */
     @FXML
-    private void handleEditExam() {
+    public void handleEditExam() {
         if (selectedExam == null) {
             MsgSender.showMsg("Please select an exam to edit.");
             return;
@@ -553,7 +553,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles creating a new exam or updating an existing one
      */
     @FXML
-    private void handleUpdateExam() {
+    public void handleUpdateExam() {
         // Validate input
         if (examNameTxt.getText().isEmpty() || courseIdTxt.getText().isEmpty() || durationTxt.getText().isEmpty()) {
             MsgSender.showMsg("Please fill in all required fields.");
@@ -644,7 +644,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles deleting an exam
      */
     @FXML
-    private void handleDeleteExam() {
+    public void handleDeleteExam() {
         if (selectedExam == null) {
             MsgSender.showMsg("Please select an exam to delete.");
             return;
@@ -678,7 +678,7 @@ public class TeacherExamMgmtController implements Initializable {
      * Handles refreshing the UI
      */
     @FXML
-    private void handleRefresh() {
+    public void handleRefresh() {
         // Save selected exam ID if any
         Long selectedExamId = selectedExam != null ? selectedExam.getId() : null;
 
@@ -735,5 +735,10 @@ public class TeacherExamMgmtController implements Initializable {
     private void handleCloseApplication() {
         Platform.exit();
         System.exit(0);
+    }
+
+    // for testing
+    public Teacher getTeacher() {
+        return teacher;
     }
 } 

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * The controller for student login page.
+ * The controller for the student login page. Handles login, registration, and navigation logic for students.
  */
 public class StudentLoginController implements Initializable {
     @FXML
@@ -36,7 +36,8 @@ public class StudentLoginController implements Initializable {
     Database<Student> studentDatabase = new Database<>(Student.class);
 
     /**
-     * Validates the login information of the student.
+     * Validates the login information of the student by checking the username and password fields against the database.
+     *
      * @return A student object if the login information is valid, null otherwise.
      */
     private Student ValidateLogin() {
@@ -51,8 +52,9 @@ public class StudentLoginController implements Initializable {
     }
 
     /**
-     * Initializes the Student Login UI.
-     * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
+     * Initializes the Student Login UI. This method is called automatically after the FXML file has been loaded.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     public void initialize(URL location, ResourceBundle resources) {
@@ -60,8 +62,9 @@ public class StudentLoginController implements Initializable {
     }
 
     /**
-     * Handles the login button click event.
-     * @param e The action event.
+     * Handles the login button click event. Attempts to log in the student and navigates to the main UI if successful.
+     *
+     * @param e The action event triggered by clicking the login button.
      */
     @FXML
     public void login(ActionEvent e) {
@@ -86,8 +89,9 @@ public class StudentLoginController implements Initializable {
     }
 
     /**
-     * Handles the register button click event.
-     * @param e The action event.
+     * Handles the register button click event. Navigates to the student registration UI.
+     *
+     * @param e The action event triggered by clicking the register button.
      */
     @FXML
     public void register(ActionEvent e) {
@@ -105,8 +109,9 @@ public class StudentLoginController implements Initializable {
     }
 
     /**
-     * Handles the cancel button click event.
-     * @param e The action event.
+     * Handles the cancel button click event. Navigates back to the main login UI.
+     *
+     * @param e The action event triggered by clicking the cancel button.
      */
     @FXML
     public void cancel(ActionEvent e) {

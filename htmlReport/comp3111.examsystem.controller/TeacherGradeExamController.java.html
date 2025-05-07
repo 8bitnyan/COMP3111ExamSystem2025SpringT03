@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeExamController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeExamController.java</span></div><h1>TeacherGradeExamController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TeacherGradeExamController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec, StudentQuizControllerTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">TeacherGradeExamController.java</span></div><h1>TeacherGradeExamController.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
 import comp3111.examsystem.Main;
 import comp3111.examsystem.entity.Teacher;
 import comp3111.examsystem.entity.Record;
@@ -66,7 +66,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L66">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;exam.txt&quot;),</span>
 <span class="nc" id="L67">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;question.txt&quot;),</span>
 <span class="nc" id="L68">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;student.txt&quot;),</span>
-<span class="nc" id="L69">            new Database&lt;&gt;(Record.class)</span>
+            new Database&lt;&gt;(Record.class)
         );
 <span class="nc" id="L71">    }</span>
 
@@ -172,14 +172,14 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L172">                    examLineMap.put(courseCode + &quot;|&quot; + examName, line);</span>
 <span class="nc" id="L173">                    courseToExamsMap.putIfAbsent(courseCode, new ArrayList&lt;&gt;());</span>
 <span class="nc" id="L174">                    courseToExamsMap.get(courseCode).add(examName);</span>
-<span class="nc" id="L175">                } else {</span>
+                } else {
 <span class="nc" id="L176">                    System.out.println(&quot;[DEBUG] -&gt; NOT MATCHED&quot;);</span>
                 }
-            }
+<span class="nc" id="L178">            }</span>
 <span class="nc" id="L179">            courseFilter.getItems().addAll(courseToExamsMap.keySet());</span>
 <span class="nc" id="L180">        } catch (IOException e) {</span>
 <span class="nc" id="L181">            MsgSender.showMsg(&quot;Failed to load exams.&quot;);</span>
-        }
+<span class="nc" id="L182">        }</span>
 <span class="nc" id="L183">    }</span>
 
     /**
@@ -207,7 +207,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L207">        } catch (IOException e) {</span>
 <span class="nc" id="L208">            MsgSender.showMsg(&quot;Failed to read question database.&quot;);</span>
 <span class="nc" id="L209">            return;</span>
-        }
+<span class="nc" id="L210">        }</span>
 
         //Extract the question from the question list
 <span class="nc bnc" id="L213" title="All 2 branches missed.">        for (String qid : questionIds) {</span>
@@ -220,10 +220,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L220">                        questionList.getItems().add(questionText);</span>
 <span class="nc" id="L221">                        questionTextToId.put(questionText, qid);</span>
                     }
-<span class="nc" id="L223">                    break;</span>
+                    break;
                 }
-            }
-        }
+<span class="nc" id="L225">            }</span>
+<span class="nc" id="L226">        }</span>
 
         // Get the students record
 <span class="nc" id="L229">        Set&lt;String&gt; uniqueStudentNames = new HashSet&lt;&gt;();</span>
@@ -233,7 +233,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L233">                String studentName = getStudentNameById(String.valueOf(r.getStudentID()));</span>
 <span class="nc" id="L234">                uniqueStudentNames.add(studentName);</span>
             }
-        }
+<span class="nc" id="L236">        }</span>
 <span class="nc" id="L237">        studentFilter.getItems().clear();</span>
 <span class="nc" id="L238">        studentFilter.getItems().add(&quot;ALL&quot;);</span>
 <span class="nc" id="L239">        studentFilter.getItems().addAll(uniqueStudentNames);</span>
@@ -319,11 +319,11 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L319">            qidLong = Long.parseLong(questionId);</span>
 <span class="nc" id="L320">        } catch (Exception e) {</span>
 <span class="nc" id="L321">            System.out.println(&quot;Could not parse questionId to Long: &quot; + questionId);</span>
-        }
+<span class="nc" id="L322">        }</span>
 <span class="nc" id="L323">        System.out.println(&quot;Selected questionId: &quot; + questionId);</span>
 <span class="nc bnc" id="L324" title="All 2 branches missed.">        for (Record r : allRecords) {</span>
-<span class="nc bnc" id="L325" title="All 4 branches missed.">            if (r.getQuestionID() != null &amp;&amp; r.getExamID() != null &amp;&amp;</span>
-<span class="nc bnc" id="L326" title="All 4 branches missed.">                qidLong != null &amp;&amp; r.getQuestionID().equals(qidLong) &amp;&amp;</span>
+<span class="nc bnc" id="L325" title="All 6 branches missed.">            if (r.getQuestionID() != null &amp;&amp; r.getExamID() != null &amp;&amp;</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">                qidLong != null &amp;&amp; r.getQuestionID().equals(qidLong) &amp;&amp;</span>
 <span class="nc bnc" id="L327" title="All 2 branches missed.">                r.getExamID().equals(currentExamID)) {</span>
 <span class="nc" id="L328">                String name = getStudentNameById(String.valueOf(r.getStudentID()));</span>
 <span class="nc bnc" id="L329" title="All 6 branches missed.">                if (selectedStudentName == null || selectedStudentName.equals(&quot;ALL&quot;) || name.equals(selectedStudentName)) {</span>
@@ -331,7 +331,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L331">                    result.add(r);</span>
                 }
             }
-        }
+<span class="nc" id="L334">        }</span>
 <span class="nc" id="L335">        answerTable.setItems(FXCollections.observableArrayList(result));</span>
 <span class="nc" id="L336">        answerTable.refresh();</span>
         // Always clear and select the first row, update detail panel
@@ -357,10 +357,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L357" title="All 2 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + studentId + &quot;!@#&quot;)) {</span>
 <span class="nc" id="L358">                    return extractField(line, &quot;name&quot;);</span>
                 }
-            }
+<span class="nc" id="L360">            }</span>
 <span class="nc" id="L361">        } catch (IOException e) {</span>
 <span class="nc" id="L362">            e.printStackTrace();</span>
-        }
+<span class="nc" id="L363">        }</span>
 <span class="nc" id="L364">        return &quot;Unknown&quot;;</span>
     }
 
@@ -380,10 +380,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L380" title="All 2 branches missed.">                    maxScoreLabel.setText(score != null ? score : &quot;N/A&quot;);</span>
 <span class="nc" id="L381">                    return;</span>
                 }
-            }
+<span class="nc" id="L383">            }</span>
 <span class="nc" id="L384">        } catch (IOException e) {</span>
 <span class="nc" id="L385">            MsgSender.showMsg(&quot;Failed to load question details.&quot;);</span>
-        }
+<span class="nc" id="L386">        }</span>
 <span class="nc" id="L387">        correctAnswerLabel.setText(&quot;N/A&quot;);</span>
 <span class="nc" id="L388">        maxScoreLabel.setText(&quot;N/A&quot;);</span>
 <span class="nc" id="L389">    }</span>
@@ -415,7 +415,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L415">                        return;</span>
                     }
 <span class="nc" id="L417">                } catch (NumberFormatException ignored) {</span>
-                }
+<span class="nc" id="L418">                }</span>
             }
 <span class="nc" id="L420">            selectedRecord.setScore(newScore);</span>
 <span class="nc" id="L421">            recordDatabase.update(selectedRecord);</span>
@@ -423,7 +423,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L423">            MsgSender.showMsg(&quot;Score updated successfully.&quot;);</span>
 <span class="nc" id="L424">        } catch (NumberFormatException e) {</span>
 <span class="nc" id="L425">            MsgSender.showMsg(&quot;Please enter a valid numeric score.&quot;);</span>
-        }
+<span class="nc" id="L426">        }</span>
 <span class="nc" id="L427">    }</span>
 
     /**
@@ -444,7 +444,7 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc" id="L444">            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
 <span class="nc" id="L445">        } catch (IOException ex) {</span>
 <span class="nc" id="L446">            ex.printStackTrace();</span>
-        }
+<span class="nc" id="L447">        }</span>
 <span class="nc" id="L448">    }</span>
 
     /**
@@ -453,9 +453,9 @@ public class TeacherGradeExamController implements Initializable {
     @FXML
     void closeApplication() {
 <span class="nc" id="L455">        MsgSender.showConfirm(</span>
-<span class="nc" id="L456">                &quot;Exit Confirmation&quot;,</span>
-<span class="nc" id="L457">                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</span>
-<span class="nc" id="L458">                Platform::exit</span>
+                &quot;Exit Confirmation&quot;,
+                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,
+                Platform::exit
         );
 <span class="nc" id="L460">    }</span>
 
@@ -482,10 +482,10 @@ public class TeacherGradeExamController implements Initializable {
                     }
 <span class="nc" id="L483">                    return options;</span>
                 }
-            }
+<span class="nc" id="L485">            }</span>
 <span class="nc" id="L486">        } catch (IOException e) {</span>
             // ignore
-        }
+<span class="nc" id="L488">        }</span>
 <span class="nc" id="L489">        return new ArrayList&lt;&gt;();</span>
     }
 
@@ -497,10 +497,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L497" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
 <span class="nc" id="L498">                    return extractField(line, &quot;type&quot;);</span>
                 }
-            }
+<span class="nc" id="L500">            }</span>
 <span class="nc" id="L501">        } catch (IOException e) {</span>
             // ignore
-        }
+<span class="nc" id="L503">        }</span>
 <span class="nc" id="L504">        return null;</span>
     }
 
@@ -512,10 +512,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L512" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
 <span class="nc" id="L513">                    return extractField(line, &quot;answer&quot;);</span>
                 }
-            }
+<span class="nc" id="L515">            }</span>
 <span class="nc" id="L516">        } catch (IOException e) {</span>
             // ignore
-        }
+<span class="nc" id="L518">        }</span>
 <span class="nc" id="L519">        return null;</span>
     }
 
@@ -527,10 +527,10 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L527" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
 <span class="nc" id="L528">                    return extractField(line, &quot;score&quot;);</span>
                 }
-            }
+<span class="nc" id="L530">            }</span>
 <span class="nc" id="L531">        } catch (IOException e) {</span>
             // ignore
-        }
+<span class="nc" id="L533">        }</span>
 <span class="nc" id="L534">        return null;</span>
     }
 
@@ -564,14 +564,14 @@ public class TeacherGradeExamController implements Initializable {
 <span class="nc bnc" id="L564" title="All 2 branches missed.">        if (studentAnswerLabel != null) {</span>
 <span class="nc bnc" id="L565" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
 <span class="nc bnc" id="L566" title="All 6 branches missed.">                studentAnswerLabel.setText((studentLetter != null ? studentLetter : &quot;&quot;) + (studentText != null &amp;&amp; !studentText.isEmpty() ? &quot;. &quot; + studentText : &quot;&quot;));</span>
-<span class="nc" id="L567">            } else {</span>
+            } else {
 <span class="nc bnc" id="L568" title="All 2 branches missed.">                studentAnswerLabel.setText(studentText != null ? studentText : &quot;&quot;);</span>
             }
         }
 <span class="nc bnc" id="L571" title="All 2 branches missed.">        if (correctAnswerLabel != null) {</span>
 <span class="nc bnc" id="L572" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
 <span class="nc bnc" id="L573" title="All 6 branches missed.">                correctAnswerLabel.setText((correctLetter != null ? correctLetter : &quot;&quot;) + (correctText != null &amp;&amp; !correctText.isEmpty() ? &quot;. &quot; + correctText : &quot;&quot;));</span>
-<span class="nc" id="L574">            } else {</span>
+            } else {
 <span class="nc bnc" id="L575" title="All 2 branches missed.">                correctAnswerLabel.setText(correctText != null ? correctText : &quot;N/A&quot;);</span>
             }
         }
