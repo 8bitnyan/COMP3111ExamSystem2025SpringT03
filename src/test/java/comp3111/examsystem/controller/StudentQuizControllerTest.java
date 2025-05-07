@@ -106,8 +106,8 @@ public class StudentQuizControllerTest {
     void testPreSetControllerAndNavigation() {
         Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D")),
-            new StudentQuizController.QuizQuestion("Q2")
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A"),
+            new StudentQuizController.QuizQuestion("Q2", 1)
         );
         controller.preSetController(student, "Sample Quiz", questions, 5);
         Text quizNameText = getFieldValue(controller, "quizNameText", Text.class);
@@ -125,8 +125,8 @@ public class StudentQuizControllerTest {
     void testAnswerPersistence() {
         Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D")),
-            new StudentQuizController.QuizQuestion("Q2")
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A"),
+            new StudentQuizController.QuizQuestion("Q2", 1)
         );
         controller.preSetController(student, "Sample Quiz", questions, 5);
         // Simulate answering Q1
@@ -150,7 +150,7 @@ public class StudentQuizControllerTest {
             try {
                 Student student = new Student();
                 List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
                 );
                 controller.preSetController(student, "Sample Quiz", questions, 0); // 0 min for instant expiry
                 // Simulate timer expiry
@@ -179,7 +179,7 @@ public class StudentQuizControllerTest {
             try {
                 Student student = new Student();
                 List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+                    new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
                 );
                 controller.preSetController(student, "Sample Quiz", questions, 5);
                 controller.handleSubmit(null);
@@ -195,7 +195,7 @@ public class StudentQuizControllerTest {
     void testWindowCloseHandler() throws Exception {
         Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"))
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B", "C", "D"), 1, "A")
         );
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
@@ -217,24 +217,24 @@ public class StudentQuizControllerTest {
     void testMCQOptionVisibilityAndSelection() {
         Student student = new Student();
         // 1 option
-        List<StudentQuizController.QuizQuestion> q1 = List.of(new StudentQuizController.QuizQuestion("Q1", List.of("A")));
+        List<StudentQuizController.QuizQuestion> q1 = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
         controller.preSetController(student, "Quiz1", q1, 5);
         assertTrue(getFieldValue(controller, "option1", RadioButton.class).isVisible());
         assertFalse(getFieldValue(controller, "option2", RadioButton.class).isVisible());
         // 2 options
-        List<StudentQuizController.QuizQuestion> q2 = List.of(new StudentQuizController.QuizQuestion("Q2", List.of("A", "B")));
+        List<StudentQuizController.QuizQuestion> q2 = Arrays.asList(new StudentQuizController.QuizQuestion("Q2", Arrays.asList("A", "B"), 1, "A"));
         controller.preSetController(student, "Quiz2", q2, 5);
         assertTrue(getFieldValue(controller, "option2", RadioButton.class).isVisible());
         // 3 options
-        List<StudentQuizController.QuizQuestion> q3 = List.of(new StudentQuizController.QuizQuestion("Q3", List.of("A", "B", "C")));
+        List<StudentQuizController.QuizQuestion> q3 = Arrays.asList(new StudentQuizController.QuizQuestion("Q3", Arrays.asList("A", "B", "C"), 1, "A"));
         controller.preSetController(student, "Quiz3", q3, 5);
         assertTrue(getFieldValue(controller, "option3", RadioButton.class).isVisible());
         // 4 options
-        List<StudentQuizController.QuizQuestion> q4 = List.of(new StudentQuizController.QuizQuestion("Q4", List.of("A", "B", "C", "D")));
+        List<StudentQuizController.QuizQuestion> q4 = Arrays.asList(new StudentQuizController.QuizQuestion("Q4", Arrays.asList("A", "B", "C", "D"), 1, "A"));
         controller.preSetController(student, "Quiz4", q4, 5);
         assertTrue(getFieldValue(controller, "option4", RadioButton.class).isVisible());
         // 0 options
-        List<StudentQuizController.QuizQuestion> q0 = List.of(new StudentQuizController.QuizQuestion("Q0", List.of()));
+        List<StudentQuizController.QuizQuestion> q0 = Arrays.asList(new StudentQuizController.QuizQuestion("Q0", new ArrayList<>(), 1, "A"));
         controller.preSetController(student, "Quiz0", q0, 5);
         assertFalse(getFieldValue(controller, "option1", RadioButton.class).isVisible());
     }
@@ -242,7 +242,7 @@ public class StudentQuizControllerTest {
     @Test
     void testShortAnswerEdgeCases() {
         Student student = new Student();
-        List<StudentQuizController.QuizQuestion> questions = List.of(new StudentQuizController.QuizQuestion("Q1"));
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", 1));
         controller.preSetController(student, "QuizSA", questions, 5);
         TextArea sa = getFieldValue(controller, "shortAnswerField", TextArea.class);
         sa.setText("");
@@ -258,8 +258,8 @@ public class StudentQuizControllerTest {
     void testNavigationEdgeCases() {
         Student student = new Student();
         List<StudentQuizController.QuizQuestion> questions = Arrays.asList(
-            new StudentQuizController.QuizQuestion("Q1", List.of("A", "B")),
-            new StudentQuizController.QuizQuestion("Q2")
+            new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A", "B"), 1, "A"),
+            new StudentQuizController.QuizQuestion("Q2", 1)
         );
         controller.preSetController(student, "QuizNav", questions, 5);
         // Try previous on first question
@@ -302,7 +302,7 @@ public class StudentQuizControllerTest {
     void testSubmitQuizBranches() throws Exception {
         // exam not found
         Student student = new Student();
-        List<StudentQuizController.QuizQuestion> questions = List.of(new StudentQuizController.QuizQuestion("Q1", List.of("A")));
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
         controller.preSetController(student, "Nonexistent Quiz", questions, 5);
         var submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
         submitQuiz.setAccessible(true);
@@ -443,7 +443,7 @@ public class StudentQuizControllerTest {
         // (simulate user clicking OK and not clicking OK)
         // Not easily testable in headless mode, but we can invoke and check no exceptions
         Student student = new Student();
-        List<StudentQuizController.QuizQuestion> questions = List.of(new StudentQuizController.QuizQuestion("Q1", List.of("A")));
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
         controller.preSetController(student, "Sample Quiz", questions, 5);
         var submitQuiz = controller.getClass().getDeclaredMethod("submitQuiz");
         submitQuiz.setAccessible(true);
@@ -468,7 +468,7 @@ public class StudentQuizControllerTest {
     void testReturnToMainPageBranches() throws Exception {
         // With valid scene/window
         Student student = new Student();
-        List<StudentQuizController.QuizQuestion> questions = List.of(new StudentQuizController.QuizQuestion("Q1", List.of("A")));
+        List<StudentQuizController.QuizQuestion> questions = Arrays.asList(new StudentQuizController.QuizQuestion("Q1", Arrays.asList("A"), 1, "A"));
         controller.preSetController(student, "Sample Quiz", questions, 5);
         var returnToMainPage = controller.getClass().getDeclaredMethod("returnToMainPage");
         returnToMainPage.setAccessible(true);

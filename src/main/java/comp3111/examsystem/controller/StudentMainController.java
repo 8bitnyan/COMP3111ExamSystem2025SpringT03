@@ -82,49 +82,37 @@ public class StudentMainController implements Initializable {
         if (student == null || student.getDepartment() == null) {
             return;
         }
-        
-        // Get the department of the student
         String studentDepartment = student.getDepartment().toString();
-        
-        // Create a database connection to fetch exams
         Database<Exam> examDB = new Database<>(Exam.class);
         Database<Course> courseDB = new Database<>(Course.class);
-        
-        // Get all published exams
+        Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
         List<Exam> allExams = examDB.getAllEnabled();
         List<String> availableQuizzes = new ArrayList<>();
-        
-        // Filter exams by student's department
-        for (Exam exam : allExams) {
-            // Skip unpublished exams
-            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {
-                continue;
-            }
-            
-            // Get the course for this exam
-            String courseCode = exam.getCourseCode();
-            if (courseCode == null || courseCode.isEmpty()) {
-                continue;
-            }
-            
-            // Find the course in the database
-            List<Course> courses = courseDB.queryByField("courseCode", courseCode);
-            if (courses.isEmpty()) {
-                continue;
-            }
-            
-            // Check if the course is from the student's department
-            Course course = courses.get(0);
-            if (course.getDepartment() != null && course.getDepartment().toString().equals(studentDepartment)) {
-                availableQuizzes.add(exam.getName());
+        // Get all records for this student
+        List<comp3111.examsystem.entity.Record> studentRecords = recordDB.queryByField("studentID", student.getId().toString());
+        // Build a set of attempted exam IDs
+        List<Long> attemptedExamIds = new ArrayList<>();
+        for (comp3111.examsystem.entity.Record record : studentRecords) {
+            if (record.getExamID() != null) {
+                attemptedExamIds.add(record.getExamID());
             }
         }
-        
-        // Update the combo box with the available quizzes
+        for (Exam exam : allExams) {
+            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) continue;
+            String courseCode = exam.getCourseCode();
+            if (courseCode == null || courseCode.isEmpty()) continue;
+            List<Course> courses = courseDB.queryByField("courseCode", courseCode);
+            if (courses.isEmpty()) continue;
+            Course course = courses.get(0);
+            if (course.getDepartment() != null && course.getDepartment().toString().equals(studentDepartment)) {
+                // Only add if student has NOT attempted this exam
+                if (!attemptedExamIds.contains(exam.getId())) {
+                    availableQuizzes.add(exam.getName());
+                }
+            }
+        }
         TakeExamComboBox.getItems().clear();
         TakeExamComboBox.getItems().addAll(availableQuizzes);
-        
-        // If no quizzes available, show message
         if (availableQuizzes.isEmpty()) {
             System.out.println("No exams available for department: " + studentDepartment);
         }
@@ -216,44 +204,44 @@ public class StudentMainController implements Initializable {
             showAlert(Alert.AlertType.WARNING, "No Quiz Selected", "Please select a quiz before starting.");
             return;
         }
-        
         try {
-            // Find the exam in the database by name
             Database<Exam> examDB = new Database<>(Exam.class);
             List<Exam> exams = examDB.getAllEnabled();
             Exam selectedExam = null;
-            
-            // Find the exam with the matching name
             for (Exam exam : exams) {
                 if (selectedQuizName.equals(exam.getName())) {
                     selectedExam = exam;
                     break;
                 }
             }
-            
             if (selectedExam == null) {
                 showAlert(Alert.AlertType.ERROR, "Exam Not Found", "Could not find the selected exam in the database.");
                 return;
             }
-            
-            // Get the questions for this exam
+            // Double-check: has the student already attempted this exam?
+            Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
+            List<comp3111.examsystem.entity.Record> studentRecords = recordDB.queryByField("studentID", student.getId().toString());
+            boolean alreadyAttempted = false;
+            for (comp3111.examsystem.entity.Record record : studentRecords) {
+                if (record.getExamID() != null && record.getExamID().equals(selectedExam.getId())) {
+                    alreadyAttempted = true;
+                    break;
+                }
+            }
+            if (alreadyAttempted) {
+                showAlert(Alert.AlertType.WARNING, "Already Attempted", "You have already attempted this exam. Only one attempt is allowed.");
+                loadAvailableQuizzes(); // Refresh the list
+                return;
+            }
             List<StudentQuizController.QuizQuestion> quizQuestions = loadQuestionsForExam(selectedExam);
-            
             if (quizQuestions.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "No Questions", "This exam does not have any questions.");
                 return;
             }
-            
-            // Load the quiz screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentQuizUI.fxml"));
             Parent root = loader.load();
-            
             StudentQuizController controller = loader.getController();
-            
-            // Initialize the controller with the real exam data
             controller.preSetController(student, selectedQuizName, quizQuestions, selectedExam.getDuration());
-            
-            // Show the quiz screen
             Stage stage = (Stage) startExamButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -299,18 +287,20 @@ public class StudentMainController implements Initializable {
                         System.out.println("Question not found with ID: " + questionIdStr);
                         continue;
                     }
-                    
-                    // Create a quiz question based on the question type
+                    int maxScore = dbQuestion.getScore() != null ? dbQuestion.getScore() : 1;
                     if ("MCQ".equalsIgnoreCase(dbQuestion.getType())) {
                         // Multiple choice question
                         quizQuestions.add(new StudentQuizController.QuizQuestion(
                             dbQuestion.getQuestionText(),
-                            dbQuestion.getOptions()
+                            dbQuestion.getOptions(),
+                            maxScore,
+                            dbQuestion.getAnswer()
                         ));
                     } else {
                         // Short answer question
                         quizQuestions.add(new StudentQuizController.QuizQuestion(
-                            dbQuestion.getQuestionText()
+                            dbQuestion.getQuestionText(),
+                            maxScore
                         ));
                     }
                 } catch (Exception e) {
@@ -460,8 +450,8 @@ public class StudentMainController implements Initializable {
                         question.getQuestionText(),
                         studentAnswer,
                         correctAnswer,
-                        score / maxScore, // Normalize to 0-1 range
-                        1.0, // Max score is always 1.0 after normalization
+                        score, // actual assigned score
+                        maxScore, // actual max score
                         generateFeedback(score, maxScore)
                     ));
                 } catch (Exception e) {

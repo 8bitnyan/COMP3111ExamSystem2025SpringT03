@@ -53,9 +53,12 @@ public class TeacherGradeExamController implements Initializable {
     private final Database<Record> recordDatabase;
     private Record selectedRecord;
     @FXML private TextField manualScoreField;
+    @FXML private Label studentAnswerLabel;
+    @FXML private Label studentNameLabel;
     private Path examFilePath;
     private Path questionFilePath;
     private Path studentFilePath;
+    @FXML private Button updateButton;
 
     // Default constructor for production
     public TeacherGradeExamController() {
@@ -82,8 +85,6 @@ public class TeacherGradeExamController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Load all questions from the exam for display
-        loadExamOptions();
         courseFilter.setOnAction(e -> {
             String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();
             examFilter.getItems().clear();
@@ -104,21 +105,33 @@ public class TeacherGradeExamController implements Initializable {
             if (newVal != null && questionTextToId.containsKey(newVal)) {
                 String qid = questionTextToId.get(newVal);
                 displayQuestionDetails(qid);
-                displayStudentResponsesForQuestion(qid);
-            }
-        });
-
-        //If a question is selected -> Display question details, all the students' response for that question.
-        questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && questionTextToId.containsKey(newVal)) {
-                String qid = questionTextToId.get(newVal);
-                displayQuestionDetails(qid);
+                refreshCurrentQuestionData();
+                // After refreshing, update the detail panel to show the first student answer (if any)
+                if (!answerTable.getItems().isEmpty()) {
+                    answerTable.getSelectionModel().select(0);
+                    Record firstRecord = answerTable.getItems().get(0);
+                    updateDetailPanel(firstRecord, qid);
+                } else {
+                    updateDetailPanel(null, qid);
+                }
             }
         });
         answerTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 selectedRecord = newVal;
                 manualScoreField.setText(String.valueOf(newVal.getScore()));
+                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();
+                if (selectedQuestion != null && questionTextToId.containsKey(selectedQuestion)) {
+                    String qid = questionTextToId.get(selectedQuestion);
+                    updateDetailPanel(newVal, qid);
+                }
+            } else {
+                // If no student is selected, clear the detail panel for the current question
+                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();
+                if (selectedQuestion != null && questionTextToId.containsKey(selectedQuestion)) {
+                    String qid = questionTextToId.get(selectedQuestion);
+                    updateDetailPanel(null, qid);
+                }
             }
         });
         studentFilter.setOnAction(e -> {
@@ -132,6 +145,7 @@ public class TeacherGradeExamController implements Initializable {
 
     public void presetController(Teacher teacher) {
         this.teacher = teacher;
+        loadExamOptions();
     }
 
     /**
@@ -145,16 +159,21 @@ public class TeacherGradeExamController implements Initializable {
             examFilter.getItems().clear();
             examLineMap.clear();
             courseToExamsMap.clear();
+            String teacherIdStr = teacher != null && teacher.getId() != null ? teacher.getId().toString() : null;
+            System.out.println("[DEBUG] Logged-in teacherId: " + teacherIdStr);
             for (String line : lines) {
-                // Only load if isAble is true
                 if (!line.contains("isAble%&:true")) continue;
-
                 String courseCode = extractField(line, "courseCode");
                 String examName = extractField(line, "examName");
-                if (courseCode != null && examName != null) {
+                String examTeacherId = extractField(line, "teacherId");
+                System.out.println("[DEBUG] Exam: courseCode=" + courseCode + ", examName=" + examName + ", teacherId=" + examTeacherId);
+                if (courseCode != null && examName != null && teacherIdStr != null && examTeacherId != null && examTeacherId.equals(teacherIdStr)) {
+                    System.out.println("[DEBUG] -> MATCHED and added to visible exams");
                     examLineMap.put(courseCode + "|" + examName, line);
                     courseToExamsMap.putIfAbsent(courseCode, new ArrayList<>());
                     courseToExamsMap.get(courseCode).add(examName);
+                } else {
+                    System.out.println("[DEBUG] -> NOT MATCHED");
                 }
             }
             courseFilter.getItems().addAll(courseToExamsMap.keySet());
@@ -295,18 +314,35 @@ public class TeacherGradeExamController implements Initializable {
         String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();
         List<Record> allRecords = recordDatabase.getAllEnabled();
         List<Record> result = new ArrayList<>();
+        Long qidLong = null;
+        try {
+            qidLong = Long.parseLong(questionId);
+        } catch (Exception e) {
+            System.out.println("Could not parse questionId to Long: " + questionId);
+        }
+        System.out.println("Selected questionId: " + questionId);
         for (Record r : allRecords) {
             if (r.getQuestionID() != null && r.getExamID() != null &&
-                    r.getQuestionID().toString().equals(questionId) &&
-                    r.getExamID().equals(currentExamID)) {
-
+                qidLong != null && r.getQuestionID().equals(qidLong) &&
+                r.getExamID().equals(currentExamID)) {
                 String name = getStudentNameById(String.valueOf(r.getStudentID()));
                 if (selectedStudentName == null || selectedStudentName.equals("ALL") || name.equals(selectedStudentName)) {
+                    System.out.println("Record: QID=" + r.getQuestionID() + ", EID=" + r.getExamID());
                     result.add(r);
                 }
             }
         }
         answerTable.setItems(FXCollections.observableArrayList(result));
+        answerTable.refresh();
+        // Always clear and select the first row, update detail panel
+        answerTable.getSelectionModel().clearSelection();
+        if (!result.isEmpty()) {
+            answerTable.getSelectionModel().select(0);
+            Record firstRecord = result.get(0);
+            updateDetailPanel(firstRecord, questionId);
+        } else {
+            updateDetailPanel(null, questionId);
+        }
     }
 
     /**
@@ -421,5 +457,139 @@ public class TeacherGradeExamController implements Initializable {
                 "Are you sure you want to exit?\nClick OK to exit the application.",
                 Platform::exit
         );
+    }
+
+    // Helper: Get option text by letter for MCQ
+    private String getOptionTextByLetter(String letter, List<String> options) {
+        if (letter == null || letter.length() != 1) return "";
+        int idx = letter.charAt(0) - 'A';
+        if (idx >= 0 && idx < options.size()) {
+            return options.get(idx);
+        }
+        return "";
+    }
+
+    // Helper: Get options for a question by ID
+    private List<String> getOptionsForQuestion(String questionId) {
+        try {
+            List<String> questionLines = Files.readAllLines(questionFilePath);
+            for (String line : questionLines) {
+                if (line.contains("id%&:" + questionId + "!@#") && line.contains("isAble%&:true")) {
+                    List<String> options = new ArrayList<>();
+                    for (String opt : new String[]{"A", "B", "C", "D", "E"}) {
+                        String val = extractField(line, "option" + opt);
+                        if (val != null && !val.isEmpty()) options.add(val);
+                    }
+                    return options;
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return new ArrayList<>();
+    }
+
+    // Helper: Get question type by ID
+    private String getQuestionType(String questionId) {
+        try {
+            List<String> questionLines = Files.readAllLines(questionFilePath);
+            for (String line : questionLines) {
+                if (line.contains("id%&:" + questionId + "!@#") && line.contains("isAble%&:true")) {
+                    return extractField(line, "type");
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    // Helper: Get correct answer for a question by ID
+    private String getCorrectAnswer(String questionId) {
+        try {
+            List<String> questionLines = Files.readAllLines(questionFilePath);
+            for (String line : questionLines) {
+                if (line.contains("id%&:" + questionId + "!@#") && line.contains("isAble%&:true")) {
+                    return extractField(line, "answer");
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    // Helper: Get max score for a question by ID
+    private String getMaxScore(String questionId) {
+        try {
+            List<String> questionLines = Files.readAllLines(questionFilePath);
+            for (String line : questionLines) {
+                if (line.contains("id%&:" + questionId + "!@#") && line.contains("isAble%&:true")) {
+                    return extractField(line, "score");
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    // Patch: When a row is selected in the answer table, update the detail panel
+    private void updateDetailPanel(Record record, String questionId) {
+        if (record == null || questionId == null) {
+            if (studentNameLabel != null) studentNameLabel.setText("");
+            if (studentAnswerLabel != null) studentAnswerLabel.setText("");
+            if (correctAnswerLabel != null) correctAnswerLabel.setText("N/A");
+            if (maxScoreLabel != null) maxScoreLabel.setText("N/A");
+            return;
+        }
+        // Student name
+        String studentName = getStudentNameById(String.valueOf(record.getStudentID()));
+        // Question type
+        String type = getQuestionType(questionId);
+        // Options (for MCQ)
+        List<String> options = getOptionsForQuestion(questionId);
+        // Student answer
+        String studentLetter = record.getResponse();
+        String studentText = ("MCQ".equalsIgnoreCase(type)) ? getOptionTextByLetter(studentLetter, options) : record.getResponse();
+        // Correct answer
+        String correctLetter = getCorrectAnswer(questionId);
+        String correctText = ("MCQ".equalsIgnoreCase(type)) ? getOptionTextByLetter(correctLetter, options) : correctLetter;
+        // Max score
+        String maxScore = getMaxScore(questionId);
+        // Update UI labels
+        if (studentNameLabel != null) {
+            studentNameLabel.setText(studentName != null ? studentName : "");
+        }
+        if (studentAnswerLabel != null) {
+            if ("MCQ".equalsIgnoreCase(type)) {
+                studentAnswerLabel.setText((studentLetter != null ? studentLetter : "") + (studentText != null && !studentText.isEmpty() ? ". " + studentText : ""));
+            } else {
+                studentAnswerLabel.setText(studentText != null ? studentText : "");
+            }
+        }
+        if (correctAnswerLabel != null) {
+            if ("MCQ".equalsIgnoreCase(type)) {
+                correctAnswerLabel.setText((correctLetter != null ? correctLetter : "") + (correctText != null && !correctText.isEmpty() ? ". " + correctText : ""));
+            } else {
+                correctAnswerLabel.setText(correctText != null ? correctText : "N/A");
+            }
+        }
+        if (maxScoreLabel != null) {
+            maxScoreLabel.setText(maxScore != null ? maxScore : "N/A");
+        }
+    }
+
+    // Refresh the answer table and detail panel from the database for the current question
+    private void refreshCurrentQuestionData() {
+        manualScoreField.setDisable(true);
+        if (updateButton != null) updateButton.setDisable(true);
+        String selectedQuestion = questionList.getSelectionModel().getSelectedItem();
+        if (selectedQuestion != null && questionTextToId.containsKey(selectedQuestion)) {
+            String qid = questionTextToId.get(selectedQuestion);
+            displayStudentResponsesForQuestion(qid); // This will refresh the table and detail panel
+        }
+        manualScoreField.setDisable(false);
+        if (updateButton != null) updateButton.setDisable(false);
     }
 }

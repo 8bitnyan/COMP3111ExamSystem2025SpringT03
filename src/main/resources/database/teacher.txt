@@ -1,2 +1,3 @@
 position%&:Professor!@#name%&:admin!@#gender%&:Male!@#age%&:54!@#department%&:CSE!@#username%&:cseteach!@#password%&:11111111!@#id%&:1745578309190!@#isAble%&:true!@#
 position%&:Associate Professor!@#name%&:Oh Yeontaek!@#gender%&:Male!@#age%&:23!@#department%&:CSE!@#username%&:yohae!@#password%&:12345678!@#id%&:1745815100309!@#isAble%&:true!@#
+position%&:Professor!@#name%&:test fina teach!@#gender%&:Male!@#age%&:41!@#department%&:FINA!@#username%&:finateach!@#password%&:11111111!@#id%&:1746588039100!@#isAble%&:true!@#

@@ -39,12 +39,14 @@
                 <Insets top="20" right="20" bottom="20" left="20" />
             </padding>
             <Text fx:id="questionText" text="Question text goes here..." wrappingWidth="500"/>
+            <Text fx:id="maxScoreText" text="Max Score: 0" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
             
             <VBox fx:id="multipleChoiceContainer" spacing="10" visible="false">
                 <RadioButton fx:id="option1" text="Option 1" toggleGroup="$answerGroup" />
                 <RadioButton fx:id="option2" text="Option 2" toggleGroup="$answerGroup" />
                 <RadioButton fx:id="option3" text="Option 3" toggleGroup="$answerGroup" />
                 <RadioButton fx:id="option4" text="Option 4" toggleGroup="$answerGroup" />
+                <RadioButton fx:id="option5" text="Option 5" toggleGroup="$answerGroup" />
             </VBox>
             
             <VBox fx:id="shortAnswerContainer" spacing="10" visible="false">

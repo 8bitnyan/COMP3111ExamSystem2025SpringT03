@@ -91,6 +91,12 @@ public class StudentGradeStatisticsController implements Initializable {
                 maxScoreField.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+        
+        // Initialize empty data
+        allQuizGrades = new ArrayList<>();
+        filteredQuizGrades = new ArrayList<>();
+        loadCourses();
+        applyFilter();
     }
     
     /**
@@ -99,37 +105,11 @@ public class StudentGradeStatisticsController implements Initializable {
      */
     public void preSetController(Student student) {
         this.student = student;
-        
-        // Load demo quiz grades
-        loadDemoQuizGrades();
-        
-        // Load available courses
+        // In a real application, load real quiz grades for this student here
+        // allQuizGrades = ...
+        // For now, just ensure empty state is handled
         loadCourses();
-        
-        // Apply initial filter
         applyFilter();
-    }
-    
-    /**
-     * Loads demo quiz grades for testing.
-     */
-    private void loadDemoQuizGrades() {
-        allQuizGrades = new ArrayList<>();
-        
-        // Demo data for COMP3111
-        allQuizGrades.add(new QuizGrade("Week 1 Quiz", "COMP3111", 85.0, LocalDate.now().minusDays(30)));
-        allQuizGrades.add(new QuizGrade("Week 2 Quiz", "COMP3111", 78.0, LocalDate.now().minusDays(23)));
-        allQuizGrades.add(new QuizGrade("Midterm Assessment", "COMP3111", 92.0, LocalDate.now().minusDays(15)));
-        
-        // Demo data for COMP3021
-        allQuizGrades.add(new QuizGrade("OOP Quiz", "COMP3021", 88.0, LocalDate.now().minusDays(28)));
-        allQuizGrades.add(new QuizGrade("Java Collection Quiz", "COMP3021", 75.0, LocalDate.now().minusDays(20)));
-        allQuizGrades.add(new QuizGrade("Multithreading Quiz", "COMP3021", 68.0, LocalDate.now().minusDays(10)));
-        
-        // Demo data for COMP2012
-        allQuizGrades.add(new QuizGrade("Pointers Quiz", "COMP2012", 80.0, LocalDate.now().minusDays(40)));
-        allQuizGrades.add(new QuizGrade("Dynamic Memory Quiz", "COMP2012", 65.0, LocalDate.now().minusDays(35)));
-        allQuizGrades.add(new QuizGrade("Inheritance Quiz", "COMP2012", 95.0, LocalDate.now().minusDays(25)));
     }
     
     /**
@@ -211,6 +191,8 @@ public class StudentGradeStatisticsController implements Initializable {
     private void updateChart() {
         gradeChart.getData().clear();
         
+        if (filteredQuizGrades.isEmpty()) return;
+        
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         
         for (QuizGrade grade : filteredQuizGrades) {
@@ -222,7 +204,7 @@ public class StudentGradeStatisticsController implements Initializable {
         // Style the bars
         for (XYChart.Data<String, Number> data : series.getData()) {
             String color = getColorForScore((double) data.getYValue());
-            data.getNode().setStyle("-fx-bar-fill: " + color + ";");
+            if (data.getNode() != null) data.getNode().setStyle("-fx-bar-fill: " + color + ";");
             
             // Add tooltip showing the exact score
             Tooltip tooltip = new Tooltip(data.getXValue() + ": " + data.getYValue() + "%");
@@ -312,7 +294,8 @@ public class StudentGradeStatisticsController implements Initializable {
     @FXML
     public void handleRefresh(ActionEvent event) {
         // In a real application, this would reload data from the server
-        loadDemoQuizGrades();
+        // For now, just re-apply filter and reload courses
+        loadCourses();
         applyFilter();
     }
     

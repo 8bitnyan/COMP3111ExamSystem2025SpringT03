@@ -1,1 +1,2 @@
 courseCode%&:COMP3111!@#courseName%&:Computer Org!@#department%&:CSE!@#id%&:1745578282931!@#isAble%&:true!@#
+courseCode%&:FINA1111!@#courseName%&:Fina intro!@#department%&:FINA!@#id%&:1746588201266!@#isAble%&:true!@#

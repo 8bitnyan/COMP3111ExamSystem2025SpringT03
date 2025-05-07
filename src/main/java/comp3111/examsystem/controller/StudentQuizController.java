@@ -9,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -21,9 +20,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.ResourceBundle;
 
 /**
@@ -42,11 +39,13 @@ public class StudentQuizController implements Initializable {
     @FXML private RadioButton option2;
     @FXML private RadioButton option3;
     @FXML private RadioButton option4;
+    @FXML private RadioButton option5;
     @FXML private TextArea shortAnswerField;
     @FXML private Button previousButton;
     @FXML private Button nextButton;
     @FXML private Button submitButton;
     @FXML private ToggleGroup answerGroup;
+    @FXML private Text maxScoreText;
     
     // Data
     private Student student;
@@ -59,6 +58,7 @@ public class StudentQuizController implements Initializable {
     private int minutes = 0;
     private int seconds = 0;
     private Timeline timeline;
+    private boolean isSubmitting = false;
     
     /**
      * Initializes the student quiz page UI.
@@ -67,10 +67,31 @@ public class StudentQuizController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Setup timer
-        setupTimer();
-        
-        // We'll set up the window close handler in preSetController after UI is fully loaded
+        // Setup MCQ listeners
+        option1.setToggleGroup(answerGroup);
+        option2.setToggleGroup(answerGroup);
+        option3.setToggleGroup(answerGroup);
+        option4.setToggleGroup(answerGroup);
+        option5.setToggleGroup(answerGroup);
+        RadioButton[] btns = {option1, option2, option3, option4, option5};
+        answerGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle != null && isCurrentQuestionMCQ()) {
+                for (int i = 0; i < btns.length; i++) {
+                    if (btns[i] == newToggle) {
+                        studentAnswers.set(currentQuestionIndex, String.valueOf((char)('A' + i)));
+                        break;
+                    }
+                }
+                updateSidebarStyles();
+            }
+        });
+        // Short answer listener
+        shortAnswerField.textProperty().addListener((obs, oldText, newText) -> {
+            if (!isCurrentQuestionMCQ()) {
+                studentAnswers.set(currentQuestionIndex, newText);
+                updateSidebarStyles();
+            }
+        });
     }
     
     /**
@@ -85,48 +106,23 @@ public class StudentQuizController implements Initializable {
         this.quizName = quizName;
         this.questions = questions;
         this.totalQuestions = questions.size();
-        this.studentAnswers = new ArrayList<>(totalQuestions);
-        
-        // Initialize student answers
-        for (int i = 0; i < totalQuestions; i++) {
-            studentAnswers.add("");
-        }
-        
-        // Set quiz name and total questions
+        this.studentAnswers = new ArrayList<>(Collections.nCopies(totalQuestions, ""));
         quizNameText.setText(quizName);
         totalQuestionsText.setText(String.valueOf(totalQuestions));
-        
-        // Setup timer with the time limit
-        if (timeLimit > 0) {
-            this.hours = timeLimit / 60;
-            this.minutes = timeLimit % 60;
-            this.seconds = 0;
-            updateTimerDisplay();
-            
-            // Start the timer
-            if (timeline != null) {
-                timeline.play();
-            }
-        }
-        
-        // Create question navigation buttons
-        setupQuestionList();
-        
-        // Load the first question
+        // Timer
+        this.hours = timeLimit / 60;
+        this.minutes = timeLimit % 60;
+        this.seconds = 0;
+        setupTimer();
+        // Sidebar
+        setupSidebar();
+        // Load first question
         loadQuestion(0);
-        
-        // Apply initial styles to question buttons
-        updateQuestionButtonStyles();
-        
-        // Setup window close handler after UI is fully loaded
+        // Window close handler
         Platform.runLater(() -> {
-            try {
-                Stage stage = (Stage) questionText.getScene().getWindow();
-                if (stage != null) {
-                    stage.setOnCloseRequest(this::handleWindowClose);
-                }
-            } catch (Exception e) {
-                System.err.println("Failed to set up window close handler: " + e.getMessage());
+            Stage stage = (Stage) quizNameText.getScene().getWindow();
+            if (stage != null) {
+                stage.setOnCloseRequest(this::handleWindowClose);
             }
         });
     }
@@ -134,47 +130,35 @@ public class StudentQuizController implements Initializable {
     /**
      * Sets up the question list for navigation.
      */
-    private void setupQuestionList() {
+    private void setupSidebar() {
         questionListContainer.getChildren().clear();
         for (int i = 0; i < questions.size(); i++) {
-            final int questionIndex = i;
-            Button questionButton = new Button("Question " + (i + 1));
-            questionButton.setPrefWidth(180);
-            questionButton.setOnAction(e -> loadQuestion(questionIndex));
-            
-            // Add a style class to the button
-            questionButton.getStyleClass().add("question-button");
-            
-            questionListContainer.getChildren().add(questionButton);
+            final int idx = i;
+            Button btn = new Button("Question " + (i + 1));
+            btn.setPrefWidth(180);
+            btn.setOnAction(e -> loadQuestion(idx));
+            btn.getStyleClass().add("question-button");
+            questionListContainer.getChildren().add(btn);
         }
+        updateSidebarStyles();
     }
     
     /**
      * Updates the question navigation buttons to indicate which questions have been answered.
      */
-    private void updateQuestionButtonStyles() {
+    private void updateSidebarStyles() {
         for (int i = 0; i < questionListContainer.getChildren().size(); i++) {
-            Button button = (Button) questionListContainer.getChildren().get(i);
-            
-            // Check if this question has been answered
-            boolean isAnswered = i < studentAnswers.size() && !studentAnswers.get(i).isEmpty();
-            
-            // Add or remove the "answered" style class
-            if (isAnswered) {
-                if (!button.getStyleClass().contains("answered-question")) {
-                    button.getStyleClass().add("answered-question");
-                }
+            Button btn = (Button) questionListContainer.getChildren().get(i);
+            boolean answered = !studentAnswers.get(i).isEmpty();
+            if (answered) {
+                if (!btn.getStyleClass().contains("answered-question")) btn.getStyleClass().add("answered-question");
             } else {
-                button.getStyleClass().remove("answered-question");
+                btn.getStyleClass().remove("answered-question");
             }
-            
-            // Highlight current question
             if (i == currentQuestionIndex) {
-                if (!button.getStyleClass().contains("current-question")) {
-                    button.getStyleClass().add("current-question");
-                }
+                if (!btn.getStyleClass().contains("current-question")) btn.getStyleClass().add("current-question");
             } else {
-                button.getStyleClass().remove("current-question");
+                btn.getStyleClass().remove("current-question");
             }
         }
     }
@@ -184,112 +168,82 @@ public class StudentQuizController implements Initializable {
      * @param index The index of the question to load.
      */
     private void loadQuestion(int index) {
-        if (index < 0 || index >= questions.size()) {
-            return;
-        }
-        
-        // Save current answer before loading new question
+        if (index < 0 || index >= questions.size()) return;
         saveCurrentAnswer();
-        
-        // Update current question index
         currentQuestionIndex = index;
-        
-        // Get the current question
-        QuizQuestion question = questions.get(currentQuestionIndex);
-        
-        // Set question text
-        questionText.setText("Question " + (currentQuestionIndex + 1) + ": " + question.getQuestionText());
-        
-        // Update UI based on question type
-        if (question.isMultipleChoice()) {
+        QuizQuestion q = questions.get(currentQuestionIndex);
+        questionText.setText("Question " + (currentQuestionIndex + 1) + ": " + q.getQuestionText());
+        maxScoreText.setText("Max Score: " + q.getMaxScore());
+        if (q.isMultipleChoice()) {
             multipleChoiceContainer.setVisible(true);
             shortAnswerContainer.setVisible(false);
-            
-            // Set multiple choice options
-            List<String> options = question.getOptions();
-            
-            // Clear all options first
-            option1.setText("");
-            option2.setText("");
-            option3.setText("");
-            option4.setText("");
-            
-            // Set options based on available count
-            int optionsCount = options.size();
-            if (optionsCount > 0) option1.setText(options.get(0));
-            if (optionsCount > 1) option2.setText(options.get(1));
-            if (optionsCount > 2) option3.setText(options.get(2));
-            if (optionsCount > 3) option4.setText(options.get(3));
-            
-            // Set visibility based on available options
-            option1.setVisible(optionsCount > 0);
-            option2.setVisible(optionsCount > 1);
-            option3.setVisible(optionsCount > 2);
-            option4.setVisible(optionsCount > 3);
-            
-            // Set selected option if an answer exists
-            String savedAnswer = studentAnswers.get(currentQuestionIndex);
-            if (!savedAnswer.isEmpty()) {
-                if (savedAnswer.equals(option1.getText()) && !option1.getText().isEmpty()) {
-                    option1.setSelected(true);
-                } else if (savedAnswer.equals(option2.getText()) && !option2.getText().isEmpty()) {
-                    option2.setSelected(true);
-                } else if (savedAnswer.equals(option3.getText()) && !option3.getText().isEmpty()) {
-                    option3.setSelected(true);
-                } else if (savedAnswer.equals(option4.getText()) && !option4.getText().isEmpty()) {
-                    option4.setSelected(true);
+            List<String> opts = q.getOptions();
+            RadioButton[] btns = {option1, option2, option3, option4, option5};
+            answerGroup.selectToggle(null);
+            for (int i = 0; i < btns.length; i++) {
+                if (i < opts.size()) {
+                    btns[i].setText(opts.get(i));
+                    btns[i].setVisible(true);
+                } else {
+                    btns[i].setText("");
+                    btns[i].setVisible(false);
                 }
-            } else {
-                answerGroup.selectToggle(null);
+            }
+            // Restore selection by letter
+            String saved = studentAnswers.get(currentQuestionIndex);
+            if (saved != null && saved.length() == 1) {
+                int idx = saved.charAt(0) - 'A';
+                if (idx >= 0 && idx < btns.length && btns[idx].isVisible()) {
+                    btns[idx].setSelected(true);
+                }
             }
         } else {
             multipleChoiceContainer.setVisible(false);
             shortAnswerContainer.setVisible(true);
-            
-            // Set short answer text if an answer exists
             shortAnswerField.setText(studentAnswers.get(currentQuestionIndex));
         }
-        
-        // Update navigation buttons
-        updateNavigationButtons();
-        
-        // Update question button styles
-        updateQuestionButtonStyles();
+        previousButton.setDisable(currentQuestionIndex == 0);
+        nextButton.setDisable(currentQuestionIndex == questions.size() - 1);
+        previousButton.setVisible(currentQuestionIndex != 0);
+        nextButton.setVisible(currentQuestionIndex != questions.size() - 1);
+        updateSidebarStyles();
     }
     
     /**
      * Saves the current answer before moving to another question.
      */
     private void saveCurrentAnswer() {
-        if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.size()) {
-            if (questions.get(currentQuestionIndex).isMultipleChoice()) {
-                RadioButton selectedButton = (RadioButton) answerGroup.getSelectedToggle();
-                if (selectedButton != null) {
-                    studentAnswers.set(currentQuestionIndex, selectedButton.getText());
-                } else {
-                    studentAnswers.set(currentQuestionIndex, "");
+        if (currentQuestionIndex < 0 || currentQuestionIndex >= questions.size()) return;
+        QuizQuestion q = questions.get(currentQuestionIndex);
+        if (q.isMultipleChoice()) {
+            RadioButton selected = (RadioButton) answerGroup.getSelectedToggle();
+            RadioButton[] btns = {option1, option2, option3, option4, option5};
+            String letter = "";
+            for (int i = 0; i < btns.length; i++) {
+                if (btns[i] == selected) {
+                    letter = String.valueOf((char)('A' + i));
+                    break;
                 }
-            } else {
-                studentAnswers.set(currentQuestionIndex, shortAnswerField.getText());
             }
-            
-            // Update the question button styles
-            updateQuestionButtonStyles();
+            studentAnswers.set(currentQuestionIndex, letter);
+        } else {
+            studentAnswers.set(currentQuestionIndex, shortAnswerField.getText());
         }
     }
     
     /**
-     * Updates the navigation buttons based on the current question index.
+     * Checks if the current question is a multiple choice question.
+     * @return True if the current question is multiple choice, false otherwise.
      */
-    private void updateNavigationButtons() {
-        previousButton.setDisable(currentQuestionIndex == 0);
-        nextButton.setDisable(currentQuestionIndex == questions.size() - 1);
+    private boolean isCurrentQuestionMCQ() {
+        return questions != null && currentQuestionIndex >= 0 && currentQuestionIndex < questions.size() && questions.get(currentQuestionIndex).isMultipleChoice();
     }
     
     /**
      * Sets up the timer for the quiz.
      */
     private void setupTimer() {
+        updateTimerDisplay();
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             if (seconds > 0) {
                 seconds--;
@@ -301,13 +255,11 @@ public class StudentQuizController implements Initializable {
                 minutes = 59;
                 seconds = 59;
             } else {
-                // Time's up - submit the quiz automatically
                 timeline.stop();
                 handleSubmit(null);
             }
             updateTimerDisplay();
         }));
-        
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -317,13 +269,8 @@ public class StudentQuizController implements Initializable {
      */
     private void updateTimerDisplay() {
         timerText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-        
-        // Change timer color to red when less than 5 minutes remain
-        if (hours == 0 && minutes < 5) {
-            timerText.setStyle("-fx-fill: red;");
-        } else {
-            timerText.setStyle("-fx-fill: black;");
-        }
+        if (hours == 0 && minutes < 5) timerText.setStyle("-fx-fill: red;");
+        else timerText.setStyle("-fx-fill: black;");
     }
     
     /**
@@ -332,29 +279,20 @@ public class StudentQuizController implements Initializable {
      */
     @FXML
     public void handleSubmit(ActionEvent event) {
-        // Save current answer before submitting
         saveCurrentAnswer();
-        
-        // Stop the timer
-        if (timeline != null) {
-            timeline.stop();
-        }
-        
-        // Show confirmation dialog
-        Alert confirmSubmit = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmSubmit.setTitle("Submit Quiz");
-        confirmSubmit.setHeaderText("Submit Quiz");
-        confirmSubmit.setContentText("Are you sure you want to submit this quiz?");
-        
-        Optional<ButtonType> result = confirmSubmit.showAndWait();
+        if (isSubmitting) return;
+        isSubmitting = true;
+        if (timeline != null) timeline.stop();
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Submit Quiz");
+        confirm.setHeaderText("Submit Quiz");
+        confirm.setContentText("Are you sure you want to submit this quiz?");
+        Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Submit the quiz
             submitQuiz();
         } else {
-            // Resume the timer if submission was cancelled
-            if (timeline != null) {
-                timeline.play();
-            }
+            isSubmitting = false;
+            if (timeline != null) timeline.play();
         }
     }
     
@@ -363,29 +301,18 @@ public class StudentQuizController implements Initializable {
      * @param event The window event.
      */
     private void handleWindowClose(WindowEvent event) {
-        // Stop the timer
-        if (timeline != null) {
-            timeline.stop();
-        }
-        
-        // Show confirmation dialog
-        Alert confirmClose = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmClose.setTitle("Submit Quiz");
-        confirmClose.setHeaderText("Submit Quiz");
-        confirmClose.setContentText("Closing the window will submit your quiz. Are you sure you want to continue?");
-        
-        Optional<ButtonType> result = confirmClose.showAndWait();
+        saveCurrentAnswer();
+        if (isSubmitting) return;
+        if (timeline != null) timeline.stop();
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Submit Quiz");
+        confirm.setHeaderText("Submit Quiz");
+        confirm.setContentText("Closing the window will submit your quiz. Are you sure you want to continue?");
+        Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Save current answer and submit the quiz
-            saveCurrentAnswer();
-            saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);
-            
-            // The window will close automatically since we don't consume the event
+            submitQuiz();
         } else {
-            // Resume the timer and consume the event to prevent window from closing
-            if (timeline != null) {
-                timeline.play();
-            }
+            if (timeline != null) timeline.play();
             event.consume();
         }
     }
@@ -394,31 +321,18 @@ public class StudentQuizController implements Initializable {
      * Submits the quiz and shows the completion message.
      */
     private void submitQuiz() {
-        // Save all answers one final time
         saveCurrentAnswer();
-        
-        // In a real application, you would save the quiz results to a database here
         saveQuizResultsToDatabase(student, quizName, questions, studentAnswers);
-        
-        // Show completion message
-        Alert completionMessage = new Alert(Alert.AlertType.INFORMATION);
-        completionMessage.setTitle("Quiz Completed");
-        completionMessage.setHeaderText("Quiz Submitted Successfully");
-        completionMessage.setContentText("You have completed the quiz: " + quizName);
-        
-        completionMessage.showAndWait().ifPresent(buttonType -> {
-            if (buttonType == ButtonType.OK) {
-                // Show final message about viewing results
-                Alert resultsMessage = new Alert(Alert.AlertType.INFORMATION);
-                resultsMessage.setTitle("Quiz Results");
-                resultsMessage.setHeaderText("Results Available After Grading");
-                resultsMessage.setContentText("You will be able to see your quiz results after your teacher grades this quiz.");
-                
-                resultsMessage.showAndWait().ifPresent(finalButton -> {
-                    // Return to student main page
-                    returnToMainPage();
-                });
-            }
+        Alert completion = new Alert(Alert.AlertType.INFORMATION);
+        completion.setTitle("Quiz Completed");
+        completion.setHeaderText("Quiz Submitted Successfully");
+        completion.setContentText("You have completed the quiz: " + quizName);
+        completion.showAndWait().ifPresent(btn -> {
+            Alert results = new Alert(Alert.AlertType.INFORMATION);
+            results.setTitle("Quiz Results");
+            results.setHeaderText("Results Available After Grading");
+            results.setContentText("You will be able to see your quiz results after your teacher grades this quiz.");
+            results.showAndWait().ifPresent(finalBtn -> returnToMainPage());
         });
     }
     
@@ -437,9 +351,6 @@ public class StudentQuizController implements Initializable {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
-            } else {
-                // In test or headless mode, just skip window operations
-                System.err.println("No scene/window available for navigation (likely in test mode).");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -457,44 +368,22 @@ public class StudentQuizController implements Initializable {
      */
     private void saveQuizResultsToDatabase(Student student, String quizName, List<QuizQuestion> questions, List<String> studentAnswers) {
         try {
-            // Get the exam from the database
             Database<Exam> examDB = new Database<>(Exam.class);
             List<Exam> exams = examDB.getAllEnabled();
             Exam exam = null;
-            
-            // Find the exam with the matching name
             for (Exam e : exams) {
                 if (quizName.equals(e.getName())) {
                     exam = e;
                     break;
                 }
             }
-            
-            if (exam == null) {
-                System.err.println("Error: Could not find exam with name: " + quizName);
-                return;
-            }
-            
-            // Get the questions string from the exam
+            if (exam == null) return;
             String questionsStr = exam.getQuestions();
-            
-            if (questionsStr == null || questionsStr.isEmpty()) {
-                System.err.println("Error: No questions found for exam: " + quizName);
-                return;
-            }
-            
-            // Split the question IDs string
+            if (questionsStr == null || questionsStr.isEmpty()) return;
             String[] questionIdArr = questionsStr.split(",");
-            
-            if (questionIdArr.length != questions.size()) {
-                System.err.println("Error: Question count mismatch. Database: " + questionIdArr.length + ", Actual: " + questions.size());
-                return;
-            }
-            
-            // Create records for each question
+            if (questionIdArr.length != questions.size()) return;
             Database<comp3111.examsystem.entity.Record> recordDB = new Database<>(comp3111.examsystem.entity.Record.class);
-            
-            // Delete any existing records for this student and exam (in case they're retaking the quiz)
+            // Delete any existing records for this student and exam (enforces one attempt)
             List<comp3111.examsystem.entity.Record> existingRecords = recordDB.getAll();
             for (comp3111.examsystem.entity.Record record : existingRecords) {
                 if (record.getStudentID() != null && record.getStudentID().equals(student.getId()) &&
@@ -502,54 +391,34 @@ public class StudentQuizController implements Initializable {
                     recordDB.delByKey(record.getId().toString());
                 }
             }
-            
-            // Create new records
+            // Create new records for this attempt
             for (int i = 0; i < questions.size() && i < questionIdArr.length && i < studentAnswers.size(); i++) {
                 try {
                     String questionIdStr = questionIdArr[i].trim();
                     if (questionIdStr.isEmpty()) continue;
-                    
-                    // Parse the question ID string to Long
                     Long questionId = Long.parseLong(questionIdStr);
-                    
+                    QuizQuestion quizQ = questions.get(i);
                     comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record();
                     record.setStudent(student.getId());
                     record.setExamID(exam.getId());
                     record.setQuestionID(questionId);
-                    record.setResponse(studentAnswers.get(i));
-                    
-                    // For now, set a default score of 0 - teacher will grade later
-                    record.setScore(0);
-                    
-                    // Save the record to the database
+                    record.setResponse(studentAnswers.get(i)); // now a letter for MCQ
+                    // Auto-grade MCQ
+                    int score = 0;
+                    if (quizQ.isMultipleChoice()) {
+                        String studentAns = studentAnswers.get(i);
+                        String correctAns = quizQ.getCorrectAnswer();
+                        if (studentAns != null && correctAns != null && studentAns.trim().equalsIgnoreCase(correctAns.trim())) {
+                            score = quizQ.getMaxScore();
+                        }
+                    }
+                    record.setScore(score); // Short answer: 0 by default
                     recordDB.add(record);
                 } catch (NumberFormatException e) {
-                    System.err.println("Error parsing question ID: " + questionIdArr[i] + ". Skipping this question.");
+                    // skip
                 }
             }
-            
-            // Also save time spent on the quiz (for future implementations)
-            Database<TimeSpent> timeSpentDB = new Database<>(TimeSpent.class);
-            TimeSpent timeSpent = new TimeSpent();
-            timeSpent.setStudentId(student.getId());
-            timeSpent.setExamId(exam.getId());
-            
-            // Calculate time spent in minutes (initial time limit minus remaining time)
-            int initialTimeLimit = exam.getDuration() != null ? exam.getDuration() : 60;
-            int remainingMinutes = hours * 60 + minutes;
-            int timeSpentMinutes = initialTimeLimit - remainingMinutes;
-            
-            // Make sure time spent is positive
-            if (timeSpentMinutes < 0) {
-                timeSpentMinutes = 0;
-            }
-            
-            timeSpent.setTimeSpent(timeSpentMinutes);
-            timeSpentDB.add(timeSpent);
-            
-            System.out.println("Successfully saved quiz results for student: " + student.getName());
         } catch (Exception e) {
-            System.err.println("Error saving quiz results: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -560,9 +429,7 @@ public class StudentQuizController implements Initializable {
      */
     @FXML
     public void handleNext(ActionEvent event) {
-        if (currentQuestionIndex < questions.size() - 1) {
-            loadQuestion(currentQuestionIndex + 1);
-        }
+        loadQuestion(currentQuestionIndex + 1);
     }
     
     /**
@@ -571,9 +438,7 @@ public class StudentQuizController implements Initializable {
      */
     @FXML
     public void handlePrevious(ActionEvent event) {
-        if (currentQuestionIndex > 0) {
-            loadQuestion(currentQuestionIndex - 1);
-        }
+        loadQuestion(currentQuestionIndex - 1);
     }
     
     /**
@@ -583,26 +448,35 @@ public class StudentQuizController implements Initializable {
         private String questionText;
         private boolean isMultipleChoice;
         private List<String> options;
+        private int maxScore;
+        private String correctAnswer;
         
         /**
          * Constructor for a multiple choice question.
          * @param questionText The text of the question.
          * @param options The list of options for the question.
+         * @param maxScore The max score for the question.
+         * @param correctAnswer The correct answer for the question.
          */
-        public QuizQuestion(String questionText, List<String> options) {
+        public QuizQuestion(String questionText, List<String> options, int maxScore, String correctAnswer) {
             this.questionText = questionText;
             this.isMultipleChoice = true;
             this.options = options;
+            this.maxScore = maxScore;
+            this.correctAnswer = correctAnswer;
         }
         
         /**
          * Constructor for a short answer question.
          * @param questionText The text of the question.
+         * @param maxScore The max score for the question.
          */
-        public QuizQuestion(String questionText) {
+        public QuizQuestion(String questionText, int maxScore) {
             this.questionText = questionText;
             this.isMultipleChoice = false;
             this.options = new ArrayList<>();
+            this.maxScore = maxScore;
+            this.correctAnswer = null;
         }
         
         /**
@@ -628,5 +502,37 @@ public class StudentQuizController implements Initializable {
         public List<String> getOptions() {
             return options;
         }
+        
+        /**
+         * Gets the max score for the question.
+         * @return The max score for the question.
+         */
+        public int getMaxScore() {
+            return maxScore;
+        }
+        
+        /**
+         * Gets the correct answer for the question.
+         * @return The correct answer for the question.
+         */
+        public String getCorrectAnswer() {
+            return correctAnswer;
+        }
+    }
+
+    // Add method to get max score for current question
+    public int getCurrentQuestionMaxScore() {
+        if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.size()) {
+            return questions.get(currentQuestionIndex).getMaxScore();
+        }
+        return 0;
+    }
+
+    // Add method to get correct answer for current question (for MCQ)
+    public String getCurrentQuestionCorrectAnswer() {
+        if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.size()) {
+            return questions.get(currentQuestionIndex).getCorrectAnswer();
+        }
+        return null;
     }
 } 

@@ -514,10 +514,8 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         String questionKeyword = filterQuestionTxt.getText().trim().toLowerCase();
         String typeSelected = filterTypeCmb.getValue();
         String scoreText = filterScoreTxt.getText().trim();
-
         Database<Question> temp = new Database<>(Question.class);
         List<Question> questionDB = temp.queryByField("teacherId", Long.toString(teacher.getId()));
-
         int scoreFilter = -1;
         if (!scoreText.isEmpty()) {
             try {
@@ -528,13 +526,11 @@ public class TeacherQuestionBankMgmtController implements Initializable {
             }
         }
         final int finalScoreFilter = scoreFilter;
-
         List<Question> filteredList = questionDB.stream()
                 .filter(q -> q.getQuestionText() != null && q.getQuestionText().toLowerCase().contains(questionKeyword))
                 .filter(q -> typeSelected.equals("Any") || (q.getType() != null && q.getType().equals(typeSelected)))
                 .filter(q -> finalScoreFilter == -1 || (q.getScore() != null && q.getScore() == finalScoreFilter))
                 .collect(Collectors.toList());
-
         questionsTable.getItems().clear();
         questionsTable.getItems().addAll(filteredList);
     }
@@ -603,20 +599,11 @@ public class TeacherQuestionBankMgmtController implements Initializable {
         questionsTable.getSelectionModel().clearSelection();
         questionsTable.getItems().clear();
         clearFormFields();
-        
-        // Force garbage collection to free resources
         System.gc();
-        
-        // Create a fresh database instance
         Database<Question> freshDB = new Database<>(Question.class);
-        
-        // Forcefully load all questions for this teacher
         List<Question> allQuestions = freshDB.queryByField("teacherId", Long.toString(this.teacher.getId()));
-        
-        // Populate the table with fresh data
         questionsTable.getItems().addAll(allQuestions);
         questionsTable.refresh();
-        
         MsgSender.showMsg("Hard refresh complete. Loaded " + allQuestions.size() + " questions.");
     }
 

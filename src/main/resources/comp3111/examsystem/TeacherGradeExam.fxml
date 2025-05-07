@@ -48,7 +48,11 @@
         <!-- Grading Panel -->
         <VBox spacing="12" layoutY="30" alignment="TOP_LEFT">
             <Label text="Grading Panel" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-            <Label text="Answer:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Label text="Student Name:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Label fx:id="studentNameLabel" prefWidth="300" wrapText="true" style="-fx-font-size: 14px;" />
+            <Label text="Student Answer:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Label fx:id="studentAnswerLabel" prefWidth="300" wrapText="true" style="-fx-font-size: 14px;" />
+            <Label text="Correct Answer:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
             <Label fx:id="correctAnswerLabel" prefWidth="300" wrapText="true" style="-fx-font-size: 14px;" />
             <Label text="Max Score:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
             <Label fx:id="maxScoreLabel" style="-fx-font-size: 14px;" />

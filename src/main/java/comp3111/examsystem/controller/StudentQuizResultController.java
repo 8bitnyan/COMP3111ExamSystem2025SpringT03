@@ -66,18 +66,19 @@ public class StudentQuizResultController implements Initializable {
         this.quizName = quizName;
         this.quizResults = quizResults;
         this.totalQuestions = quizResults.size();
-        
-        // Calculate total score
+        // Calculate total score and max score
         calculateTotalScore();
-        
+        double totalMaxScore = 0;
+        for (QuizResult result : quizResults) {
+            totalMaxScore += result.getMaxScore();
+        }
         // Set quiz name, total questions, and score
         quizNameText.setText(quizName);
         totalQuestionsText.setText(String.valueOf(totalQuestions));
-        scoreText.setText(String.format("%.1f%%", (totalScore / totalQuestions) * 100));
-        
+        double percent = (totalMaxScore > 0) ? (totalScore / totalMaxScore) * 100.0 : 0.0;
+        scoreText.setText(String.format("%.1f%%", percent));
         // Create question navigation buttons
         setupQuestionList();
-        
         // Load the first question result
         loadQuestionResult(0);
     }

@@ -349,11 +349,8 @@ public class TeacherExamMgmtController implements Initializable {
             MsgSender.showMsg("No such course found.");
             return;
         }
-        
         Database<Exam> examDB = new Database<>(Exam.class);
-        // List<Exam> allExams = examDB.queryByField("teacherId", teacher.getId().toString());
-        List<Exam> allExams = examDB.getAllEnabled();
-
+        List<Exam> allExams = examDB.queryByField("teacherId", teacher.getId().toString());
         List<Exam> filteredExams = allExams.stream()
             .filter(e -> e.getName() != null && e.getName().toLowerCase().contains(nameFilter))
             .filter(e -> e.getCourseCode() != null && e.getCourseCode().toLowerCase().contains(courseIdFilter))
@@ -364,7 +361,6 @@ public class TeacherExamMgmtController implements Initializable {
                        ("Unpublished".equals(statusFilter) && !isPublished);
             })
             .collect(Collectors.toList());
-        
         examsTable.getItems().clear();
         examsTable.getItems().addAll(filteredExams);
     }
@@ -388,11 +384,8 @@ public class TeacherExamMgmtController implements Initializable {
         String questionFilter = filterQuestionTxt.getText().trim().toLowerCase();
         String typeFilter = filterTypeCmb.getValue();
         String scoreText = filterScoreTxt.getText().trim();
-        
         Database<Question> questionDB = new Database<>(Question.class);
-        // List<Question> allQuestions = questionDB.queryByField("teacherId", teacher.getId().toString());
-        List<Question> allQuestions = questionDB.getAllEnabled();
-
+        List<Question> allQuestions = questionDB.queryByField("teacherId", teacher.getId().toString());
         int scoreFilter = -1;
         if (!scoreText.isEmpty()) {
             try {
@@ -403,13 +396,11 @@ public class TeacherExamMgmtController implements Initializable {
             }
         }
         final int finalScoreFilter = scoreFilter;
-        
         List<Question> filteredQuestions = allQuestions.stream()
             .filter(q -> q.getQuestionText() != null && q.getQuestionText().toLowerCase().contains(questionFilter))
             .filter(q -> "Any".equals(typeFilter) || (q.getType() != null && q.getType().equals(typeFilter)))
             .filter(q -> finalScoreFilter == -1 || (q.getScore() != null && q.getScore() == finalScoreFilter))
             .collect(Collectors.toList());
-        
         questionsTable.getItems().clear();
         questionsTable.getItems().addAll(filteredQuestions);
     }
@@ -430,9 +421,7 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadAllExams() {
         Database<Exam> examDB = new Database<>(Exam.class);
-        // List<Exam> exams = examDB.queryByField("teacherId", teacher.getId().toString());
-        List<Exam> exams = examDB.getAllEnabled();
-
+        List<Exam> exams = examDB.queryByField("teacherId", teacher.getId().toString());
         examsTable.getItems().clear();
         examsTable.getItems().addAll(exams);
     }
@@ -442,15 +431,10 @@ public class TeacherExamMgmtController implements Initializable {
      */
     private void loadAllQuestions() {
         Database<Question> questionDB = new Database<>(Question.class);
-        /*
-        List<Question> questions = questionDB.getAllEnabled();
-
-        questionsTable.getItems().clear();
-        questionsTable.getItems().addAll(questions);
-        */
+        List<Question> questions = questionDB.queryByField("teacherId", teacher.getId().toString());
         availableQuestions.clear();
         selectedQuestions.clear();
-        availableQuestions.setAll(questionDB.getAllEnabled());
+        availableQuestions.setAll(questions);
     }
 
     /**
