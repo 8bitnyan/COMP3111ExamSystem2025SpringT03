@@ -24,9 +24,9 @@ import java.util.List;
 <span class="fc" id="L24">            fileOutputStream.write(content.getBytes(&quot;UTF-8&quot;));</span>
 <span class="fc" id="L25">            fileOutputStream.close();</span>
 <span class="fc" id="L26">            flag = true;</span>
-<span class="nc" id="L27">        } catch (Exception e) {</span>
+<span class="pc" id="L27">        } catch (Exception e) {</span>
 <span class="nc" id="L28">            e.printStackTrace();</span>
-<span class="fc" id="L29">        }</span>
+        }
 <span class="fc" id="L30">        return flag;</span>
     }
 
@@ -46,14 +46,14 @@ import java.util.List;
 <span class="fc" id="L46">                list.add(tempString);</span>
             }
 <span class="fc" id="L48">            reader.close();</span>
-<span class="nc" id="L49">        } catch (IOException e) {</span>
+<span class="pc" id="L49">        } catch (IOException e) {</span>
 <span class="nc" id="L50">            e.printStackTrace();</span>
         } finally {
 <span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if (reader != null) {</span>
                 try {
 <span class="fc" id="L54">                    reader.close();</span>
-<span class="nc" id="L55">                } catch (IOException e1) {</span>
-<span class="fc" id="L56">                }</span>
+<span class="pc" id="L55">                } catch (IOException e1) {</span>
+                }
             }
         }
 <span class="fc" id="L59">        return list;</span>

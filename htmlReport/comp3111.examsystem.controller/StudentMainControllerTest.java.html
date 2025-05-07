@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L32">                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
 <span class="nc" id="L33">                Platform.startup(latch::countDown);</span>
 <span class="nc" id="L34">                latch.await();</span>
-<span class="fc" id="L35">            } catch (IllegalStateException e) {</span>
+<span class="pc" id="L35">            } catch (IllegalStateException e) {</span>
                 // Toolkit already initialized, ignore
-<span class="nc" id="L37">            }</span>
+            }
 <span class="fc" id="L38">            Platform.setImplicitExit(false);</span>
 <span class="fc" id="L39">            javafxInitialized = true;</span>
         }
@@ -65,9 +65,9 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L65">            var f = target.getClass().getDeclaredField(field);</span>
 <span class="fc" id="L66">            f.setAccessible(true);</span>
 <span class="fc" id="L67">            f.set(target, value);</span>
-<span class="nc" id="L68">        } catch (Exception e) {</span>
+<span class="pc" id="L68">        } catch (Exception e) {</span>
 <span class="nc" id="L69">            throw new RuntimeException(e);</span>
-<span class="fc" id="L70">        }</span>
+        }
 <span class="fc" id="L71">    }</span>
 
     @Test
@@ -103,7 +103,7 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="nc" id="L103">            });</span>
 <span class="nc" id="L104">            boolean completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS);</span>
 <span class="nc" id="L105">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
-        } finally {
+<span class="nc" id="L106">        } finally {</span>
 <span class="nc" id="L107">            platformMock.close();</span>
         }
 <span class="nc" id="L109">    }</span>
@@ -116,7 +116,7 @@ import static org.junit.jupiter.api.Assertions.*;
             try {
 <span class="nc" id="L117">                controller.handleLogout(new ActionEvent());</span>
                 // Would check for scene change or alert, but skip in headless
-            } finally {
+<span class="nc" id="L119">            } finally {</span>
 <span class="nc" id="L120">                latch.countDown();</span>
             }
 <span class="nc" id="L122">        });</span>
@@ -132,7 +132,7 @@ import static org.junit.jupiter.api.Assertions.*;
             try {
 <span class="nc" id="L133">                controller.handleViewStatistics(new ActionEvent());</span>
                 // Would check for scene change or alert, but skip in headless
-            } finally {
+<span class="nc" id="L135">            } finally {</span>
 <span class="nc" id="L136">                latch.countDown();</span>
             }
 <span class="nc" id="L138">        });</span>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exam.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Exam.java</span></div><h1>Exam.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.entity;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exam.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.entity</a> &gt; <span class="el_source">Exam.java</span></div><h1>Exam.java</h1><pre class="source lang-java linenums"><span class="nc" id="L1">package comp3111.examsystem.entity;</span>
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +12,11 @@ public class Exam extends Entity {
     private String courseCode; // Changed from courseId to courseCode
     private Integer duration; // in minutes
     private String examTime; // Added for database compatibility
-<span class="fc" id="L15">    private String isPublished = &quot;0&quot;; // Changed from Integer to String</span>
-<span class="fc" id="L16">    private Integer isPublishedInt = 0; // Added for API compatibility</span>
-<span class="fc" id="L17">    private Boolean published = false; // Added for database compatibility</span>
-<span class="fc" id="L18">    private Boolean enabled = true; // Added for compatibility with Entity.isAble</span>
-<span class="fc" id="L19">    private List&lt;Long&gt; questionIds = new ArrayList&lt;&gt;(); // IDs of questions included in this exam</span>
+<span class="pc" id="L15">    private String isPublished = &quot;0&quot;; // Changed from Integer to String</span>
+<span class="pc" id="L16">    private Integer isPublishedInt = 0; // Added for API compatibility</span>
+<span class="pc" id="L17">    private Boolean published = false; // Added for database compatibility</span>
+<span class="pc" id="L18">    private Boolean enabled = true; // Added for compatibility with Entity.isAble</span>
+<span class="pc" id="L19">    private List&lt;Long&gt; questionIds = new ArrayList&lt;&gt;(); // IDs of questions included in this exam</span>
     private String questions; // Added for database compatibility
     
     // Default constructor required for Database.java reflection
@@ -25,32 +25,32 @@ public class Exam extends Entity {
     /**
      * Full constructor for creating a new exam
      */
-<span class="fc" id="L28">    public Exam(Long teacherId, String name, String courseCode, Integer duration, Integer isPublished, List&lt;Long&gt; questionIds) {</span>
-<span class="fc" id="L29">        this.teacherId = teacherId;</span>
-<span class="fc" id="L30">        this.name = name;</span>
-<span class="fc" id="L31">        this.examName = name; // Set examName to match name</span>
-<span class="fc" id="L32">        this.courseCode = courseCode;</span>
-<span class="fc" id="L33">        this.duration = duration;</span>
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</span>
-<span class="fc" id="L35">        this.isPublishedInt = isPublished;</span>
-<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</span>
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
-<span class="fc" id="L38">        this.enabled = true; // Default to enabled</span>
+<span class="nc" id="L28">    public Exam(Long teacherId, String name, String courseCode, Integer duration, Integer isPublished, List&lt;Long&gt; questionIds) {</span>
+<span class="nc" id="L29">        this.teacherId = teacherId;</span>
+<span class="nc" id="L30">        this.name = name;</span>
+<span class="nc" id="L31">        this.examName = name; // Set examName to match name</span>
+<span class="nc" id="L32">        this.courseCode = courseCode;</span>
+<span class="nc" id="L33">        this.duration = duration;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        this.examTime = duration != null ? duration.toString() + &quot; minutes&quot; : null; // Initialize examTime</span>
+<span class="nc" id="L35">        this.isPublishedInt = isPublished;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        this.isPublished = isPublished != null ? isPublished.toString() : &quot;0&quot;; // Convert to String</span>
+<span class="nc bnc" id="L37" title="All 4 branches missed.">        this.published = isPublished != null &amp;&amp; isPublished &gt; 0; // Set published boolean based on isPublished integer</span>
+<span class="nc" id="L38">        this.enabled = true; // Default to enabled</span>
         // Always copy input list to ensure mutability
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        this.questionIds = questionIds != null ? new ArrayList&lt;&gt;(questionIds) : new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L41">        updateQuestionsField(); // Initialize questions field</span>
-<span class="fc" id="L42">    }</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        this.questionIds = questionIds != null ? new ArrayList&lt;&gt;(questionIds) : new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L41">        updateQuestionsField(); // Initialize questions field</span>
+<span class="nc" id="L42">    }</span>
     
     /**
      * Updates the questions field based on questionIds
      */
     private void updateQuestionsField() {
-<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        if (questionIds != null &amp;&amp; !questionIds.isEmpty()) {</span>
-<span class="fc" id="L49">            this.questions = String.join(&quot;,&quot;, questionIds.stream().map(Object::toString).toArray(String[]::new));</span>
-        } else {
-<span class="fc" id="L51">            this.questions = &quot;&quot;;</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">        if (questionIds != null &amp;&amp; !questionIds.isEmpty()) {</span>
+<span class="nc" id="L49">            this.questions = String.join(&quot;,&quot;, questionIds.stream().map(Object::toString).toArray(String[]::new));</span>
+<span class="nc" id="L50">        } else {</span>
+<span class="nc" id="L51">            this.questions = &quot;&quot;;</span>
         }
-<span class="fc" id="L53">    }</span>
+<span class="nc" id="L53">    }</span>
     
     /**
      * Add a question to this exam
@@ -58,12 +58,12 @@ public class Exam extends Entity {
      * @return true if added, false if already exists
      */
     public boolean addQuestion(Long questionId) {
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!questionIds.contains(questionId)) {</span>
-<span class="fc" id="L62">            questionIds.add(questionId);</span>
-<span class="fc" id="L63">            updateQuestionsField();</span>
-<span class="fc" id="L64">            return true;</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (!questionIds.contains(questionId)) {</span>
+<span class="nc" id="L62">            questionIds.add(questionId);</span>
+<span class="nc" id="L63">            updateQuestionsField();</span>
+<span class="nc" id="L64">            return true;</span>
         }
-<span class="fc" id="L66">        return false;</span>
+<span class="nc" id="L66">        return false;</span>
     }
     
     /**
@@ -72,11 +72,11 @@ public class Exam extends Entity {
      * @return true if removed, false if not found
      */
     public boolean removeQuestion(Long questionId) {
-<span class="fc" id="L75">        boolean removed = questionIds.remove(questionId);</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (removed) {</span>
-<span class="fc" id="L77">            updateQuestionsField();</span>
+<span class="nc" id="L75">        boolean removed = questionIds.remove(questionId);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (removed) {</span>
+<span class="nc" id="L77">            updateQuestionsField();</span>
         }
-<span class="fc" id="L79">        return removed;</span>
+<span class="nc" id="L79">        return removed;</span>
     }
     
     /**
@@ -84,7 +84,7 @@ public class Exam extends Entity {
      * @return The question count
      */
     public int getQuestionCount() {
-<span class="fc" id="L87">        return questionIds.size();</span>
+<span class="nc" id="L87">        return questionIds.size();</span>
     }
     
     // Getters and Setters
@@ -117,13 +117,13 @@ public class Exam extends Entity {
 <span class="fc" id="L117">    }</span>
     
     public String getExamName() {
-<span class="fc" id="L120">        return examName;</span>
+<span class="nc" id="L120">        return examName;</span>
     }
     
     public void setExamName(String examName) {
-<span class="fc" id="L124">        this.examName = examName;</span>
-<span class="fc" id="L125">        this.name = examName; // Keep name in sync with examName</span>
-<span class="fc" id="L126">    }</span>
+<span class="nc" id="L124">        this.examName = examName;</span>
+<span class="nc" id="L125">        this.name = examName; // Keep name in sync with examName</span>
+<span class="nc" id="L126">    }</span>
     
     public String getCourseCode() {
 <span class="fc" id="L129">        return courseCode;</span>
@@ -145,7 +145,7 @@ public class Exam extends Entity {
 <span class="nc" id="L145">    }</span>
     
     public Integer getDuration() {
-<span class="fc" id="L148">        return duration;</span>
+<span class="nc" id="L148">        return duration;</span>
     }
     
     public void setDuration(Integer duration) {
@@ -154,38 +154,38 @@ public class Exam extends Entity {
 <span class="fc" id="L154">    }</span>
     
     public String getExamTime() {
-<span class="fc" id="L157">        return examTime;</span>
+<span class="nc" id="L157">        return examTime;</span>
     }
     
     public void setExamTime(String examTime) {
-<span class="fc" id="L161">        this.examTime = examTime;</span>
+<span class="nc" id="L161">        this.examTime = examTime;</span>
         // Try to parse duration from examTime if possible
-<span class="pc bpc" id="L163" title="1 of 4 branches missed.">        if (examTime != null &amp;&amp; examTime.contains(&quot; minutes&quot;)) {</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">        if (examTime != null &amp;&amp; examTime.contains(&quot; minutes&quot;)) {</span>
             try {
-<span class="fc" id="L165">                String durationStr = examTime.replace(&quot; minutes&quot;, &quot;&quot;).trim();</span>
-<span class="fc" id="L166">                this.duration = Integer.parseInt(durationStr);</span>
+<span class="nc" id="L165">                String durationStr = examTime.replace(&quot; minutes&quot;, &quot;&quot;).trim();</span>
+<span class="nc" id="L166">                this.duration = Integer.parseInt(durationStr);</span>
 <span class="nc" id="L167">            } catch (NumberFormatException e) {</span>
                 // If parsing fails, keep the existing duration
-<span class="fc" id="L169">            }</span>
+            }
         }
-<span class="fc" id="L171">    }</span>
+<span class="nc" id="L171">    }</span>
     
     public String getIsPublished() {
-<span class="fc" id="L174">        return isPublished;</span>
+<span class="nc" id="L174">        return isPublished;</span>
     }
     
     public void setIsPublished(String isPublished) {
-<span class="fc" id="L178">        this.isPublished = isPublished;</span>
+<span class="nc" id="L178">        this.isPublished = isPublished;</span>
         // Try to update isPublishedInt
         try {
-<span class="fc" id="L181">            this.isPublishedInt = Integer.parseInt(isPublished);</span>
-<span class="fc" id="L182">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L181">            this.isPublishedInt = Integer.parseInt(isPublished);</span>
+<span class="nc" id="L182">        } catch (NumberFormatException e) {</span>
             // If parsing fails, default to 0
-<span class="fc" id="L184">            this.isPublishedInt = 0;</span>
-<span class="fc" id="L185">        }</span>
+<span class="nc" id="L184">            this.isPublishedInt = 0;</span>
+        }
         // Update published boolean
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        this.published = this.isPublishedInt &gt; 0;</span>
-<span class="fc" id="L188">    }</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        this.published = this.isPublishedInt &gt; 0;</span>
+<span class="nc" id="L188">    }</span>
     
     // For API compatibility with existing code
     public Integer getIsPublishedInt() {
@@ -193,13 +193,13 @@ public class Exam extends Entity {
     }
     
     public void setIsPublishedInt(Integer isPublishedInt) {
-<span class="fc" id="L196">        this.isPublishedInt = isPublishedInt;</span>
-<span class="fc bfc" id="L197" title="All 2 branches covered.">        this.isPublished = isPublishedInt != null ? isPublishedInt.toString() : &quot;0&quot;;</span>
-<span class="fc bfc" id="L198" title="All 4 branches covered.">        this.published = isPublishedInt != null &amp;&amp; isPublishedInt &gt; 0;</span>
-<span class="fc" id="L199">    }</span>
+<span class="nc" id="L196">        this.isPublishedInt = isPublishedInt;</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        this.isPublished = isPublishedInt != null ? isPublishedInt.toString() : &quot;0&quot;;</span>
+<span class="nc bnc" id="L198" title="All 4 branches missed.">        this.published = isPublishedInt != null &amp;&amp; isPublishedInt &gt; 0;</span>
+<span class="nc" id="L199">    }</span>
     
     public Boolean getPublished() {
-<span class="fc" id="L202">        return published;</span>
+<span class="nc" id="L202">        return published;</span>
     }
     
     public void setPublished(Boolean published) {
@@ -210,41 +210,41 @@ public class Exam extends Entity {
     
     @Override
     public Boolean getIsAble() {
-<span class="fc" id="L213">        return enabled;</span>
+<span class="nc" id="L213">        return enabled;</span>
     }
     
     public Boolean getEnabled() {
-<span class="fc" id="L217">        return enabled;</span>
+<span class="nc" id="L217">        return enabled;</span>
     }
     
     public void setEnabled(Boolean enabled) {
-<span class="fc" id="L221">        this.enabled = enabled;</span>
-<span class="fc" id="L222">        super.isAble = enabled; // Keep base class isAble in sync</span>
-<span class="fc" id="L223">    }</span>
+<span class="nc" id="L221">        this.enabled = enabled;</span>
+<span class="nc" id="L222">        super.isAble = enabled; // Keep base class isAble in sync</span>
+<span class="nc" id="L223">    }</span>
     
     public List&lt;Long&gt; getQuestionIds() {
-<span class="fc" id="L226">        return questionIds;</span>
+<span class="nc" id="L226">        return questionIds;</span>
     }
     
     public void setQuestionIds(List&lt;?&gt; questionIds) {
-<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (questionIds == null) {</span>
-<span class="fc" id="L231">            this.questionIds = new ArrayList&lt;&gt;();</span>
-        } else {
-<span class="fc" id="L233">            this.questionIds = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            for (Object id : questionIds) {</span>
-<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                if (id instanceof Long) {</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (questionIds == null) {</span>
+<span class="nc" id="L231">            this.questionIds = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L232">        } else {</span>
+<span class="nc" id="L233">            this.questionIds = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            for (Object id : questionIds) {</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                if (id instanceof Long) {</span>
 <span class="nc" id="L236">                    this.questionIds.add((Long) id);</span>
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">                } else if (id instanceof String) {</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">                } else if (id instanceof String) {</span>
                     try {
-<span class="fc" id="L239">                        this.questionIds.add(Long.parseLong((String) id));</span>
+<span class="nc" id="L239">                        this.questionIds.add(Long.parseLong((String) id));</span>
 <span class="nc" id="L240">                    } catch (NumberFormatException e) {</span>
                         // Skip invalid string IDs
-<span class="fc" id="L242">                    }</span>
+                    }
                 }
-<span class="fc" id="L244">            }</span>
+            }
         }
-<span class="fc" id="L246">        updateQuestionsField(); // Update questions field when questionIds changes</span>
-<span class="fc" id="L247">    }</span>
+<span class="nc" id="L246">        updateQuestionsField(); // Update questions field when questionIds changes</span>
+<span class="nc" id="L247">    }</span>
     
     public String getQuestions() {
 <span class="fc" id="L250">        return questions;</span>
@@ -268,7 +268,7 @@ public class Exam extends Entity {
                 }
 <span class="fc" id="L269">            } catch (NumberFormatException e) {</span>
                 // If parsing fails, keep the existing questionIds (does NOT clear the list)
-<span class="fc" id="L271">            }</span>
+            }
         }
 <span class="fc" id="L273">    }</span>
 }

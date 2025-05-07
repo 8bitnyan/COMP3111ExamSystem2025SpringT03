@@ -25,7 +25,7 @@ import java.util.List;
  * This class handles displaying, filtering, adding, updating, and deleting courses.
  * It also links to associated entities such as Department and Exam.
  */
-<span class="fc" id="L28">public class CourseManagementController {</span>
+<span class="nc" id="L28">public class CourseManagementController {</span>
     private Manager manager;
     /**
      * Sets the manager context for this controller.
@@ -36,7 +36,7 @@ import java.util.List;
 <span class="nc" id="L36">    }</span>
 
     // Database instance for handling Course objects
-<span class="fc" id="L39">    private final Database&lt;Course&gt; courseDatabase = new Database&lt;&gt;(Course.class);</span>
+<span class="nc" id="L39">    private final Database&lt;Course&gt; courseDatabase = new Database&lt;&gt;(Course.class);</span>
     private ObservableList&lt;Course&gt; allCourses;
 
     // Table columns for displaying course data
@@ -89,12 +89,12 @@ import java.util.List;
      * Applies filtering logic on course list based on filter inputs.
      */
     private List&lt;Course&gt; applyCoursesFilter(String courseCode, String courseName, String department) {
-<span class="fc" id="L92">        return allCourses.stream()</span>
-<span class="pc bpc" id="L93" title="3 of 4 branches missed.">                .filter(s -&gt; courseCode == null || s.getCourseCode().toLowerCase().contains(courseCode.toLowerCase()))</span>
-<span class="pc bpc" id="L94" title="3 of 4 branches missed.">                .filter(s -&gt; courseName == null || s.getCourseName().toLowerCase().contains(courseName.toLowerCase()))</span>
-<span class="pc bpc" id="L95" title="1 of 4 branches missed.">                .filter(s -&gt; department == null || department.equalsIgnoreCase(&quot;ANY&quot;) ||</span>
-<span class="pc bnc" id="L96" title="All 2 branches missed.">                        s.getDepartment().toString().equalsIgnoreCase(department))</span>
-<span class="fc" id="L97">                .toList();</span>
+<span class="nc" id="L92">        return allCourses.stream()</span>
+<span class="nc bnc" id="L93" title="All 4 branches missed.">                .filter(s -&gt; courseCode == null || s.getCourseCode().toLowerCase().contains(courseCode.toLowerCase()))</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">                .filter(s -&gt; courseName == null || s.getCourseName().toLowerCase().contains(courseName.toLowerCase()))</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                .filter(s -&gt; department == null || department.equalsIgnoreCase(&quot;ANY&quot;) ||</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                        s.getDepartment().toString().equalsIgnoreCase(department))</span>
+<span class="nc" id="L97">                .toList();</span>
     }
 
     /**
@@ -102,29 +102,29 @@ import java.util.List;
      */
     @FXML
     private void filterCourses() {
-<span class="fc" id="L105">        String courseCode = filterCourseCode.getText().trim();</span>
-<span class="fc" id="L106">        String courseName = filterCourseName.getText().trim();</span>
-<span class="fc" id="L107">        String department = filterDepartment.getValue();</span>
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (courseCode.isEmpty()) courseCode = null;</span>
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (courseName.isEmpty()) courseName = null;</span>
-<span class="pc bpc" id="L110" title="5 of 6 branches missed.">        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase(&quot;ANY&quot;)) department = null;</span>
+<span class="nc" id="L105">        String courseCode = filterCourseCode.getText().trim();</span>
+<span class="nc" id="L106">        String courseName = filterCourseName.getText().trim();</span>
+<span class="nc" id="L107">        String department = filterDepartment.getValue();</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (courseCode.isEmpty()) courseCode = null;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (courseName.isEmpty()) courseName = null;</span>
+<span class="nc bnc" id="L110" title="All 6 branches missed.">        if (department == null || department.trim().isEmpty() || department.equalsIgnoreCase(&quot;ANY&quot;)) department = null;</span>
 
-<span class="fc" id="L112">        allCourses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</span>
-<span class="fc" id="L113">        List&lt;Course&gt; filtered = applyCoursesFilter(courseCode, courseName, department);</span>
-<span class="fc" id="L114">        courseTable.setItems(FXCollections.observableArrayList(filtered));</span>
-<span class="fc" id="L115">    }</span>
+<span class="nc" id="L112">        allCourses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</span>
+<span class="nc" id="L113">        List&lt;Course&gt; filtered = applyCoursesFilter(courseCode, courseName, department);</span>
+<span class="nc" id="L114">        courseTable.setItems(FXCollections.observableArrayList(filtered));</span>
+<span class="nc" id="L115">    }</span>
 
     /**
      * Resets all filters and reloads the full course list.
      */
     @FXML
     private void reset() {
-<span class="fc" id="L122">        filterCourseCode.clear();</span>
-<span class="fc" id="L123">        filterCourseName.clear();</span>
-<span class="fc" id="L124">        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</span>
-<span class="fc" id="L125">        List&lt;Course&gt; resetFiltered = applyCoursesFilter(null, null, &quot;ANY&quot;);</span>
-<span class="fc" id="L126">        courseTable.setItems(FXCollections.observableArrayList(resetFiltered));</span>
-<span class="fc" id="L127">    }</span>
+<span class="nc" id="L122">        filterCourseCode.clear();</span>
+<span class="nc" id="L123">        filterCourseName.clear();</span>
+<span class="nc" id="L124">        filterDepartment.getSelectionModel().select(&quot;ANY&quot;);</span>
+<span class="nc" id="L125">        List&lt;Course&gt; resetFiltered = applyCoursesFilter(null, null, &quot;ANY&quot;);</span>
+<span class="nc" id="L126">        courseTable.setItems(FXCollections.observableArrayList(resetFiltered));</span>
+<span class="nc" id="L127">    }</span>
 
     /**
      * Clears the input form on the right side.
@@ -141,12 +141,12 @@ import java.util.List;
      */
     @FXML
     private void addCourse() {
-<span class="fc" id="L144">        String courseCode = tfCourseCode.getText().trim();</span>
-<span class="fc" id="L145">        String courseName = tfCourseName.getText().trim();</span>
-<span class="fc" id="L146">        Department department = cbDepartment.getValue();</span>
-<span class="pc bpc" id="L147" title="3 of 6 branches missed.">        if (courseCode.isEmpty() || courseName.isEmpty() || department == null) {</span>
-<span class="fc" id="L148">            MsgSender.showMsg(&quot;All fields must be filled correctly.&quot;);</span>
-<span class="fc" id="L149">            return;</span>
+<span class="nc" id="L144">        String courseCode = tfCourseCode.getText().trim();</span>
+<span class="nc" id="L145">        String courseName = tfCourseName.getText().trim();</span>
+<span class="nc" id="L146">        Department department = cbDepartment.getValue();</span>
+<span class="nc bnc" id="L147" title="All 6 branches missed.">        if (courseCode.isEmpty() || courseName.isEmpty() || department == null) {</span>
+<span class="nc" id="L148">            MsgSender.showMsg(&quot;All fields must be filled correctly.&quot;);</span>
+<span class="nc" id="L149">            return;</span>
         }
 <span class="nc" id="L151">        long id = System.currentTimeMillis();</span>
 <span class="nc" id="L152">        Course course = new Course(id, courseCode, courseName, department);</span>
@@ -158,7 +158,7 @@ import java.util.List;
 <span class="nc" id="L158">        } catch (Exception e) {</span>
 <span class="nc" id="L159">            MsgSender.showMsg(&quot;Failed to add course.&quot;);</span>
 <span class="nc" id="L160">            e.printStackTrace();</span>
-<span class="nc" id="L161">        }</span>
+        }
 <span class="nc" id="L162">    }</span>
 
     /**
@@ -166,10 +166,10 @@ import java.util.List;
      */
     @FXML
     private void updateCourse() {
-<span class="fc" id="L169">        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</span>
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (selectedCourse == null) {</span>
-<span class="fc" id="L171">            MsgSender.showMsg(&quot;Please select a Course to update.&quot;);</span>
-<span class="fc" id="L172">            return;</span>
+<span class="nc" id="L169">        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (selectedCourse == null) {</span>
+<span class="nc" id="L171">            MsgSender.showMsg(&quot;Please select a Course to update.&quot;);</span>
+<span class="nc" id="L172">            return;</span>
         }
 <span class="nc" id="L174">        String courseCode = tfCourseCode.getText().trim();</span>
 <span class="nc" id="L175">        String courseName = tfCourseName.getText().trim();</span>
@@ -188,7 +188,7 @@ import java.util.List;
 <span class="nc" id="L188">        } catch (Exception e) {</span>
 <span class="nc" id="L189">            MsgSender.showMsg(&quot;Failed to update course.&quot;);</span>
 <span class="nc" id="L190">            e.printStackTrace();</span>
-<span class="nc" id="L191">        }</span>
+        }
 <span class="nc" id="L192">    }</span>
 
     /**
@@ -196,15 +196,15 @@ import java.util.List;
      */
     @FXML
     void deleteCourse() {
-<span class="fc" id="L199">        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if (selectedCourse == null) {</span>
-<span class="fc" id="L201">            MsgSender.showMsg(&quot;Please select a course to delete.&quot;);</span>
-<span class="fc" id="L202">            return;</span>
+<span class="nc" id="L199">        Course selectedCourse = courseTable.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (selectedCourse == null) {</span>
+<span class="nc" id="L201">            MsgSender.showMsg(&quot;Please select a course to delete.&quot;);</span>
+<span class="nc" id="L202">            return;</span>
         }
 <span class="nc" id="L204">        MsgSender.showConfirm(</span>
-                &quot;Delete Confirmation&quot;,
-                &quot;Are you sure you want to delete this course?\nThis will also delete all associated exams.&quot;,
-                () -&gt; {
+<span class="nc" id="L205">                &quot;Delete Confirmation&quot;,</span>
+<span class="nc" id="L206">                &quot;Are you sure you want to delete this course?\nThis will also delete all associated exams.&quot;,</span>
+<span class="nc" id="L207">                () -&gt; {</span>
                     try {
 <span class="nc" id="L209">                        courseDatabase.delByKey(String.valueOf(selectedCourse.getId()));</span>
 <span class="nc" id="L210">                        Database&lt;Exam&gt; examDatabase = new Database&lt;&gt;(comp3111.examsystem.entity.Exam.class);</span>
@@ -213,7 +213,7 @@ import java.util.List;
 <span class="nc bnc" id="L213" title="All 4 branches missed.">                            if (selectedCourse.getCourseCode().equals(exam.getCourseCode()) &amp;&amp; exam.getId() != null) {</span>
 <span class="nc" id="L214">                                examDatabase.delByKey(String.valueOf(exam.getId()));</span>
                             }
-<span class="nc" id="L216">                        }</span>
+                        }
 <span class="nc" id="L217">                        allCourses = FXCollections.observableArrayList(courseDatabase.getAllEnabled());</span>
 <span class="nc" id="L218">                        courseTable.setItems(allCourses);</span>
 <span class="nc" id="L219">                        clearForm();</span>
@@ -221,7 +221,7 @@ import java.util.List;
 <span class="nc" id="L221">                    } catch (Exception e) {</span>
 <span class="nc" id="L222">                        MsgSender.showMsg(&quot;Failed to delete course.&quot;);</span>
 <span class="nc" id="L223">                        e.printStackTrace();</span>
-<span class="nc" id="L224">                    }</span>
+                    }
 <span class="nc" id="L225">                }</span>
         );
 <span class="nc" id="L227">    }</span>
@@ -232,16 +232,16 @@ import java.util.List;
      */
     @FXML
     void back(ActionEvent e) {
-<span class="fc" id="L235">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;ManagerMainUI.fxml&quot;));</span>
-<span class="fc" id="L236">        Stage stage = new Stage();</span>
-<span class="fc" id="L237">        stage.setTitle(&quot;Back&quot;);</span>
+<span class="nc" id="L235">        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;ManagerMainUI.fxml&quot;));</span>
+<span class="nc" id="L236">        Stage stage = new Stage();</span>
+<span class="nc" id="L237">        stage.setTitle(&quot;Back&quot;);</span>
         try {
-<span class="fc" id="L239">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L239">            stage.setScene(new Scene(fxmlLoader.load()));</span>
 <span class="nc" id="L240">        } catch (IOException e1) {</span>
 <span class="nc" id="L241">            e1.printStackTrace();</span>
-<span class="fc" id="L242">        }</span>
-<span class="fc" id="L243">        UIhelper.expandToFullScreen(stage);</span>
-<span class="fc" id="L244">        stage.show();</span>
+        }
+<span class="nc" id="L243">        UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L244">        stage.show();</span>
 <span class="nc" id="L245">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
 <span class="nc" id="L246">    }</span>
 
@@ -250,11 +250,11 @@ import java.util.List;
      */
     @FXML
     void closeApplication() {
-<span class="fc" id="L253">        MsgSender.showConfirm(</span>
-                &quot;Exit Confirmation&quot;,
-                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,
-                Platform::exit
+<span class="nc" id="L253">        MsgSender.showConfirm(</span>
+<span class="nc" id="L254">                &quot;Exit Confirmation&quot;,</span>
+<span class="nc" id="L255">                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</span>
+<span class="nc" id="L256">                Platform::exit</span>
         );
-<span class="fc" id="L258">    }</span>
+<span class="nc" id="L258">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

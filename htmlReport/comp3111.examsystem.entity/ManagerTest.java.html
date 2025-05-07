@@ -3,26 +3,26 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-<span class="fc" id="L6">public class ManagerTest {</span>
+<span class="nc" id="L6">public class ManagerTest {</span>
     @Test
     void testSingletonInstance() {
-<span class="fc" id="L9">        Manager m1 = Manager.getInstance();</span>
-<span class="fc" id="L10">        Manager m2 = Manager.getInstance();</span>
-<span class="fc" id="L11">        assertSame(m1, m2);</span>
-<span class="fc" id="L12">    }</span>
+<span class="nc" id="L9">        Manager m1 = Manager.getInstance();</span>
+<span class="nc" id="L10">        Manager m2 = Manager.getInstance();</span>
+<span class="nc" id="L11">        assertSame(m1, m2);</span>
+<span class="nc" id="L12">    }</span>
 
     @Test
     void testValidateLogin() {
-<span class="fc" id="L16">        assertTrue(Manager.validateLogin(&quot;root&quot;, &quot;root&quot;));</span>
-<span class="fc" id="L17">        assertFalse(Manager.validateLogin(&quot;admin&quot;, &quot;root&quot;));</span>
-<span class="fc" id="L18">        assertFalse(Manager.validateLogin(&quot;root&quot;, &quot;wrong&quot;));</span>
-<span class="fc" id="L19">    }</span>
+<span class="nc" id="L16">        assertTrue(Manager.validateLogin(&quot;root&quot;, &quot;root&quot;));</span>
+<span class="nc" id="L17">        assertFalse(Manager.validateLogin(&quot;admin&quot;, &quot;root&quot;));</span>
+<span class="nc" id="L18">        assertFalse(Manager.validateLogin(&quot;root&quot;, &quot;wrong&quot;));</span>
+<span class="nc" id="L19">    }</span>
 
     @Test
     void testPersonMethods() {
-<span class="fc" id="L23">        Manager m = Manager.getInstance();</span>
-<span class="fc" id="L24">        assertEquals(&quot;root&quot;, m.getUsername());</span>
-<span class="fc" id="L25">        assertEquals(&quot;root&quot;, m.getPassword());</span>
-<span class="fc" id="L26">    }</span>
+<span class="nc" id="L23">        Manager m = Manager.getInstance();</span>
+<span class="nc" id="L24">        assertEquals(&quot;root&quot;, m.getUsername());</span>
+<span class="nc" id="L25">        assertEquals(&quot;root&quot;, m.getPassword());</span>
+<span class="nc" id="L26">    }</span>
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

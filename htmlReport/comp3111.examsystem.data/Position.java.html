@@ -4,17 +4,17 @@
  * Represents the position of a teacher user.
  * This enum provides a list of possible positions for a teacher.
  */
-<span class="fc" id="L7">public enum Position {</span>
-    /**
+<span class="nc" id="L7">public enum Position {</span>
+<span class="nc" id="L8">    /**</span>
      * The list of positions.
      */
-<span class="fc" id="L11">    AP(&quot;Associate Professor&quot;),</span>
-<span class="fc" id="L12">    DH(&quot;Department Head&quot;),</span>
-<span class="fc" id="L13">    IA(&quot;Instructional Assistant&quot;),</span>
-<span class="fc" id="L14">    L(&quot;Lecturer&quot;),</span>
-<span class="fc" id="L15">    P(&quot;Professor&quot;),</span>
-<span class="fc" id="L16">    SL(&quot;Senior Lecturer&quot;),</span>
-<span class="fc" id="L17">    TA(&quot;Teaching Associate&quot;);</span>
+<span class="nc" id="L11">    AP(&quot;Associate Professor&quot;),</span>
+<span class="nc" id="L12">    DH(&quot;Department Head&quot;),</span>
+<span class="nc" id="L13">    IA(&quot;Instructional Assistant&quot;),</span>
+<span class="nc" id="L14">    L(&quot;Lecturer&quot;),</span>
+<span class="nc" id="L15">    P(&quot;Professor&quot;),</span>
+<span class="nc" id="L16">    SL(&quot;Senior Lecturer&quot;),</span>
+<span class="nc" id="L17">    TA(&quot;Teaching Associate&quot;);</span>
 
     /**
      * The name of the position
@@ -25,7 +25,7 @@
      * The constructor for Position Enum.
      * @param positionName The name of the position.
      */
-<span class="fc" id="L28">    Position(String positionName) { this.positionName = positionName; }</span>
+<span class="nc" id="L28">    Position(String positionName) { this.positionName = positionName; }</span>
 
     /**
      * Gets the string representation of the Position.
@@ -33,7 +33,7 @@
      */
     @Override
     public String toString() {
-<span class="fc" id="L36">        return positionName;</span>
+<span class="nc" id="L36">        return positionName;</span>
     }
 
     /**
@@ -42,9 +42,9 @@
      * @return The corresponding Position Enum. If the string is invalid, Position.AP is returned.
      */
     public static Position fromString(String positionString) {
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        for (Position position : Position.values()) {</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (position.toString().equals(positionString)) {</span>
-<span class="fc" id="L47">                return position;</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        for (Position position : Position.values()) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (position.toString().equals(positionString)) {</span>
+<span class="nc" id="L47">                return position;</span>
             }
         }
 <span class="nc" id="L50">        return AP;</span>

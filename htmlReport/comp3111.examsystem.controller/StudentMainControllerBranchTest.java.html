@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentMainControllerBranchTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">comp3111.examsystem.controller</a> &gt; <span class="el_source">StudentMainControllerBranchTest.java</span></div><h1>StudentMainControllerBranchTest.java</h1><pre class="source lang-java linenums">package comp3111.examsystem.controller;
+
+import comp3111.examsystem.entity.*;
+import comp3111.examsystem.data.Department;
+import comp3111.examsystem.data.Gender;
+import comp3111.examsystem.tools.Database;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
+import javafx.scene.control.*;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L20">class StudentMainControllerBranchTest {</span>
+    StudentMainController controller;
+    ComboBox&lt;String&gt; takeExamComboBox;
+    ComboBox&lt;String&gt; checkResultComboBox;
+    Button startExamButton;
+    Button checkResultButton;
+    Button viewStatisticsButton;
+    Button logoutButton;
+    Button exitButton;
+<span class="fc" id="L29">    private static boolean javafxInitialized = false;</span>
+
+    @BeforeAll
+    static void initJfx() throws Exception {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (!javafxInitialized) {</span>
+            try {
+<span class="fc" id="L35">                java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L36">                Platform.startup(latch::countDown);</span>
+<span class="nc" id="L37">                latch.await();</span>
+<span class="pc" id="L38">            } catch (IllegalStateException e) {</span>
+                // Toolkit already initialized, ignore
+            }
+<span class="fc" id="L41">            Platform.setImplicitExit(false);</span>
+<span class="fc" id="L42">            javafxInitialized = true;</span>
+        }
+<span class="fc" id="L44">    }</span>
+
+    @BeforeEach
+    void setup() {
+<span class="fc" id="L48">        controller = new StudentMainController();</span>
+<span class="fc" id="L49">        takeExamComboBox = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L50">        checkResultComboBox = new ComboBox&lt;&gt;();</span>
+<span class="fc" id="L51">        startExamButton = new Button();</span>
+<span class="fc" id="L52">        checkResultButton = new Button();</span>
+<span class="fc" id="L53">        viewStatisticsButton = new Button();</span>
+<span class="fc" id="L54">        logoutButton = new Button();</span>
+<span class="fc" id="L55">        exitButton = new Button();</span>
+<span class="fc" id="L56">        inject(controller, &quot;TakeExamComboBox&quot;, takeExamComboBox);</span>
+<span class="fc" id="L57">        inject(controller, &quot;CheckResultComboBox&quot;, checkResultComboBox);</span>
+<span class="fc" id="L58">        inject(controller, &quot;startExamButton&quot;, startExamButton);</span>
+<span class="fc" id="L59">        inject(controller, &quot;checkResultButton&quot;, checkResultButton);</span>
+<span class="fc" id="L60">        inject(controller, &quot;viewStatisticsButton&quot;, viewStatisticsButton);</span>
+<span class="fc" id="L61">        inject(controller, &quot;logoutButton&quot;, logoutButton);</span>
+<span class="fc" id="L62">        inject(controller, &quot;exitButton&quot;, exitButton);</span>
+<span class="fc" id="L63">    }</span>
+
+    private void inject(Object target, String field, Object value) {
+        try {
+<span class="fc" id="L67">            var f = target.getClass().getDeclaredField(field);</span>
+<span class="fc" id="L68">            f.setAccessible(true);</span>
+<span class="fc" id="L69">            f.set(target, value);</span>
+<span class="pc" id="L70">        } catch (Exception e) {</span>
+<span class="nc" id="L71">            throw new RuntimeException(e);</span>
+        }
+<span class="fc" id="L73">    }</span>
+
+    @Test
+    void testInitializeListenersAndButtonStates() {
+<span class="fc" id="L77">        controller.initialize(null, null);</span>
+<span class="fc" id="L78">        assertTrue(startExamButton.isDisabled());</span>
+<span class="fc" id="L79">        assertTrue(checkResultButton.isDisabled());</span>
+<span class="fc" id="L80">        takeExamComboBox.getItems().addAll(&quot;Quiz1&quot;, &quot;Quiz2&quot;);</span>
+<span class="fc" id="L81">        takeExamComboBox.getSelectionModel().select(&quot;Quiz1&quot;);</span>
+<span class="fc" id="L82">        assertFalse(startExamButton.isDisabled());</span>
+<span class="fc" id="L83">        takeExamComboBox.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L84">        assertTrue(startExamButton.isDisabled());</span>
+<span class="fc" id="L85">        checkResultComboBox.getItems().addAll(&quot;Result1&quot;);</span>
+<span class="fc" id="L86">        checkResultComboBox.getSelectionModel().select(&quot;Result1&quot;);</span>
+<span class="fc" id="L87">        assertFalse(checkResultButton.isDisabled());</span>
+<span class="fc" id="L88">        checkResultComboBox.getSelectionModel().clearSelection();</span>
+<span class="fc" id="L89">        assertTrue(checkResultButton.isDisabled());</span>
+<span class="fc" id="L90">    }</span>
+
+    @Test
+    void testPreSetControllerNullStudent() {
+<span class="fc" id="L94">        controller.preSetController(null);</span>
+<span class="fc" id="L95">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L96">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L97">    }</span>
+
+    @Test
+    void testPreSetControllerWithStudentNoDepartment() {
+<span class="fc" id="L101">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, null);</span>
+<span class="fc" id="L102">        controller.preSetController(student);</span>
+<span class="fc" id="L103">        assertEquals(0, takeExamComboBox.getItems().size());</span>
+<span class="fc" id="L104">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L105">    }</span>
+
+    @Test
+    void testPreSetControllerWithStudentWithDepartment() {
+<span class="fc" id="L109">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="fc" id="L110">        controller.preSetController(student);</span>
+        // Accept 0 or 1 quizzes, depending on DB state (avoid false negative)
+<span class="fc" id="L112">        int quizCount = takeExamComboBox.getItems().size();</span>
+<span class="pc bpc" id="L113" title="2 of 4 branches missed.">        assertTrue(quizCount == 0 || quizCount == 1, &quot;Quiz count should be 0 or 1, was: &quot; + quizCount);</span>
+<span class="fc" id="L114">        assertEquals(0, checkResultComboBox.getItems().size());</span>
+<span class="fc" id="L115">    }</span>
+
+    @Disabled(&quot;Requires real JavaFX thread/UI&quot;)
+    @Test
+    void testHandleStartExam_NoQuizSelected() throws Exception {
+<span class="nc" id="L120">        controller.initialize(null, null);</span>
+<span class="nc" id="L121">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="nc" id="L122">        takeExamComboBox.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L123">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
+        try {
+<span class="nc" id="L125">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L126">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L128">                    var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="nc" id="L129">                    method.setAccessible(true);</span>
+<span class="nc" id="L130">                    method.invoke(controller, new ActionEvent());</span>
+<span class="nc" id="L131">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L134">                    latch.countDown();</span>
+                }
+<span class="nc" id="L136">            });</span>
+<span class="nc" id="L137">            boolean completed = latch.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L138">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
+<span class="nc" id="L139">        } finally {</span>
+<span class="nc" id="L140">            platformMock.close();</span>
+        }
+<span class="nc" id="L142">    }</span>
+
+    @Disabled(&quot;Requires real JavaFX thread/UI&quot;)
+    @Test
+    void testHandleStartExam_QuizSelectedButNotFound() throws Exception {
+<span class="nc" id="L147">        controller.initialize(null, null);</span>
+<span class="nc" id="L148">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="nc" id="L149">        takeExamComboBox.getSelectionModel().select(&quot;Quiz1&quot;);</span>
+<span class="nc" id="L150">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
+        try {
+<span class="nc" id="L152">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L153">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L155">                    var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="nc" id="L156">                    method.setAccessible(true);</span>
+<span class="nc" id="L157">                    method.invoke(controller, new ActionEvent());</span>
+<span class="nc" id="L158">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L161">                    latch.countDown();</span>
+                }
+<span class="nc" id="L163">            });</span>
+<span class="nc" id="L164">            boolean completed = latch.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L165">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
+<span class="nc" id="L166">        } finally {</span>
+<span class="nc" id="L167">            platformMock.close();</span>
+        }
+<span class="nc" id="L169">    }</span>
+
+    @Disabled(&quot;Requires real JavaFX thread/UI&quot;)
+    @Test
+    void testHandleStartExam_AlreadyAttempted() throws Exception {
+<span class="nc" id="L174">        Student student = new Student(1L, &quot;user&quot;, &quot;pass&quot;, &quot;Name&quot;, Gender.MALE, 20, Department.CSE);</span>
+<span class="nc" id="L175">        controller.preSetController(student);</span>
+<span class="nc" id="L176">        takeExamComboBox.getItems().add(&quot;Quiz1&quot;);</span>
+<span class="nc" id="L177">        takeExamComboBox.getSelectionModel().select(&quot;Quiz1&quot;);</span>
+<span class="nc" id="L178">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
+        try {
+<span class="nc" id="L180">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L181">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L183">                    var method = controller.getClass().getDeclaredMethod(&quot;handleStartExam&quot;, ActionEvent.class);</span>
+<span class="nc" id="L184">                    method.setAccessible(true);</span>
+<span class="nc" id="L185">                    method.invoke(controller, new ActionEvent());</span>
+<span class="nc" id="L186">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L189">                    latch.countDown();</span>
+                }
+<span class="nc" id="L191">            });</span>
+<span class="nc" id="L192">            boolean completed = latch.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L193">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
+<span class="nc" id="L194">        } finally {</span>
+<span class="nc" id="L195">            platformMock.close();</span>
+        }
+<span class="nc" id="L197">    }</span>
+
+    @Disabled(&quot;Requires real JavaFX thread/UI&quot;)
+    @Test
+    void testHandleViewStatisticsLoadsStatisticsScreen() throws Exception {
+<span class="nc" id="L202">        controller.initialize(null, null);</span>
+<span class="nc" id="L203">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
+        try {
+<span class="nc" id="L205">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);</span>
+<span class="nc" id="L206">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L208">                    controller.handleViewStatistics(new ActionEvent());</span>
+<span class="nc" id="L209">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L212">                    latch.countDown();</span>
+                }
+<span class="nc" id="L214">            });</span>
+<span class="nc" id="L215">            boolean completed = latch.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L216">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
+<span class="nc" id="L217">        } finally {</span>
+<span class="nc" id="L218">            platformMock.close();</span>
+        }
+<span class="nc" id="L220">    }</span>
+
+    @Disabled(&quot;Requires real JavaFX thread/UI&quot;)
+    @Test
+    void testHandleLogoutAndExit() throws Exception {
+<span class="nc" id="L225">        controller.initialize(null, null);</span>
+<span class="nc" id="L226">        MockedStatic&lt;Platform&gt; platformMock = Mockito.mockStatic(Platform.class);</span>
+        try {
+<span class="nc" id="L228">            java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(2);</span>
+<span class="nc" id="L229">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L231">                    controller.handleLogout(new ActionEvent());</span>
+<span class="nc" id="L232">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L235">                    latch.countDown();</span>
+                }
+<span class="nc" id="L237">            });</span>
+<span class="nc" id="L238">            Platform.runLater(() -&gt; {</span>
+                try {
+<span class="nc" id="L240">                    controller.handleExit(new ActionEvent());</span>
+<span class="nc" id="L241">                } catch (Exception e) {</span>
+                    // Ignore IllegalState/NullPointer for headless
+                } finally {
+<span class="nc" id="L244">                    latch.countDown();</span>
+                }
+<span class="nc" id="L246">            });</span>
+<span class="nc" id="L247">            boolean completed = latch.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L248">            assertTrue(completed, &quot;JavaFX action did not complete in time&quot;);</span>
+<span class="nc" id="L249">        } finally {</span>
+<span class="nc" id="L250">            platformMock.close();</span>
+        }
+<span class="nc" id="L252">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

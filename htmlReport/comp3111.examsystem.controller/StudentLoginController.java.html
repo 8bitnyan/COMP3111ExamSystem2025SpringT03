@@ -45,7 +45,7 @@ import java.util.ResourceBundle;
 <span class="nc bnc" id="L45" title="All 4 branches missed.">            if (student.getUsername().equals(usernameTxt.getText()) &amp;&amp; student.getPassword().equals(passwordTxt.getText())) {</span>
 <span class="nc" id="L46">                return student;</span>
             }
-<span class="nc" id="L48">        }</span>
+        }
 <span class="nc" id="L49">        comp3111.examsystem.tools.MsgSender.showMsg(&quot;Invalid username or password!\n&quot;);</span>
 <span class="nc" id="L50">        return null;</span>
     }
@@ -79,7 +79,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L79">            controller.preSetController(student);</span>
 <span class="nc" id="L80">        } catch (IOException e1) {</span>
 <span class="nc" id="L81">            e1.printStackTrace();</span>
-<span class="nc" id="L82">        }</span>
+        }
 <span class="nc" id="L83">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L84">        stage.show();</span>
 <span class="nc" id="L85">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
@@ -98,7 +98,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L98">            stage.setScene(new Scene(fxmlLoader.load()));</span>
 <span class="nc" id="L99">        } catch (IOException e1) {</span>
 <span class="nc" id="L100">            e1.printStackTrace();</span>
-<span class="nc" id="L101">        }</span>
+        }
 <span class="nc" id="L102">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L103">        stage.show();</span>
 <span class="nc" id="L104">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
@@ -116,7 +116,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L116">            stage.setScene(new Scene(fxmlLoader.load()));</span>
 <span class="nc" id="L117">        } catch (IOException e1) {</span>
 <span class="nc" id="L118">            e1.printStackTrace();</span>
-<span class="nc" id="L119">        }</span>
+        }
 <span class="nc" id="L120">        UIhelper.expandToFullScreen(stage);</span>
 <span class="nc" id="L121">        stage.show();</span>
 <span class="nc" id="L122">        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>

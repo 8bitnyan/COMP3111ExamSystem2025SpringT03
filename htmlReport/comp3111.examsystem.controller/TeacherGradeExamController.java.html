@@ -41,98 +41,112 @@ public class TeacherGradeExamController implements Initializable {
     @FXML private ComboBox&lt;String&gt; courseFilter;
     @FXML private ComboBox&lt;String&gt; examFilter;
     @FXML private ComboBox&lt;String&gt; studentFilter;
-<span class="fc" id="L44">    private final Map&lt;String, String&gt; examLineMap = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L45">    private final Map&lt;String, List&lt;String&gt;&gt; courseToExamsMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L44">    private final Map&lt;String, String&gt; examLineMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L45">    private final Map&lt;String, List&lt;String&gt;&gt; courseToExamsMap = new HashMap&lt;&gt;();</span>
     @FXML private TableView&lt;Record&gt; answerTable;
     @FXML private TableColumn&lt;Record, String&gt; colStudentName;
     @FXML private TableColumn&lt;Record, String&gt; colStudentAnswer;
     @FXML private TableColumn&lt;Record, Integer&gt; colScore;
     @FXML private Label correctAnswerLabel;
     @FXML private Label maxScoreLabel;
-<span class="fc" id="L52">    private final Map&lt;String, String&gt; questionTextToId = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L52">    private final Map&lt;String, String&gt; questionTextToId = new HashMap&lt;&gt;();</span>
     private final Database&lt;Record&gt; recordDatabase;
     private Record selectedRecord;
     @FXML private TextField manualScoreField;
+    @FXML private Label studentAnswerLabel;
+    @FXML private Label studentNameLabel;
     private Path examFilePath;
     private Path questionFilePath;
     private Path studentFilePath;
+    @FXML private Button updateButton;
 
     // Default constructor for production
     public TeacherGradeExamController() {
-<span class="nc" id="L62">        this(</span>
-<span class="nc" id="L63">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;exam.txt&quot;),</span>
-<span class="nc" id="L64">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;question.txt&quot;),</span>
-<span class="nc" id="L65">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;student.txt&quot;),</span>
-            new Database&lt;&gt;(Record.class)
+<span class="nc" id="L65">        this(</span>
+<span class="nc" id="L66">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;exam.txt&quot;),</span>
+<span class="nc" id="L67">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;question.txt&quot;),</span>
+<span class="nc" id="L68">            Paths.get(&quot;src&quot;, &quot;main&quot;, &quot;resources&quot;, &quot;database&quot;, &quot;student.txt&quot;),</span>
+<span class="nc" id="L69">            new Database&lt;&gt;(Record.class)</span>
         );
-<span class="nc" id="L68">    }</span>
+<span class="nc" id="L71">    }</span>
 
     // Constructor for tests (3-arg, uses default DB)
     public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath) {
-<span class="nc" id="L72">        this(examFilePath, questionFilePath, studentFilePath, new Database&lt;&gt;(Record.class));</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L75">        this(examFilePath, questionFilePath, studentFilePath, new Database&lt;&gt;(Record.class));</span>
+<span class="nc" id="L76">    }</span>
 
     // Constructor for tests (4-arg, custom DB)
-<span class="fc" id="L76">    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath, Database&lt;Record&gt; recordDatabase) {</span>
-<span class="fc" id="L77">        this.examFilePath = examFilePath;</span>
-<span class="fc" id="L78">        this.questionFilePath = questionFilePath;</span>
-<span class="fc" id="L79">        this.studentFilePath = studentFilePath;</span>
-<span class="fc" id="L80">        this.recordDatabase = recordDatabase;</span>
-<span class="fc" id="L81">    }</span>
+<span class="nc" id="L79">    public TeacherGradeExamController(Path examFilePath, Path questionFilePath, Path studentFilePath, Database&lt;Record&gt; recordDatabase) {</span>
+<span class="nc" id="L80">        this.examFilePath = examFilePath;</span>
+<span class="nc" id="L81">        this.questionFilePath = questionFilePath;</span>
+<span class="nc" id="L82">        this.studentFilePath = studentFilePath;</span>
+<span class="nc" id="L83">        this.recordDatabase = recordDatabase;</span>
+<span class="nc" id="L84">    }</span>
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Load all questions from the exam for display
-<span class="nc" id="L86">        loadExamOptions();</span>
-<span class="nc" id="L87">        courseFilter.setOnAction(e -&gt; {</span>
-<span class="nc" id="L88">            String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</span>
-<span class="nc" id="L89">            examFilter.getItems().clear();</span>
-<span class="nc bnc" id="L90" title="All 4 branches missed.">            if (selectedCourse != null &amp;&amp; courseToExamsMap.containsKey(selectedCourse)) {</span>
-<span class="nc" id="L91">                examFilter.getItems().addAll(courseToExamsMap.get(selectedCourse));</span>
+<span class="nc" id="L88">        courseFilter.setOnAction(e -&gt; {</span>
+<span class="nc" id="L89">            String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L90">            examFilter.getItems().clear();</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">            if (selectedCourse != null &amp;&amp; courseToExamsMap.containsKey(selectedCourse)) {</span>
+<span class="nc" id="L92">                examFilter.getItems().addAll(courseToExamsMap.get(selectedCourse));</span>
             }
-<span class="nc" id="L93">        });</span>
+<span class="nc" id="L94">        });</span>
         // Retrieve student's response to a particular question
-<span class="nc" id="L95">        colStudentName.setCellValueFactory(cellData -&gt; {</span>
-<span class="nc" id="L96">            Long id = cellData.getValue().getStudentID();</span>
-<span class="nc" id="L97">            return new SimpleStringProperty(getStudentNameById(String.valueOf(id)));</span>
+<span class="nc" id="L96">        colStudentName.setCellValueFactory(cellData -&gt; {</span>
+<span class="nc" id="L97">            Long id = cellData.getValue().getStudentID();</span>
+<span class="nc" id="L98">            return new SimpleStringProperty(getStudentNameById(String.valueOf(id)));</span>
         });
-<span class="nc" id="L99">        colStudentAnswer.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;response&quot;));</span>
-<span class="nc" id="L100">        colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
+<span class="nc" id="L100">        colStudentAnswer.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;response&quot;));</span>
+<span class="nc" id="L101">        colScore.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;score&quot;));</span>
 
         // Handle question selection
-<span class="nc" id="L103">        questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
-<span class="nc bnc" id="L104" title="All 4 branches missed.">            if (newVal != null &amp;&amp; questionTextToId.containsKey(newVal)) {</span>
-<span class="nc" id="L105">                String qid = questionTextToId.get(newVal);</span>
-<span class="nc" id="L106">                displayQuestionDetails(qid);</span>
-<span class="nc" id="L107">                displayStudentResponsesForQuestion(qid);</span>
+<span class="nc" id="L104">        questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">            if (newVal != null &amp;&amp; questionTextToId.containsKey(newVal)) {</span>
+<span class="nc" id="L106">                String qid = questionTextToId.get(newVal);</span>
+<span class="nc" id="L107">                displayQuestionDetails(qid);</span>
+<span class="nc" id="L108">                refreshCurrentQuestionData();</span>
+                // After refreshing, update the detail panel to show the first student answer (if any)
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (!answerTable.getItems().isEmpty()) {</span>
+<span class="nc" id="L111">                    answerTable.getSelectionModel().select(0);</span>
+<span class="nc" id="L112">                    Record firstRecord = answerTable.getItems().get(0);</span>
+<span class="nc" id="L113">                    updateDetailPanel(firstRecord, qid);</span>
+<span class="nc" id="L114">                } else {</span>
+<span class="nc" id="L115">                    updateDetailPanel(null, qid);</span>
+                }
             }
-<span class="nc" id="L109">        });</span>
-
-        //If a question is selected -&gt; Display question details, all the students' response for that question.
-<span class="nc" id="L112">        questionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
-<span class="nc bnc" id="L113" title="All 4 branches missed.">            if (newVal != null &amp;&amp; questionTextToId.containsKey(newVal)) {</span>
-<span class="nc" id="L114">                String qid = questionTextToId.get(newVal);</span>
-<span class="nc" id="L115">                displayQuestionDetails(qid);</span>
+<span class="nc" id="L118">        });</span>
+<span class="nc" id="L119">        answerTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            if (newVal != null) {</span>
+<span class="nc" id="L121">                selectedRecord = newVal;</span>
+<span class="nc" id="L122">                manualScoreField.setText(String.valueOf(newVal.getScore()));</span>
+<span class="nc" id="L123">                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">                if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</span>
+<span class="nc" id="L125">                    String qid = questionTextToId.get(selectedQuestion);</span>
+<span class="nc" id="L126">                    updateDetailPanel(newVal, qid);</span>
+                }
+<span class="nc" id="L128">            } else {</span>
+                // If no student is selected, clear the detail panel for the current question
+<span class="nc" id="L130">                String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">                if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</span>
+<span class="nc" id="L132">                    String qid = questionTextToId.get(selectedQuestion);</span>
+<span class="nc" id="L133">                    updateDetailPanel(null, qid);</span>
+                }
             }
-<span class="nc" id="L117">        });</span>
-<span class="nc" id="L118">        answerTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">            if (newVal != null) {</span>
-<span class="nc" id="L120">                selectedRecord = newVal;</span>
-<span class="nc" id="L121">                manualScoreField.setText(String.valueOf(newVal.getScore()));</span>
+<span class="nc" id="L136">        });</span>
+<span class="nc" id="L137">        studentFilter.setOnAction(e -&gt; {</span>
+<span class="nc" id="L138">            String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L139" title="All 4 branches missed.">            if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</span>
+<span class="nc" id="L140">                String qid = questionTextToId.get(selectedQuestion);</span>
+<span class="nc" id="L141">                displayStudentResponsesForQuestion(qid);</span>
             }
-<span class="nc" id="L123">        });</span>
-<span class="nc" id="L124">        studentFilter.setOnAction(e -&gt; {</span>
-<span class="nc" id="L125">            String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</span>
-<span class="nc bnc" id="L126" title="All 4 branches missed.">            if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</span>
-<span class="nc" id="L127">                String qid = questionTextToId.get(selectedQuestion);</span>
-<span class="nc" id="L128">                displayStudentResponsesForQuestion(qid);</span>
-            }
-<span class="nc" id="L130">        });</span>
-<span class="nc" id="L131">    }</span>
+<span class="nc" id="L143">        });</span>
+<span class="nc" id="L144">    }</span>
 
     public void presetController(Teacher teacher) {
-<span class="nc" id="L134">        this.teacher = teacher;</span>
-<span class="nc" id="L135">    }</span>
+<span class="nc" id="L147">        this.teacher = teacher;</span>
+<span class="nc" id="L148">        loadExamOptions();</span>
+<span class="nc" id="L149">    }</span>
 
     /**
      * Loads all enabled exams from the database file and populates filter options.
@@ -140,28 +154,33 @@ public class TeacherGradeExamController implements Initializable {
      */
     private void loadExamOptions() {
         try {
-<span class="fc" id="L143">            List&lt;String&gt; lines = Files.readAllLines(examFilePath);</span>
-<span class="fc" id="L144">            courseFilter.getItems().clear();</span>
-<span class="fc" id="L145">            examFilter.getItems().clear();</span>
-<span class="fc" id="L146">            examLineMap.clear();</span>
-<span class="fc" id="L147">            courseToExamsMap.clear();</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">            for (String line : lines) {</span>
-                // Only load if isAble is true
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                if (!line.contains(&quot;isAble%&amp;:true&quot;)) continue;</span>
-
-<span class="fc" id="L152">                String courseCode = extractField(line, &quot;courseCode&quot;);</span>
-<span class="fc" id="L153">                String examName = extractField(line, &quot;examName&quot;);</span>
-<span class="pc bpc" id="L154" title="2 of 4 branches missed.">                if (courseCode != null &amp;&amp; examName != null) {</span>
-<span class="fc" id="L155">                    examLineMap.put(courseCode + &quot;|&quot; + examName, line);</span>
-<span class="fc" id="L156">                    courseToExamsMap.putIfAbsent(courseCode, new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L157">                    courseToExamsMap.get(courseCode).add(examName);</span>
+<span class="nc" id="L157">            List&lt;String&gt; lines = Files.readAllLines(examFilePath);</span>
+<span class="nc" id="L158">            courseFilter.getItems().clear();</span>
+<span class="nc" id="L159">            examFilter.getItems().clear();</span>
+<span class="nc" id="L160">            examLineMap.clear();</span>
+<span class="nc" id="L161">            courseToExamsMap.clear();</span>
+<span class="nc bnc" id="L162" title="All 4 branches missed.">            String teacherIdStr = teacher != null &amp;&amp; teacher.getId() != null ? teacher.getId().toString() : null;</span>
+<span class="nc" id="L163">            System.out.println(&quot;[DEBUG] Logged-in teacherId: &quot; + teacherIdStr);</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            for (String line : lines) {</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                if (!line.contains(&quot;isAble%&amp;:true&quot;)) continue;</span>
+<span class="nc" id="L166">                String courseCode = extractField(line, &quot;courseCode&quot;);</span>
+<span class="nc" id="L167">                String examName = extractField(line, &quot;examName&quot;);</span>
+<span class="nc" id="L168">                String examTeacherId = extractField(line, &quot;teacherId&quot;);</span>
+<span class="nc" id="L169">                System.out.println(&quot;[DEBUG] Exam: courseCode=&quot; + courseCode + &quot;, examName=&quot; + examName + &quot;, teacherId=&quot; + examTeacherId);</span>
+<span class="nc bnc" id="L170" title="All 10 branches missed.">                if (courseCode != null &amp;&amp; examName != null &amp;&amp; teacherIdStr != null &amp;&amp; examTeacherId != null &amp;&amp; examTeacherId.equals(teacherIdStr)) {</span>
+<span class="nc" id="L171">                    System.out.println(&quot;[DEBUG] -&gt; MATCHED and added to visible exams&quot;);</span>
+<span class="nc" id="L172">                    examLineMap.put(courseCode + &quot;|&quot; + examName, line);</span>
+<span class="nc" id="L173">                    courseToExamsMap.putIfAbsent(courseCode, new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L174">                    courseToExamsMap.get(courseCode).add(examName);</span>
+<span class="nc" id="L175">                } else {</span>
+<span class="nc" id="L176">                    System.out.println(&quot;[DEBUG] -&gt; NOT MATCHED&quot;);</span>
                 }
-<span class="fc" id="L159">            }</span>
-<span class="fc" id="L160">            courseFilter.getItems().addAll(courseToExamsMap.keySet());</span>
-<span class="nc" id="L161">        } catch (IOException e) {</span>
-<span class="nc" id="L162">            MsgSender.showMsg(&quot;Failed to load exams.&quot;);</span>
-<span class="fc" id="L163">        }</span>
-<span class="fc" id="L164">    }</span>
+            }
+<span class="nc" id="L179">            courseFilter.getItems().addAll(courseToExamsMap.keySet());</span>
+<span class="nc" id="L180">        } catch (IOException e) {</span>
+<span class="nc" id="L181">            MsgSender.showMsg(&quot;Failed to load exams.&quot;);</span>
+        }
+<span class="nc" id="L183">    }</span>
 
     /**
      * Displays all questions from the selected exam.
@@ -171,55 +190,55 @@ public class TeacherGradeExamController implements Initializable {
      * @param examLine The serialized exam data line.
      */
     private void displayQuestionsFromExamLine(String examLine) {
-<span class="fc" id="L174">        questionList.getItems().clear();</span>
-<span class="fc" id="L175">        questionTextToId.clear();</span>
-<span class="fc" id="L176">        String questionSection = extractField(examLine, &quot;questions&quot;);</span>
-<span class="pc bpc" id="L177" title="2 of 4 branches missed.">        if (questionSection == null || questionSection.isBlank()) return;</span>
+<span class="nc" id="L193">        questionList.getItems().clear();</span>
+<span class="nc" id="L194">        questionTextToId.clear();</span>
+<span class="nc" id="L195">        String questionSection = extractField(examLine, &quot;questions&quot;);</span>
+<span class="nc bnc" id="L196" title="All 4 branches missed.">        if (questionSection == null || questionSection.isBlank()) return;</span>
 
         // Parse question IDs from the comma-separated string
-<span class="fc" id="L180">        List&lt;String&gt; questionIds = Arrays.stream(questionSection.split(&quot;,&quot;))</span>
-<span class="fc" id="L181">                .map(String::trim)</span>
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                .filter(id -&gt; !id.isEmpty())</span>
-<span class="fc" id="L183">                .collect(Collectors.toList());</span>
+<span class="nc" id="L199">        List&lt;String&gt; questionIds = Arrays.stream(questionSection.split(&quot;,&quot;))</span>
+<span class="nc" id="L200">                .map(String::trim)</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                .filter(id -&gt; !id.isEmpty())</span>
+<span class="nc" id="L202">                .collect(Collectors.toList());</span>
 
         List&lt;String&gt; questionLines;
         try {
-<span class="fc" id="L187">            questionLines = Files.readAllLines(questionFilePath);</span>
-<span class="nc" id="L188">        } catch (IOException e) {</span>
-<span class="nc" id="L189">            MsgSender.showMsg(&quot;Failed to read question database.&quot;);</span>
-<span class="nc" id="L190">            return;</span>
-<span class="fc" id="L191">        }</span>
+<span class="nc" id="L206">            questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc" id="L207">        } catch (IOException e) {</span>
+<span class="nc" id="L208">            MsgSender.showMsg(&quot;Failed to read question database.&quot;);</span>
+<span class="nc" id="L209">            return;</span>
+        }
 
         //Extract the question from the question list
-<span class="fc bfc" id="L194" title="All 2 branches covered.">        for (String qid : questionIds) {</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">            for (String line : questionLines) {</span>
-<span class="fc" id="L196">                String id = extractField(line, &quot;id&quot;);</span>
-<span class="fc" id="L197">                String isAble = extractField(line, &quot;isAble&quot;);</span>
-<span class="pc bpc" id="L198" title="2 of 6 branches missed.">                if (id != null &amp;&amp; id.equals(qid) &amp;&amp; &quot;true&quot;.equalsIgnoreCase(isAble)) {</span>
-<span class="fc" id="L199">                    String questionText = extractField(line, &quot;questionText&quot;);</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                    if (questionText != null) {</span>
-<span class="fc" id="L201">                        questionList.getItems().add(questionText);</span>
-<span class="fc" id="L202">                        questionTextToId.put(questionText, qid);</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        for (String qid : questionIds) {</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc" id="L215">                String id = extractField(line, &quot;id&quot;);</span>
+<span class="nc" id="L216">                String isAble = extractField(line, &quot;isAble&quot;);</span>
+<span class="nc bnc" id="L217" title="All 6 branches missed.">                if (id != null &amp;&amp; id.equals(qid) &amp;&amp; &quot;true&quot;.equalsIgnoreCase(isAble)) {</span>
+<span class="nc" id="L218">                    String questionText = extractField(line, &quot;questionText&quot;);</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                    if (questionText != null) {</span>
+<span class="nc" id="L220">                        questionList.getItems().add(questionText);</span>
+<span class="nc" id="L221">                        questionTextToId.put(questionText, qid);</span>
                     }
-                    break;
+<span class="nc" id="L223">                    break;</span>
                 }
-<span class="fc" id="L206">            }</span>
-<span class="fc" id="L207">        }</span>
+            }
+        }
 
         // Get the students record
-<span class="fc" id="L210">        Set&lt;String&gt; uniqueStudentNames = new HashSet&lt;&gt;();</span>
-<span class="fc" id="L211">        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        for (Record r : allRecords) {</span>
-<span class="pc bpc" id="L213" title="2 of 4 branches missed.">            if (r.getExamID() != null &amp;&amp; r.getExamID().equals(currentExamID)) {</span>
-<span class="fc" id="L214">                String studentName = getStudentNameById(String.valueOf(r.getStudentID()));</span>
-<span class="fc" id="L215">                uniqueStudentNames.add(studentName);</span>
+<span class="nc" id="L229">        Set&lt;String&gt; uniqueStudentNames = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L230">        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        for (Record r : allRecords) {</span>
+<span class="nc bnc" id="L232" title="All 4 branches missed.">            if (r.getExamID() != null &amp;&amp; r.getExamID().equals(currentExamID)) {</span>
+<span class="nc" id="L233">                String studentName = getStudentNameById(String.valueOf(r.getStudentID()));</span>
+<span class="nc" id="L234">                uniqueStudentNames.add(studentName);</span>
             }
-<span class="fc" id="L217">        }</span>
-<span class="fc" id="L218">        studentFilter.getItems().clear();</span>
-<span class="fc" id="L219">        studentFilter.getItems().add(&quot;ALL&quot;);</span>
-<span class="fc" id="L220">        studentFilter.getItems().addAll(uniqueStudentNames);</span>
-<span class="fc" id="L221">        studentFilter.getSelectionModel().select(&quot;ALL&quot;);</span>
-<span class="fc" id="L222">    }</span>
+        }
+<span class="nc" id="L237">        studentFilter.getItems().clear();</span>
+<span class="nc" id="L238">        studentFilter.getItems().add(&quot;ALL&quot;);</span>
+<span class="nc" id="L239">        studentFilter.getItems().addAll(uniqueStudentNames);</span>
+<span class="nc" id="L240">        studentFilter.getSelectionModel().select(&quot;ALL&quot;);</span>
+<span class="nc" id="L241">    }</span>
 
     /**
      * Extracts the value of a specific field from a serialized data line.
@@ -228,13 +247,13 @@ public class TeacherGradeExamController implements Initializable {
      * @return The value of the field, or null if not found.
      */
     private String extractField(String line, String fieldName) {
-<span class="fc" id="L231">        String[] fields = line.split(&quot;!@#&quot;);</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        for (String field : fields) {</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">            if (field.startsWith(fieldName + &quot;%&amp;:&quot;)) {</span>
-<span class="fc" id="L234">                return field.split(&quot;%&amp;:&quot;)[1];</span>
+<span class="nc" id="L250">        String[] fields = line.split(&quot;!@#&quot;);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        for (String field : fields) {</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if (field.startsWith(fieldName + &quot;%&amp;:&quot;)) {</span>
+<span class="nc" id="L253">                return field.split(&quot;%&amp;:&quot;)[1];</span>
             }
         }
-<span class="nc" id="L237">        return null;</span>
+<span class="nc" id="L256">        return null;</span>
     }
 
     /**
@@ -243,22 +262,22 @@ public class TeacherGradeExamController implements Initializable {
      */
     @FXML
     private void filterExam() {
-<span class="fc" id="L246">        String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</span>
-<span class="fc" id="L247">        String selectedExam = examFilter.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L265">        String selectedCourse = courseFilter.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L266">        String selectedExam = examFilter.getSelectionModel().getSelectedItem();</span>
 
-<span class="fc bfc" id="L249" title="All 4 branches covered.">        if (selectedCourse != null &amp;&amp; selectedExam != null) {</span>
-<span class="fc" id="L250">            String key = selectedCourse + &quot;|&quot; + selectedExam;</span>
-<span class="fc bfc" id="L251" title="All 2 branches covered.">            if (examLineMap.containsKey(key)) {</span>
-<span class="fc" id="L252">                String examLine = examLineMap.get(key);</span>
-<span class="fc" id="L253">                currentExamID = extractExamIdFromLine(examLine); // new function</span>
-<span class="fc" id="L254">                displayQuestionsFromExamLine(examLine);</span>
-<span class="fc" id="L255">            } else {</span>
-<span class="fc" id="L256">                MsgSender.showMsg(&quot;No exam found for the selected course and exam.&quot;);</span>
+<span class="nc bnc" id="L268" title="All 4 branches missed.">        if (selectedCourse != null &amp;&amp; selectedExam != null) {</span>
+<span class="nc" id="L269">            String key = selectedCourse + &quot;|&quot; + selectedExam;</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (examLineMap.containsKey(key)) {</span>
+<span class="nc" id="L271">                String examLine = examLineMap.get(key);</span>
+<span class="nc" id="L272">                currentExamID = extractExamIdFromLine(examLine); // new function</span>
+<span class="nc" id="L273">                displayQuestionsFromExamLine(examLine);</span>
+<span class="nc" id="L274">            } else {</span>
+<span class="nc" id="L275">                MsgSender.showMsg(&quot;No exam found for the selected course and exam.&quot;);</span>
             }
-<span class="fc" id="L258">        } else {</span>
-<span class="fc" id="L259">            MsgSender.showMsg(&quot;Please select both a course and an exam.&quot;);</span>
+<span class="nc" id="L277">        } else {</span>
+<span class="nc" id="L278">            MsgSender.showMsg(&quot;Please select both a course and an exam.&quot;);</span>
         }
-<span class="fc" id="L261">    }</span>
+<span class="nc" id="L280">    }</span>
 
     /**
      * Extracts the exam ID from a serialized exam line.
@@ -266,13 +285,13 @@ public class TeacherGradeExamController implements Initializable {
      * @return The exam ID as a Long.
      */
     private Long extractExamIdFromLine(String examLine) {
-<span class="fc" id="L269">        String[] fields = examLine.split(&quot;!@#&quot;);</span>
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">        for (String field : fields) {</span>
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (field.startsWith(&quot;id%&amp;:&quot;)) {</span>
-<span class="fc" id="L272">                return Long.parseLong(field.split(&quot;%&amp;:&quot;)[1]);</span>
+<span class="nc" id="L288">        String[] fields = examLine.split(&quot;!@#&quot;);</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        for (String field : fields) {</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            if (field.startsWith(&quot;id%&amp;:&quot;)) {</span>
+<span class="nc" id="L291">                return Long.parseLong(field.split(&quot;%&amp;:&quot;)[1]);</span>
             }
         }
-<span class="nc" id="L275">        return null;</span>
+<span class="nc" id="L294">        return null;</span>
     }
 
     /**
@@ -280,11 +299,11 @@ public class TeacherGradeExamController implements Initializable {
      */
     @FXML
     private void resetFilter() {
-<span class="fc" id="L283">        courseFilter.getSelectionModel().clearSelection();</span>
-<span class="fc" id="L284">        examFilter.getSelectionModel().clearSelection();</span>
-<span class="fc" id="L285">        examFilter.getItems().clear();</span>
-<span class="fc" id="L286">        questionList.getItems().clear();</span>
-<span class="fc" id="L287">    }</span>
+<span class="nc" id="L302">        courseFilter.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L303">        examFilter.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L304">        examFilter.getItems().clear();</span>
+<span class="nc" id="L305">        questionList.getItems().clear();</span>
+<span class="nc" id="L306">    }</span>
 
     /**
      * Displays all student responses to the selected question.
@@ -292,22 +311,39 @@ public class TeacherGradeExamController implements Initializable {
      * @param questionId The ID of the selected question.
      */
     private void displayStudentResponsesForQuestion(String questionId) {
-<span class="fc" id="L295">        String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();</span>
-<span class="fc" id="L296">        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</span>
-<span class="fc" id="L297">        List&lt;Record&gt; result = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L298" title="All 2 branches covered.">        for (Record r : allRecords) {</span>
-<span class="pc bpc" id="L299" title="2 of 4 branches missed.">            if (r.getQuestionID() != null &amp;&amp; r.getExamID() != null &amp;&amp;</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">                    r.getQuestionID().toString().equals(questionId) &amp;&amp;</span>
-<span class="pc bpc" id="L301" title="1 of 2 branches missed.">                    r.getExamID().equals(currentExamID)) {</span>
-
-<span class="fc" id="L303">                String name = getStudentNameById(String.valueOf(r.getStudentID()));</span>
-<span class="pc bpc" id="L304" title="4 of 6 branches missed.">                if (selectedStudentName == null || selectedStudentName.equals(&quot;ALL&quot;) || name.equals(selectedStudentName)) {</span>
-<span class="fc" id="L305">                    result.add(r);</span>
+<span class="nc" id="L314">        String selectedStudentName = studentFilter.getSelectionModel().getSelectedItem();</span>
+<span class="nc" id="L315">        List&lt;Record&gt; allRecords = recordDatabase.getAllEnabled();</span>
+<span class="nc" id="L316">        List&lt;Record&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L317">        Long qidLong = null;</span>
+        try {
+<span class="nc" id="L319">            qidLong = Long.parseLong(questionId);</span>
+<span class="nc" id="L320">        } catch (Exception e) {</span>
+<span class="nc" id="L321">            System.out.println(&quot;Could not parse questionId to Long: &quot; + questionId);</span>
+        }
+<span class="nc" id="L323">        System.out.println(&quot;Selected questionId: &quot; + questionId);</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        for (Record r : allRecords) {</span>
+<span class="nc bnc" id="L325" title="All 4 branches missed.">            if (r.getQuestionID() != null &amp;&amp; r.getExamID() != null &amp;&amp;</span>
+<span class="nc bnc" id="L326" title="All 4 branches missed.">                qidLong != null &amp;&amp; r.getQuestionID().equals(qidLong) &amp;&amp;</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">                r.getExamID().equals(currentExamID)) {</span>
+<span class="nc" id="L328">                String name = getStudentNameById(String.valueOf(r.getStudentID()));</span>
+<span class="nc bnc" id="L329" title="All 6 branches missed.">                if (selectedStudentName == null || selectedStudentName.equals(&quot;ALL&quot;) || name.equals(selectedStudentName)) {</span>
+<span class="nc" id="L330">                    System.out.println(&quot;Record: QID=&quot; + r.getQuestionID() + &quot;, EID=&quot; + r.getExamID());</span>
+<span class="nc" id="L331">                    result.add(r);</span>
                 }
             }
-<span class="fc" id="L308">        }</span>
-<span class="fc" id="L309">        answerTable.setItems(FXCollections.observableArrayList(result));</span>
-<span class="fc" id="L310">    }</span>
+        }
+<span class="nc" id="L335">        answerTable.setItems(FXCollections.observableArrayList(result));</span>
+<span class="nc" id="L336">        answerTable.refresh();</span>
+        // Always clear and select the first row, update detail panel
+<span class="nc" id="L338">        answerTable.getSelectionModel().clearSelection();</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        if (!result.isEmpty()) {</span>
+<span class="nc" id="L340">            answerTable.getSelectionModel().select(0);</span>
+<span class="nc" id="L341">            Record firstRecord = result.get(0);</span>
+<span class="nc" id="L342">            updateDetailPanel(firstRecord, questionId);</span>
+<span class="nc" id="L343">        } else {</span>
+<span class="nc" id="L344">            updateDetailPanel(null, questionId);</span>
+        }
+<span class="nc" id="L346">    }</span>
 
     /**
      * Looks up and returns a student's name by ID.
@@ -317,15 +353,15 @@ public class TeacherGradeExamController implements Initializable {
      */
     private String getStudentNameById(String studentId) {
         try {
-<span class="fc bfc" id="L320" title="All 2 branches covered.">            for (String line : Files.readAllLines(studentFilePath)) {</span>
-<span class="fc bfc" id="L321" title="All 2 branches covered.">                if (line.contains(&quot;id%&amp;:&quot; + studentId + &quot;!@#&quot;)) {</span>
-<span class="fc" id="L322">                    return extractField(line, &quot;name&quot;);</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">            for (String line : Files.readAllLines(studentFilePath)) {</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + studentId + &quot;!@#&quot;)) {</span>
+<span class="nc" id="L358">                    return extractField(line, &quot;name&quot;);</span>
                 }
-<span class="fc" id="L324">            }</span>
-<span class="nc" id="L325">        } catch (IOException e) {</span>
-<span class="nc" id="L326">            e.printStackTrace();</span>
-<span class="fc" id="L327">        }</span>
-<span class="fc" id="L328">        return &quot;Unknown&quot;;</span>
+            }
+<span class="nc" id="L361">        } catch (IOException e) {</span>
+<span class="nc" id="L362">            e.printStackTrace();</span>
+        }
+<span class="nc" id="L364">        return &quot;Unknown&quot;;</span>
     }
 
     /**
@@ -334,23 +370,23 @@ public class TeacherGradeExamController implements Initializable {
      */
     private void displayQuestionDetails(String questionId) {
         try {
-<span class="fc" id="L337">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
-<span class="fc bfc" id="L338" title="All 2 branches covered.">            for (String line : questionLines) {</span>
-<span class="pc bpc" id="L339" title="1 of 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
-<span class="fc" id="L340">                    String answer = extractField(line, &quot;answer&quot;);</span>
-<span class="fc" id="L341">                    String score = extractField(line, &quot;score&quot;);</span>
+<span class="nc" id="L373">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc bnc" id="L375" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
+<span class="nc" id="L376">                    String answer = extractField(line, &quot;answer&quot;);</span>
+<span class="nc" id="L377">                    String score = extractField(line, &quot;score&quot;);</span>
 
-<span class="pc bpc" id="L343" title="1 of 2 branches missed.">                    correctAnswerLabel.setText(answer != null ? answer : &quot;N/A&quot;);</span>
-<span class="pc bpc" id="L344" title="1 of 2 branches missed.">                    maxScoreLabel.setText(score != null ? score : &quot;N/A&quot;);</span>
-<span class="fc" id="L345">                    return;</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">                    correctAnswerLabel.setText(answer != null ? answer : &quot;N/A&quot;);</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">                    maxScoreLabel.setText(score != null ? score : &quot;N/A&quot;);</span>
+<span class="nc" id="L381">                    return;</span>
                 }
-<span class="fc" id="L347">            }</span>
-<span class="nc" id="L348">        } catch (IOException e) {</span>
-<span class="nc" id="L349">            MsgSender.showMsg(&quot;Failed to load question details.&quot;);</span>
-<span class="fc" id="L350">        }</span>
-<span class="fc" id="L351">        correctAnswerLabel.setText(&quot;N/A&quot;);</span>
-<span class="fc" id="L352">        maxScoreLabel.setText(&quot;N/A&quot;);</span>
-<span class="fc" id="L353">    }</span>
+            }
+<span class="nc" id="L384">        } catch (IOException e) {</span>
+<span class="nc" id="L385">            MsgSender.showMsg(&quot;Failed to load question details.&quot;);</span>
+        }
+<span class="nc" id="L387">        correctAnswerLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L388">        maxScoreLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L389">    }</span>
 
     /**
      * Updates the score of the selected student answer.
@@ -358,37 +394,37 @@ public class TeacherGradeExamController implements Initializable {
      */
     @FXML
     private void updateScore() {
-<span class="fc bfc" id="L361" title="All 2 branches covered.">        if (selectedRecord == null) {</span>
-<span class="fc" id="L362">            MsgSender.showMsg(&quot;Please select a student answer first.&quot;);</span>
-<span class="fc" id="L363">            return;</span>
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        if (selectedRecord == null) {</span>
+<span class="nc" id="L398">            MsgSender.showMsg(&quot;Please select a student answer first.&quot;);</span>
+<span class="nc" id="L399">            return;</span>
         }
-<span class="fc" id="L365">        String newScoreText = manualScoreField.getText().trim();</span>
-<span class="fc bfc" id="L366" title="All 2 branches covered.">        if (newScoreText.isEmpty()) {</span>
-<span class="fc" id="L367">            MsgSender.showMsg(&quot;Score cannot be empty.&quot;);</span>
-<span class="fc" id="L368">            return;</span>
+<span class="nc" id="L401">        String newScoreText = manualScoreField.getText().trim();</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        if (newScoreText.isEmpty()) {</span>
+<span class="nc" id="L403">            MsgSender.showMsg(&quot;Score cannot be empty.&quot;);</span>
+<span class="nc" id="L404">            return;</span>
         }
         try {
-<span class="fc" id="L371">            int newScore = Integer.parseInt(newScoreText);</span>
+<span class="nc" id="L407">            int newScore = Integer.parseInt(newScoreText);</span>
             //Validation
-<span class="fc" id="L373">            String maxScoreText = maxScoreLabel.getText().trim();</span>
-<span class="pc bpc" id="L374" title="1 of 2 branches missed.">            if (!maxScoreText.equals(&quot;N/A&quot;)) {</span>
+<span class="nc" id="L409">            String maxScoreText = maxScoreLabel.getText().trim();</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            if (!maxScoreText.equals(&quot;N/A&quot;)) {</span>
                 try {
-<span class="fc" id="L376">                    int maxScore = Integer.parseInt(maxScoreText);</span>
-<span class="pc bpc" id="L377" title="1 of 4 branches missed.">                    if (newScore &lt; 0 || newScore &gt; maxScore) {</span>
-<span class="fc" id="L378">                        MsgSender.showMsg(&quot;Score must be between 0 and &quot; + maxScore);</span>
-<span class="fc" id="L379">                        return;</span>
+<span class="nc" id="L412">                    int maxScore = Integer.parseInt(maxScoreText);</span>
+<span class="nc bnc" id="L413" title="All 4 branches missed.">                    if (newScore &lt; 0 || newScore &gt; maxScore) {</span>
+<span class="nc" id="L414">                        MsgSender.showMsg(&quot;Score must be between 0 and &quot; + maxScore);</span>
+<span class="nc" id="L415">                        return;</span>
                     }
-<span class="nc" id="L381">                } catch (NumberFormatException ignored) {</span>
-<span class="fc" id="L382">                }</span>
+<span class="nc" id="L417">                } catch (NumberFormatException ignored) {</span>
+                }
             }
-<span class="fc" id="L384">            selectedRecord.setScore(newScore);</span>
-<span class="fc" id="L385">            recordDatabase.update(selectedRecord);</span>
-<span class="fc" id="L386">            answerTable.refresh();  // Refresh table view</span>
-<span class="fc" id="L387">            MsgSender.showMsg(&quot;Score updated successfully.&quot;);</span>
-<span class="fc" id="L388">        } catch (NumberFormatException e) {</span>
-<span class="fc" id="L389">            MsgSender.showMsg(&quot;Please enter a valid numeric score.&quot;);</span>
-<span class="fc" id="L390">        }</span>
-<span class="fc" id="L391">    }</span>
+<span class="nc" id="L420">            selectedRecord.setScore(newScore);</span>
+<span class="nc" id="L421">            recordDatabase.update(selectedRecord);</span>
+<span class="nc" id="L422">            answerTable.refresh();  // Refresh table view</span>
+<span class="nc" id="L423">            MsgSender.showMsg(&quot;Score updated successfully.&quot;);</span>
+<span class="nc" id="L424">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L425">            MsgSender.showMsg(&quot;Please enter a valid numeric score.&quot;);</span>
+        }
+<span class="nc" id="L427">    }</span>
 
     /**
      * Navigates back to the Teacher main screen.
@@ -397,30 +433,164 @@ public class TeacherGradeExamController implements Initializable {
     @FXML
     void back(ActionEvent e) {
         try {
-<span class="nc" id="L400">            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
-<span class="nc" id="L401">            Stage stage = new Stage();</span>
-<span class="nc" id="L402">            stage.setTitle(&quot;Back&quot;);</span>
-<span class="nc" id="L403">            stage.setScene(new Scene(fxmlLoader.load()));</span>
-<span class="nc" id="L404">            TeacherMainController controller = fxmlLoader.getController();</span>
-<span class="nc" id="L405">            controller.presetController(teacher);</span>
-<span class="nc" id="L406">            UIhelper.expandToFullScreen(stage);</span>
-<span class="nc" id="L407">            stage.show();</span>
-<span class="nc" id="L408">            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
-<span class="nc" id="L409">        } catch (IOException ex) {</span>
-<span class="nc" id="L410">            ex.printStackTrace();</span>
-<span class="nc" id="L411">        }</span>
-<span class="nc" id="L412">    }</span>
+<span class="nc" id="L436">            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(&quot;TeacherMainUI.fxml&quot;));</span>
+<span class="nc" id="L437">            Stage stage = new Stage();</span>
+<span class="nc" id="L438">            stage.setTitle(&quot;Back&quot;);</span>
+<span class="nc" id="L439">            stage.setScene(new Scene(fxmlLoader.load()));</span>
+<span class="nc" id="L440">            TeacherMainController controller = fxmlLoader.getController();</span>
+<span class="nc" id="L441">            controller.presetController(teacher);</span>
+<span class="nc" id="L442">            UIhelper.expandToFullScreen(stage);</span>
+<span class="nc" id="L443">            stage.show();</span>
+<span class="nc" id="L444">            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
+<span class="nc" id="L445">        } catch (IOException ex) {</span>
+<span class="nc" id="L446">            ex.printStackTrace();</span>
+        }
+<span class="nc" id="L448">    }</span>
 
     /**
      * Closes the application with a confirmation dialog.
      */
     @FXML
     void closeApplication() {
-<span class="fc" id="L419">        MsgSender.showConfirm(</span>
-                &quot;Exit Confirmation&quot;,
-                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,
-                Platform::exit
+<span class="nc" id="L455">        MsgSender.showConfirm(</span>
+<span class="nc" id="L456">                &quot;Exit Confirmation&quot;,</span>
+<span class="nc" id="L457">                &quot;Are you sure you want to exit?\nClick OK to exit the application.&quot;,</span>
+<span class="nc" id="L458">                Platform::exit</span>
         );
-<span class="fc" id="L424">    }</span>
+<span class="nc" id="L460">    }</span>
+
+    // Helper: Get option text by letter for MCQ
+    private String getOptionTextByLetter(String letter, List&lt;String&gt; options) {
+<span class="nc bnc" id="L464" title="All 4 branches missed.">        if (letter == null || letter.length() != 1) return &quot;&quot;;</span>
+<span class="nc" id="L465">        int idx = letter.charAt(0) - 'A';</span>
+<span class="nc bnc" id="L466" title="All 4 branches missed.">        if (idx &gt;= 0 &amp;&amp; idx &lt; options.size()) {</span>
+<span class="nc" id="L467">            return options.get(idx);</span>
+        }
+<span class="nc" id="L469">        return &quot;&quot;;</span>
+    }
+
+    // Helper: Get options for a question by ID
+    private List&lt;String&gt; getOptionsForQuestion(String questionId) {
+        try {
+<span class="nc" id="L475">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc bnc" id="L476" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc bnc" id="L477" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
+<span class="nc" id="L478">                    List&lt;String&gt; options = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">                    for (String opt : new String[]{&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;}) {</span>
+<span class="nc" id="L480">                        String val = extractField(line, &quot;option&quot; + opt);</span>
+<span class="nc bnc" id="L481" title="All 4 branches missed.">                        if (val != null &amp;&amp; !val.isEmpty()) options.add(val);</span>
+                    }
+<span class="nc" id="L483">                    return options;</span>
+                }
+            }
+<span class="nc" id="L486">        } catch (IOException e) {</span>
+            // ignore
+        }
+<span class="nc" id="L489">        return new ArrayList&lt;&gt;();</span>
+    }
+
+    // Helper: Get question type by ID
+    private String getQuestionType(String questionId) {
+        try {
+<span class="nc" id="L495">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc bnc" id="L496" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc bnc" id="L497" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
+<span class="nc" id="L498">                    return extractField(line, &quot;type&quot;);</span>
+                }
+            }
+<span class="nc" id="L501">        } catch (IOException e) {</span>
+            // ignore
+        }
+<span class="nc" id="L504">        return null;</span>
+    }
+
+    // Helper: Get correct answer for a question by ID
+    private String getCorrectAnswer(String questionId) {
+        try {
+<span class="nc" id="L510">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc bnc" id="L512" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
+<span class="nc" id="L513">                    return extractField(line, &quot;answer&quot;);</span>
+                }
+            }
+<span class="nc" id="L516">        } catch (IOException e) {</span>
+            // ignore
+        }
+<span class="nc" id="L519">        return null;</span>
+    }
+
+    // Helper: Get max score for a question by ID
+    private String getMaxScore(String questionId) {
+        try {
+<span class="nc" id="L525">            List&lt;String&gt; questionLines = Files.readAllLines(questionFilePath);</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">            for (String line : questionLines) {</span>
+<span class="nc bnc" id="L527" title="All 4 branches missed.">                if (line.contains(&quot;id%&amp;:&quot; + questionId + &quot;!@#&quot;) &amp;&amp; line.contains(&quot;isAble%&amp;:true&quot;)) {</span>
+<span class="nc" id="L528">                    return extractField(line, &quot;score&quot;);</span>
+                }
+            }
+<span class="nc" id="L531">        } catch (IOException e) {</span>
+            // ignore
+        }
+<span class="nc" id="L534">        return null;</span>
+    }
+
+    // Patch: When a row is selected in the answer table, update the detail panel
+    private void updateDetailPanel(Record record, String questionId) {
+<span class="nc bnc" id="L539" title="All 4 branches missed.">        if (record == null || questionId == null) {</span>
+<span class="nc bnc" id="L540" title="All 2 branches missed.">            if (studentNameLabel != null) studentNameLabel.setText(&quot;&quot;);</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">            if (studentAnswerLabel != null) studentAnswerLabel.setText(&quot;&quot;);</span>
+<span class="nc bnc" id="L542" title="All 2 branches missed.">            if (correctAnswerLabel != null) correctAnswerLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc bnc" id="L543" title="All 2 branches missed.">            if (maxScoreLabel != null) maxScoreLabel.setText(&quot;N/A&quot;);</span>
+<span class="nc" id="L544">            return;</span>
+        }
+        // Student name
+<span class="nc" id="L547">        String studentName = getStudentNameById(String.valueOf(record.getStudentID()));</span>
+        // Question type
+<span class="nc" id="L549">        String type = getQuestionType(questionId);</span>
+        // Options (for MCQ)
+<span class="nc" id="L551">        List&lt;String&gt; options = getOptionsForQuestion(questionId);</span>
+        // Student answer
+<span class="nc" id="L553">        String studentLetter = record.getResponse();</span>
+<span class="nc bnc" id="L554" title="All 2 branches missed.">        String studentText = (&quot;MCQ&quot;.equalsIgnoreCase(type)) ? getOptionTextByLetter(studentLetter, options) : record.getResponse();</span>
+        // Correct answer
+<span class="nc" id="L556">        String correctLetter = getCorrectAnswer(questionId);</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">        String correctText = (&quot;MCQ&quot;.equalsIgnoreCase(type)) ? getOptionTextByLetter(correctLetter, options) : correctLetter;</span>
+        // Max score
+<span class="nc" id="L559">        String maxScore = getMaxScore(questionId);</span>
+        // Update UI labels
+<span class="nc bnc" id="L561" title="All 2 branches missed.">        if (studentNameLabel != null) {</span>
+<span class="nc bnc" id="L562" title="All 2 branches missed.">            studentNameLabel.setText(studentName != null ? studentName : &quot;&quot;);</span>
+        }
+<span class="nc bnc" id="L564" title="All 2 branches missed.">        if (studentAnswerLabel != null) {</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
+<span class="nc bnc" id="L566" title="All 6 branches missed.">                studentAnswerLabel.setText((studentLetter != null ? studentLetter : &quot;&quot;) + (studentText != null &amp;&amp; !studentText.isEmpty() ? &quot;. &quot; + studentText : &quot;&quot;));</span>
+<span class="nc" id="L567">            } else {</span>
+<span class="nc bnc" id="L568" title="All 2 branches missed.">                studentAnswerLabel.setText(studentText != null ? studentText : &quot;&quot;);</span>
+            }
+        }
+<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (correctAnswerLabel != null) {</span>
+<span class="nc bnc" id="L572" title="All 2 branches missed.">            if (&quot;MCQ&quot;.equalsIgnoreCase(type)) {</span>
+<span class="nc bnc" id="L573" title="All 6 branches missed.">                correctAnswerLabel.setText((correctLetter != null ? correctLetter : &quot;&quot;) + (correctText != null &amp;&amp; !correctText.isEmpty() ? &quot;. &quot; + correctText : &quot;&quot;));</span>
+<span class="nc" id="L574">            } else {</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">                correctAnswerLabel.setText(correctText != null ? correctText : &quot;N/A&quot;);</span>
+            }
+        }
+<span class="nc bnc" id="L578" title="All 2 branches missed.">        if (maxScoreLabel != null) {</span>
+<span class="nc bnc" id="L579" title="All 2 branches missed.">            maxScoreLabel.setText(maxScore != null ? maxScore : &quot;N/A&quot;);</span>
+        }
+<span class="nc" id="L581">    }</span>
+
+    // Refresh the answer table and detail panel from the database for the current question
+    private void refreshCurrentQuestionData() {
+<span class="nc" id="L585">        manualScoreField.setDisable(true);</span>
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        if (updateButton != null) updateButton.setDisable(true);</span>
+<span class="nc" id="L587">        String selectedQuestion = questionList.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L588" title="All 4 branches missed.">        if (selectedQuestion != null &amp;&amp; questionTextToId.containsKey(selectedQuestion)) {</span>
+<span class="nc" id="L589">            String qid = questionTextToId.get(selectedQuestion);</span>
+<span class="nc" id="L590">            displayStudentResponsesForQuestion(qid); // This will refresh the table and detail panel</span>
+        }
+<span class="nc" id="L592">        manualScoreField.setDisable(false);</span>
+<span class="nc bnc" id="L593" title="All 2 branches missed.">        if (updateButton != null) updateButton.setDisable(false);</span>
+<span class="nc" id="L594">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

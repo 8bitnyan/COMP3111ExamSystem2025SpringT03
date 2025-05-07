@@ -26,14 +26,14 @@ import javafx.scene.control.ButtonType;
      * @param callback The function to be executed if the user confirms.
      */
     static public void showConfirm(String title, String msg, Runnable callback) {
-<span class="fc" id="L29">        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);</span>
-<span class="fc" id="L30">        alert.setTitle(title);</span>
-<span class="fc" id="L31">        alert.setHeaderText(msg);</span>
-<span class="fc" id="L32">        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);</span>
+<span class="nc" id="L29">        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);</span>
+<span class="nc" id="L30">        alert.setTitle(title);</span>
+<span class="nc" id="L31">        alert.setHeaderText(msg);</span>
+<span class="nc" id="L32">        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);</span>
 
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (result == ButtonType.OK) {</span>
-<span class="fc" id="L35">            callback.run();</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (result == ButtonType.OK) {</span>
+<span class="nc" id="L35">            callback.run();</span>
         }
-<span class="fc" id="L37">    }</span>
+<span class="nc" id="L37">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

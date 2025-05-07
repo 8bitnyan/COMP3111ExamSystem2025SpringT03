@@ -3,7 +3,7 @@
  * A Enum representing the gender of users.
  */
 <span class="fc" id="L5">public enum Gender {</span>
-    /**
+<span class="fc" id="L6">    /**</span>
      * The list of genders.
      */
 <span class="fc" id="L9">    MALE(&quot;Male&quot;), FEMALE(&quot;Female&quot;);</span>
@@ -32,7 +32,7 @@
      */
     public static Gender fromString(String genderString) {
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">        for (Gender gender : Gender.values()) {</span>
-<span class="fc bfc" id="L35" title="All 2 branches covered.">            if (gender.toString().equals(genderString)) {</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">            if (gender.toString().equals(genderString)) {</span>
 <span class="fc" id="L36">                return gender;</span>
             }
         }

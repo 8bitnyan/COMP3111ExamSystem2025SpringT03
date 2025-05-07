@@ -37,9 +37,9 @@ import javafx.stage.WindowEvent;
 <span class="fc" id="L37">                stage.show();</span>
                 try {
 <span class="fc" id="L39">                    setField(controller, &quot;questionText&quot;, questionText);</span>
-<span class="nc" id="L40">                } catch (Exception ex) {</span>
+<span class="pc" id="L40">                } catch (Exception ex) {</span>
 <span class="nc" id="L41">                    throw new RuntimeException(ex);</span>
-<span class="fc" id="L42">                }</span>
+                }
             } finally {
 <span class="fc" id="L44">                latch.countDown();</span>
             }
@@ -55,435 +55,438 @@ import javafx.stage.WindowEvent;
 <span class="fc" id="L55">        setField(controller, &quot;option2&quot;, new RadioButton());</span>
 <span class="fc" id="L56">        setField(controller, &quot;option3&quot;, new RadioButton());</span>
 <span class="fc" id="L57">        setField(controller, &quot;option4&quot;, new RadioButton());</span>
-<span class="fc" id="L58">        setField(controller, &quot;shortAnswerField&quot;, new TextArea());</span>
-<span class="fc" id="L59">        setField(controller, &quot;previousButton&quot;, new Button());</span>
-<span class="fc" id="L60">        setField(controller, &quot;nextButton&quot;, new Button());</span>
-<span class="fc" id="L61">        setField(controller, &quot;submitButton&quot;, new Button());</span>
-<span class="fc" id="L62">        setField(controller, &quot;answerGroup&quot;, new ToggleGroup());</span>
+<span class="fc" id="L58">        setField(controller, &quot;option5&quot;, new RadioButton());</span>
+<span class="fc" id="L59">        setField(controller, &quot;shortAnswerField&quot;, new TextArea());</span>
+<span class="fc" id="L60">        setField(controller, &quot;previousButton&quot;, new Button());</span>
+<span class="fc" id="L61">        setField(controller, &quot;nextButton&quot;, new Button());</span>
+<span class="fc" id="L62">        setField(controller, &quot;submitButton&quot;, new Button());</span>
+<span class="fc" id="L63">        setField(controller, &quot;answerGroup&quot;, new ToggleGroup());</span>
+<span class="fc" id="L64">        setField(controller, &quot;maxScoreText&quot;, new Text());</span>
 
         // Add a mock Exam with name 'Sample Quiz' to the test database
-<span class="fc" id="L65">        Exam exam = new Exam();</span>
-<span class="fc" id="L66">        exam.setId(1L);</span>
-<span class="fc" id="L67">        exam.setName(&quot;Sample Quiz&quot;);</span>
-<span class="fc" id="L68">        exam.setQuestions(&quot;1&quot;); // minimal valid questions string</span>
-<span class="fc" id="L69">        exam.setDuration(5); // 5 minutes</span>
-<span class="fc" id="L70">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="fc" id="L71">        examDB.add(exam);</span>
+<span class="fc" id="L67">        Exam exam = new Exam();</span>
+<span class="fc" id="L68">        exam.setId(1L);</span>
+<span class="fc" id="L69">        exam.setName(&quot;Sample Quiz&quot;);</span>
+<span class="fc" id="L70">        exam.setQuestions(&quot;1&quot;); // minimal valid questions string</span>
+<span class="fc" id="L71">        exam.setDuration(5); // 5 minutes</span>
+<span class="fc" id="L72">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="fc" id="L73">        examDB.add(exam);</span>
 
-<span class="fc" id="L73">        msgSenderMocked = Mockito.mockStatic(comp3111.examsystem.tools.MsgSender.class);</span>
-<span class="pc" id="L74">        msgSenderMocked.when(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString())).then(invocation -&gt; null);</span>
-<span class="fc" id="L75">        msgSenderMocked.when(() -&gt; comp3111.examsystem.tools.MsgSender.showConfirm(</span>
-<span class="fc" id="L76">            Mockito.anyString(), Mockito.anyString(), Mockito.any(Runnable.class)</span>
-<span class="fc" id="L77">        )).thenAnswer(invocation -&gt; {</span>
-<span class="nc" id="L78">            Runnable callback = invocation.getArgument(2);</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (callback != null) callback.run();</span>
-<span class="nc" id="L80">            return null;</span>
+<span class="fc" id="L75">        msgSenderMocked = Mockito.mockStatic(comp3111.examsystem.tools.MsgSender.class);</span>
+<span class="pc" id="L76">        msgSenderMocked.when(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString())).then(invocation -&gt; null);</span>
+<span class="fc" id="L77">        msgSenderMocked.when(() -&gt; comp3111.examsystem.tools.MsgSender.showConfirm(</span>
+<span class="fc" id="L78">            Mockito.anyString(), Mockito.anyString(), Mockito.any(Runnable.class)</span>
+<span class="fc" id="L79">        )).thenAnswer(invocation -&gt; {</span>
+<span class="nc" id="L80">            Runnable callback = invocation.getArgument(2);</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (callback != null) callback.run();</span>
+<span class="nc" id="L82">            return null;</span>
         });
-<span class="fc" id="L82">    }</span>
+<span class="fc" id="L84">    }</span>
 
     @AfterEach
     void tearDown() {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (msgSenderMocked != null) msgSenderMocked.close();</span>
-<span class="fc" id="L87">    }</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (msgSenderMocked != null) msgSenderMocked.close();</span>
+<span class="fc" id="L89">    }</span>
 
     private void setField(Object obj, String fieldName, Object value) throws Exception {
-<span class="fc" id="L90">        var field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L91">        field.setAccessible(true);</span>
-<span class="fc" id="L92">        field.set(obj, value);</span>
-<span class="fc" id="L93">    }</span>
+<span class="fc" id="L92">        var field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L93">        field.setAccessible(true);</span>
+<span class="fc" id="L94">        field.set(obj, value);</span>
+<span class="fc" id="L95">    }</span>
 
     private &lt;T&gt; T getFieldValue(Object obj, String fieldName, Class&lt;T&gt; type) {
         try {
-<span class="fc" id="L97">            var field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L98">            field.setAccessible(true);</span>
-<span class="fc" id="L99">            return type.cast(field.get(obj));</span>
-<span class="nc" id="L100">        } catch (Exception e) {</span>
-<span class="nc" id="L101">            throw new RuntimeException(e);</span>
+<span class="fc" id="L99">            var field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L100">            field.setAccessible(true);</span>
+<span class="fc" id="L101">            return type.cast(field.get(obj));</span>
+<span class="nc" id="L102">        } catch (Exception e) {</span>
+<span class="nc" id="L103">            throw new RuntimeException(e);</span>
         }
     }
 
     @Test
     void testPreSetControllerAndNavigation() {
-<span class="fc" id="L107">        Student student = new Student();</span>
-<span class="fc" id="L108">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L109">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;)),</span>
-            new StudentQuizController.QuizQuestion(&quot;Q2&quot;)
+<span class="fc" id="L109">        Student student = new Student();</span>
+<span class="fc" id="L110">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L111">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;),</span>
+<span class="fc" id="L112">            new StudentQuizController.QuizQuestion(&quot;Q2&quot;, 1)</span>
         );
-<span class="fc" id="L112">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L113">        Text quizNameText = getFieldValue(controller, &quot;quizNameText&quot;, Text.class);</span>
-<span class="fc" id="L114">        Text totalQuestionsText = getFieldValue(controller, &quot;totalQuestionsText&quot;, Text.class);</span>
-<span class="fc" id="L115">        assertEquals(&quot;Sample Quiz&quot;, quizNameText.getText());</span>
-<span class="fc" id="L116">        assertEquals(&quot;2&quot;, totalQuestionsText.getText());</span>
+<span class="fc" id="L114">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L115">        Text quizNameText = getFieldValue(controller, &quot;quizNameText&quot;, Text.class);</span>
+<span class="fc" id="L116">        Text totalQuestionsText = getFieldValue(controller, &quot;totalQuestionsText&quot;, Text.class);</span>
+<span class="fc" id="L117">        assertEquals(&quot;Sample Quiz&quot;, quizNameText.getText());</span>
+<span class="fc" id="L118">        assertEquals(&quot;2&quot;, totalQuestionsText.getText());</span>
         // Test navigation
-<span class="fc" id="L118">        controller.handleNext(null);</span>
-<span class="fc" id="L119">        assertEquals(1, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
-<span class="fc" id="L120">        controller.handlePrevious(null);</span>
-<span class="fc" id="L121">        assertEquals(0, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
-<span class="fc" id="L122">    }</span>
+<span class="fc" id="L120">        controller.handleNext(null);</span>
+<span class="fc" id="L121">        assertEquals(1, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
+<span class="fc" id="L122">        controller.handlePrevious(null);</span>
+<span class="fc" id="L123">        assertEquals(0, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
+<span class="fc" id="L124">    }</span>
 
     @Test
     void testAnswerPersistence() {
-<span class="fc" id="L126">        Student student = new Student();</span>
-<span class="fc" id="L127">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L128">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;)),</span>
-            new StudentQuizController.QuizQuestion(&quot;Q2&quot;)
+<span class="fc" id="L128">        Student student = new Student();</span>
+<span class="fc" id="L129">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L130">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;),</span>
+<span class="fc" id="L131">            new StudentQuizController.QuizQuestion(&quot;Q2&quot;, 1)</span>
         );
-<span class="fc" id="L131">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L133">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
         // Simulate answering Q1
-<span class="fc" id="L133">        RadioButton option2 = getFieldValue(controller, &quot;option2&quot;, RadioButton.class);</span>
-<span class="fc" id="L134">        option2.setSelected(true);</span>
-<span class="fc" id="L135">        controller.handleNext(null);</span>
+<span class="fc" id="L135">        RadioButton option2 = getFieldValue(controller, &quot;option2&quot;, RadioButton.class);</span>
+<span class="fc" id="L136">        option2.setSelected(true);</span>
+<span class="fc" id="L137">        controller.handleNext(null);</span>
         // Simulate answering Q2
-<span class="fc" id="L137">        TextArea shortAnswerField = getFieldValue(controller, &quot;shortAnswerField&quot;, TextArea.class);</span>
-<span class="fc" id="L138">        shortAnswerField.setText(&quot;Short answer&quot;);</span>
-<span class="fc" id="L139">        controller.handlePrevious(null);</span>
+<span class="fc" id="L139">        TextArea shortAnswerField = getFieldValue(controller, &quot;shortAnswerField&quot;, TextArea.class);</span>
+<span class="fc" id="L140">        shortAnswerField.setText(&quot;Short answer&quot;);</span>
+<span class="fc" id="L141">        controller.handlePrevious(null);</span>
         // Q1 should still have answer
-<span class="fc" id="L141">        assertTrue(option2.isSelected());</span>
-<span class="fc" id="L142">        controller.handleNext(null);</span>
-<span class="fc" id="L143">        assertEquals(&quot;Short answer&quot;, shortAnswerField.getText());</span>
-<span class="fc" id="L144">    }</span>
+<span class="fc" id="L143">        assertTrue(option2.isSelected());</span>
+<span class="fc" id="L144">        controller.handleNext(null);</span>
+<span class="fc" id="L145">        assertEquals(&quot;Short answer&quot;, shortAnswerField.getText());</span>
+<span class="fc" id="L146">    }</span>
 
     @Test
     void testTimerAndAutoSubmit() throws Exception {
-<span class="fc" id="L148">        CountDownLatch latch = new CountDownLatch(1);</span>
-<span class="fc" id="L149">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L150">        CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L151">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L151">                Student student = new Student();</span>
-<span class="fc" id="L152">                List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L153">                    new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;))</span>
+<span class="fc" id="L153">                Student student = new Student();</span>
+<span class="fc" id="L154">                List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L155">                    new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;)</span>
                 );
-<span class="fc" id="L155">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 0); // 0 min for instant expiry</span>
+<span class="fc" id="L157">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 0); // 0 min for instant expiry</span>
                 // Simulate timer expiry
                 try {
-<span class="fc" id="L158">                    setField(controller, &quot;seconds&quot;, 0);</span>
-<span class="fc" id="L159">                    setField(controller, &quot;minutes&quot;, 0);</span>
-<span class="fc" id="L160">                    setField(controller, &quot;hours&quot;, 0);</span>
-<span class="fc" id="L161">                    var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
-<span class="fc" id="L162">                    submitQuiz.setAccessible(true);</span>
-<span class="fc" id="L163">                    submitQuiz.invoke(controller);</span>
-<span class="nc" id="L164">                    msgSenderMocked.verify(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());</span>
-<span class="fc" id="L165">                } catch (Exception e) {</span>
-<span class="fc" id="L166">                    throw new RuntimeException(e);</span>
-<span class="nc" id="L167">                }</span>
+<span class="fc" id="L160">                    setField(controller, &quot;seconds&quot;, 0);</span>
+<span class="fc" id="L161">                    setField(controller, &quot;minutes&quot;, 0);</span>
+<span class="fc" id="L162">                    setField(controller, &quot;hours&quot;, 0);</span>
+<span class="fc" id="L163">                    var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
+<span class="fc" id="L164">                    submitQuiz.setAccessible(true);</span>
+<span class="fc" id="L165">                    submitQuiz.invoke(controller);</span>
+<span class="nc" id="L166">                    msgSenderMocked.verify(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());</span>
+<span class="pc" id="L167">                } catch (Exception e) {</span>
+<span class="fc" id="L168">                    throw new RuntimeException(e);</span>
+                }
             } finally {
-<span class="fc" id="L169">                latch.countDown();</span>
+<span class="fc" id="L171">                latch.countDown();</span>
             }
-<span class="nc" id="L171">        });</span>
-<span class="fc" id="L172">        latch.await();</span>
-<span class="fc" id="L173">    }</span>
+<span class="nc" id="L173">        });</span>
+<span class="fc" id="L174">        latch.await();</span>
+<span class="fc" id="L175">    }</span>
 
     @Test
     void testHandleSubmit() throws Exception {
-<span class="fc" id="L177">        CountDownLatch latch = new CountDownLatch(1);</span>
-<span class="fc" id="L178">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L179">        CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L180">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L180">                Student student = new Student();</span>
-<span class="fc" id="L181">                List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L182">                    new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;))</span>
+<span class="fc" id="L182">                Student student = new Student();</span>
+<span class="fc" id="L183">                List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L184">                    new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;)</span>
                 );
-<span class="fc" id="L184">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L185">                controller.handleSubmit(null);</span>
-<span class="nc" id="L186">                msgSenderMocked.verify(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());</span>
-            } finally {
-<span class="fc" id="L188">                latch.countDown();</span>
+<span class="fc" id="L186">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L187">                controller.handleSubmit(null);</span>
+<span class="nc" id="L188">                msgSenderMocked.verify(() -&gt; comp3111.examsystem.tools.MsgSender.showMsg(Mockito.anyString()), Mockito.atLeastOnce());</span>
+<span class="nc" id="L189">            } finally {</span>
+<span class="fc" id="L190">                latch.countDown();</span>
             }
-<span class="nc" id="L190">        });</span>
-<span class="fc" id="L191">        latch.await();</span>
-<span class="fc" id="L192">    }</span>
+<span class="nc" id="L192">        });</span>
+<span class="fc" id="L193">        latch.await();</span>
+<span class="fc" id="L194">    }</span>
 
     @Test
     void testWindowCloseHandler() throws Exception {
-<span class="fc" id="L196">        Student student = new Student();</span>
-<span class="fc" id="L197">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L198">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;))</span>
+<span class="fc" id="L198">        Student student = new Student();</span>
+<span class="fc" id="L199">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L200">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;)</span>
         );
-<span class="fc" id="L200">        CountDownLatch latch = new CountDownLatch(1);</span>
-<span class="fc" id="L201">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L202">        CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L203">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L203">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L204">                Stage stage = (Stage) getFieldValue(controller, &quot;questionText&quot;, Text.class).getScene().getWindow();</span>
-<span class="fc" id="L205">                WindowEvent closeEvent = new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST);</span>
-<span class="fc" id="L206">                stage.fireEvent(closeEvent);</span>
-                // You can add assertions or verifications here if needed
-            } finally {
-<span class="fc" id="L209">                latch.countDown();</span>
+<span class="fc" id="L205">                controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L206">                Stage stage = (Stage) getFieldValue(controller, &quot;questionText&quot;, Text.class).getScene().getWindow();</span>
+<span class="fc" id="L207">                WindowEvent closeEvent = new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST);</span>
+<span class="fc" id="L208">                stage.fireEvent(closeEvent);</span>
+                // Ensure the window is closed so the test does not hang
+<span class="fc" id="L210">                stage.close();</span>
+<span class="fc" id="L211">            } finally {</span>
+<span class="fc" id="L212">                latch.countDown();</span>
             }
-<span class="fc" id="L211">        });</span>
-<span class="fc" id="L212">        latch.await();</span>
-<span class="fc" id="L213">    }</span>
+<span class="fc" id="L214">        });</span>
+<span class="fc" id="L215">        latch.await();</span>
+<span class="fc" id="L216">    }</span>
 
     @Test
     void testMCQOptionVisibilityAndSelection() {
-<span class="fc" id="L217">        Student student = new Student();</span>
+<span class="fc" id="L220">        Student student = new Student();</span>
         // 1 option
-<span class="fc" id="L219">        List&lt;StudentQuizController.QuizQuestion&gt; q1 = List.of(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, List.of(&quot;A&quot;)));</span>
-<span class="fc" id="L220">        controller.preSetController(student, &quot;Quiz1&quot;, q1, 5);</span>
-<span class="fc" id="L221">        assertTrue(getFieldValue(controller, &quot;option1&quot;, RadioButton.class).isVisible());</span>
-<span class="fc" id="L222">        assertFalse(getFieldValue(controller, &quot;option2&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L222">        List&lt;StudentQuizController.QuizQuestion&gt; q1 = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L223">        controller.preSetController(student, &quot;Quiz1&quot;, q1, 5);</span>
+<span class="fc" id="L224">        assertTrue(getFieldValue(controller, &quot;option1&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L225">        assertFalse(getFieldValue(controller, &quot;option2&quot;, RadioButton.class).isVisible());</span>
         // 2 options
-<span class="fc" id="L224">        List&lt;StudentQuizController.QuizQuestion&gt; q2 = List.of(new StudentQuizController.QuizQuestion(&quot;Q2&quot;, List.of(&quot;A&quot;, &quot;B&quot;)));</span>
-<span class="fc" id="L225">        controller.preSetController(student, &quot;Quiz2&quot;, q2, 5);</span>
-<span class="fc" id="L226">        assertTrue(getFieldValue(controller, &quot;option2&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L227">        List&lt;StudentQuizController.QuizQuestion&gt; q2 = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q2&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L228">        controller.preSetController(student, &quot;Quiz2&quot;, q2, 5);</span>
+<span class="fc" id="L229">        assertTrue(getFieldValue(controller, &quot;option2&quot;, RadioButton.class).isVisible());</span>
         // 3 options
-<span class="fc" id="L228">        List&lt;StudentQuizController.QuizQuestion&gt; q3 = List.of(new StudentQuizController.QuizQuestion(&quot;Q3&quot;, List.of(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;)));</span>
-<span class="fc" id="L229">        controller.preSetController(student, &quot;Quiz3&quot;, q3, 5);</span>
-<span class="fc" id="L230">        assertTrue(getFieldValue(controller, &quot;option3&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L231">        List&lt;StudentQuizController.QuizQuestion&gt; q3 = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q3&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L232">        controller.preSetController(student, &quot;Quiz3&quot;, q3, 5);</span>
+<span class="fc" id="L233">        assertTrue(getFieldValue(controller, &quot;option3&quot;, RadioButton.class).isVisible());</span>
         // 4 options
-<span class="fc" id="L232">        List&lt;StudentQuizController.QuizQuestion&gt; q4 = List.of(new StudentQuizController.QuizQuestion(&quot;Q4&quot;, List.of(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;)));</span>
-<span class="fc" id="L233">        controller.preSetController(student, &quot;Quiz4&quot;, q4, 5);</span>
-<span class="fc" id="L234">        assertTrue(getFieldValue(controller, &quot;option4&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L235">        List&lt;StudentQuizController.QuizQuestion&gt; q4 = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q4&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L236">        controller.preSetController(student, &quot;Quiz4&quot;, q4, 5);</span>
+<span class="fc" id="L237">        assertTrue(getFieldValue(controller, &quot;option4&quot;, RadioButton.class).isVisible());</span>
         // 0 options
-<span class="fc" id="L236">        List&lt;StudentQuizController.QuizQuestion&gt; q0 = List.of(new StudentQuizController.QuizQuestion(&quot;Q0&quot;, List.of()));</span>
-<span class="fc" id="L237">        controller.preSetController(student, &quot;Quiz0&quot;, q0, 5);</span>
-<span class="fc" id="L238">        assertFalse(getFieldValue(controller, &quot;option1&quot;, RadioButton.class).isVisible());</span>
-<span class="fc" id="L239">    }</span>
+<span class="fc" id="L239">        List&lt;StudentQuizController.QuizQuestion&gt; q0 = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q0&quot;, new ArrayList&lt;&gt;(), 1, &quot;A&quot;));</span>
+<span class="fc" id="L240">        controller.preSetController(student, &quot;Quiz0&quot;, q0, 5);</span>
+<span class="fc" id="L241">        assertFalse(getFieldValue(controller, &quot;option1&quot;, RadioButton.class).isVisible());</span>
+<span class="fc" id="L242">    }</span>
 
     @Test
     void testShortAnswerEdgeCases() {
-<span class="fc" id="L243">        Student student = new Student();</span>
-<span class="fc" id="L244">        List&lt;StudentQuizController.QuizQuestion&gt; questions = List.of(new StudentQuizController.QuizQuestion(&quot;Q1&quot;));</span>
-<span class="fc" id="L245">        controller.preSetController(student, &quot;QuizSA&quot;, questions, 5);</span>
-<span class="fc" id="L246">        TextArea sa = getFieldValue(controller, &quot;shortAnswerField&quot;, TextArea.class);</span>
-<span class="fc" id="L247">        sa.setText(&quot;&quot;);</span>
-<span class="fc" id="L248">        controller.handleNext(null);</span>
-<span class="fc" id="L249">        sa.setText(&quot;   &quot;);</span>
-<span class="fc" id="L250">        controller.handlePrevious(null);</span>
-<span class="fc" id="L251">        sa.setText(&quot;A very long answer that should be accepted as valid input for the short answer field.&quot;);</span>
-<span class="fc" id="L252">        controller.handleNext(null);</span>
-<span class="fc" id="L253">        assertNotNull(sa.getText());</span>
-<span class="fc" id="L254">    }</span>
+<span class="fc" id="L246">        Student student = new Student();</span>
+<span class="fc" id="L247">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, 1));</span>
+<span class="fc" id="L248">        controller.preSetController(student, &quot;QuizSA&quot;, questions, 5);</span>
+<span class="fc" id="L249">        TextArea sa = getFieldValue(controller, &quot;shortAnswerField&quot;, TextArea.class);</span>
+<span class="fc" id="L250">        sa.setText(&quot;&quot;);</span>
+<span class="fc" id="L251">        controller.handleNext(null);</span>
+<span class="fc" id="L252">        sa.setText(&quot;   &quot;);</span>
+<span class="fc" id="L253">        controller.handlePrevious(null);</span>
+<span class="fc" id="L254">        sa.setText(&quot;A very long answer that should be accepted as valid input for the short answer field.&quot;);</span>
+<span class="fc" id="L255">        controller.handleNext(null);</span>
+<span class="fc" id="L256">        assertNotNull(sa.getText());</span>
+<span class="fc" id="L257">    }</span>
 
     @Test
     void testNavigationEdgeCases() {
-<span class="fc" id="L258">        Student student = new Student();</span>
-<span class="fc" id="L259">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
-<span class="fc" id="L260">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, List.of(&quot;A&quot;, &quot;B&quot;)),</span>
-            new StudentQuizController.QuizQuestion(&quot;Q2&quot;)
+<span class="fc" id="L261">        Student student = new Student();</span>
+<span class="fc" id="L262">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(</span>
+<span class="fc" id="L263">            new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;, &quot;B&quot;), 1, &quot;A&quot;),</span>
+<span class="fc" id="L264">            new StudentQuizController.QuizQuestion(&quot;Q2&quot;, 1)</span>
         );
-<span class="fc" id="L263">        controller.preSetController(student, &quot;QuizNav&quot;, questions, 5);</span>
+<span class="fc" id="L266">        controller.preSetController(student, &quot;QuizNav&quot;, questions, 5);</span>
         // Try previous on first question
-<span class="fc" id="L265">        controller.handlePrevious(null);</span>
-<span class="fc" id="L266">        assertEquals(0, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
+<span class="fc" id="L268">        controller.handlePrevious(null);</span>
+<span class="fc" id="L269">        assertEquals(0, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
         // Go to last question
-<span class="fc" id="L268">        controller.handleNext(null);</span>
+<span class="fc" id="L271">        controller.handleNext(null);</span>
         // Try next on last question
-<span class="fc" id="L270">        controller.handleNext(null);</span>
-<span class="fc" id="L271">        assertEquals(1, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
+<span class="fc" id="L273">        controller.handleNext(null);</span>
+<span class="fc" id="L274">        assertEquals(1, getPrivateInt(controller, &quot;currentQuestionIndex&quot;));</span>
         // Try loading invalid index
-<span class="fc" id="L273">        var loadQuestion = assertDoesNotThrow(() -&gt; controller.getClass().getDeclaredMethod(&quot;loadQuestion&quot;, int.class));</span>
-<span class="fc" id="L274">        loadQuestion.setAccessible(true);</span>
-<span class="fc" id="L275">        assertDoesNotThrow(() -&gt; loadQuestion.invoke(controller, -1));</span>
-<span class="fc" id="L276">        assertDoesNotThrow(() -&gt; loadQuestion.invoke(controller, 99));</span>
-<span class="fc" id="L277">    }</span>
+<span class="fc" id="L276">        var loadQuestion = assertDoesNotThrow(() -&gt; controller.getClass().getDeclaredMethod(&quot;loadQuestion&quot;, int.class));</span>
+<span class="fc" id="L277">        loadQuestion.setAccessible(true);</span>
+<span class="fc" id="L278">        assertDoesNotThrow(() -&gt; loadQuestion.invoke(controller, -1));</span>
+<span class="fc" id="L279">        assertDoesNotThrow(() -&gt; loadQuestion.invoke(controller, 99));</span>
+<span class="fc" id="L280">    }</span>
 
     @Test
     void testTimerExpiryBranches() throws Exception {
         // hours &gt; 0
-<span class="fc" id="L282">        setField(controller, &quot;hours&quot;, 1);</span>
-<span class="fc" id="L283">        setField(controller, &quot;minutes&quot;, 0);</span>
-<span class="fc" id="L284">        setField(controller, &quot;seconds&quot;, 0);</span>
-<span class="fc" id="L285">        var updateTimerDisplay = controller.getClass().getDeclaredMethod(&quot;updateTimerDisplay&quot;);</span>
-<span class="fc" id="L286">        updateTimerDisplay.setAccessible(true);</span>
-<span class="fc" id="L287">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
+<span class="fc" id="L285">        setField(controller, &quot;hours&quot;, 1);</span>
+<span class="fc" id="L286">        setField(controller, &quot;minutes&quot;, 0);</span>
+<span class="fc" id="L287">        setField(controller, &quot;seconds&quot;, 0);</span>
+<span class="fc" id="L288">        var updateTimerDisplay = controller.getClass().getDeclaredMethod(&quot;updateTimerDisplay&quot;);</span>
+<span class="fc" id="L289">        updateTimerDisplay.setAccessible(true);</span>
+<span class="fc" id="L290">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
         // minutes &gt; 0
-<span class="fc" id="L289">        setField(controller, &quot;hours&quot;, 0);</span>
-<span class="fc" id="L290">        setField(controller, &quot;minutes&quot;, 1);</span>
-<span class="fc" id="L291">        setField(controller, &quot;seconds&quot;, 0);</span>
-<span class="fc" id="L292">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
+<span class="fc" id="L292">        setField(controller, &quot;hours&quot;, 0);</span>
+<span class="fc" id="L293">        setField(controller, &quot;minutes&quot;, 1);</span>
+<span class="fc" id="L294">        setField(controller, &quot;seconds&quot;, 0);</span>
+<span class="fc" id="L295">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
         // seconds &gt; 0
-<span class="fc" id="L294">        setField(controller, &quot;hours&quot;, 0);</span>
-<span class="fc" id="L295">        setField(controller, &quot;minutes&quot;, 0);</span>
-<span class="fc" id="L296">        setField(controller, &quot;seconds&quot;, 1);</span>
-<span class="fc" id="L297">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
-<span class="fc" id="L298">    }</span>
+<span class="fc" id="L297">        setField(controller, &quot;hours&quot;, 0);</span>
+<span class="fc" id="L298">        setField(controller, &quot;minutes&quot;, 0);</span>
+<span class="fc" id="L299">        setField(controller, &quot;seconds&quot;, 1);</span>
+<span class="fc" id="L300">        assertDoesNotThrow(() -&gt; updateTimerDisplay.invoke(controller));</span>
+<span class="fc" id="L301">    }</span>
 
     @Test
     void testSubmitQuizBranches() throws Exception {
         // exam not found
-<span class="fc" id="L303">        Student student = new Student();</span>
-<span class="fc" id="L304">        List&lt;StudentQuizController.QuizQuestion&gt; questions = List.of(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, List.of(&quot;A&quot;)));</span>
-<span class="fc" id="L305">        controller.preSetController(student, &quot;Nonexistent Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L306">        var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
-<span class="fc" id="L307">        submitQuiz.setAccessible(true);</span>
-<span class="fc" id="L308">        CountDownLatch latch1 = new CountDownLatch(1);</span>
-<span class="fc" id="L309">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L306">        Student student = new Student();</span>
+<span class="fc" id="L307">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L308">        controller.preSetController(student, &quot;Nonexistent Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L309">        var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
+<span class="fc" id="L310">        submitQuiz.setAccessible(true);</span>
+<span class="fc" id="L311">        CountDownLatch latch1 = new CountDownLatch(1);</span>
+<span class="fc" id="L312">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L311">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L312">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L313">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L314">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L315">            } catch (Exception e) {</span>
-<span class="nc" id="L316">                e.printStackTrace();</span>
-<span class="nc" id="L317">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L314">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L315">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L316">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L317">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L318">            } catch (Exception e) {</span>
+<span class="nc" id="L319">                e.printStackTrace();</span>
+<span class="nc" id="L320">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L319">                latch1.countDown();</span>
+<span class="fc" id="L322">                latch1.countDown();</span>
             }
-<span class="fc" id="L321">        });</span>
-<span class="fc" id="L322">        latch1.await();</span>
+<span class="fc" id="L324">        });</span>
+<span class="fc" id="L325">        latch1.await();</span>
         // questions string empty
-<span class="fc" id="L324">        Exam exam = new Exam();</span>
-<span class="fc" id="L325">        exam.setId(2L);</span>
-<span class="fc" id="L326">        exam.setName(&quot;EmptyQ&quot;);</span>
-<span class="fc" id="L327">        exam.setQuestions(&quot;&quot;);</span>
-<span class="fc" id="L328">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="fc" id="L329">        examDB.add(exam);</span>
-<span class="fc" id="L330">        controller.preSetController(student, &quot;EmptyQ&quot;, questions, 5);</span>
-<span class="fc" id="L331">        CountDownLatch latch2 = new CountDownLatch(1);</span>
-<span class="fc" id="L332">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L327">        Exam exam = new Exam();</span>
+<span class="fc" id="L328">        exam.setId(2L);</span>
+<span class="fc" id="L329">        exam.setName(&quot;EmptyQ&quot;);</span>
+<span class="fc" id="L330">        exam.setQuestions(&quot;&quot;);</span>
+<span class="fc" id="L331">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="fc" id="L332">        examDB.add(exam);</span>
+<span class="fc" id="L333">        controller.preSetController(student, &quot;EmptyQ&quot;, questions, 5);</span>
+<span class="fc" id="L334">        CountDownLatch latch2 = new CountDownLatch(1);</span>
+<span class="fc" id="L335">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L334">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L335">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L336">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L337">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L338">            } catch (Exception e) {</span>
-<span class="nc" id="L339">                e.printStackTrace();</span>
-<span class="nc" id="L340">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L337">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L338">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L339">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L340">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L341">            } catch (Exception e) {</span>
+<span class="nc" id="L342">                e.printStackTrace();</span>
+<span class="nc" id="L343">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L342">                latch2.countDown();</span>
+<span class="fc" id="L345">                latch2.countDown();</span>
             }
-<span class="fc" id="L344">        });</span>
-<span class="fc" id="L345">        latch2.await();</span>
+<span class="fc" id="L347">        });</span>
+<span class="fc" id="L348">        latch2.await();</span>
         // questions string null
-<span class="fc" id="L347">        Exam exam2 = new Exam();</span>
-<span class="fc" id="L348">        exam2.setId(3L);</span>
-<span class="fc" id="L349">        exam2.setName(&quot;NullQ&quot;);</span>
-<span class="fc" id="L350">        exam2.setQuestions(null);</span>
-<span class="fc" id="L351">        examDB.add(exam2);</span>
-<span class="fc" id="L352">        controller.preSetController(student, &quot;NullQ&quot;, questions, 5);</span>
-<span class="fc" id="L353">        CountDownLatch latch3 = new CountDownLatch(1);</span>
-<span class="fc" id="L354">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L350">        Exam exam2 = new Exam();</span>
+<span class="fc" id="L351">        exam2.setId(3L);</span>
+<span class="fc" id="L352">        exam2.setName(&quot;NullQ&quot;);</span>
+<span class="fc" id="L353">        exam2.setQuestions(null);</span>
+<span class="fc" id="L354">        examDB.add(exam2);</span>
+<span class="fc" id="L355">        controller.preSetController(student, &quot;NullQ&quot;, questions, 5);</span>
+<span class="fc" id="L356">        CountDownLatch latch3 = new CountDownLatch(1);</span>
+<span class="fc" id="L357">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L356">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L357">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L358">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L359">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L360">            } catch (Exception e) {</span>
-<span class="nc" id="L361">                e.printStackTrace();</span>
-<span class="nc" id="L362">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L359">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L360">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L361">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L362">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L363">            } catch (Exception e) {</span>
+<span class="nc" id="L364">                e.printStackTrace();</span>
+<span class="nc" id="L365">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L364">                latch3.countDown();</span>
+<span class="fc" id="L367">                latch3.countDown();</span>
             }
-<span class="fc" id="L366">        });</span>
-<span class="fc" id="L367">        latch3.await();</span>
+<span class="fc" id="L369">        });</span>
+<span class="fc" id="L370">        latch3.await();</span>
         // question count mismatch
-<span class="fc" id="L369">        Exam exam3 = new Exam();</span>
-<span class="fc" id="L370">        exam3.setId(4L);</span>
-<span class="fc" id="L371">        exam3.setName(&quot;MismatchQ&quot;);</span>
-<span class="fc" id="L372">        exam3.setQuestions(&quot;1,2&quot;);</span>
-<span class="fc" id="L373">        examDB.add(exam3);</span>
-<span class="fc" id="L374">        controller.preSetController(student, &quot;MismatchQ&quot;, questions, 5);</span>
-<span class="fc" id="L375">        CountDownLatch latch4 = new CountDownLatch(1);</span>
-<span class="fc" id="L376">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L372">        Exam exam3 = new Exam();</span>
+<span class="fc" id="L373">        exam3.setId(4L);</span>
+<span class="fc" id="L374">        exam3.setName(&quot;MismatchQ&quot;);</span>
+<span class="fc" id="L375">        exam3.setQuestions(&quot;1,2&quot;);</span>
+<span class="fc" id="L376">        examDB.add(exam3);</span>
+<span class="fc" id="L377">        controller.preSetController(student, &quot;MismatchQ&quot;, questions, 5);</span>
+<span class="fc" id="L378">        CountDownLatch latch4 = new CountDownLatch(1);</span>
+<span class="fc" id="L379">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L378">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L379">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L380">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L381">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L382">            } catch (Exception e) {</span>
-<span class="nc" id="L383">                e.printStackTrace();</span>
-<span class="nc" id="L384">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L381">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L382">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L383">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L384">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L385">            } catch (Exception e) {</span>
+<span class="nc" id="L386">                e.printStackTrace();</span>
+<span class="nc" id="L387">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L386">                latch4.countDown();</span>
+<span class="fc" id="L389">                latch4.countDown();</span>
             }
-<span class="fc" id="L388">        });</span>
-<span class="fc" id="L389">        latch4.await();</span>
+<span class="fc" id="L391">        });</span>
+<span class="fc" id="L392">        latch4.await();</span>
         // bad questionId
-<span class="fc" id="L391">        Exam exam4 = new Exam();</span>
-<span class="fc" id="L392">        exam4.setId(5L);</span>
-<span class="fc" id="L393">        exam4.setName(&quot;BadIdQ&quot;);</span>
-<span class="fc" id="L394">        exam4.setQuestions(&quot;notanumber&quot;);</span>
-<span class="fc" id="L395">        examDB.add(exam4);</span>
-<span class="fc" id="L396">        controller.preSetController(student, &quot;BadIdQ&quot;, questions, 5);</span>
-<span class="fc" id="L397">        CountDownLatch latch5 = new CountDownLatch(1);</span>
-<span class="fc" id="L398">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L394">        Exam exam4 = new Exam();</span>
+<span class="fc" id="L395">        exam4.setId(5L);</span>
+<span class="fc" id="L396">        exam4.setName(&quot;BadIdQ&quot;);</span>
+<span class="fc" id="L397">        exam4.setQuestions(&quot;notanumber&quot;);</span>
+<span class="fc" id="L398">        examDB.add(exam4);</span>
+<span class="fc" id="L399">        controller.preSetController(student, &quot;BadIdQ&quot;, questions, 5);</span>
+<span class="fc" id="L400">        CountDownLatch latch5 = new CountDownLatch(1);</span>
+<span class="fc" id="L401">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L400">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L401">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L402">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L403">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L404">            } catch (Exception e) {</span>
-<span class="nc" id="L405">                e.printStackTrace();</span>
-<span class="nc" id="L406">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L403">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L404">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L405">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L406">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L407">            } catch (Exception e) {</span>
+<span class="nc" id="L408">                e.printStackTrace();</span>
+<span class="nc" id="L409">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L408">                latch5.countDown();</span>
+<span class="fc" id="L411">                latch5.countDown();</span>
             }
-<span class="fc" id="L410">        });</span>
-<span class="fc" id="L411">        latch5.await();</span>
+<span class="fc" id="L413">        });</span>
+<span class="fc" id="L414">        latch5.await();</span>
         // time spent negative
-<span class="fc" id="L413">        Exam exam5 = new Exam();</span>
-<span class="fc" id="L414">        exam5.setId(6L);</span>
-<span class="fc" id="L415">        exam5.setName(&quot;TimeNegQ&quot;);</span>
-<span class="fc" id="L416">        exam5.setQuestions(&quot;1&quot;);</span>
-<span class="fc" id="L417">        exam5.setDuration(5);</span>
-<span class="fc" id="L418">        examDB.add(exam5);</span>
-<span class="fc" id="L419">        setField(controller, &quot;hours&quot;, 10);</span>
-<span class="fc" id="L420">        setField(controller, &quot;minutes&quot;, 0);</span>
-<span class="fc" id="L421">        controller.preSetController(student, &quot;TimeNegQ&quot;, questions, 5);</span>
-<span class="fc" id="L422">        CountDownLatch latch6 = new CountDownLatch(1);</span>
-<span class="fc" id="L423">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L416">        Exam exam5 = new Exam();</span>
+<span class="fc" id="L417">        exam5.setId(6L);</span>
+<span class="fc" id="L418">        exam5.setName(&quot;TimeNegQ&quot;);</span>
+<span class="fc" id="L419">        exam5.setQuestions(&quot;1&quot;);</span>
+<span class="fc" id="L420">        exam5.setDuration(5);</span>
+<span class="fc" id="L421">        examDB.add(exam5);</span>
+<span class="fc" id="L422">        setField(controller, &quot;hours&quot;, 10);</span>
+<span class="fc" id="L423">        setField(controller, &quot;minutes&quot;, 0);</span>
+<span class="fc" id="L424">        controller.preSetController(student, &quot;TimeNegQ&quot;, questions, 5);</span>
+<span class="fc" id="L425">        CountDownLatch latch6 = new CountDownLatch(1);</span>
+<span class="fc" id="L426">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L425">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L426">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L427">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L428">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L429">            } catch (Exception e) {</span>
-<span class="nc" id="L430">                e.printStackTrace();</span>
-<span class="nc" id="L431">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L428">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L429">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L430">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L431">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L432">            } catch (Exception e) {</span>
+<span class="nc" id="L433">                e.printStackTrace();</span>
+<span class="nc" id="L434">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L433">                latch6.countDown();</span>
+<span class="fc" id="L436">                latch6.countDown();</span>
             }
-<span class="fc" id="L435">        });</span>
-<span class="fc" id="L436">        latch6.await();</span>
-<span class="fc" id="L437">    }</span>
+<span class="fc" id="L438">        });</span>
+<span class="fc" id="L439">        latch6.await();</span>
+<span class="fc" id="L440">    }</span>
 
     @Test
     void testSubmitQuizDialogFlow() throws Exception {
         // This test simulates the dialog flow for submitQuiz
         // (simulate user clicking OK and not clicking OK)
         // Not easily testable in headless mode, but we can invoke and check no exceptions
-<span class="fc" id="L444">        Student student = new Student();</span>
-<span class="fc" id="L445">        List&lt;StudentQuizController.QuizQuestion&gt; questions = List.of(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, List.of(&quot;A&quot;)));</span>
-<span class="fc" id="L446">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L447">        var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
-<span class="fc" id="L448">        submitQuiz.setAccessible(true);</span>
-<span class="fc" id="L449">        CountDownLatch latch = new CountDownLatch(1);</span>
-<span class="fc" id="L450">        Platform.runLater(() -&gt; {</span>
+<span class="fc" id="L447">        Student student = new Student();</span>
+<span class="fc" id="L448">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L449">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L450">        var submitQuiz = controller.getClass().getDeclaredMethod(&quot;submitQuiz&quot;);</span>
+<span class="fc" id="L451">        submitQuiz.setAccessible(true);</span>
+<span class="fc" id="L452">        CountDownLatch latch = new CountDownLatch(1);</span>
+<span class="fc" id="L453">        Platform.runLater(() -&gt; {</span>
             try {
-<span class="fc" id="L452">                submitQuiz.invoke(controller);</span>
-<span class="nc" id="L453">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
-<span class="nc" id="L454">                e.getCause().printStackTrace();</span>
-<span class="nc" id="L455">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
-<span class="nc" id="L456">            } catch (Exception e) {</span>
-<span class="nc" id="L457">                e.printStackTrace();</span>
-<span class="nc" id="L458">                fail(&quot;submitQuiz threw: &quot; + e);</span>
+<span class="fc" id="L455">                submitQuiz.invoke(controller);</span>
+<span class="pc" id="L456">            } catch (java.lang.reflect.InvocationTargetException e) {</span>
+<span class="nc" id="L457">                e.getCause().printStackTrace();</span>
+<span class="nc" id="L458">                fail(&quot;submitQuiz threw: &quot; + e.getCause());</span>
+<span class="nc" id="L459">            } catch (Exception e) {</span>
+<span class="nc" id="L460">                e.printStackTrace();</span>
+<span class="nc" id="L461">                fail(&quot;submitQuiz threw: &quot; + e);</span>
             } finally {
-<span class="fc" id="L460">                latch.countDown();</span>
+<span class="fc" id="L463">                latch.countDown();</span>
             }
-<span class="fc" id="L462">        });</span>
-<span class="fc" id="L463">        latch.await();</span>
-<span class="fc" id="L464">    }</span>
+<span class="fc" id="L465">        });</span>
+<span class="fc" id="L466">        latch.await();</span>
+<span class="fc" id="L467">    }</span>
 
     @Test
     void testReturnToMainPageBranches() throws Exception {
         // With valid scene/window
-<span class="fc" id="L469">        Student student = new Student();</span>
-<span class="fc" id="L470">        List&lt;StudentQuizController.QuizQuestion&gt; questions = List.of(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, List.of(&quot;A&quot;)));</span>
-<span class="fc" id="L471">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
-<span class="fc" id="L472">        var returnToMainPage = controller.getClass().getDeclaredMethod(&quot;returnToMainPage&quot;);</span>
-<span class="fc" id="L473">        returnToMainPage.setAccessible(true);</span>
-<span class="fc" id="L474">        assertDoesNotThrow(() -&gt; returnToMainPage.invoke(controller));</span>
-        // Without valid scene/window
-<span class="fc" id="L476">        setField(controller, &quot;quizNameText&quot;, new Text()); // no scene</span>
+<span class="fc" id="L472">        Student student = new Student();</span>
+<span class="fc" id="L473">        List&lt;StudentQuizController.QuizQuestion&gt; questions = Arrays.asList(new StudentQuizController.QuizQuestion(&quot;Q1&quot;, Arrays.asList(&quot;A&quot;), 1, &quot;A&quot;));</span>
+<span class="fc" id="L474">        controller.preSetController(student, &quot;Sample Quiz&quot;, questions, 5);</span>
+<span class="fc" id="L475">        var returnToMainPage = controller.getClass().getDeclaredMethod(&quot;returnToMainPage&quot;);</span>
+<span class="fc" id="L476">        returnToMainPage.setAccessible(true);</span>
 <span class="fc" id="L477">        assertDoesNotThrow(() -&gt; returnToMainPage.invoke(controller));</span>
-<span class="fc" id="L478">    }</span>
+        // Without valid scene/window
+<span class="fc" id="L479">        setField(controller, &quot;quizNameText&quot;, new Text()); // no scene</span>
+<span class="fc" id="L480">        assertDoesNotThrow(() -&gt; returnToMainPage.invoke(controller));</span>
+<span class="fc" id="L481">    }</span>
 
     private int getPrivateInt(Object obj, String fieldName) {
         try {
-<span class="fc" id="L482">            var field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L483">            field.setAccessible(true);</span>
-<span class="fc" id="L484">            return field.getInt(obj);</span>
-<span class="nc" id="L485">        } catch (Exception e) {</span>
-<span class="nc" id="L486">            throw new RuntimeException(e);</span>
+<span class="fc" id="L485">            var field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="fc" id="L486">            field.setAccessible(true);</span>
+<span class="fc" id="L487">            return field.getInt(obj);</span>
+<span class="nc" id="L488">        } catch (Exception e) {</span>
+<span class="nc" id="L489">            throw new RuntimeException(e);</span>
         }
     }
 } 

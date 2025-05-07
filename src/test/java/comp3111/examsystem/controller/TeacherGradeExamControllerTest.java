@@ -45,7 +45,7 @@ class TeacherGradeExamControllerTest {
 
         // Write test data
         Files.write(examFile, List.of(
-            "id%&:1!@#courseCode%&:COMP!@#examName%&:Midterm!@#questions%&:101,102!@#isAble%&:true"
+            "id%&:1!@#courseCode%&:COMP!@#examName%&:Midterm!@#questions%&:101,102!@#isAble%&:true!@#teacherId%&:1"
         ));
         Files.write(questionFile, List.of(
             "id%&:101!@#questionText%&:What is 2+2?!@#isAble%&:true!@#answer%&:4!@#score%&:10"
@@ -56,6 +56,12 @@ class TeacherGradeExamControllerTest {
 
         fakeRecordDb = new FakeRecordDatabase();
         controller = new TeacherGradeExamController(examFile, questionFile, studentFile, fakeRecordDb);
+        // Patch: set teacher field to match test data
+        comp3111.examsystem.entity.Teacher teacher = new comp3111.examsystem.entity.Teacher();
+        teacher.setId(1L);
+        java.lang.reflect.Field teacherField = controller.getClass().getDeclaredField("teacher");
+        teacherField.setAccessible(true);
+        teacherField.set(controller, teacher);
         setField(controller, "courseFilter", new ComboBox<>());
         setField(controller, "examFilter", new ComboBox<>());
         setField(controller, "studentFilter", new ComboBox<>());

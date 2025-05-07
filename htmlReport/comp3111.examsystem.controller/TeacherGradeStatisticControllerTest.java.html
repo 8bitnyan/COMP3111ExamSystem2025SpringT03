@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import comp3111.examsystem.data.Gender;
 import comp3111.examsystem.data.Department;
 
-<span class="fc" id="L19">public class TeacherGradeStatisticControllerTest {</span>
+<span class="nc" id="L19">public class TeacherGradeStatisticControllerTest {</span>
     private TeacherGradeStatisticController controller;
     private InMemoryDB&lt;comp3111.examsystem.entity.Record&gt; recordDB;
     private InMemoryDB&lt;Student&gt; studentDB;
@@ -26,116 +26,116 @@ import comp3111.examsystem.data.Department;
 
     @BeforeAll
     static void initJfx() {
-<span class="fc" id="L29">        new javafx.embed.swing.JFXPanel();</span>
-<span class="fc" id="L30">    }</span>
+<span class="nc" id="L29">        new javafx.embed.swing.JFXPanel();</span>
+<span class="nc" id="L30">    }</span>
 
     @BeforeEach
     void setUp() throws Exception {
-<span class="fc" id="L34">        recordDB = new InMemoryDB&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
-<span class="fc" id="L35">        studentDB = new InMemoryDB&lt;&gt;(Student.class);</span>
-<span class="fc" id="L36">        examDB = new InMemoryDB&lt;&gt;(Exam.class);</span>
-<span class="fc" id="L37">        courseDB = new InMemoryDB&lt;&gt;(Course.class);</span>
-<span class="fc" id="L38">        questionDB = new InMemoryDB&lt;&gt;(Question.class);</span>
+<span class="nc" id="L34">        recordDB = new InMemoryDB&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="nc" id="L35">        studentDB = new InMemoryDB&lt;&gt;(Student.class);</span>
+<span class="nc" id="L36">        examDB = new InMemoryDB&lt;&gt;(Exam.class);</span>
+<span class="nc" id="L37">        courseDB = new InMemoryDB&lt;&gt;(Course.class);</span>
+<span class="nc" id="L38">        questionDB = new InMemoryDB&lt;&gt;(Question.class);</span>
         // Pre-populate with minimal valid data
-<span class="fc" id="L40">        Student student = new Student(1L, &quot;user1&quot;, &quot;pass1&quot;, &quot;Alice&quot;, Gender.FEMALE, 20, Department.CSE);</span>
-<span class="fc" id="L41">        studentDB.add(student);</span>
-<span class="fc" id="L42">        Course course = new Course(1L, &quot;COMP3111&quot;, &quot;Software Engineering&quot;, Department.CSE);</span>
-<span class="fc" id="L43">        courseDB.add(course);</span>
-<span class="fc" id="L44">        Exam exam = new Exam(1L, &quot;Alice&quot;, &quot;COMP3111&quot;, 60, 1, new ArrayList&lt;&gt;());</span>
-<span class="fc" id="L45">        exam.setExamName(&quot;Midterm&quot;);</span>
-<span class="fc" id="L46">        examDB.add(exam);</span>
-<span class="fc" id="L47">        Question question = new Question(1L, &quot;MCQ&quot;, &quot;What is 2+2?&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;4&quot;, 5);</span>
-<span class="fc" id="L48">        questionDB.add(question);</span>
-<span class="fc" id="L49">        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record(1L, 1L, 1L, &quot;4&quot;, 5);</span>
-<span class="fc" id="L50">        recordDB.add(record);</span>
-<span class="fc" id="L51">        controller = new TeacherGradeStatisticController(recordDB, studentDB, examDB, courseDB, questionDB);</span>
-<span class="fc" id="L52">        setField(controller, &quot;courseCmb&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L53">        setField(controller, &quot;examCmb&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L54">        setField(controller, &quot;studentCmb&quot;, new ComboBox&lt;&gt;());</span>
-<span class="fc" id="L55">        setField(controller, &quot;recordTable&quot;, new TableView&lt;Stats&gt;());</span>
-<span class="fc" id="L56">        setField(controller, &quot;barChart&quot;, new BarChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
-<span class="fc" id="L57">        setField(controller, &quot;lineChart&quot;, new LineChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
-<span class="fc" id="L58">        setField(controller, &quot;colStudent&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L59">        setField(controller, &quot;colCourse&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L60">        setField(controller, &quot;colExam&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L61">        setField(controller, &quot;colScore&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L62">        setField(controller, &quot;colMaxScore&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L63">        setField(controller, &quot;colTimeSpent&quot;, new TableColumn&lt;&gt;());</span>
-<span class="fc" id="L64">    }</span>
+<span class="nc" id="L40">        Student student = new Student(1L, &quot;user1&quot;, &quot;pass1&quot;, &quot;Alice&quot;, Gender.FEMALE, 20, Department.CSE);</span>
+<span class="nc" id="L41">        studentDB.add(student);</span>
+<span class="nc" id="L42">        Course course = new Course(1L, &quot;COMP3111&quot;, &quot;Software Engineering&quot;, Department.CSE);</span>
+<span class="nc" id="L43">        courseDB.add(course);</span>
+<span class="nc" id="L44">        Exam exam = new Exam(1L, &quot;Alice&quot;, &quot;COMP3111&quot;, 60, 1, new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L45">        exam.setExamName(&quot;Midterm&quot;);</span>
+<span class="nc" id="L46">        examDB.add(exam);</span>
+<span class="nc" id="L47">        Question question = new Question(1L, &quot;MCQ&quot;, &quot;What is 2+2?&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;4&quot;, 5);</span>
+<span class="nc" id="L48">        questionDB.add(question);</span>
+<span class="nc" id="L49">        comp3111.examsystem.entity.Record record = new comp3111.examsystem.entity.Record(1L, 1L, 1L, &quot;4&quot;, 5);</span>
+<span class="nc" id="L50">        recordDB.add(record);</span>
+<span class="nc" id="L51">        controller = new TeacherGradeStatisticController(recordDB, studentDB, examDB, courseDB, questionDB);</span>
+<span class="nc" id="L52">        setField(controller, &quot;courseCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="nc" id="L53">        setField(controller, &quot;examCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="nc" id="L54">        setField(controller, &quot;studentCmb&quot;, new ComboBox&lt;&gt;());</span>
+<span class="nc" id="L55">        setField(controller, &quot;recordTable&quot;, new TableView&lt;Stats&gt;());</span>
+<span class="nc" id="L56">        setField(controller, &quot;barChart&quot;, new BarChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+<span class="nc" id="L57">        setField(controller, &quot;lineChart&quot;, new LineChart&lt;&gt;(new CategoryAxis(), new NumberAxis()));</span>
+<span class="nc" id="L58">        setField(controller, &quot;colStudent&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L59">        setField(controller, &quot;colCourse&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L60">        setField(controller, &quot;colExam&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L61">        setField(controller, &quot;colScore&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L62">        setField(controller, &quot;colMaxScore&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L63">        setField(controller, &quot;colTimeSpent&quot;, new TableColumn&lt;&gt;());</span>
+<span class="nc" id="L64">    }</span>
 
     private void setField(Object obj, String fieldName, Object value) throws Exception {
-<span class="fc" id="L67">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L68">        field.setAccessible(true);</span>
-<span class="fc" id="L69">        field.set(obj, value);</span>
-<span class="fc" id="L70">    }</span>
+<span class="nc" id="L67">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="nc" id="L68">        field.setAccessible(true);</span>
+<span class="nc" id="L69">        field.set(obj, value);</span>
+<span class="nc" id="L70">    }</span>
 
     @Test
     void testInitializationAndMockData() {
         // Should generate mock data if DBs are empty
-<span class="fc" id="L75">        controller.initialize(null, null);</span>
-<span class="fc" id="L76">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
-<span class="fc" id="L77">        assertFalse(table.getItems().isEmpty(), &quot;Table should be populated with mock data&quot;);</span>
-<span class="fc" id="L78">    }</span>
+<span class="nc" id="L75">        controller.initialize(null, null);</span>
+<span class="nc" id="L76">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
+<span class="nc" id="L77">        assertFalse(table.getItems().isEmpty(), &quot;Table should be populated with mock data&quot;);</span>
+<span class="nc" id="L78">    }</span>
 
     @Test
     void testFilterLogic() throws Exception {
-<span class="fc" id="L82">        controller.initialize(null, null);</span>
-<span class="fc" id="L83">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
-<span class="fc" id="L84">        ComboBox&lt;String&gt; courseCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;courseCmb&quot;);</span>
-<span class="fc" id="L85">        ComboBox&lt;String&gt; examCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;examCmb&quot;);</span>
-<span class="fc" id="L86">        ComboBox&lt;String&gt; studentCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;studentCmb&quot;);</span>
-<span class="fc" id="L87">        Stats sample = table.getItems().get(0);</span>
-<span class="fc" id="L88">        courseCmb.setValue(sample.getCourseCode());</span>
-<span class="fc" id="L89">        examCmb.setValue(sample.getExamName());</span>
-<span class="fc" id="L90">        studentCmb.setValue(sample.getStudentName());</span>
+<span class="nc" id="L82">        controller.initialize(null, null);</span>
+<span class="nc" id="L83">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
+<span class="nc" id="L84">        ComboBox&lt;String&gt; courseCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;courseCmb&quot;);</span>
+<span class="nc" id="L85">        ComboBox&lt;String&gt; examCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;examCmb&quot;);</span>
+<span class="nc" id="L86">        ComboBox&lt;String&gt; studentCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;studentCmb&quot;);</span>
+<span class="nc" id="L87">        Stats sample = table.getItems().get(0);</span>
+<span class="nc" id="L88">        courseCmb.setValue(sample.getCourseCode());</span>
+<span class="nc" id="L89">        examCmb.setValue(sample.getExamName());</span>
+<span class="nc" id="L90">        studentCmb.setValue(sample.getStudentName());</span>
         // Call private handleFilter via reflection
-<span class="fc" id="L92">        var method = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);</span>
-<span class="fc" id="L93">        method.setAccessible(true);</span>
-<span class="fc" id="L94">        method.invoke(controller);</span>
-<span class="fc" id="L95">        assertTrue(table.getItems().stream().allMatch(s -&gt;</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            s.getCourseCode().equals(sample.getCourseCode()) &amp;&amp;</span>
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">            s.getExamName().equals(sample.getExamName()) &amp;&amp;</span>
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            s.getStudentName().equals(sample.getStudentName())</span>
+<span class="nc" id="L92">        var method = controller.getClass().getDeclaredMethod(&quot;handleFilter&quot;);</span>
+<span class="nc" id="L93">        method.setAccessible(true);</span>
+<span class="nc" id="L94">        method.invoke(controller);</span>
+<span class="nc" id="L95">        assertTrue(table.getItems().stream().allMatch(s -&gt;</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            s.getCourseCode().equals(sample.getCourseCode()) &amp;&amp;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            s.getExamName().equals(sample.getExamName()) &amp;&amp;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            s.getStudentName().equals(sample.getStudentName())</span>
         ));
-<span class="fc" id="L100">    }</span>
+<span class="nc" id="L100">    }</span>
 
     @Test
     void testResetLogic() throws Exception {
-<span class="fc" id="L104">        controller.initialize(null, null);</span>
-<span class="fc" id="L105">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
-<span class="fc" id="L106">        ComboBox&lt;String&gt; courseCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;courseCmb&quot;);</span>
-<span class="fc" id="L107">        ComboBox&lt;String&gt; examCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;examCmb&quot;);</span>
-<span class="fc" id="L108">        ComboBox&lt;String&gt; studentCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;studentCmb&quot;);</span>
-<span class="fc" id="L109">        courseCmb.setValue(&quot;SomeCourse&quot;);</span>
-<span class="fc" id="L110">        examCmb.setValue(&quot;SomeExam&quot;);</span>
-<span class="fc" id="L111">        studentCmb.setValue(&quot;SomeStudent&quot;);</span>
+<span class="nc" id="L104">        controller.initialize(null, null);</span>
+<span class="nc" id="L105">        TableView&lt;Stats&gt; table = (TableView&lt;Stats&gt;) getField(controller, &quot;recordTable&quot;);</span>
+<span class="nc" id="L106">        ComboBox&lt;String&gt; courseCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;courseCmb&quot;);</span>
+<span class="nc" id="L107">        ComboBox&lt;String&gt; examCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;examCmb&quot;);</span>
+<span class="nc" id="L108">        ComboBox&lt;String&gt; studentCmb = (ComboBox&lt;String&gt;) getField(controller, &quot;studentCmb&quot;);</span>
+<span class="nc" id="L109">        courseCmb.setValue(&quot;SomeCourse&quot;);</span>
+<span class="nc" id="L110">        examCmb.setValue(&quot;SomeExam&quot;);</span>
+<span class="nc" id="L111">        studentCmb.setValue(&quot;SomeStudent&quot;);</span>
         // Call private handleReset via reflection
-<span class="fc" id="L113">        var method = controller.getClass().getDeclaredMethod(&quot;handleReset&quot;);</span>
-<span class="fc" id="L114">        method.setAccessible(true);</span>
-<span class="fc" id="L115">        method.invoke(controller);</span>
-<span class="fc" id="L116">        assertEquals(&quot;Any&quot;, courseCmb.getValue());</span>
-<span class="fc" id="L117">        assertEquals(&quot;Any&quot;, examCmb.getValue());</span>
-<span class="fc" id="L118">        assertEquals(&quot;Any&quot;, studentCmb.getValue());</span>
-<span class="fc" id="L119">        assertEquals(table.getItems().size(), ((List&lt;?&gt;)getField(controller, &quot;allStats&quot;)).size());</span>
-<span class="fc" id="L120">    }</span>
+<span class="nc" id="L113">        var method = controller.getClass().getDeclaredMethod(&quot;handleReset&quot;);</span>
+<span class="nc" id="L114">        method.setAccessible(true);</span>
+<span class="nc" id="L115">        method.invoke(controller);</span>
+<span class="nc" id="L116">        assertEquals(&quot;Any&quot;, courseCmb.getValue());</span>
+<span class="nc" id="L117">        assertEquals(&quot;Any&quot;, examCmb.getValue());</span>
+<span class="nc" id="L118">        assertEquals(&quot;Any&quot;, studentCmb.getValue());</span>
+<span class="nc" id="L119">        assertEquals(table.getItems().size(), ((List&lt;?&gt;)getField(controller, &quot;allStats&quot;)).size());</span>
+<span class="nc" id="L120">    }</span>
 
     // Simple in-memory DB for test isolation
     static class InMemoryDB&lt;T&gt; extends comp3111.examsystem.tools.Database&lt;T&gt; {
-<span class="fc" id="L124">        private final List&lt;T&gt; items = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L125">        public InMemoryDB(Class&lt;T&gt; clazz) { super(clazz); }</span>
-<span class="fc" id="L126">        @Override public List&lt;T&gt; getAll() { return new ArrayList&lt;&gt;(items); }</span>
-<span class="fc" id="L127">        @Override public List&lt;T&gt; getAllEnabled() { return new ArrayList&lt;&gt;(items); }</span>
-<span class="fc" id="L128">        @Override public void add(T t) { items.add(t); }</span>
+<span class="nc" id="L124">        private final List&lt;T&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L125">        public InMemoryDB(Class&lt;T&gt; clazz) { super(clazz); }</span>
+<span class="nc" id="L126">        @Override public List&lt;T&gt; getAll() { return new ArrayList&lt;&gt;(items); }</span>
+<span class="nc" id="L127">        @Override public List&lt;T&gt; getAllEnabled() { return new ArrayList&lt;&gt;(items); }</span>
+<span class="nc" id="L128">        @Override public void add(T t) { items.add(t); }</span>
 <span class="nc" id="L129">        @Override public void delByKey(String key) { items.clear(); }</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        @Override public T queryByKey(String key) { return items.isEmpty() ? null : items.get(0); }</span>
-<span class="fc" id="L131">        @Override public List&lt;T&gt; queryByField(String field, String value) { return getAll(); }</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        @Override public T queryByKey(String key) { return items.isEmpty() ? null : items.get(0); }</span>
+<span class="nc" id="L131">        @Override public List&lt;T&gt; queryByField(String field, String value) { return getAll(); }</span>
     }
 
     private Object getField(Object obj, String fieldName) {
         try {
-<span class="fc" id="L136">            Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L137">            field.setAccessible(true);</span>
-<span class="fc" id="L138">            return field.get(obj);</span>
+<span class="nc" id="L136">            Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="nc" id="L137">            field.setAccessible(true);</span>
+<span class="nc" id="L138">            return field.get(obj);</span>
 <span class="nc" id="L139">        } catch (Exception e) {</span>
 <span class="nc" id="L140">            return null;</span>
         }

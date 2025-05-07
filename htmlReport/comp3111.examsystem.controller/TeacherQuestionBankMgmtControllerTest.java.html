@@ -21,512 +21,512 @@ import javafx.application.Platform;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-<span class="fc" id="L24">public class TeacherQuestionBankMgmtControllerTest {</span>
+<span class="nc" id="L24">public class TeacherQuestionBankMgmtControllerTest {</span>
     private TeacherQuestionBankMgmtController controller;
 
     static {
         try {
 <span class="nc" id="L29">            Platform.startup(() -&gt; {});</span>
-<span class="fc" id="L30">        } catch (IllegalStateException e) {</span>
+<span class="nc" id="L30">        } catch (IllegalStateException e) {</span>
             // JavaFX already started
-<span class="nc" id="L32">        }</span>
-<span class="fc" id="L33">    }</span>
+        }
+<span class="nc" id="L33">    }</span>
 
     @BeforeAll
     static void initJfx() {
-<span class="fc" id="L37">        new JFXPanel();</span>
-<span class="fc" id="L38">    }</span>
+<span class="nc" id="L37">        new JFXPanel();</span>
+<span class="nc" id="L38">    }</span>
 
     @BeforeEach
     void setUp() throws Exception {
-<span class="fc" id="L42">        controller = new TeacherQuestionBankMgmtController();</span>
+<span class="nc" id="L42">        controller = new TeacherQuestionBankMgmtController();</span>
         // Set up dummy teacher with non-null ID and required properties
-<span class="fc" id="L44">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L45">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L44">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L45">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
         // Use reflection to set private fields if direct access fails
-<span class="fc" id="L47">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L48">        setField(controller, &quot;filterQuestionTxt&quot;, new TextField());</span>
-<span class="fc" id="L49">        setField(controller, &quot;filterTypeCmb&quot;, new ComboBox&lt;String&gt;());</span>
-<span class="fc" id="L50">        setField(controller, &quot;filterScoreTxt&quot;, new TextField());</span>
-<span class="fc" id="L51">        setField(controller, &quot;questionTxt&quot;, new TextArea());</span>
-<span class="fc" id="L52">        setField(controller, &quot;scoreTxt&quot;, new TextField());</span>
-<span class="fc" id="L53">        setField(controller, &quot;answerTxt&quot;, new TextField());</span>
-<span class="fc" id="L54">        setField(controller, &quot;typeCmb&quot;, new ComboBox&lt;String&gt;());</span>
-<span class="fc" id="L55">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;TextField&gt;());</span>
-<span class="fc" id="L56">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L57">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L58">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L59">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L60">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L61">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L62">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L63">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L64">    }</span>
+<span class="nc" id="L47">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L48">        setField(controller, &quot;filterQuestionTxt&quot;, new TextField());</span>
+<span class="nc" id="L49">        setField(controller, &quot;filterTypeCmb&quot;, new ComboBox&lt;String&gt;());</span>
+<span class="nc" id="L50">        setField(controller, &quot;filterScoreTxt&quot;, new TextField());</span>
+<span class="nc" id="L51">        setField(controller, &quot;questionTxt&quot;, new TextArea());</span>
+<span class="nc" id="L52">        setField(controller, &quot;scoreTxt&quot;, new TextField());</span>
+<span class="nc" id="L53">        setField(controller, &quot;answerTxt&quot;, new TextField());</span>
+<span class="nc" id="L54">        setField(controller, &quot;typeCmb&quot;, new ComboBox&lt;String&gt;());</span>
+<span class="nc" id="L55">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;TextField&gt;());</span>
+<span class="nc" id="L56">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L57">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L58">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L59">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L60">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L61">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L62">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L63">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L64">    }</span>
 
     private void setField(Object obj, String fieldName, Object value) throws Exception {
-<span class="fc" id="L67">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="fc" id="L68">        field.setAccessible(true);</span>
-<span class="fc" id="L69">        field.set(obj, value);</span>
-<span class="fc" id="L70">    }</span>
+<span class="nc" id="L67">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="nc" id="L68">        field.setAccessible(true);</span>
+<span class="nc" id="L69">        field.set(obj, value);</span>
+<span class="nc" id="L70">    }</span>
 
     @Test
     void testFilterByTextTypeScore() throws Exception {
         // Add mock questions
-<span class="fc" id="L75">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
-<span class="fc" id="L76">        setField(controller, &quot;questionsTable&quot;, table);</span>
-<span class="fc" id="L77">        Question q1 = new Question(); q1.setQuestionText(&quot;Math Q1&quot;); q1.setType(&quot;MCQ&quot;); q1.setScore(5);</span>
-<span class="fc" id="L78">        Question q2 = new Question(); q2.setQuestionText(&quot;Physics Q2&quot;); q2.setType(&quot;Short Answer&quot;); q2.setScore(10);</span>
-<span class="fc" id="L79">        table.getItems().addAll(q1, q2);</span>
+<span class="nc" id="L75">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
+<span class="nc" id="L76">        setField(controller, &quot;questionsTable&quot;, table);</span>
+<span class="nc" id="L77">        Question q1 = new Question(); q1.setQuestionText(&quot;Math Q1&quot;); q1.setType(&quot;MCQ&quot;); q1.setScore(5);</span>
+<span class="nc" id="L78">        Question q2 = new Question(); q2.setQuestionText(&quot;Physics Q2&quot;); q2.setType(&quot;Short Answer&quot;); q2.setScore(10);</span>
+<span class="nc" id="L79">        table.getItems().addAll(q1, q2);</span>
 
         // Filter by text
-<span class="fc" id="L82">        TextField filterQuestionTxt = new TextField(&quot;Math&quot;);</span>
-<span class="fc" id="L83">        setField(controller, &quot;filterQuestionTxt&quot;, filterQuestionTxt);</span>
-<span class="fc" id="L84">        List&lt;Question&gt; filtered = table.getItems().filtered(q -&gt; q.getQuestionText().contains(&quot;Math&quot;));</span>
-<span class="fc" id="L85">        assertEquals(1, filtered.size());</span>
-<span class="fc" id="L86">        assertEquals(&quot;Math Q1&quot;, filtered.get(0).getQuestionText());</span>
+<span class="nc" id="L82">        TextField filterQuestionTxt = new TextField(&quot;Math&quot;);</span>
+<span class="nc" id="L83">        setField(controller, &quot;filterQuestionTxt&quot;, filterQuestionTxt);</span>
+<span class="nc" id="L84">        List&lt;Question&gt; filtered = table.getItems().filtered(q -&gt; q.getQuestionText().contains(&quot;Math&quot;));</span>
+<span class="nc" id="L85">        assertEquals(1, filtered.size());</span>
+<span class="nc" id="L86">        assertEquals(&quot;Math Q1&quot;, filtered.get(0).getQuestionText());</span>
 
         // Filter by type
-<span class="fc" id="L89">        ComboBox&lt;String&gt; filterTypeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L90">        filterTypeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L91">        filterTypeCmb.setValue(&quot;Short Answer&quot;);</span>
-<span class="fc" id="L92">        setField(controller, &quot;filterTypeCmb&quot;, filterTypeCmb);</span>
-<span class="fc" id="L93">        filtered = table.getItems().filtered(q -&gt; q.getType().equals(&quot;Short Answer&quot;));</span>
-<span class="fc" id="L94">        assertEquals(1, filtered.size());</span>
-<span class="fc" id="L95">        assertEquals(&quot;Physics Q2&quot;, filtered.get(0).getQuestionText());</span>
+<span class="nc" id="L89">        ComboBox&lt;String&gt; filterTypeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L90">        filterTypeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L91">        filterTypeCmb.setValue(&quot;Short Answer&quot;);</span>
+<span class="nc" id="L92">        setField(controller, &quot;filterTypeCmb&quot;, filterTypeCmb);</span>
+<span class="nc" id="L93">        filtered = table.getItems().filtered(q -&gt; q.getType().equals(&quot;Short Answer&quot;));</span>
+<span class="nc" id="L94">        assertEquals(1, filtered.size());</span>
+<span class="nc" id="L95">        assertEquals(&quot;Physics Q2&quot;, filtered.get(0).getQuestionText());</span>
 
         // Filter by score
-<span class="fc" id="L98">        TextField filterScoreTxt = new TextField(&quot;5&quot;);</span>
-<span class="fc" id="L99">        setField(controller, &quot;filterScoreTxt&quot;, filterScoreTxt);</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        filtered = table.getItems().filtered(q -&gt; q.getScore() == 5);</span>
-<span class="fc" id="L101">        assertEquals(1, filtered.size());</span>
-<span class="fc" id="L102">        assertEquals(&quot;Math Q1&quot;, filtered.get(0).getQuestionText());</span>
-<span class="fc" id="L103">    }</span>
+<span class="nc" id="L98">        TextField filterScoreTxt = new TextField(&quot;5&quot;);</span>
+<span class="nc" id="L99">        setField(controller, &quot;filterScoreTxt&quot;, filterScoreTxt);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        filtered = table.getItems().filtered(q -&gt; q.getScore() == 5);</span>
+<span class="nc" id="L101">        assertEquals(1, filtered.size());</span>
+<span class="nc" id="L102">        assertEquals(&quot;Math Q1&quot;, filtered.get(0).getQuestionText());</span>
+<span class="nc" id="L103">    }</span>
 
     @Test
     void testAddQuestion_AllBranches() throws Exception {
         // Ensure teacher is set (in case controller is reset)
-<span class="fc" id="L108">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L109">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L108">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L109">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
         // Setup for MCQ valid
-<span class="fc" id="L111">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L112">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L113">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L114">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L115">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L116">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L117">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L118">        List&lt;TextField&gt; optionFields = new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;)));</span>
-<span class="fc" id="L119">        setField(controller, &quot;optionFields&quot;, optionFields);</span>
-<span class="fc" id="L120">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L121">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L122">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L123">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L124">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L125">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L126">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L127">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L128">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L129">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L130">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L131">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L132">            controller.handleAdd();</span>
-<span class="fc" id="L133">            controller.handleUpdate();</span>
+<span class="nc" id="L111">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L112">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L113">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L114">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L115">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L116">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L117">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L118">        List&lt;TextField&gt; optionFields = new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;)));</span>
+<span class="nc" id="L119">        setField(controller, &quot;optionFields&quot;, optionFields);</span>
+<span class="nc" id="L120">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L121">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L122">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L123">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L124">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L125">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L126">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L127">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L128">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L129">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L130">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L131">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L132">            controller.handleAdd();</span>
+<span class="nc" id="L133">            controller.handleUpdate();</span>
             // Invalid: missing fields
-<span class="fc" id="L135">            setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
-<span class="fc" id="L136">            controller.handleUpdate();</span>
-<span class="fc" id="L137">            setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L138">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;-1&quot;));</span>
-<span class="fc" id="L139">            controller.handleUpdate();</span>
-<span class="fc" id="L140">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;abc&quot;));</span>
-<span class="fc" id="L141">            controller.handleUpdate();</span>
-<span class="fc" id="L142">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L143">            setField(controller, &quot;answerTxt&quot;, new TextField(&quot;Z&quot;));</span>
-<span class="fc" id="L144">            controller.handleUpdate();</span>
+<span class="nc" id="L135">            setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
+<span class="nc" id="L136">            controller.handleUpdate();</span>
+<span class="nc" id="L137">            setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L138">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;-1&quot;));</span>
+<span class="nc" id="L139">            controller.handleUpdate();</span>
+<span class="nc" id="L140">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;abc&quot;));</span>
+<span class="nc" id="L141">            controller.handleUpdate();</span>
+<span class="nc" id="L142">            setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L143">            setField(controller, &quot;answerTxt&quot;, new TextField(&quot;Z&quot;));</span>
+<span class="nc" id="L144">            controller.handleUpdate();</span>
             // Short Answer
-<span class="fc" id="L146">            typeCmb.setValue(&quot;Short Answer&quot;);</span>
-<span class="fc" id="L147">            setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L148">            controller.handleUpdate();</span>
+<span class="nc" id="L146">            typeCmb.setValue(&quot;Short Answer&quot;);</span>
+<span class="nc" id="L147">            setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L148">            controller.handleUpdate();</span>
         }
-<span class="fc" id="L150">    }</span>
+<span class="nc" id="L150">    }</span>
 
     @Test
     void testUpdateQuestion_EditModeBranches() throws Exception {
         // Ensure teacher is set (in case controller is reset)
-<span class="fc" id="L155">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L156">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L155">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L156">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
         // Setup for update
-<span class="fc" id="L158">        setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L159">        Question q = new Question();</span>
-<span class="fc" id="L160">        q.setId(100L); // Set non-null ID</span>
-<span class="fc" id="L161">        q.setPublished(0);</span>
-<span class="fc" id="L162">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
-<span class="fc" id="L163">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L164">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L165">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L166">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L167">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L168">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L169">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L170">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L171">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L172">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L173">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L174">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L175">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L176">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L177">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L178">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L179">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L180">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L181">            controller.handleUpdate();</span>
+<span class="nc" id="L158">        setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L159">        Question q = new Question();</span>
+<span class="nc" id="L160">        q.setId(100L); // Set non-null ID</span>
+<span class="nc" id="L161">        q.setPublished(0);</span>
+<span class="nc" id="L162">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
+<span class="nc" id="L163">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L164">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L165">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L166">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L167">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L168">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L169">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L170">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L171">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L172">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L173">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L174">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L175">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L176">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L177">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L178">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L179">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L180">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L181">            controller.handleUpdate();</span>
             // Not in editMode
-<span class="fc" id="L183">            setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L184">            controller.handleUpdate();</span>
+<span class="nc" id="L183">            setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L184">            controller.handleUpdate();</span>
             // selectedQuestion null
-<span class="fc" id="L186">            setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L187">            setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L188">            controller.handleUpdate();</span>
+<span class="nc" id="L186">            setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L187">            setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L188">            controller.handleUpdate();</span>
             // selectedQuestion published
-<span class="fc" id="L190">            Question q2 = new Question();</span>
-<span class="fc" id="L191">            q2.setId(101L); // Set non-null ID</span>
-<span class="fc" id="L192">            q2.setPublished(1);</span>
-<span class="fc" id="L193">            setField(controller, &quot;selectedQuestion&quot;, q2);</span>
-<span class="fc" id="L194">            controller.handleUpdate();</span>
+<span class="nc" id="L190">            Question q2 = new Question();</span>
+<span class="nc" id="L191">            q2.setId(101L); // Set non-null ID</span>
+<span class="nc" id="L192">            q2.setPublished(1);</span>
+<span class="nc" id="L193">            setField(controller, &quot;selectedQuestion&quot;, q2);</span>
+<span class="nc" id="L194">            controller.handleUpdate();</span>
         }
-<span class="fc" id="L196">    }</span>
+<span class="nc" id="L196">    }</span>
 
     @Test
     void testDeleteBranches_AllPaths() throws Exception {
-<span class="fc" id="L200">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L201">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
-<span class="fc" id="L202">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
-<span class="fc" id="L203">        setField(controller, &quot;questionsTable&quot;, table);</span>
-<span class="fc" id="L204">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L205">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L206">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L207">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L208">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L209">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L210">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L211">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L200">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L201">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L202">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
+<span class="nc" id="L203">        setField(controller, &quot;questionsTable&quot;, table);</span>
+<span class="nc" id="L204">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L205">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L206">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L207">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L208">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L209">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L210">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L211">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
         // No selection
-<span class="fc" id="L213">        table.getSelectionModel().clearSelection();</span>
-<span class="fc" id="L214">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L215">            controller.handleDelete();</span>
-<span class="fc" id="L216">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;No question selected to delete.&quot;), Mockito.atLeastOnce());</span>
+<span class="nc" id="L213">        table.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L214">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L215">            controller.handleDelete();</span>
+<span class="nc" id="L216">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;No question selected to delete.&quot;), Mockito.atLeastOnce());</span>
             // Published
-<span class="fc" id="L218">            Question q = new Question();</span>
-<span class="fc" id="L219">            q.setId(200L); q.setPublished(1);</span>
-<span class="fc" id="L220">            table.getItems().add(q);</span>
-<span class="fc" id="L221">            table.getSelectionModel().select(q);</span>
-<span class="fc" id="L222">            controller.handleDelete();</span>
-<span class="fc" id="L223">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Published question cannot be deleted.&quot;), Mockito.atLeastOnce());</span>
+<span class="nc" id="L218">            Question q = new Question();</span>
+<span class="nc" id="L219">            q.setId(200L); q.setPublished(1);</span>
+<span class="nc" id="L220">            table.getItems().add(q);</span>
+<span class="nc" id="L221">            table.getSelectionModel().select(q);</span>
+<span class="nc" id="L222">            controller.handleDelete();</span>
+<span class="nc" id="L223">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Published question cannot be deleted.&quot;), Mockito.atLeastOnce());</span>
             // Not published
-<span class="fc" id="L225">            q.setPublished(0);</span>
-<span class="fc" id="L226">            table.getSelectionModel().select(q);</span>
-<span class="fc" id="L227">            controller.handleDelete();</span>
+<span class="nc" id="L225">            q.setPublished(0);</span>
+<span class="nc" id="L226">            table.getSelectionModel().select(q);</span>
+<span class="nc" id="L227">            controller.handleDelete();</span>
         }
-<span class="fc" id="L229">    }</span>
+<span class="nc" id="L229">    }</span>
 
     @Test
     void testEditBranches() throws Exception {
-<span class="fc" id="L233">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L234">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
-<span class="fc" id="L235">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L236">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L237">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L238">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L239">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L240">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L241">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L242">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L233">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L234">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L235">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L236">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L237">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L238">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L239">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L240">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L241">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L242">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
         // No selection
-<span class="fc" id="L244">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L245">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L246">            controller.handleEdit();</span>
+<span class="nc" id="L244">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L245">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L246">            controller.handleEdit();</span>
             // Published
-<span class="fc" id="L248">            Question q = new Question();</span>
-<span class="fc" id="L249">            q.setId(300L); // Set non-null ID</span>
-<span class="fc" id="L250">            q.setPublished(1);</span>
-<span class="fc" id="L251">            setField(controller, &quot;selectedQuestion&quot;, q);</span>
-<span class="fc" id="L252">            controller.handleEdit();</span>
+<span class="nc" id="L248">            Question q = new Question();</span>
+<span class="nc" id="L249">            q.setId(300L); // Set non-null ID</span>
+<span class="nc" id="L250">            q.setPublished(1);</span>
+<span class="nc" id="L251">            setField(controller, &quot;selectedQuestion&quot;, q);</span>
+<span class="nc" id="L252">            controller.handleEdit();</span>
             // Not published
-<span class="fc" id="L254">            q.setPublished(0);</span>
-<span class="fc" id="L255">            setField(controller, &quot;selectedQuestion&quot;, q);</span>
-<span class="fc" id="L256">            controller.handleEdit();</span>
+<span class="nc" id="L254">            q.setPublished(0);</span>
+<span class="nc" id="L255">            setField(controller, &quot;selectedQuestion&quot;, q);</span>
+<span class="nc" id="L256">            controller.handleEdit();</span>
         }
-<span class="fc" id="L258">    }</span>
+<span class="nc" id="L258">    }</span>
 
     @Test
     void testCancelEditBranches_AllPaths() throws Exception {
-<span class="fc" id="L262">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L263">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
-<span class="fc" id="L264">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L265">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L266">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L267">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L268">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L269">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L270">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L271">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L262">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L263">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L264">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L265">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L266">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L267">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L268">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L269">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L270">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L271">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
         // Not in edit mode, selectedQuestion not null
-<span class="fc" id="L273">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L274">        Question q = new Question();</span>
-<span class="fc" id="L275">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
-<span class="fc" id="L276">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L277">            controller.handleCancelEdit();</span>
+<span class="nc" id="L273">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L274">        Question q = new Question();</span>
+<span class="nc" id="L275">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
+<span class="nc" id="L276">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L277">            controller.handleCancelEdit();</span>
             // In edit mode, selectedQuestion null
-<span class="fc" id="L279">            setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L280">            setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L281">            controller.handleCancelEdit();</span>
-<span class="fc" id="L282">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Adding new question cancelled.&quot;), Mockito.atLeastOnce());</span>
+<span class="nc" id="L279">            setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L280">            setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L281">            controller.handleCancelEdit();</span>
+<span class="nc" id="L282">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Adding new question cancelled.&quot;), Mockito.atLeastOnce());</span>
             // In edit mode, selectedQuestion not null, question not found
-<span class="fc" id="L284">            setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L285">            Question q2 = new Question();</span>
-<span class="fc" id="L286">            q2.setId(400L);</span>
-<span class="fc" id="L287">            setField(controller, &quot;selectedQuestion&quot;, q2);</span>
-<span class="fc" id="L288">            controller.handleCancelEdit();</span>
-<span class="fc" id="L289">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Question could not be found. Edit cancelled.&quot;), Mockito.atLeastOnce());</span>
+<span class="nc" id="L284">            setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L285">            Question q2 = new Question();</span>
+<span class="nc" id="L286">            q2.setId(400L);</span>
+<span class="nc" id="L287">            setField(controller, &quot;selectedQuestion&quot;, q2);</span>
+<span class="nc" id="L288">            controller.handleCancelEdit();</span>
+<span class="nc" id="L289">            msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Question could not be found. Edit cancelled.&quot;), Mockito.atLeastOnce());</span>
         }
-<span class="fc" id="L291">    }</span>
+<span class="nc" id="L291">    }</span>
 
     @Test
     void testFilterBranches() throws Exception {
-<span class="fc" id="L295">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L296">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
-<span class="fc" id="L297">        setField(controller, &quot;filterQuestionTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L298">        ComboBox&lt;String&gt; filterTypeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L299">        filterTypeCmb.getItems().addAll(&quot;Any&quot;, &quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L300">        filterTypeCmb.setValue(&quot;Any&quot;);</span>
-<span class="fc" id="L301">        setField(controller, &quot;filterTypeCmb&quot;, filterTypeCmb);</span>
-<span class="fc" id="L302">        setField(controller, &quot;filterScoreTxt&quot;, new TextField(&quot;notanint&quot;));</span>
-<span class="fc" id="L303">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L304">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L305">            controller.handleFilter();</span>
+<span class="nc" id="L295">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L296">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L297">        setField(controller, &quot;filterQuestionTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L298">        ComboBox&lt;String&gt; filterTypeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L299">        filterTypeCmb.getItems().addAll(&quot;Any&quot;, &quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L300">        filterTypeCmb.setValue(&quot;Any&quot;);</span>
+<span class="nc" id="L301">        setField(controller, &quot;filterTypeCmb&quot;, filterTypeCmb);</span>
+<span class="nc" id="L302">        setField(controller, &quot;filterScoreTxt&quot;, new TextField(&quot;notanint&quot;));</span>
+<span class="nc" id="L303">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L304">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L305">            controller.handleFilter();</span>
         }
-<span class="fc" id="L307">    }</span>
+<span class="nc" id="L307">    }</span>
 
     @Test
     void testAddMCQWithMinimumOptions() throws Exception {
-<span class="fc" id="L311">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L312">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L313">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L314">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L315">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L316">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;1&quot;));</span>
-<span class="fc" id="L317">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L318">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L319">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L320">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L321">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L322">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L323">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L324">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L325">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L326">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L327">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L328">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L329">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L330">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L331">            controller.handleAdd();</span>
+<span class="nc" id="L311">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L312">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L313">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L314">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L315">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L316">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;1&quot;));</span>
+<span class="nc" id="L317">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L318">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L319">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L320">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L321">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L322">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L323">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L324">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L325">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L326">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L327">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L328">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L329">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L330">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L331">            controller.handleAdd();</span>
             // No exception means success for this test
         }
-<span class="fc" id="L334">    }</span>
+<span class="nc" id="L334">    }</span>
 
     @Test
     void testAddMCQWithMaximumOptions() throws Exception {
-<span class="fc" id="L338">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L339">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L340">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L341">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L342">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L343">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L344">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L345">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
-            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;))));
-<span class="fc" id="L347">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L348">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L349">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L350">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L351">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L352">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L353">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L354">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L355">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L356">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L357">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L358">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L359">            controller.handleAdd();</span>
+<span class="nc" id="L338">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L339">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L340">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L341">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L342">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L343">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L344">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L345">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
+<span class="nc" id="L346">            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;))));</span>
+<span class="nc" id="L347">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L348">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L349">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L350">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L351">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L352">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L353">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L354">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L355">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L356">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L357">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L358">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L359">            controller.handleAdd();</span>
         }
-<span class="fc" id="L361">    }</span>
+<span class="nc" id="L361">    }</span>
 
     @Test
     void testAddMCQWithInvalidOptionCounts() throws Exception {
         // 1 option (should fail)
-<span class="fc" id="L366">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L367">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L368">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L369">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L370">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L371">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
-<span class="fc" id="L372">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L373">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;))));</span>
-<span class="fc" id="L374">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L375">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L376">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L377">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L378">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L379">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L380">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L381">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L382">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L383">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L384">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L385">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L386">            controller.handleAdd(); // Should not add, but should not throw</span>
+<span class="nc" id="L366">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L367">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L368">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L369">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L370">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L371">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
+<span class="nc" id="L372">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L373">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;))));</span>
+<span class="nc" id="L374">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L375">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L376">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L377">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L378">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L379">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L380">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L381">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L382">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L383">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L384">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L385">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L386">            controller.handleAdd(); // Should not add, but should not throw</span>
         }
         // 6 options (should fail)
-<span class="fc" id="L389">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
-            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;), new TextField(&quot;A6&quot;))));
-<span class="fc" id="L391">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L392">            controller.handleAdd(); // Should not add, but should not throw</span>
+<span class="nc" id="L389">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(</span>
+<span class="nc" id="L390">            new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;), new TextField(&quot;A3&quot;), new TextField(&quot;A4&quot;), new TextField(&quot;A5&quot;), new TextField(&quot;A6&quot;))));</span>
+<span class="nc" id="L391">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L392">            controller.handleAdd(); // Should not add, but should not throw</span>
         }
-<span class="fc" id="L394">    }</span>
+<span class="nc" id="L394">    }</span>
 
     @Test
     void testAddUpdateWithEmptyOrPartialFields() throws Exception {
         // All fields empty
-<span class="fc" id="L399">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
-<span class="fc" id="L400">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L401">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L402">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L403">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L404">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L405">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L406">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;&quot;), new TextField(&quot;&quot;))));</span>
-<span class="fc" id="L407">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L408">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L409">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L410">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L411">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L412">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L413">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L414">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L415">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L416">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L417">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L418">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L419">            controller.handleAdd();</span>
+<span class="nc" id="L399">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
+<span class="nc" id="L400">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L401">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L402">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L403">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L404">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L405">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L406">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;&quot;), new TextField(&quot;&quot;))));</span>
+<span class="nc" id="L407">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L408">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L409">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L410">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L411">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L412">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L413">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L414">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L415">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L416">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L417">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L418">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L419">            controller.handleAdd();</span>
         }
         // Only some fields filled
-<span class="fc" id="L422">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L423">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L424">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L425">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L426">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L427">            controller.handleAdd();</span>
+<span class="nc" id="L422">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L423">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L424">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L425">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L426">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L427">            controller.handleAdd();</span>
         }
-<span class="fc" id="L429">    }</span>
+<span class="nc" id="L429">    }</span>
 
     @Test
     void testButtonStatesAfterSelectionAndActions() throws Exception {
-<span class="fc" id="L433">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L434">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L435">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L436">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L437">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L438">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L439">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L440">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
-<span class="fc" id="L441">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
-<span class="fc" id="L442">        setField(controller, &quot;questionsTable&quot;, table);</span>
+<span class="nc" id="L433">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L434">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L435">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L436">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L437">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L438">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L439">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L440">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L441">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
+<span class="nc" id="L442">        setField(controller, &quot;questionsTable&quot;, table);</span>
         // No selection
-<span class="fc" id="L444">        table.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L444">        table.getSelectionModel().clearSelection();</span>
         // Simulate selection
-<span class="fc" id="L446">        Question q = new Question();</span>
-<span class="fc" id="L447">        q.setId(1L);</span>
-<span class="fc" id="L448">        table.getItems().add(q);</span>
-<span class="fc" id="L449">        table.getSelectionModel().select(q);</span>
+<span class="nc" id="L446">        Question q = new Question();</span>
+<span class="nc" id="L447">        q.setId(1L);</span>
+<span class="nc" id="L448">        table.getItems().add(q);</span>
+<span class="nc" id="L449">        table.getSelectionModel().select(q);</span>
         // Deselect
-<span class="fc" id="L451">        table.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L451">        table.getSelectionModel().clearSelection();</span>
         // After add
-<span class="fc" id="L453">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L454">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L455">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L456">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L457">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L458">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
-<span class="fc" id="L459">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L460">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L461">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L462">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L463">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L464">            controller.handleAdd();</span>
+<span class="nc" id="L453">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L454">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L455">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L456">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L457">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L458">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
+<span class="nc" id="L459">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L460">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L461">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L462">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L463">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L464">            controller.handleAdd();</span>
         }
         // After update
-<span class="fc" id="L467">        setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L468">        Question q2 = new Question();</span>
-<span class="fc" id="L469">        q2.setId(2L);</span>
-<span class="fc" id="L470">        setField(controller, &quot;selectedQuestion&quot;, q2);</span>
-<span class="fc" id="L471">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L472">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
-<span class="fc" id="L473">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L474">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L475">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L476">            controller.handleUpdate();</span>
+<span class="nc" id="L467">        setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L468">        Question q2 = new Question();</span>
+<span class="nc" id="L469">        q2.setId(2L);</span>
+<span class="nc" id="L470">        setField(controller, &quot;selectedQuestion&quot;, q2);</span>
+<span class="nc" id="L471">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L472">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;2&quot;));</span>
+<span class="nc" id="L473">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L474">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L475">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L476">            controller.handleUpdate();</span>
         }
         // After delete
-<span class="fc" id="L479">        table.getItems().add(q2);</span>
-<span class="fc" id="L480">        table.getSelectionModel().select(q2);</span>
-<span class="fc" id="L481">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L482">            controller.handleDelete();</span>
+<span class="nc" id="L479">        table.getItems().add(q2);</span>
+<span class="nc" id="L480">        table.getSelectionModel().select(q2);</span>
+<span class="nc" id="L481">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L482">            controller.handleDelete();</span>
         }
-<span class="fc" id="L484">    }</span>
+<span class="nc" id="L484">    }</span>
 
     @Test
     void testSwitchBetweenMCQAndShortAnswer() throws Exception {
-<span class="fc" id="L488">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L489">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L490">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L491">        VBox options = new VBox();</span>
-<span class="fc" id="L492">        setField(controller, &quot;options&quot;, options);</span>
+<span class="nc" id="L488">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L489">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L490">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L491">        VBox options = new VBox();</span>
+<span class="nc" id="L492">        setField(controller, &quot;options&quot;, options);</span>
         // Switch to MCQ
-<span class="fc" id="L494">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L495">        controller.updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
+<span class="nc" id="L494">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L495">        controller.updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
         // Switch to Short Answer
-<span class="fc" id="L497">        typeCmb.setValue(&quot;Short Answer&quot;);</span>
-<span class="fc" id="L498">        controller.updateOptionFieldsVisibility(&quot;Short Answer&quot;);</span>
+<span class="nc" id="L497">        typeCmb.setValue(&quot;Short Answer&quot;);</span>
+<span class="nc" id="L498">        controller.updateOptionFieldsVisibility(&quot;Short Answer&quot;);</span>
         // Switch back to MCQ
-<span class="fc" id="L500">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L501">        controller.updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
-<span class="fc" id="L502">    }</span>
+<span class="nc" id="L500">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L501">        controller.updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
+<span class="nc" id="L502">    }</span>
 
     @Test
     void testUpdateBranches_AllPaths() throws Exception {
-<span class="fc" id="L506">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
-<span class="fc" id="L507">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
-<span class="fc" id="L508">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L509">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L510">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
-<span class="fc" id="L511">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L512">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L513">        typeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L514">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
-<span class="fc" id="L515">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L516">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;&quot;));</span>
-<span class="fc" id="L517">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;&quot;), new TextField(&quot;&quot;))));</span>
-<span class="fc" id="L518">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
-<span class="fc" id="L519">        setField(controller, &quot;addBtn&quot;, new Button());</span>
-<span class="fc" id="L520">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
-<span class="fc" id="L521">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
-<span class="fc" id="L522">        setField(controller, &quot;editBtn&quot;, new Button());</span>
-<span class="fc" id="L523">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
-<span class="fc" id="L524">        setField(controller, &quot;options&quot;, new VBox());</span>
-<span class="fc" id="L525">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
-<span class="fc" id="L526">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
+<span class="nc" id="L506">        Teacher dummyTeacher = new Teacher(1L, &quot;dummyuser&quot;, &quot;dummypass&quot;, &quot;Dummy Name&quot;, Gender.MALE, 30, Department.CSE, Position.P);</span>
+<span class="nc" id="L507">        setField(controller, &quot;teacher&quot;, dummyTeacher);</span>
+<span class="nc" id="L508">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L509">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L510">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;&quot;));</span>
+<span class="nc" id="L511">        ComboBox&lt;String&gt; typeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L512">        typeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L513">        typeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L514">        setField(controller, &quot;typeCmb&quot;, typeCmb);</span>
+<span class="nc" id="L515">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L516">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;&quot;));</span>
+<span class="nc" id="L517">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;&quot;), new TextField(&quot;&quot;))));</span>
+<span class="nc" id="L518">        setField(controller, &quot;questionsTable&quot;, new TableView&lt;Question&gt;());</span>
+<span class="nc" id="L519">        setField(controller, &quot;addBtn&quot;, new Button());</span>
+<span class="nc" id="L520">        setField(controller, &quot;updateBtn&quot;, new Button());</span>
+<span class="nc" id="L521">        setField(controller, &quot;cancelEditBtn&quot;, new Button());</span>
+<span class="nc" id="L522">        setField(controller, &quot;editBtn&quot;, new Button());</span>
+<span class="nc" id="L523">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L524">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L525">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L526">        setField(controller, &quot;mainbox&quot;, new VBox());</span>
         // Invalid fields
-<span class="fc" id="L528">        CountDownLatch latchInvalid = new CountDownLatch(1);</span>
-<span class="fc" id="L529">        Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L528">        CountDownLatch latchInvalid = new CountDownLatch(1);</span>
+<span class="nc" id="L529">        Platform.runLater(() -&gt; {</span>
 <span class="nc" id="L530">            try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
 <span class="nc" id="L531">                msgSenderMocked.when(() -&gt; MsgSender.showMsg(Mockito.anyString()))</span>
 <span class="nc" id="L532">                    .then(invocation -&gt; {</span>
@@ -548,41 +548,41 @@ import java.util.concurrent.TimeUnit;
 <span class="nc" id="L548">                latchInvalid.countDown();</span>
             }
 <span class="nc" id="L550">        });</span>
-<span class="fc" id="L551">        latchInvalid.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L551">        latchInvalid.await(5, TimeUnit.SECONDS);</span>
         // Not in editMode, selectedQuestion null
-<span class="fc" id="L553">        setField(controller, &quot;editMode&quot;, false);</span>
-<span class="fc" id="L554">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L555">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L556">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L557">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L558">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L559">        ComboBox&lt;String&gt; validTypeCmbForAdd = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L560">        validTypeCmbForAdd.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L561">        validTypeCmbForAdd.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L562">        setField(controller, &quot;typeCmb&quot;, validTypeCmbForAdd);</span>
-<span class="fc" id="L563">        CountDownLatch latchAdd = new CountDownLatch(1);</span>
-<span class="fc" id="L564">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
-<span class="fc" id="L565">            Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L553">        setField(controller, &quot;editMode&quot;, false);</span>
+<span class="nc" id="L554">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L555">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L556">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L557">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L558">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L559">        ComboBox&lt;String&gt; validTypeCmbForAdd = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L560">        validTypeCmbForAdd.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L561">        validTypeCmbForAdd.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L562">        setField(controller, &quot;typeCmb&quot;, validTypeCmbForAdd);</span>
+<span class="nc" id="L563">        CountDownLatch latchAdd = new CountDownLatch(1);</span>
+<span class="nc" id="L564">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L565">            Platform.runLater(() -&gt; {</span>
 <span class="nc" id="L566">                controller.handleUpdate(); // Should add new question</span>
 <span class="nc" id="L567">                latchAdd.countDown();</span>
 <span class="nc" id="L568">            });</span>
-<span class="fc" id="L569">            latchAdd.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L569">            latchAdd.await(5, TimeUnit.SECONDS);</span>
             // No verify needed if no dialog expected
         }
         // Now test editMode true, selectedQuestion null
         // Set all required fields to valid values
-<span class="fc" id="L574">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
-<span class="fc" id="L575">        ComboBox&lt;String&gt; validTypeCmb = new ComboBox&lt;&gt;();</span>
-<span class="fc" id="L576">        validTypeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
-<span class="fc" id="L577">        validTypeCmb.setValue(&quot;MCQ&quot;);</span>
-<span class="fc" id="L578">        setField(controller, &quot;typeCmb&quot;, validTypeCmb);</span>
-<span class="fc" id="L579">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
-<span class="fc" id="L580">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
-<span class="fc" id="L581">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
-<span class="fc" id="L582">        setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L583">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
-<span class="fc" id="L584">        CountDownLatch latchNull = new CountDownLatch(1);</span>
-<span class="fc" id="L585">        Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L574">        setField(controller, &quot;questionTxt&quot;, new TextArea(&quot;Q?&quot;));</span>
+<span class="nc" id="L575">        ComboBox&lt;String&gt; validTypeCmb = new ComboBox&lt;&gt;();</span>
+<span class="nc" id="L576">        validTypeCmb.getItems().addAll(&quot;MCQ&quot;, &quot;Short Answer&quot;);</span>
+<span class="nc" id="L577">        validTypeCmb.setValue(&quot;MCQ&quot;);</span>
+<span class="nc" id="L578">        setField(controller, &quot;typeCmb&quot;, validTypeCmb);</span>
+<span class="nc" id="L579">        setField(controller, &quot;scoreTxt&quot;, new TextField(&quot;5&quot;));</span>
+<span class="nc" id="L580">        setField(controller, &quot;answerTxt&quot;, new TextField(&quot;A&quot;));</span>
+<span class="nc" id="L581">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;(Arrays.asList(new TextField(&quot;A1&quot;), new TextField(&quot;A2&quot;))));</span>
+<span class="nc" id="L582">        setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L583">        setField(controller, &quot;selectedQuestion&quot;, null);</span>
+<span class="nc" id="L584">        CountDownLatch latchNull = new CountDownLatch(1);</span>
+<span class="nc" id="L585">        Platform.runLater(() -&gt; {</span>
 <span class="nc" id="L586">            try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
 <span class="nc" id="L587">                controller.handleUpdate();</span>
 <span class="nc" id="L588">                msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;No question selected to update.&quot;), Mockito.atLeastOnce());</span>
@@ -592,15 +592,15 @@ import java.util.concurrent.TimeUnit;
 <span class="nc" id="L592">                latchNull.countDown();</span>
             }
 <span class="nc" id="L594">        });</span>
-<span class="fc" id="L595">        latchNull.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L595">        latchNull.await(5, TimeUnit.SECONDS);</span>
 
         // Published
-<span class="fc" id="L598">        Question q = new Question();</span>
-<span class="fc" id="L599">        q.setId(300L); q.setPublished(1);</span>
-<span class="fc" id="L600">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
-<span class="fc" id="L601">        setField(controller, &quot;editMode&quot;, true);</span>
-<span class="fc" id="L602">        CountDownLatch latchPublished = new CountDownLatch(1);</span>
-<span class="fc" id="L603">        Platform.runLater(() -&gt; {</span>
+<span class="nc" id="L598">        Question q = new Question();</span>
+<span class="nc" id="L599">        q.setId(300L); q.setPublished(1);</span>
+<span class="nc" id="L600">        setField(controller, &quot;selectedQuestion&quot;, q);</span>
+<span class="nc" id="L601">        setField(controller, &quot;editMode&quot;, true);</span>
+<span class="nc" id="L602">        CountDownLatch latchPublished = new CountDownLatch(1);</span>
+<span class="nc" id="L603">        Platform.runLater(() -&gt; {</span>
 <span class="nc" id="L604">            try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
 <span class="nc" id="L605">                controller.handleUpdate();</span>
 <span class="nc" id="L606">                msgSenderMocked.verify(() -&gt; MsgSender.showMsg(&quot;Published question cannot be modified.&quot;), Mockito.atLeastOnce());</span>
@@ -610,13 +610,88 @@ import java.util.concurrent.TimeUnit;
 <span class="nc" id="L610">                latchPublished.countDown();</span>
             }
 <span class="nc" id="L612">        });</span>
-<span class="fc" id="L613">        latchPublished.await(5, TimeUnit.SECONDS);</span>
-<span class="fc" id="L614">    }</span>
+<span class="nc" id="L613">        latchPublished.await(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L614">    }</span>
+
+    @Test
+    void testHandleRefreshWithNullTeacher() throws Exception {
+<span class="nc" id="L618">        setField(controller, &quot;teacher&quot;, null);</span>
+<span class="nc" id="L619">        try (MockedStatic&lt;MsgSender&gt; msgSenderMocked = Mockito.mockStatic(MsgSender.class)) {</span>
+<span class="nc" id="L620">            msgSenderMocked.when(() -&gt; MsgSender.showMsg(Mockito.anyString())).then(invocation -&gt; null);</span>
+            // Should show error and not throw
+<span class="nc" id="L622">            assertDoesNotThrow(() -&gt; controller.handleRefresh());</span>
+<span class="nc" id="L623">            assertDoesNotThrow(() -&gt; controller.handleRefreshWithoutMsg());</span>
+        }
+<span class="nc" id="L625">    }</span>
+
+    @Test
+    void testUpdateOptionFieldsVisibilityBranches() throws Exception {
+        // MCQ branch
+<span class="nc" id="L630">        setField(controller, &quot;optionFields&quot;, new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L631">        setField(controller, &quot;options&quot;, new VBox());</span>
+<span class="nc" id="L632">        setField(controller, &quot;optionsContainer&quot;, new VBox());</span>
+<span class="nc" id="L633">        setField(controller, &quot;addOptionBtn&quot;, new Button());</span>
+<span class="nc" id="L634">        controller.updateOptionFieldsVisibility(&quot;MCQ&quot;);</span>
+        // non-MCQ branch
+<span class="nc" id="L636">        controller.updateOptionFieldsVisibility(&quot;Short Answer&quot;);</span>
+<span class="nc" id="L637">    }</span>
+
+    @Test
+    void testTableSelectionLogicBranches() throws Exception {
+<span class="nc" id="L641">        TableView&lt;Question&gt; table = new TableView&lt;&gt;();</span>
+<span class="nc" id="L642">        setField(controller, &quot;questionsTable&quot;, table);</span>
+<span class="nc" id="L643">        setField(controller, &quot;editMode&quot;, true);</span>
+        // Listener should return early if editMode true
+<span class="nc" id="L645">        table.getSelectionModel().select(null);</span>
+<span class="nc" id="L646">        setField(controller, &quot;editMode&quot;, false);</span>
+        // Add a question and select it
+<span class="nc" id="L648">        Question q = new Question(); q.setId(1L); q.setQuestionText(&quot;Q?&quot;);</span>
+<span class="nc" id="L649">        table.getItems().add(q);</span>
+<span class="nc" id="L650">        table.getSelectionModel().select(q);</span>
+        // Clear selection
+<span class="nc" id="L652">        table.getSelectionModel().clearSelection();</span>
+<span class="nc" id="L653">    }</span>
+
+    @Test
+    void testFillFieldsFromSelectedQuestion_ExceptionHandling() throws Exception {
+        // Should handle null question
+<span class="nc" id="L658">        assertDoesNotThrow(() -&gt; {</span>
+<span class="nc" id="L659">            var method = controller.getClass().getDeclaredMethod(&quot;fillFieldsFromSelectedQuestion&quot;, Question.class);</span>
+<span class="nc" id="L660">            method.setAccessible(true);</span>
+<span class="nc" id="L661">            method.invoke(controller, new Object[]{null});</span>
+<span class="nc" id="L662">        });</span>
+        // Should handle exception in Platform.runLater (simulate by passing a question with nulls)
+<span class="nc" id="L664">        Question q = new Question();</span>
+<span class="nc" id="L665">        q.setId(2L);</span>
+<span class="nc" id="L666">        assertDoesNotThrow(() -&gt; {</span>
+<span class="nc" id="L667">            var method = controller.getClass().getDeclaredMethod(&quot;fillFieldsFromSelectedQuestion&quot;, Question.class);</span>
+<span class="nc" id="L668">            method.setAccessible(true);</span>
+<span class="nc" id="L669">            method.invoke(controller, q);</span>
+<span class="nc" id="L670">        });</span>
+<span class="nc" id="L671">    }</span>
+
+    @Test
+    void testDisplaySelectedQuestionReadOnly_ExceptionHandling() throws Exception {
+        // Should handle null question
+<span class="nc" id="L676">        assertDoesNotThrow(() -&gt; {</span>
+<span class="nc" id="L677">            var method = controller.getClass().getDeclaredMethod(&quot;displaySelectedQuestionReadOnly&quot;, Question.class);</span>
+<span class="nc" id="L678">            method.setAccessible(true);</span>
+<span class="nc" id="L679">            method.invoke(controller, new Object[]{null});</span>
+<span class="nc" id="L680">        });</span>
+        // Should handle exception in setting fields (simulate by passing a question with nulls)
+<span class="nc" id="L682">        Question q = new Question();</span>
+<span class="nc" id="L683">        q.setId(3L);</span>
+<span class="nc" id="L684">        assertDoesNotThrow(() -&gt; {</span>
+<span class="nc" id="L685">            var method = controller.getClass().getDeclaredMethod(&quot;displaySelectedQuestionReadOnly&quot;, Question.class);</span>
+<span class="nc" id="L686">            method.setAccessible(true);</span>
+<span class="nc" id="L687">            method.invoke(controller, q);</span>
+<span class="nc" id="L688">        });</span>
+<span class="nc" id="L689">    }</span>
 
     private Object getField(Object obj, String fieldName) throws Exception {
-<span class="nc" id="L617">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
-<span class="nc" id="L618">        field.setAccessible(true);</span>
-<span class="nc" id="L619">        return field.get(obj);</span>
+<span class="nc" id="L692">        Field field = obj.getClass().getDeclaredField(fieldName);</span>
+<span class="nc" id="L693">        field.setAccessible(true);</span>
+<span class="nc" id="L694">        return field.get(obj);</span>
     }
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -3,32 +3,32 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-<span class="fc" id="L6">public class TimeSpentTest {</span>
+<span class="nc" id="L6">public class TimeSpentTest {</span>
     @Test
     void testDefaultConstructor() {
-<span class="fc" id="L9">        TimeSpent ts = new TimeSpent();</span>
-<span class="fc" id="L10">        assertNull(ts.getStudentId());</span>
-<span class="fc" id="L11">        assertNull(ts.getExamId());</span>
-<span class="fc" id="L12">        assertNull(ts.getTimeSpent());</span>
-<span class="fc" id="L13">    }</span>
+<span class="nc" id="L9">        TimeSpent ts = new TimeSpent();</span>
+<span class="nc" id="L10">        assertNull(ts.getStudentId());</span>
+<span class="nc" id="L11">        assertNull(ts.getExamId());</span>
+<span class="nc" id="L12">        assertNull(ts.getTimeSpent());</span>
+<span class="nc" id="L13">    }</span>
 
     @Test
     void testConstructorAndGetters() {
-<span class="fc" id="L17">        TimeSpent ts = new TimeSpent(10L, 20L, 90);</span>
-<span class="fc" id="L18">        assertEquals(10L, ts.getStudentId());</span>
-<span class="fc" id="L19">        assertEquals(20L, ts.getExamId());</span>
-<span class="fc" id="L20">        assertEquals(90, ts.getTimeSpent());</span>
-<span class="fc" id="L21">    }</span>
+<span class="nc" id="L17">        TimeSpent ts = new TimeSpent(10L, 20L, 90);</span>
+<span class="nc" id="L18">        assertEquals(10L, ts.getStudentId());</span>
+<span class="nc" id="L19">        assertEquals(20L, ts.getExamId());</span>
+<span class="nc" id="L20">        assertEquals(90, ts.getTimeSpent());</span>
+<span class="nc" id="L21">    }</span>
 
     @Test
     void testSetters() {
-<span class="fc" id="L25">        TimeSpent ts = new TimeSpent();</span>
-<span class="fc" id="L26">        ts.setStudentId(11L);</span>
-<span class="fc" id="L27">        ts.setExamId(21L);</span>
-<span class="fc" id="L28">        ts.setTimeSpent(120);</span>
-<span class="fc" id="L29">        assertEquals(11L, ts.getStudentId());</span>
-<span class="fc" id="L30">        assertEquals(21L, ts.getExamId());</span>
-<span class="fc" id="L31">        assertEquals(120, ts.getTimeSpent());</span>
-<span class="fc" id="L32">    }</span>
+<span class="nc" id="L25">        TimeSpent ts = new TimeSpent();</span>
+<span class="nc" id="L26">        ts.setStudentId(11L);</span>
+<span class="nc" id="L27">        ts.setExamId(21L);</span>
+<span class="nc" id="L28">        ts.setTimeSpent(120);</span>
+<span class="nc" id="L29">        assertEquals(11L, ts.getStudentId());</span>
+<span class="nc" id="L30">        assertEquals(21L, ts.getExamId());</span>
+<span class="nc" id="L31">        assertEquals(120, ts.getTimeSpent());</span>
+<span class="nc" id="L32">    }</span>
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

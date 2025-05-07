@@ -68,7 +68,7 @@ import comp3111.examsystem.TestUtils;
 <span class="nc" id="L68">            System.out.println(&quot;    &lt;version&gt;jdk-12.0.1+2&lt;/version&gt;&quot;);</span>
 <span class="nc" id="L69">            System.out.println(&quot;    &lt;scope&gt;test&lt;/scope&gt;&quot;);</span>
 <span class="nc" id="L70">            System.out.println(&quot;&lt;/dependency&gt;&quot;);</span>
-<span class="nc" id="L71">        }</span>
+        }
         
         // Initialize JavaFX toolkit
 <span class="nc" id="L74">        TestUtils.setupJavaFX();</span>
@@ -91,7 +91,7 @@ import comp3111.examsystem.TestUtils;
 <span class="nc" id="L91">            System.out.println(&quot;\nFailed tests:&quot;);</span>
 <span class="nc bnc" id="L92" title="All 2 branches missed.">            for (Failure failure : result.getFailures()) {</span>
 <span class="nc" id="L93">                System.out.println(&quot;- &quot; + failure.toString());</span>
-<span class="nc" id="L94">            }</span>
+            }
         }
         
 <span class="nc bnc" id="L97" title="All 2 branches missed.">        System.out.println(&quot;\nTest &quot; + (result.wasSuccessful() ? &quot;SUCCESSFUL&quot; : &quot;FAILED&quot;));</span>

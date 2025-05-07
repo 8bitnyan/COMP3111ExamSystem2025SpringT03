@@ -6,22 +6,22 @@
  * The manager can query, add, update, and delete student, teacher and course in the system.
  */
 public final class Manager extends Person {
-<span class="fc" id="L9">    private static final Manager instance = new Manager();</span>
+<span class="nc" id="L9">    private static final Manager instance = new Manager();</span>
 
     /**
      * Since Manager is a singleton class, it should not be constructed in other places.
      * The record is hardcoded.
      */
     private Manager() {
-<span class="fc" id="L16">        super(-2L, &quot;root&quot;, &quot;root&quot;);</span>
-<span class="fc" id="L17">    }</span>
+<span class="nc" id="L16">        super(-2L, &quot;root&quot;, &quot;root&quot;);</span>
+<span class="nc" id="L17">    }</span>
 
     /**
      * For calling non-static functions from Person/User class, if somehow needed.
      * @return A Manager instance that can call non-static functions.
      */
     public static Manager getInstance() {
-<span class="fc" id="L24">        return instance;</span>
+<span class="nc" id="L24">        return instance;</span>
     }
 
     /**
@@ -31,7 +31,7 @@ public final class Manager extends Person {
      * @return true if both the username and password is correct, false otherwise.
      */
     public static Boolean validateLogin(String username, String password) {
-<span class="fc bfc" id="L34" title="All 4 branches covered.">        return instance.getUsername().equals(username) &amp;&amp; instance.getPassword().equals(password);</span>
+<span class="nc bnc" id="L34" title="All 4 branches missed.">        return instance.getUsername().equals(username) &amp;&amp; instance.getPassword().equals(password);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

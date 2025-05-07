@@ -55,11 +55,13 @@ public class StudentQuizControllerTest {
         setField(controller, "option2", new RadioButton());
         setField(controller, "option3", new RadioButton());
         setField(controller, "option4", new RadioButton());
+        setField(controller, "option5", new RadioButton());
         setField(controller, "shortAnswerField", new TextArea());
         setField(controller, "previousButton", new Button());
         setField(controller, "nextButton", new Button());
         setField(controller, "submitButton", new Button());
         setField(controller, "answerGroup", new ToggleGroup());
+        setField(controller, "maxScoreText", new Text());
 
         // Add a mock Exam with name 'Sample Quiz' to the test database
         Exam exam = new Exam();

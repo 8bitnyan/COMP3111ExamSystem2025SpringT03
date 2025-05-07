@@ -45,6 +45,13 @@ public class StudentQuizResultController implements Initializable {
     private int totalQuestions = 0;
     private double totalScore = 0;
     
+    // For testability: allow patching alert logic
+    @FunctionalInterface
+    interface AlertShower {
+        void show(Alert.AlertType type, String title, String content);
+    }
+    AlertShower showAlert = null;
+    
     /**
      * Initializes the student quiz result page UI.
      * @param location The location used to resolve relative paths for the root object, or null if the location is not known.
@@ -171,14 +178,15 @@ public class StudentQuizResultController implements Initializable {
     @FXML
     public void handleBack(ActionEvent event) {
         try {
-            // Load the student main page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp3111/examsystem/StudentMainUI.fxml"));
             Parent root = loader.load();
-            
             StudentMainController controller = loader.getController();
             controller.preSetController(student);
-            
             // Show the student main page
+            if (backButton.getScene() == null || backButton.getScene().getWindow() == null) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Cannot return to main page: No window attached.");
+                return;
+            }
             Stage stage = (Stage) backButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -196,11 +204,15 @@ public class StudentQuizResultController implements Initializable {
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        if (showAlert != null) {
+            showAlert.show(type, title, content);
+        } else {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        }
     }
     
     /**

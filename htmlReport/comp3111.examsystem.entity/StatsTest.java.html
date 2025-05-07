@@ -3,44 +3,44 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-<span class="fc" id="L6">public class StatsTest {</span>
+<span class="nc" id="L6">public class StatsTest {</span>
     @Test
     void testDefaultConstructor() {
-<span class="fc" id="L9">        Stats s = new Stats();</span>
-<span class="fc" id="L10">        assertNull(s.getStudentName());</span>
-<span class="fc" id="L11">        assertNull(s.getCourseCode());</span>
-<span class="fc" id="L12">        assertNull(s.getExamName());</span>
-<span class="fc" id="L13">        assertNull(s.getScore());</span>
-<span class="fc" id="L14">        assertNull(s.getMaxScore());</span>
-<span class="fc" id="L15">        assertNull(s.getTimeSpent());</span>
-<span class="fc" id="L16">    }</span>
+<span class="nc" id="L9">        Stats s = new Stats();</span>
+<span class="nc" id="L10">        assertNull(s.getStudentName());</span>
+<span class="nc" id="L11">        assertNull(s.getCourseCode());</span>
+<span class="nc" id="L12">        assertNull(s.getExamName());</span>
+<span class="nc" id="L13">        assertNull(s.getScore());</span>
+<span class="nc" id="L14">        assertNull(s.getMaxScore());</span>
+<span class="nc" id="L15">        assertNull(s.getTimeSpent());</span>
+<span class="nc" id="L16">    }</span>
 
     @Test
     void testConstructorAndGetters() {
-<span class="fc" id="L20">        Stats s = new Stats(&quot;Alice&quot;, &quot;COMP3111&quot;, &quot;Midterm&quot;, 80, 100, &quot;60min&quot;);</span>
-<span class="fc" id="L21">        assertEquals(&quot;Alice&quot;, s.getStudentName());</span>
-<span class="fc" id="L22">        assertEquals(&quot;COMP3111&quot;, s.getCourseCode());</span>
-<span class="fc" id="L23">        assertEquals(&quot;Midterm&quot;, s.getExamName());</span>
-<span class="fc" id="L24">        assertEquals(80, s.getScore());</span>
-<span class="fc" id="L25">        assertEquals(100, s.getMaxScore());</span>
-<span class="fc" id="L26">        assertEquals(&quot;60min&quot;, s.getTimeSpent());</span>
-<span class="fc" id="L27">    }</span>
+<span class="nc" id="L20">        Stats s = new Stats(&quot;Alice&quot;, &quot;COMP3111&quot;, &quot;Midterm&quot;, 80, 100, &quot;60min&quot;);</span>
+<span class="nc" id="L21">        assertEquals(&quot;Alice&quot;, s.getStudentName());</span>
+<span class="nc" id="L22">        assertEquals(&quot;COMP3111&quot;, s.getCourseCode());</span>
+<span class="nc" id="L23">        assertEquals(&quot;Midterm&quot;, s.getExamName());</span>
+<span class="nc" id="L24">        assertEquals(80, s.getScore());</span>
+<span class="nc" id="L25">        assertEquals(100, s.getMaxScore());</span>
+<span class="nc" id="L26">        assertEquals(&quot;60min&quot;, s.getTimeSpent());</span>
+<span class="nc" id="L27">    }</span>
 
     @Test
     void testSetters() {
-<span class="fc" id="L31">        Stats s = new Stats();</span>
-<span class="fc" id="L32">        s.setStudentName(&quot;Bob&quot;);</span>
-<span class="fc" id="L33">        s.setCourseCode(&quot;COMP2012&quot;);</span>
-<span class="fc" id="L34">        s.setExamName(&quot;Final&quot;);</span>
-<span class="fc" id="L35">        s.setScore(90);</span>
-<span class="fc" id="L36">        s.setMaxScore(120);</span>
-<span class="fc" id="L37">        s.setTimeSpent(&quot;90min&quot;);</span>
-<span class="fc" id="L38">        assertEquals(&quot;Bob&quot;, s.getStudentName());</span>
-<span class="fc" id="L39">        assertEquals(&quot;COMP2012&quot;, s.getCourseCode());</span>
-<span class="fc" id="L40">        assertEquals(&quot;Final&quot;, s.getExamName());</span>
-<span class="fc" id="L41">        assertEquals(90, s.getScore());</span>
-<span class="fc" id="L42">        assertEquals(120, s.getMaxScore());</span>
-<span class="fc" id="L43">        assertEquals(&quot;90min&quot;, s.getTimeSpent());</span>
-<span class="fc" id="L44">    }</span>
+<span class="nc" id="L31">        Stats s = new Stats();</span>
+<span class="nc" id="L32">        s.setStudentName(&quot;Bob&quot;);</span>
+<span class="nc" id="L33">        s.setCourseCode(&quot;COMP2012&quot;);</span>
+<span class="nc" id="L34">        s.setExamName(&quot;Final&quot;);</span>
+<span class="nc" id="L35">        s.setScore(90);</span>
+<span class="nc" id="L36">        s.setMaxScore(120);</span>
+<span class="nc" id="L37">        s.setTimeSpent(&quot;90min&quot;);</span>
+<span class="nc" id="L38">        assertEquals(&quot;Bob&quot;, s.getStudentName());</span>
+<span class="nc" id="L39">        assertEquals(&quot;COMP2012&quot;, s.getCourseCode());</span>
+<span class="nc" id="L40">        assertEquals(&quot;Final&quot;, s.getExamName());</span>
+<span class="nc" id="L41">        assertEquals(90, s.getScore());</span>
+<span class="nc" id="L42">        assertEquals(120, s.getMaxScore());</span>
+<span class="nc" id="L43">        assertEquals(&quot;90min&quot;, s.getTimeSpent());</span>
+<span class="nc" id="L44">    }</span>
 } 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

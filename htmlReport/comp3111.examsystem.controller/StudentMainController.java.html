@@ -52,12 +52,12 @@ import java.util.ResourceBundle;
         
         // Add listeners to combo boxes
 <span class="fc" id="L54">        TakeExamComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
-<span class="nc bnc" id="L55" title="All 2 branches missed.">            startExamButton.setDisable(newVal == null);</span>
-<span class="nc" id="L56">        });</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            startExamButton.setDisable(newVal == null);</span>
+<span class="fc" id="L56">        });</span>
         
 <span class="fc" id="L58">        CheckResultComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -&gt; {</span>
-<span class="nc bnc" id="L59" title="All 2 branches missed.">            checkResultButton.setDisable(newVal == null);</span>
-<span class="nc" id="L60">        });</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            checkResultButton.setDisable(newVal == null);</span>
+<span class="fc" id="L60">        });</span>
 <span class="fc" id="L61">    }</span>
 
     /**
@@ -82,53 +82,41 @@ import java.util.ResourceBundle;
 <span class="fc bfc" id="L82" title="All 4 branches covered.">        if (student == null || student.getDepartment() == null) {</span>
 <span class="fc" id="L83">            return;</span>
         }
-        
-        // Get the department of the student
-<span class="fc" id="L87">        String studentDepartment = student.getDepartment().toString();</span>
-        
-        // Create a database connection to fetch exams
-<span class="fc" id="L90">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="fc" id="L91">        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
-        
-        // Get all published exams
-<span class="fc" id="L94">        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</span>
-<span class="fc" id="L95">        List&lt;String&gt; availableQuizzes = new ArrayList&lt;&gt;();</span>
-        
-        // Filter exams by student's department
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (Exam exam : allExams) {</span>
-            // Skip unpublished exams
-<span class="pc bpc" id="L100" title="1 of 4 branches missed.">            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {</span>
-<span class="fc" id="L101">                continue;</span>
+<span class="fc" id="L85">        String studentDepartment = student.getDepartment().toString();</span>
+<span class="fc" id="L86">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="fc" id="L87">        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="fc" id="L88">        Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="fc" id="L89">        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</span>
+<span class="fc" id="L90">        List&lt;String&gt; availableQuizzes = new ArrayList&lt;&gt;();</span>
+        // Get all records for this student
+<span class="fc" id="L92">        List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</span>
+        // Build a set of attempted exam IDs
+<span class="fc" id="L94">        List&lt;Long&gt; attemptedExamIds = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        for (comp3111.examsystem.entity.Record record : studentRecords) {</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if (record.getExamID() != null) {</span>
+<span class="nc" id="L97">                attemptedExamIds.add(record.getExamID());</span>
             }
-            
-            // Get the course for this exam
-<span class="fc" id="L105">            String courseCode = exam.getCourseCode();</span>
-<span class="pc bpc" id="L106" title="2 of 4 branches missed.">            if (courseCode == null || courseCode.isEmpty()) {</span>
-<span class="nc" id="L107">                continue;</span>
-            }
-            
-            // Find the course in the database
-<span class="fc" id="L111">            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</span>
-<span class="pc bpc" id="L112" title="1 of 2 branches missed.">            if (courses.isEmpty()) {</span>
-<span class="nc" id="L113">                continue;</span>
-            }
-            
-            // Check if the course is from the student's department
-<span class="fc" id="L117">            Course course = courses.get(0);</span>
-<span class="pc bpc" id="L118" title="2 of 4 branches missed.">            if (course.getDepartment() != null &amp;&amp; course.getDepartment().toString().equals(studentDepartment)) {</span>
-<span class="fc" id="L119">                availableQuizzes.add(exam.getName());</span>
-            }
-<span class="fc" id="L121">        }</span>
-        
-        // Update the combo box with the available quizzes
-<span class="fc" id="L124">        TakeExamComboBox.getItems().clear();</span>
-<span class="fc" id="L125">        TakeExamComboBox.getItems().addAll(availableQuizzes);</span>
-        
-        // If no quizzes available, show message
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (availableQuizzes.isEmpty()) {</span>
-<span class="nc" id="L129">            System.out.println(&quot;No exams available for department: &quot; + studentDepartment);</span>
         }
-<span class="fc" id="L131">    }</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (Exam exam : allExams) {</span>
+<span class="pc bpc" id="L101" title="1 of 4 branches missed.">            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) continue;</span>
+<span class="fc" id="L102">            String courseCode = exam.getCourseCode();</span>
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">            if (courseCode == null || courseCode.isEmpty()) continue;</span>
+<span class="fc" id="L104">            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if (courses.isEmpty()) continue;</span>
+<span class="fc" id="L106">            Course course = courses.get(0);</span>
+<span class="pc bpc" id="L107" title="1 of 4 branches missed.">            if (course.getDepartment() != null &amp;&amp; course.getDepartment().toString().equals(studentDepartment)) {</span>
+                // Only add if student has NOT attempted this exam
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                if (!attemptedExamIds.contains(exam.getId())) {</span>
+<span class="fc" id="L110">                    availableQuizzes.add(exam.getName());</span>
+                }
+            }
+        }
+<span class="fc" id="L114">        TakeExamComboBox.getItems().clear();</span>
+<span class="fc" id="L115">        TakeExamComboBox.getItems().addAll(availableQuizzes);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (availableQuizzes.isEmpty()) {</span>
+<span class="nc" id="L117">            System.out.println(&quot;No exams available for department: &quot; + studentDepartment);</span>
+        }
+<span class="fc" id="L119">    }</span>
     
     /**
      * Loads available quiz results for the student.
@@ -137,132 +125,132 @@ import java.util.ResourceBundle;
      */
     private void loadAvailableResults() {
         // Get the student's department
-<span class="fc bfc" id="L140" title="All 4 branches covered.">        if (student == null || student.getDepartment() == null) {</span>
-<span class="fc" id="L141">            return;</span>
+<span class="fc bfc" id="L128" title="All 4 branches covered.">        if (student == null || student.getDepartment() == null) {</span>
+<span class="fc" id="L129">            return;</span>
         }
         
         // Create database connections
-<span class="fc" id="L145">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="fc" id="L146">        Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
-<span class="fc" id="L147">        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
+<span class="fc" id="L133">        Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="fc" id="L134">        Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="fc" id="L135">        Database&lt;Course&gt; courseDB = new Database&lt;&gt;(Course.class);</span>
         
         // Get all exams
-<span class="fc" id="L150">        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</span>
+<span class="fc" id="L138">        List&lt;Exam&gt; allExams = examDB.getAllEnabled();</span>
         
         // Get all records for this student
-<span class="fc" id="L153">        List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</span>
+<span class="fc" id="L141">        List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</span>
         
         // Create a set of exam IDs that the student has completed
-<span class="fc" id="L156">        List&lt;String&gt; completedExamNames = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L144">        List&lt;String&gt; completedExamNames = new ArrayList&lt;&gt;();</span>
         
         // For each exam that has a record for this student
-<span class="fc bfc" id="L159" title="All 2 branches covered.">        for (Exam exam : allExams) {</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (Exam exam : allExams) {</span>
             // Skip unpublished exams
-<span class="pc bpc" id="L161" title="1 of 4 branches missed.">            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {</span>
-<span class="fc" id="L162">                continue;</span>
+<span class="pc bpc" id="L149" title="1 of 4 branches missed.">            if (exam.getIsPublishedInt() == null || exam.getIsPublishedInt() == 0) {</span>
+<span class="fc" id="L150">                continue;</span>
             }
             
             // Check if exam belongs to student's department
-<span class="fc" id="L166">            String courseCode = exam.getCourseCode();</span>
-<span class="pc bpc" id="L167" title="2 of 4 branches missed.">            if (courseCode == null || courseCode.isEmpty()) {</span>
-<span class="nc" id="L168">                continue;</span>
+<span class="fc" id="L154">            String courseCode = exam.getCourseCode();</span>
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">            if (courseCode == null || courseCode.isEmpty()) {</span>
+<span class="nc" id="L156">                continue;</span>
             }
             
             // Find the course in the database
-<span class="fc" id="L172">            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</span>
-<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (courses.isEmpty()) {</span>
-<span class="nc" id="L174">                continue;</span>
+<span class="fc" id="L160">            List&lt;Course&gt; courses = courseDB.queryByField(&quot;courseCode&quot;, courseCode);</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (courses.isEmpty()) {</span>
+<span class="nc" id="L162">                continue;</span>
             }
             
             // Check if the course is from the student's department
-<span class="fc" id="L178">            Course course = courses.get(0);</span>
-<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (course.getDepartment() == null || </span>
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                !course.getDepartment().toString().equals(student.getDepartment().toString())) {</span>
-<span class="nc" id="L181">                continue;</span>
+<span class="fc" id="L166">            Course course = courses.get(0);</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">            if (course.getDepartment() == null || </span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                !course.getDepartment().toString().equals(student.getDepartment().toString())) {</span>
+<span class="fc" id="L169">                continue;</span>
             }
             
             // Check if student has a record for this exam
-<span class="fc" id="L185">            boolean hasRecord = false;</span>
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">            for (comp3111.examsystem.entity.Record record : studentRecords) {</span>
-<span class="nc bnc" id="L187" title="All 4 branches missed.">                if (record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</span>
-<span class="nc" id="L188">                    hasRecord = true;</span>
-<span class="nc" id="L189">                    break;</span>
+<span class="fc" id="L173">            boolean hasRecord = false;</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            for (comp3111.examsystem.entity.Record record : studentRecords) {</span>
+<span class="nc bnc" id="L175" title="All 4 branches missed.">                if (record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId())) {</span>
+<span class="nc" id="L176">                    hasRecord = true;</span>
+<span class="nc" id="L177">                    break;</span>
                 }
-<span class="nc" id="L191">            }</span>
+            }
             
             // If student has completed this exam, add it to the list
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (hasRecord) {</span>
-<span class="nc" id="L195">                completedExamNames.add(exam.getName());</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            if (hasRecord) {</span>
+<span class="nc" id="L183">                completedExamNames.add(exam.getName());</span>
             }
-<span class="fc" id="L197">        }</span>
+        }
         
         // Update the combo box with the available results
-<span class="fc" id="L200">        CheckResultComboBox.getItems().clear();</span>
-<span class="fc" id="L201">        CheckResultComboBox.getItems().addAll(completedExamNames);</span>
+<span class="fc" id="L188">        CheckResultComboBox.getItems().clear();</span>
+<span class="fc" id="L189">        CheckResultComboBox.getItems().addAll(completedExamNames);</span>
         
         // If no results available, show message
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (completedExamNames.isEmpty()) {</span>
-<span class="fc" id="L205">            System.out.println(&quot;No completed exams found for student: &quot; + student.getName());</span>
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (completedExamNames.isEmpty()) {</span>
+<span class="fc" id="L193">            System.out.println(&quot;No completed exams found for student: &quot; + student.getName());</span>
         }
-<span class="fc" id="L207">    }</span>
+<span class="fc" id="L195">    }</span>
     
     /**
      * Handles the start exam button click.
      * @param event The action event.
      */
     private void handleStartExam(ActionEvent event) {
-<span class="nc" id="L214">        String selectedQuizName = TakeExamComboBox.getValue();</span>
-<span class="nc bnc" id="L215" title="All 4 branches missed.">        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</span>
-<span class="nc" id="L216">            showAlert(Alert.AlertType.WARNING, &quot;No Quiz Selected&quot;, &quot;Please select a quiz before starting.&quot;);</span>
-<span class="nc" id="L217">            return;</span>
+<span class="nc" id="L202">        String selectedQuizName = TakeExamComboBox.getValue();</span>
+<span class="nc bnc" id="L203" title="All 4 branches missed.">        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</span>
+<span class="nc" id="L204">            showAlert(Alert.AlertType.WARNING, &quot;No Quiz Selected&quot;, &quot;Please select a quiz before starting.&quot;);</span>
+<span class="nc" id="L205">            return;</span>
         }
-        
         try {
-            // Find the exam in the database by name
-<span class="nc" id="L222">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="nc" id="L223">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
-<span class="nc" id="L224">            Exam selectedExam = null;</span>
-            
-            // Find the exam with the matching name
-<span class="nc bnc" id="L227" title="All 2 branches missed.">            for (Exam exam : exams) {</span>
-<span class="nc bnc" id="L228" title="All 2 branches missed.">                if (selectedQuizName.equals(exam.getName())) {</span>
-<span class="nc" id="L229">                    selectedExam = exam;</span>
-<span class="nc" id="L230">                    break;</span>
+<span class="nc" id="L208">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="nc" id="L209">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
+<span class="nc" id="L210">            Exam selectedExam = null;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            for (Exam exam : exams) {</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                if (selectedQuizName.equals(exam.getName())) {</span>
+<span class="nc" id="L213">                    selectedExam = exam;</span>
+<span class="nc" id="L214">                    break;</span>
                 }
-<span class="nc" id="L232">            }</span>
-            
-<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (selectedExam == null) {</span>
-<span class="nc" id="L235">                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</span>
-<span class="nc" id="L236">                return;</span>
             }
-            
-            // Get the questions for this exam
-<span class="nc" id="L240">            List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = loadQuestionsForExam(selectedExam);</span>
-            
-<span class="nc bnc" id="L242" title="All 2 branches missed.">            if (quizQuestions.isEmpty()) {</span>
-<span class="nc" id="L243">                showAlert(Alert.AlertType.WARNING, &quot;No Questions&quot;, &quot;This exam does not have any questions.&quot;);</span>
-<span class="nc" id="L244">                return;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            if (selectedExam == null) {</span>
+<span class="nc" id="L218">                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</span>
+<span class="nc" id="L219">                return;</span>
             }
-            
-            // Load the quiz screen
-<span class="nc" id="L248">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentQuizUI.fxml&quot;));</span>
-<span class="nc" id="L249">            Parent root = loader.load();</span>
-            
-<span class="nc" id="L251">            StudentQuizController controller = loader.getController();</span>
-            
-            // Initialize the controller with the real exam data
-<span class="nc" id="L254">            controller.preSetController(student, selectedQuizName, quizQuestions, selectedExam.getDuration());</span>
-            
-            // Show the quiz screen
-<span class="nc" id="L257">            Stage stage = (Stage) startExamButton.getScene().getWindow();</span>
-<span class="nc" id="L258">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L259">            stage.setScene(scene);</span>
-<span class="nc" id="L260">            stage.show();</span>
-<span class="nc" id="L261">        } catch (IOException e) {</span>
-<span class="nc" id="L262">            e.printStackTrace();</span>
-<span class="nc" id="L263">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz screen: &quot; + e.getMessage());</span>
-<span class="nc" id="L264">        }</span>
-<span class="nc" id="L265">    }</span>
+            // Double-check: has the student already attempted this exam?
+<span class="nc" id="L222">            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="nc" id="L223">            List&lt;comp3111.examsystem.entity.Record&gt; studentRecords = recordDB.queryByField(&quot;studentID&quot;, student.getId().toString());</span>
+<span class="nc" id="L224">            boolean alreadyAttempted = false;</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            for (comp3111.examsystem.entity.Record record : studentRecords) {</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">                if (record.getExamID() != null &amp;&amp; record.getExamID().equals(selectedExam.getId())) {</span>
+<span class="nc" id="L227">                    alreadyAttempted = true;</span>
+<span class="nc" id="L228">                    break;</span>
+                }
+            }
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            if (alreadyAttempted) {</span>
+<span class="nc" id="L232">                showAlert(Alert.AlertType.WARNING, &quot;Already Attempted&quot;, &quot;You have already attempted this exam. Only one attempt is allowed.&quot;);</span>
+<span class="nc" id="L233">                loadAvailableQuizzes(); // Refresh the list</span>
+<span class="nc" id="L234">                return;</span>
+            }
+<span class="nc" id="L236">            List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = loadQuestionsForExam(selectedExam);</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">            if (quizQuestions.isEmpty()) {</span>
+<span class="nc" id="L238">                showAlert(Alert.AlertType.WARNING, &quot;No Questions&quot;, &quot;This exam does not have any questions.&quot;);</span>
+<span class="nc" id="L239">                return;</span>
+            }
+<span class="nc" id="L241">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentQuizUI.fxml&quot;));</span>
+<span class="nc" id="L242">            Parent root = loader.load();</span>
+<span class="nc" id="L243">            StudentQuizController controller = loader.getController();</span>
+<span class="nc" id="L244">            controller.preSetController(student, selectedQuizName, quizQuestions, selectedExam.getDuration());</span>
+<span class="nc" id="L245">            Stage stage = (Stage) startExamButton.getScene().getWindow();</span>
+<span class="nc" id="L246">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L247">            stage.setScene(scene);</span>
+<span class="nc" id="L248">            stage.show();</span>
+<span class="nc" id="L249">        } catch (IOException e) {</span>
+<span class="nc" id="L250">            e.printStackTrace();</span>
+<span class="nc" id="L251">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz screen: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L253">    }</span>
     
     /**
      * Loads the questions for an exam from the database.
@@ -270,59 +258,61 @@ import java.util.ResourceBundle;
      * @return A list of quiz questions.
      */
     private List&lt;StudentQuizController.QuizQuestion&gt; loadQuestionsForExam(Exam exam) {
-<span class="nc" id="L273">        List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L274">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="nc" id="L261">        List&lt;StudentQuizController.QuizQuestion&gt; quizQuestions = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L262">        Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
         
         try {
             // Get the questions directly from the database using the exam's question string
-<span class="nc" id="L278">            String questionsStr = exam.getQuestions();</span>
+<span class="nc" id="L266">            String questionsStr = exam.getQuestions();</span>
             
-<span class="nc bnc" id="L280" title="All 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
-<span class="nc" id="L281">                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</span>
-<span class="nc" id="L282">                return quizQuestions;</span>
+<span class="nc bnc" id="L268" title="All 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
+<span class="nc" id="L269">                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</span>
+<span class="nc" id="L270">                return quizQuestions;</span>
             }
             
             // Split the question IDs string
-<span class="nc" id="L286">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
+<span class="nc" id="L274">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
             
             // Process each question ID
-<span class="nc bnc" id="L289" title="All 2 branches missed.">            for (String questionIdStr : questionIdArr) {</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">            for (String questionIdStr : questionIdArr) {</span>
                 try {
                     // Trim any whitespace
-<span class="nc" id="L292">                    questionIdStr = questionIdStr.trim();</span>
-<span class="nc bnc" id="L293" title="All 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
+<span class="nc" id="L280">                    questionIdStr = questionIdStr.trim();</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
                     
                     // Use the questionIdStr directly with queryByKey
-<span class="nc" id="L296">                    Question dbQuestion = questionDB.queryByKey(questionIdStr);</span>
+<span class="nc" id="L284">                    Question dbQuestion = questionDB.queryByKey(questionIdStr);</span>
                     
-<span class="nc bnc" id="L298" title="All 2 branches missed.">                    if (dbQuestion == null) {</span>
-<span class="nc" id="L299">                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</span>
-<span class="nc" id="L300">                        continue;</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">                    if (dbQuestion == null) {</span>
+<span class="nc" id="L287">                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</span>
+<span class="nc" id="L288">                        continue;</span>
                     }
-                    
-                    // Create a quiz question based on the question type
-<span class="nc bnc" id="L304" title="All 2 branches missed.">                    if (&quot;MCQ&quot;.equalsIgnoreCase(dbQuestion.getType())) {</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">                    int maxScore = dbQuestion.getScore() != null ? dbQuestion.getScore() : 1;</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">                    if (&quot;MCQ&quot;.equalsIgnoreCase(dbQuestion.getType())) {</span>
                         // Multiple choice question
-<span class="nc" id="L306">                        quizQuestions.add(new StudentQuizController.QuizQuestion(</span>
-<span class="nc" id="L307">                            dbQuestion.getQuestionText(),</span>
-<span class="nc" id="L308">                            dbQuestion.getOptions()</span>
+<span class="nc" id="L293">                        quizQuestions.add(new StudentQuizController.QuizQuestion(</span>
+<span class="nc" id="L294">                            dbQuestion.getQuestionText(),</span>
+<span class="nc" id="L295">                            dbQuestion.getOptions(),</span>
+<span class="nc" id="L296">                            maxScore,</span>
+<span class="nc" id="L297">                            dbQuestion.getAnswer()</span>
                         ));
-                    } else {
+<span class="nc" id="L299">                    } else {</span>
                         // Short answer question
-<span class="nc" id="L312">                        quizQuestions.add(new StudentQuizController.QuizQuestion(</span>
-<span class="nc" id="L313">                            dbQuestion.getQuestionText()</span>
+<span class="nc" id="L301">                        quizQuestions.add(new StudentQuizController.QuizQuestion(</span>
+<span class="nc" id="L302">                            dbQuestion.getQuestionText(),</span>
+<span class="nc" id="L303">                            maxScore</span>
                         ));
                     }
-<span class="nc" id="L316">                } catch (Exception e) {</span>
-<span class="nc" id="L317">                    System.err.println(&quot;Error processing question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</span>
-<span class="nc" id="L318">                }</span>
+<span class="nc" id="L306">                } catch (Exception e) {</span>
+<span class="nc" id="L307">                    System.err.println(&quot;Error processing question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</span>
+                }
             }
-<span class="nc" id="L320">        } catch (Exception e) {</span>
-<span class="nc" id="L321">            System.err.println(&quot;Error loading questions for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</span>
-<span class="nc" id="L322">            e.printStackTrace();</span>
-<span class="nc" id="L323">        }</span>
+<span class="nc" id="L310">        } catch (Exception e) {</span>
+<span class="nc" id="L311">            System.err.println(&quot;Error loading questions for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L312">            e.printStackTrace();</span>
+        }
         
-<span class="nc" id="L325">        return quizQuestions;</span>
+<span class="nc" id="L315">        return quizQuestions;</span>
     }
     
     /**
@@ -330,58 +320,58 @@ import java.util.ResourceBundle;
      * @param event The action event.
      */
     private void handleCheckResult(ActionEvent event) {
-<span class="nc" id="L333">        String selectedQuizName = CheckResultComboBox.getValue();</span>
-<span class="nc bnc" id="L334" title="All 4 branches missed.">        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</span>
-<span class="nc" id="L335">            showAlert(Alert.AlertType.WARNING, &quot;No Result Selected&quot;, &quot;Please select a quiz result to check.&quot;);</span>
-<span class="nc" id="L336">            return;</span>
+<span class="nc" id="L323">        String selectedQuizName = CheckResultComboBox.getValue();</span>
+<span class="nc bnc" id="L324" title="All 4 branches missed.">        if (selectedQuizName == null || selectedQuizName.isEmpty()) {</span>
+<span class="nc" id="L325">            showAlert(Alert.AlertType.WARNING, &quot;No Result Selected&quot;, &quot;Please select a quiz result to check.&quot;);</span>
+<span class="nc" id="L326">            return;</span>
         }
         
         try {
             // Find the exam in the database by name
-<span class="nc" id="L341">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
-<span class="nc" id="L342">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
-<span class="nc" id="L343">            Exam selectedExam = null;</span>
+<span class="nc" id="L331">            Database&lt;Exam&gt; examDB = new Database&lt;&gt;(Exam.class);</span>
+<span class="nc" id="L332">            List&lt;Exam&gt; exams = examDB.getAllEnabled();</span>
+<span class="nc" id="L333">            Exam selectedExam = null;</span>
             
             // Find the exam with the matching name
-<span class="nc bnc" id="L346" title="All 2 branches missed.">            for (Exam exam : exams) {</span>
-<span class="nc bnc" id="L347" title="All 2 branches missed.">                if (selectedQuizName.equals(exam.getName())) {</span>
-<span class="nc" id="L348">                    selectedExam = exam;</span>
-<span class="nc" id="L349">                    break;</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">            for (Exam exam : exams) {</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">                if (selectedQuizName.equals(exam.getName())) {</span>
+<span class="nc" id="L338">                    selectedExam = exam;</span>
+<span class="nc" id="L339">                    break;</span>
                 }
-<span class="nc" id="L351">            }</span>
+            }
             
-<span class="nc bnc" id="L353" title="All 2 branches missed.">            if (selectedExam == null) {</span>
-<span class="nc" id="L354">                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</span>
-<span class="nc" id="L355">                return;</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">            if (selectedExam == null) {</span>
+<span class="nc" id="L344">                showAlert(Alert.AlertType.ERROR, &quot;Exam Not Found&quot;, &quot;Could not find the selected exam in the database.&quot;);</span>
+<span class="nc" id="L345">                return;</span>
             }
             
             // Load the quiz results
-<span class="nc" id="L359">            List&lt;StudentQuizResultController.QuizResult&gt; results = loadQuizResults(selectedExam);</span>
+<span class="nc" id="L349">            List&lt;StudentQuizResultController.QuizResult&gt; results = loadQuizResults(selectedExam);</span>
             
-<span class="nc bnc" id="L361" title="All 2 branches missed.">            if (results.isEmpty()) {</span>
-<span class="nc" id="L362">                showAlert(Alert.AlertType.WARNING, &quot;No Results&quot;, &quot;No results found for this exam.&quot;);</span>
-<span class="nc" id="L363">                return;</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">            if (results.isEmpty()) {</span>
+<span class="nc" id="L352">                showAlert(Alert.AlertType.WARNING, &quot;No Results&quot;, &quot;No results found for this exam.&quot;);</span>
+<span class="nc" id="L353">                return;</span>
             }
             
             // Load the quiz result screen
-<span class="nc" id="L367">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentQuizResultUI.fxml&quot;));</span>
-<span class="nc" id="L368">            Parent root = loader.load();</span>
+<span class="nc" id="L357">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentQuizResultUI.fxml&quot;));</span>
+<span class="nc" id="L358">            Parent root = loader.load();</span>
             
-<span class="nc" id="L370">            StudentQuizResultController controller = loader.getController();</span>
+<span class="nc" id="L360">            StudentQuizResultController controller = loader.getController();</span>
             
             // Initialize the controller
-<span class="nc" id="L373">            controller.preSetController(student, selectedQuizName, results);</span>
+<span class="nc" id="L363">            controller.preSetController(student, selectedQuizName, results);</span>
             
             // Show the quiz result screen
-<span class="nc" id="L376">            Stage stage = (Stage) checkResultButton.getScene().getWindow();</span>
-<span class="nc" id="L377">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L378">            stage.setScene(scene);</span>
-<span class="nc" id="L379">            stage.show();</span>
-<span class="nc" id="L380">        } catch (IOException e) {</span>
-<span class="nc" id="L381">            e.printStackTrace();</span>
-<span class="nc" id="L382">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz result screen: &quot; + e.getMessage());</span>
-<span class="nc" id="L383">        }</span>
-<span class="nc" id="L384">    }</span>
+<span class="nc" id="L366">            Stage stage = (Stage) checkResultButton.getScene().getWindow();</span>
+<span class="nc" id="L367">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L368">            stage.setScene(scene);</span>
+<span class="nc" id="L369">            stage.show();</span>
+<span class="nc" id="L370">        } catch (IOException e) {</span>
+<span class="nc" id="L371">            e.printStackTrace();</span>
+<span class="nc" id="L372">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load quiz result screen: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L374">    }</span>
     
     /**
      * Loads quiz results for an exam from the database.
@@ -389,91 +379,91 @@ import java.util.ResourceBundle;
      * @return A list of quiz results.
      */
     private List&lt;StudentQuizResultController.QuizResult&gt; loadQuizResults(Exam exam) {
-<span class="nc" id="L392">        List&lt;StudentQuizResultController.QuizResult&gt; results = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L382">        List&lt;StudentQuizResultController.QuizResult&gt; results = new ArrayList&lt;&gt;();</span>
         
         try {
             // Get the database connections
-<span class="nc" id="L396">            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
-<span class="nc" id="L397">            Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
+<span class="nc" id="L386">            Database&lt;comp3111.examsystem.entity.Record&gt; recordDB = new Database&lt;&gt;(comp3111.examsystem.entity.Record.class);</span>
+<span class="nc" id="L387">            Database&lt;Question&gt; questionDB = new Database&lt;&gt;(Question.class);</span>
             
             // Get questions string from the exam
-<span class="nc" id="L400">            String questionsStr = exam.getQuestions();</span>
+<span class="nc" id="L390">            String questionsStr = exam.getQuestions();</span>
             
-<span class="nc bnc" id="L402" title="All 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
-<span class="nc" id="L403">                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</span>
-<span class="nc" id="L404">                return results;</span>
+<span class="nc bnc" id="L392" title="All 4 branches missed.">            if (questionsStr == null || questionsStr.isEmpty()) {</span>
+<span class="nc" id="L393">                System.out.println(&quot;No questions found for exam: &quot; + exam.getName());</span>
+<span class="nc" id="L394">                return results;</span>
             }
             
             // Split the question IDs string
-<span class="nc" id="L408">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
+<span class="nc" id="L398">            String[] questionIdArr = questionsStr.split(&quot;,&quot;);</span>
             
             // Process each question ID
-<span class="nc bnc" id="L411" title="All 2 branches missed.">            for (String questionIdStr : questionIdArr) {</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            for (String questionIdStr : questionIdArr) {</span>
                 try {
                     // Trim any whitespace
-<span class="nc" id="L414">                    questionIdStr = questionIdStr.trim();</span>
-<span class="nc bnc" id="L415" title="All 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
+<span class="nc" id="L404">                    questionIdStr = questionIdStr.trim();</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">                    if (questionIdStr.isEmpty()) continue;</span>
                     
                     // Query the database with the question ID string directly
-<span class="nc" id="L418">                    Question question = questionDB.queryByKey(questionIdStr);</span>
+<span class="nc" id="L408">                    Question question = questionDB.queryByKey(questionIdStr);</span>
                     
-<span class="nc bnc" id="L420" title="All 2 branches missed.">                    if (question == null) {</span>
-<span class="nc" id="L421">                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</span>
-<span class="nc" id="L422">                        continue;</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">                    if (question == null) {</span>
+<span class="nc" id="L411">                        System.out.println(&quot;Question not found with ID: &quot; + questionIdStr);</span>
+<span class="nc" id="L412">                        continue;</span>
                     }
                     
                     // Get the student's record for this question and exam
-<span class="nc" id="L426">                    List&lt;comp3111.examsystem.entity.Record&gt; records = recordDB.getAll();</span>
-<span class="nc" id="L427">                    comp3111.examsystem.entity.Record studentRecord = null;</span>
+<span class="nc" id="L416">                    List&lt;comp3111.examsystem.entity.Record&gt; records = recordDB.getAll();</span>
+<span class="nc" id="L417">                    comp3111.examsystem.entity.Record studentRecord = null;</span>
                     
                     // Get the question ID as Long for comparison with record IDs
-<span class="nc" id="L430">                    Long questionId = null;</span>
+<span class="nc" id="L420">                    Long questionId = null;</span>
                     try {
-<span class="nc" id="L432">                        questionId = Long.parseLong(questionIdStr);</span>
-<span class="nc" id="L433">                    } catch (NumberFormatException e) {</span>
-<span class="nc" id="L434">                        System.out.println(&quot;Could not parse question ID to Long: &quot; + questionIdStr);</span>
-<span class="nc" id="L435">                        continue;</span>
-<span class="nc" id="L436">                    }</span>
+<span class="nc" id="L422">                        questionId = Long.parseLong(questionIdStr);</span>
+<span class="nc" id="L423">                    } catch (NumberFormatException e) {</span>
+<span class="nc" id="L424">                        System.out.println(&quot;Could not parse question ID to Long: &quot; + questionIdStr);</span>
+<span class="nc" id="L425">                        continue;</span>
+                    }
                     
-<span class="nc bnc" id="L438" title="All 2 branches missed.">                    for (comp3111.examsystem.entity.Record record : records) {</span>
-<span class="nc bnc" id="L439" title="All 4 branches missed.">                        if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</span>
-<span class="nc bnc" id="L440" title="All 4 branches missed.">                            record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId()) &amp;&amp;</span>
-<span class="nc bnc" id="L441" title="All 4 branches missed.">                            record.getQuestionID() != null &amp;&amp; record.getQuestionID().equals(questionId)) {</span>
-<span class="nc" id="L442">                            studentRecord = record;</span>
-<span class="nc" id="L443">                            break;</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">                    for (comp3111.examsystem.entity.Record record : records) {</span>
+<span class="nc bnc" id="L429" title="All 4 branches missed.">                        if (record.getStudentID() != null &amp;&amp; record.getStudentID().equals(student.getId()) &amp;&amp;</span>
+<span class="nc bnc" id="L430" title="All 4 branches missed.">                            record.getExamID() != null &amp;&amp; record.getExamID().equals(exam.getId()) &amp;&amp;</span>
+<span class="nc bnc" id="L431" title="All 4 branches missed.">                            record.getQuestionID() != null &amp;&amp; record.getQuestionID().equals(questionId)) {</span>
+<span class="nc" id="L432">                            studentRecord = record;</span>
+<span class="nc" id="L433">                            break;</span>
                         }
-<span class="nc" id="L445">                    }</span>
+                    }
                     
                     // If no record found, skip this question
-<span class="nc bnc" id="L448" title="All 2 branches missed.">                    if (studentRecord == null) {</span>
-<span class="nc" id="L449">                        continue;</span>
+<span class="nc bnc" id="L438" title="All 2 branches missed.">                    if (studentRecord == null) {</span>
+<span class="nc" id="L439">                        continue;</span>
                     }
                     
                     // Create a quiz result for this question
-<span class="nc bnc" id="L453" title="All 2 branches missed.">                    double score = studentRecord.getScore() != null ? studentRecord.getScore() : 0;</span>
-<span class="nc bnc" id="L454" title="All 2 branches missed.">                    double maxScore = question.getScore() != null ? question.getScore() : 1;</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">                    double score = studentRecord.getScore() != null ? studentRecord.getScore() : 0;</span>
+<span class="nc bnc" id="L444" title="All 2 branches missed.">                    double maxScore = question.getScore() != null ? question.getScore() : 1;</span>
                     
-<span class="nc bnc" id="L456" title="All 2 branches missed.">                    String studentAnswer = studentRecord.getResponse() != null ? studentRecord.getResponse() : &quot;No answer provided&quot;;</span>
-<span class="nc bnc" id="L457" title="All 2 branches missed.">                    String correctAnswer = question.getAnswer() != null ? question.getAnswer() : &quot;Answer not available&quot;;</span>
+<span class="nc bnc" id="L446" title="All 2 branches missed.">                    String studentAnswer = studentRecord.getResponse() != null ? studentRecord.getResponse() : &quot;No answer provided&quot;;</span>
+<span class="nc bnc" id="L447" title="All 2 branches missed.">                    String correctAnswer = question.getAnswer() != null ? question.getAnswer() : &quot;Answer not available&quot;;</span>
                     
-<span class="nc" id="L459">                    results.add(new StudentQuizResultController.QuizResult(</span>
-<span class="nc" id="L460">                        question.getQuestionText(),</span>
-                        studentAnswer,
-                        correctAnswer,
-                        score / maxScore, // Normalize to 0-1 range
-                        1.0, // Max score is always 1.0 after normalization
-<span class="nc" id="L465">                        generateFeedback(score, maxScore)</span>
+<span class="nc" id="L449">                    results.add(new StudentQuizResultController.QuizResult(</span>
+<span class="nc" id="L450">                        question.getQuestionText(),</span>
+<span class="nc" id="L451">                        studentAnswer,</span>
+<span class="nc" id="L452">                        correctAnswer,</span>
+<span class="nc" id="L453">                        score, // actual assigned score</span>
+<span class="nc" id="L454">                        maxScore, // actual max score</span>
+<span class="nc" id="L455">                        generateFeedback(score, maxScore)</span>
                     ));
-<span class="nc" id="L467">                } catch (Exception e) {</span>
-<span class="nc" id="L468">                    System.err.println(&quot;Error processing result for question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</span>
-<span class="nc" id="L469">                }</span>
+<span class="nc" id="L457">                } catch (Exception e) {</span>
+<span class="nc" id="L458">                    System.err.println(&quot;Error processing result for question ID: &quot; + questionIdStr + &quot;. Error: &quot; + e.getMessage());</span>
+                }
             }
-<span class="nc" id="L471">        } catch (Exception e) {</span>
-<span class="nc" id="L472">            System.err.println(&quot;Error loading results for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</span>
-<span class="nc" id="L473">            e.printStackTrace();</span>
-<span class="nc" id="L474">        }</span>
+<span class="nc" id="L461">        } catch (Exception e) {</span>
+<span class="nc" id="L462">            System.err.println(&quot;Error loading results for exam: &quot; + exam.getName() + &quot;. Error: &quot; + e.getMessage());</span>
+<span class="nc" id="L463">            e.printStackTrace();</span>
+        }
         
-<span class="nc" id="L476">        return results;</span>
+<span class="nc" id="L466">        return results;</span>
     }
     
     /**
@@ -483,12 +473,12 @@ import java.util.ResourceBundle;
      * @return Feedback message.
      */
     private String generateFeedback(double score, double maxScore) {
-<span class="nc bnc" id="L486" title="All 2 branches missed.">        if (score == 0) {</span>
-<span class="nc" id="L487">            return &quot;Incorrect answer. Please review this question.&quot;;</span>
-<span class="nc bnc" id="L488" title="All 2 branches missed.">        } else if (score &lt; maxScore) {</span>
-<span class="nc" id="L489">            return &quot;Partially correct. You received &quot; + score + &quot; out of &quot; + maxScore + &quot; points.&quot;;</span>
+<span class="nc bnc" id="L476" title="All 2 branches missed.">        if (score == 0) {</span>
+<span class="nc" id="L477">            return &quot;Incorrect answer. Please review this question.&quot;;</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">        } else if (score &lt; maxScore) {</span>
+<span class="nc" id="L479">            return &quot;Partially correct. You received &quot; + score + &quot; out of &quot; + maxScore + &quot; points.&quot;;</span>
         } else {
-<span class="nc" id="L491">            return &quot;Excellent! Your answer is correct.&quot;;</span>
+<span class="nc" id="L481">            return &quot;Excellent! Your answer is correct.&quot;;</span>
         }
     }
     
@@ -500,24 +490,24 @@ import java.util.ResourceBundle;
     public void handleViewStatistics(ActionEvent event) {
         try {
             // Load the grade statistics screen
-<span class="nc" id="L503">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentGradeStatisticsUI.fxml&quot;));</span>
-<span class="nc" id="L504">            Parent root = loader.load();</span>
+<span class="nc" id="L493">            FXMLLoader loader = new FXMLLoader(getClass().getResource(&quot;/comp3111/examsystem/StudentGradeStatisticsUI.fxml&quot;));</span>
+<span class="nc" id="L494">            Parent root = loader.load();</span>
             
-<span class="nc" id="L506">            StudentGradeStatisticsController controller = loader.getController();</span>
+<span class="nc" id="L496">            StudentGradeStatisticsController controller = loader.getController();</span>
             
             // Initialize the controller
-<span class="nc" id="L509">            controller.preSetController(student);</span>
+<span class="nc" id="L499">            controller.preSetController(student);</span>
             
             // Show the grade statistics screen
-<span class="nc" id="L512">            Stage stage = (Stage) viewStatisticsButton.getScene().getWindow();</span>
-<span class="nc" id="L513">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L514">            stage.setScene(scene);</span>
-<span class="nc" id="L515">            stage.show();</span>
-<span class="nc" id="L516">        } catch (IOException e) {</span>
-<span class="nc" id="L517">            e.printStackTrace();</span>
-<span class="nc" id="L518">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load grade statistics screen: &quot; + e.getMessage());</span>
-<span class="nc" id="L519">        }</span>
-<span class="nc" id="L520">    }</span>
+<span class="nc" id="L502">            Stage stage = (Stage) viewStatisticsButton.getScene().getWindow();</span>
+<span class="nc" id="L503">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L504">            stage.setScene(scene);</span>
+<span class="nc" id="L505">            stage.show();</span>
+<span class="nc" id="L506">        } catch (IOException e) {</span>
+<span class="nc" id="L507">            e.printStackTrace();</span>
+<span class="nc" id="L508">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to load grade statistics screen: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L510">    }</span>
     
     /**
      * Handles the logout button click.
@@ -527,18 +517,18 @@ import java.util.ResourceBundle;
     public void handleLogout(ActionEvent event) {
         try {
             // Load the login screen (assuming there is a LoginUI.fxml)
-<span class="nc" id="L530">            Parent root = FXMLLoader.load(getClass().getResource(&quot;/comp3111/examsystem/LoginUI.fxml&quot;));</span>
+<span class="nc" id="L520">            Parent root = FXMLLoader.load(getClass().getResource(&quot;/comp3111/examsystem/LoginUI.fxml&quot;));</span>
             
             // Show the login screen
-<span class="nc" id="L533">            Stage stage = (Stage) logoutButton.getScene().getWindow();</span>
-<span class="nc" id="L534">            Scene scene = new Scene(root);</span>
-<span class="nc" id="L535">            stage.setScene(scene);</span>
-<span class="nc" id="L536">            stage.show();</span>
-<span class="nc" id="L537">        } catch (IOException e) {</span>
-<span class="nc" id="L538">            e.printStackTrace();</span>
-<span class="nc" id="L539">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to login page: &quot; + e.getMessage());</span>
-<span class="nc" id="L540">        }</span>
-<span class="nc" id="L541">    }</span>
+<span class="nc" id="L523">            Stage stage = (Stage) logoutButton.getScene().getWindow();</span>
+<span class="nc" id="L524">            Scene scene = new Scene(root);</span>
+<span class="nc" id="L525">            stage.setScene(scene);</span>
+<span class="nc" id="L526">            stage.show();</span>
+<span class="nc" id="L527">        } catch (IOException e) {</span>
+<span class="nc" id="L528">            e.printStackTrace();</span>
+<span class="nc" id="L529">            showAlert(Alert.AlertType.ERROR, &quot;Error&quot;, &quot;Failed to return to login page: &quot; + e.getMessage());</span>
+        }
+<span class="nc" id="L531">    }</span>
     
     /**
      * Handles the exit button click.
@@ -547,18 +537,18 @@ import java.util.ResourceBundle;
     @FXML
     public void handleExit(ActionEvent event) {
         // Confirm before closing the application
-<span class="nc" id="L550">        Alert confirmExit = new Alert(Alert.AlertType.CONFIRMATION);</span>
-<span class="nc" id="L551">        confirmExit.setTitle(&quot;Exit Application&quot;);</span>
-<span class="nc" id="L552">        confirmExit.setHeaderText(&quot;Exit Application&quot;);</span>
-<span class="nc" id="L553">        confirmExit.setContentText(&quot;Are you sure you want to exit the application?&quot;);</span>
+<span class="nc" id="L540">        Alert confirmExit = new Alert(Alert.AlertType.CONFIRMATION);</span>
+<span class="nc" id="L541">        confirmExit.setTitle(&quot;Exit Application&quot;);</span>
+<span class="nc" id="L542">        confirmExit.setHeaderText(&quot;Exit Application&quot;);</span>
+<span class="nc" id="L543">        confirmExit.setContentText(&quot;Are you sure you want to exit the application?&quot;);</span>
         
-<span class="nc" id="L555">        confirmExit.showAndWait().ifPresent(response -&gt; {</span>
-<span class="nc bnc" id="L556" title="All 2 branches missed.">            if (response == ButtonType.OK) {</span>
+<span class="nc" id="L545">        confirmExit.showAndWait().ifPresent(response -&gt; {</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">            if (response == ButtonType.OK) {</span>
                 // Close the application
-<span class="nc" id="L558">                Platform.exit();</span>
+<span class="nc" id="L548">                Platform.exit();</span>
             }
-<span class="nc" id="L560">        });</span>
-<span class="nc" id="L561">    }</span>
+<span class="nc" id="L550">        });</span>
+<span class="nc" id="L551">    }</span>
     
     /**
      * Shows an alert dialog.
@@ -567,11 +557,11 @@ import java.util.ResourceBundle;
      * @param content The content of the alert.
      */
     private void showAlert(Alert.AlertType type, String title, String content) {
-<span class="nc" id="L570">        Alert alert = new Alert(type);</span>
-<span class="nc" id="L571">        alert.setTitle(title);</span>
-<span class="nc" id="L572">        alert.setHeaderText(null);</span>
-<span class="nc" id="L573">        alert.setContentText(content);</span>
-<span class="nc" id="L574">        alert.showAndWait();</span>
-<span class="nc" id="L575">    }</span>
+<span class="nc" id="L560">        Alert alert = new Alert(type);</span>
+<span class="nc" id="L561">        alert.setTitle(title);</span>
+<span class="nc" id="L562">        alert.setHeaderText(null);</span>
+<span class="nc" id="L563">        alert.setContentText(content);</span>
+<span class="nc" id="L564">        alert.showAndWait();</span>
+<span class="nc" id="L565">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 /**
  * The controller for the main page of the manager.
  */
-<span class="fc" id="L23">public class ManagerMainController implements Initializable {</span>
+<span class="nc" id="L23">public class ManagerMainController implements Initializable {</span>
     @FXML
     private VBox mainbox;
 
@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
      * @param resources The resources used to localize the root object, or null if the root object was not localized.
      */
     public void initialize(URL location, ResourceBundle resources) {
-<span class="fc" id="L34">    }</span>
+<span class="nc" id="L34">    }</span>
 
     public void preSetController(Manager manager) {
 <span class="nc" id="L37">        this.manager = manager;</span>
@@ -51,7 +51,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L51">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L52">        } catch (Exception e) {</span>
 <span class="nc" id="L53">            e.printStackTrace();</span>
-<span class="nc" id="L54">        }</span>
+        }
 <span class="nc" id="L55">    }</span>
 
     @FXML
@@ -68,7 +68,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L68">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L69">        } catch (Exception e) {</span>
 <span class="nc" id="L70">            e.printStackTrace();</span>
-<span class="nc" id="L71">        }</span>
+        }
 <span class="nc" id="L72">    }</span>
 
     @FXML
@@ -85,7 +85,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L85">            ((Stage) mainbox.getScene().getWindow()).close();</span>
 <span class="nc" id="L86">        } catch (Exception e) {</span>
 <span class="nc" id="L87">            e.printStackTrace();</span>
-<span class="nc" id="L88">        }</span>
+        }
 <span class="nc" id="L89">    }</span>
 
     @FXML
@@ -101,7 +101,7 @@ import java.util.ResourceBundle;
 <span class="nc" id="L101">            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();</span>
 <span class="nc" id="L102">        } catch (IOException e1) {</span>
 <span class="nc" id="L103">            e1.printStackTrace();</span>
-<span class="nc" id="L104">        }</span>
+        }
 <span class="nc" id="L105">    }</span>
 
     @FXML

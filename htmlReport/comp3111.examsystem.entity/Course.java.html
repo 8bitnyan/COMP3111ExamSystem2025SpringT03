@@ -19,28 +19,28 @@ public class Course extends Entity {
 <span class="fc" id="L19">    }</span>
 
     public Course(Long id, String courseCode, String courseName, Department department) {
-<span class="fc" id="L22">        super(id);</span>
-<span class="fc" id="L23">        this.courseCode = courseCode;</span>
-<span class="fc" id="L24">        this.courseName = courseName;</span>
-<span class="fc" id="L25">        this.department = department;</span>
-<span class="fc" id="L26">    }</span>
+<span class="nc" id="L22">        super(id);</span>
+<span class="nc" id="L23">        this.courseCode = courseCode;</span>
+<span class="nc" id="L24">        this.courseName = courseName;</span>
+<span class="nc" id="L25">        this.department = department;</span>
+<span class="nc" id="L26">    }</span>
 
     public String getCourseCode() {
 
-<span class="fc" id="L30">        return this.courseCode;</span>
+<span class="nc" id="L30">        return this.courseCode;</span>
 
     }
     public void setCourseCode(String courseCode) {
-<span class="fc" id="L34">        this.courseCode = courseCode;</span>
-<span class="fc" id="L35">    }</span>
+<span class="nc" id="L34">        this.courseCode = courseCode;</span>
+<span class="nc" id="L35">    }</span>
 
     public String getCourseName() {
 
-<span class="fc" id="L39">        return this.courseName;</span>
+<span class="nc" id="L39">        return this.courseName;</span>
     }
     public void setCourseName(String courseName) {
-<span class="fc" id="L42">        this.courseName = courseName;</span>
-<span class="fc" id="L43">    }</span>
+<span class="nc" id="L42">        this.courseName = courseName;</span>
+<span class="nc" id="L43">    }</span>
 
     /**
      * Gets the department of the user.
@@ -55,16 +55,16 @@ public class Course extends Entity {
      * @param department the new department.
      */
     public void setDepartment(Department department) {
-<span class="fc" id="L58">        this.department = department;</span>
-<span class="fc" id="L59">    }</span>
+<span class="nc" id="L58">        this.department = department;</span>
+<span class="nc" id="L59">    }</span>
 
     /**
      * Sets the department of the user, for reading data from database only.
      * @param departmentString the department string read from database.
      */
     public void setDepartment(String departmentString) {
-<span class="fc" id="L66">        this.department = Department.fromString(departmentString);</span>
-<span class="fc" id="L67">    }</span>
+<span class="nc" id="L66">        this.department = Department.fromString(departmentString);</span>
+<span class="nc" id="L67">    }</span>
 
     /**
      * Validates a user.
@@ -87,7 +87,7 @@ public class Course extends Entity {
 <span class="nc" id="L87">                msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</span>
 <span class="nc" id="L88">        } catch (NumberFormatException e) {</span>
 <span class="nc" id="L89">            msg.append(&quot;Invalid age! (Required: 1-100, number only)\n\n&quot;);</span>
-<span class="nc" id="L90">        }</span>
+        }
 <span class="nc bnc" id="L91" title="All 2 branches missed.">        if (department == Department.ANY) msg.append(&quot;Invalid department! (Department cannot be \&quot;ANY\&quot;)\n\n&quot;);</span>
 <span class="nc" id="L92">        return msg;</span>
     }

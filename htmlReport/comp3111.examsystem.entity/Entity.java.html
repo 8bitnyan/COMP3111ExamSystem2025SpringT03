@@ -27,15 +27,15 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @param id
      */
     public void setId(Long id) {
-<span class="fc" id="L30">        this.id = id;</span>
-<span class="fc" id="L31">    }</span>
+<span class="nc" id="L30">        this.id = id;</span>
+<span class="nc" id="L31">    }</span>
 
     /**
      * Gets the status of the entity.
      * @return true if active, false otherwise.
      */
     public Boolean getIsAble() {
-<span class="fc" id="L38">        return isAble;</span>
+<span class="nc" id="L38">        return isAble;</span>
     }
 
     /**
@@ -61,7 +61,7 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @return -1 if this.id is smaller than o.id, 0 if equal, 1 otherwise.
      */
     public int compareTo(Entity o) {
-<span class="fc" id="L64">        return Long.compare(this.id, o.id);</span>
+<span class="nc" id="L64">        return Long.compare(this.id, o.id);</span>
     }
 
     /**
@@ -70,8 +70,8 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
      * @return true if str contains any of these special strings, false otherwise.
      */
     public static Boolean containsSpecialString(String str) {
-<span class="fc bfc" id="L73" title="All 4 branches covered.">        return str.contains(Database.ListItemSeparator) || str.contains(Database.PropertySeparator)</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">                || str.contains(Database.NameValueSeparator);</span>
+<span class="nc bnc" id="L73" title="All 4 branches missed.">        return str.contains(Database.ListItemSeparator) || str.contains(Database.PropertySeparator)</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                || str.contains(Database.NameValueSeparator);</span>
     }
 
     /**
@@ -85,8 +85,8 @@ public class Entity implements java.io.Serializable, Comparable&lt;Entity&gt; {
 <span class="fc bfc" id="L85" title="All 2 branches covered.">        if (other instanceof Entity) {</span>
             // Handle null IDs safely
 <span class="fc" id="L87">            Entity otherEntity = (Entity) other;</span>
-<span class="pc bpc" id="L88" title="1 of 4 branches missed.">            if (this.id == null || otherEntity.getId() == null) {</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">                return this == other; // If either ID is null, only equal if same object</span>
+<span class="pc bpc" id="L88" title="2 of 4 branches missed.">            if (this.id == null || otherEntity.getId() == null) {</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                return this == other; // If either ID is null, only equal if same object</span>
             }
 <span class="fc" id="L91">            return this.id.equals(otherEntity.getId());</span>
         }

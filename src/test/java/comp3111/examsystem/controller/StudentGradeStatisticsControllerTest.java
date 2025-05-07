@@ -74,6 +74,23 @@ public class StudentGradeStatisticsControllerTest {
         setField(controller, "lowestScoreLabel", lowestScoreLabel);
         setField(controller, "backButton", backButton);
         setField(controller, "closeButton", closeButton);
+        // Patch: initialize allQuizGrades with sample data
+        java.lang.reflect.Field allQuizGradesField = controller.getClass().getDeclaredField("allQuizGrades");
+        allQuizGradesField.setAccessible(true);
+        java.util.List<Object> sampleGrades = new java.util.ArrayList<>();
+        java.time.LocalDate now = java.time.LocalDate.now();
+        // Use the inner QuizGrade class
+        Class<?> quizGradeClass = null;
+        for (Class<?> c : controller.getClass().getDeclaredClasses()) {
+            if (c.getSimpleName().equals("QuizGrade")) quizGradeClass = c;
+        }
+        if (quizGradeClass != null) {
+            sampleGrades.add(quizGradeClass.getConstructor(String.class, String.class, double.class, java.time.LocalDate.class)
+                .newInstance("Week 1 Quiz", "COMP3111", 85.0, now.minusDays(30)));
+            sampleGrades.add(quizGradeClass.getConstructor(String.class, String.class, double.class, java.time.LocalDate.class)
+                .newInstance("Week 2 Quiz", "COMP3111", 90.0, now.minusDays(15)));
+        }
+        allQuizGradesField.set(controller, sampleGrades);
     }
 
     private void setField(Object obj, String fieldName, Object value) throws Exception {

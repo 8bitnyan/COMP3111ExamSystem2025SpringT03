@@ -27,6 +27,12 @@ public class TeacherExamMgmtControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         controller = new TeacherExamMgmtController();
+        // Patch: initialize teacher field
+        comp3111.examsystem.entity.Teacher teacher = new comp3111.examsystem.entity.Teacher();
+        teacher.setId(1L);
+        java.lang.reflect.Field teacherField = controller.getClass().getDeclaredField("teacher");
+        teacherField.setAccessible(true);
+        teacherField.set(controller, teacher);
         setField(controller, "publishedChk", new CheckBox());
         setField(controller, "examNameTxt", new TextField());
         setField(controller, "courseIdTxt", new TextField());
@@ -157,6 +163,12 @@ public class TeacherExamMgmtControllerTest {
         }
         // Null fields (simulate by not setting them)
         controller = new TeacherExamMgmtController();
+        // Patch: initialize teacher field for null fields test
+        comp3111.examsystem.entity.Teacher teacher = new comp3111.examsystem.entity.Teacher();
+        teacher.setId(1L);
+        java.lang.reflect.Field teacherField = controller.getClass().getDeclaredField("teacher");
+        teacherField.setAccessible(true);
+        teacherField.set(controller, teacher);
         setField(controller, "examNameTxt", new TextField());
         setField(controller, "courseIdTxt", new TextField());
         setField(controller, "durationTxt", new TextField());

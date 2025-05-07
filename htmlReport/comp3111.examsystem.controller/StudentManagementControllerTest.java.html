@@ -60,7 +60,7 @@ import static org.mockito.Mockito.*;
 <span class="fc" id="L60">                List&lt;Student&gt; result = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L61" title="All 2 branches covered.">                for (Student s : students) {</span>
 <span class="pc bpc" id="L62" title="1 of 2 branches missed.">                    if (s.getUsername().contains(fieldValue)) result.add(s);</span>
-<span class="fc" id="L63">                }</span>
+                }
 <span class="fc" id="L64">                return result;</span>
             }
 <span class="nc" id="L66">            return new ArrayList&lt;&gt;();</span>
@@ -89,9 +89,9 @@ import static org.mockito.Mockito.*;
 <span class="fc" id="L89">            java.lang.reflect.Field dbField = StudentManagementController.class.getDeclaredField(&quot;studentDatabase&quot;);</span>
 <span class="fc" id="L90">            dbField.setAccessible(true);</span>
 <span class="fc" id="L91">            dbField.set(controller, studentDatabase);</span>
-<span class="nc" id="L92">        } catch (Exception e) {</span>
+<span class="pc" id="L92">        } catch (Exception e) {</span>
 <span class="nc" id="L93">            throw new RuntimeException(e);</span>
-<span class="fc" id="L94">        }</span>
+        }
         // Create and inject real JavaFX controls
 <span class="fc" id="L96">        studentTable = new TableView&lt;&gt;();</span>
 <span class="fc" id="L97">        colName = new TableColumn&lt;&gt;();</span>
@@ -136,9 +136,9 @@ import static org.mockito.Mockito.*;
 <span class="fc" id="L136">            java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);</span>
 <span class="fc" id="L137">            field.setAccessible(true);</span>
 <span class="fc" id="L138">            field.set(target, value);</span>
-<span class="nc" id="L139">        } catch (Exception e) {</span>
+<span class="pc" id="L139">        } catch (Exception e) {</span>
 <span class="nc" id="L140">            throw new RuntimeException(e);</span>
-<span class="fc" id="L141">        }</span>
+        }
 <span class="fc" id="L142">    }</span>
 
     @AfterEach
@@ -215,7 +215,7 @@ import static org.mockito.Mockito.*;
 <span class="fc" id="L215">        System.out.println(&quot;All students in table after update:&quot;);</span>
 <span class="fc bfc" id="L216" title="All 2 branches covered.">        for (Student st : studentTable.getItems()) {</span>
 <span class="fc" id="L217">            System.out.println(&quot;Student: username=&quot; + st.getUsername() + &quot;, name=&quot; + st.getName());</span>
-<span class="fc" id="L218">        }</span>
+        }
 <span class="fc" id="L219">        assertEquals(&quot;testuser2&quot;, updated.getUsername());</span>
 <span class="fc" id="L220">        assertEquals(&quot;Test UserX&quot;, updated.getName());</span>
 <span class="fc" id="L221">        assertEquals(&quot;password456&quot;, updated.getPassword());</span>
